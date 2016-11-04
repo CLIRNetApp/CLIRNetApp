@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    android:background="@color/black"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:layout_weight="2">
+
+
+        <ImageView
+            android:padding="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="240dp"
+            android:layout_weight="1"
+            android:background="@drawable/copy"
+            android:contentDescription="@string/desc"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:layout_weight="1"
+            android:padding="10dp">
+            <ImageView
+                android:layout_width="300dp"
+                android:layout_height="340dp"
+                android:layout_weight="0.1"
+                android:src="@drawable/concierge_suite"
+                android:padding="10dp"
+                android:contentDescription="@string/desc"/>
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="340dp"
+                android:orientation="vertical"
+                android:layout_weight="0.6"
+                android:padding="10dp">
+                <EditText
+                    android:id="@+id/email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="0dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/rounded_corner"
+                    android:hint="@string/hint_username"
+                    android:inputType="textEmailAddress"
+                    android:drawableLeft="@drawable/ic_social_person"
+                    android:padding="10dp"
+                    android:paddingBottom="20dp"
+                    android:paddingTop="20dp"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/input_login_hint" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp"/>
+
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:background="@drawable/rounded_corner"
+                    android:layout_gravity="center"
+                    android:hint="@string/hint_password"
+                    android:inputType="textPassword"
+                    android:drawableLeft="@drawable/ic_action_lock"
+                    android:padding="10dp"
+                    android:paddingTop="15dp"
+                    android:maxLines="1"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/input_login_hint" />
+
+                <android.support.v7.widget.AppCompatCheckBox
+                    android:id="@+id/ch_rememberme"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Remember me"
+                    android:checked="true"
+                    android:textColor="#fff"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:textSize="18sp"
+                    app:buttonTint="@color/white" />
+
+                <!-- Login Button -->
+
+                <Button
+                    android:id="@+id/btnLogin"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dip"
+                    android:background="@color/white"
+                    android:layout_gravity="center"
+                    android:text="@string/btn_login"
+                    android:textColor="@color/input_register"
+                    android:textStyle="bold"
+                    android:textSize="18sp"/>
+
+                <!-- Link to Login Screen -->
+
+                <Button
+                    android:id="@+id/btnLinkToForgetScreen"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dip"
+                    android:background="@null"
+                    android:text="@string/btn_link_to_register"
+                    android:textAllCaps="false"
+                    android:textColor="@color/btn_login"
+                    android:textStyle="bold"
+                    android:textSize="15sp" />
+
+            </LinearLayout>
+
+            <ImageView
+                android:layout_width="300dp"
+                android:layout_height="340dp"
+                android:layout_weight="0.1"
+                android:src="@drawable/knowledge_suite2"
+                android:padding="10dp"
+                android:contentDescription="@string/desc"/>
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white"
+            android:paddingBottom="10dp"
+            />
+
+        <ImageView
+            android:paddingTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:src="@drawable/logon"
+            android:layout_gravity="center"
+            android:contentDescription="@string/desc"/>
+        <TextView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="20dp"
+            android:text="\u00a9 Copyright CLIRNet Services Private Limited 2016. All Rights Reserved."
+            android:textColor="@color/input_register"
+            android:gravity="center"
+            android:textSize="14sp"/>
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="right">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/privacyPolicy"
+            android:text="Privacy Policy "
+            android:textColor="@color/bg_login"
+            android:padding="3dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/termsandCondition"
+            android:text="Terms and Conditions"
+            android:textColor="@color/bg_login" />
+    </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

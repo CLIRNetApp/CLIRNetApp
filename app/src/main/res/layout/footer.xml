@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="bottom">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/input_register"
+            android:paddingBottom="10dp"
+            />
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:src="@drawable/logon"
+            android:layout_gravity="center"
+            android:contentDescription="@string/desc"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:text="\u00a9 Copyright CLIRNet Services Private Limited 2016. All Rights Reserved."
+            android:textColor="@color/input_register"
+            android:gravity="center"
+            android:textSize="14sp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="right">
+
+
+
+        <TextView
+            android:id="@+id/privacyPolicy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Privacy Policy "
+            android:textColor="@color/bg_login"
+            android:padding="3dp"/>
+
+        <TextView
+            android:id="@+id/termsandCondition"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:text="Terms and Conditions"
+            android:textColor="@color/bg_login" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

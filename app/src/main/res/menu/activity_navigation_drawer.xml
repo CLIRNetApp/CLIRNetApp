@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_po"
+            android:icon="@drawable/icon_1_green"
+            android:title="@string/patient_central" />
+        <item
+            android:id="@+id/nav_consultLog"
+            android:icon="@drawable/icon_2_green"
+            android:title="@string/consultation_log"
+             />
+        <item
+            android:id="@+id/nav_pohistory"
+            android:icon="@drawable/icon_3_green"
+            android:title="@string/pohistory"
+            />
+
+        <item
+            android:id="@+id/nav_logout"
+            android:icon="@drawable/ic_menu_send"
+            android:title="@string/logout" />
+    </group>
+
+   
+
+
+</menu>

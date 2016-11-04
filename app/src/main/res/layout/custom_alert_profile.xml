@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+   <!-- <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Please Confirm"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:orientation="vertical"
+        android:background="#50BAA0">
+    </TextView>-->
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        style="@style/Base.TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"
+        android:textSize="16sp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Mobile Number Not Found!!!"></TextView>
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:layout_gravity="center"
+        android:textColor="@color/black"
+        style="@style/Base.TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"
+        android:textSize="14sp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Search Again or Add a New Patient Records"></TextView>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/input_register"
+        android:paddingBottom="10dp"
+        />
+
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:padding="5dp">
+
+        <Button
+            android:id="@+id/customDialogCancel"
+            android:layout_width="130dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_corner_color"
+            android:layout_alignParentLeft="true"
+            android:text="Search Again!"
+            android:paddingLeft="5dp"
+            android:textColor="@color/white"/>
+
+        <Button
+            android:id="@+id/customDialogOk"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/bg_main"
+            android:background="@drawable/rounded_color_add"
+            android:layout_alignParentRight="true"
+            android:text="Add New"
+            android:paddingRight="5dp"
+            android:textColor="@color/white"
+            tools:targetApi="lollipop" />
+    </RelativeLayout>
+</LinearLayout>

@@ -1,0 +1,351 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/llayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dep"
+    android:orientation="vertical"
+    android:padding="5dp"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context=".activity.EditPatientUpdate">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/patientImage1"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:src="@drawable/main_profile"
+                android:visibility="gone"
+                android:contentDescription="@string/desc"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:id="@+id/backChangingImages"
+                    android:layout_width="match_parent"
+                    android:layout_height="120dp"
+                    android:layout_gravity="start"
+                    android:orientation="vertical"
+                    android:contentDescription="@string/desc">
+
+                </ImageView>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+
+                    <TextView
+                        android:id="@+id/sysdate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.7"
+                        android:gravity="end"
+                        android:text="Date"
+                        android:textAppearance="@style/Base.Widget.AppCompat.Button.Small"
+                        android:textColor="#827d86"
+                        android:textSize="16sp"
+                        android:textStyle="normal" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- TODO: Update blank fragment layout -->
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/rectangle_cornor_blue_color"
+                    android:orientation="vertical"
+                    android:padding="5dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:padding="3dp">
+
+                        <com.mikhaellopez.circularimageview.CircularImageView
+                            android:id="@+id/patientImage"
+                            android:layout_width="150dp"
+                            android:layout_height="150dp"
+                            android:src="@drawable/main_profile"
+                            app:civ_border_color="#EEEEEE"
+                            app:civ_border_width="4dp"
+                            app:civ_shadow="true"
+                            app:civ_shadow_color="#FF0000"
+                            app:civ_shadow_radius="10" />
+
+                        <!-- <ImageView
+                             android:id="@+id/patientImage"
+                             android:layout_width="0dp"
+                             android:layout_height="150dp"
+                             android:layout_weight="0.4"
+                             android:src="@drawable/main_profile" />-->
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.6"
+                            android:gravity="center"
+                            android:orientation="vertical"
+                            android:paddingTop="50dp">
+
+                            <TextView
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="Name"
+                                android:textColor="@color/input_register"
+                                android:textSize="18sp"
+                                android:textStyle="bold" />
+
+                            <TextView
+                                android:id="@+id/patientName"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_horizontal"
+                                android:text="Patient Name"
+                                android:textColor="@color/bg_main"
+                                android:textSize="20sp"
+                                android:textStyle="normal|bold" />
+
+                        </LinearLayout>
+
+                        <ImageView
+                            android:id="@+id/editPersonalInfo"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.1"
+                            android:src="@drawable/editprofile"
+                            android:contentDescription="@string/desc"
+                            />
+
+
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:weightSum="4"
+                        android:baselineAligned="false">
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.2"
+                                android:src="@drawable/age"
+                                android:contentDescription="@string/desc"/>
+
+                            <TextView
+                                android:id="@+id/age1"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="4dp"
+                                android:layout_weight="0.8"
+                                android:fontFamily="sans-serif"
+                                android:padding="8dp"
+                                android:paddingLeft="12dp"
+                                android:text="Age"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:textColor="@color/bg_main"
+                                android:textSize="16sp"
+                                tools:targetApi="jelly_bean" />
+                        </LinearLayout>
+
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.2"
+                                android:src="@drawable/mobile"
+                                android:contentDescription="@string/desc"/>
+
+                            <TextView
+                                android:id="@+id/mobileno"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="4dp"
+                                android:layout_weight="0.8"
+                                android:fontFamily="sans-serif"
+                                android:padding="8dp"
+                                android:text="Number"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:textColor="@color/bg_main"
+                                android:textSize="16sp"
+                                tools:targetApi="jelly_bean" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.2"
+                                android:src="@drawable/sex"
+                                android:contentDescription="@string/desc"/>
+
+                            <TextView
+                                android:id="@+id/gender"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="4dp"
+                                android:layout_weight="0.8"
+                                android:fontFamily="sans-serif"
+                                android:padding="8dp"
+                                android:text="Gender"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:textColor="@color/bg_main"
+                                android:textSize="16sp"
+                                tools:targetApi="jelly_bean" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="0.2"
+                                android:src="@drawable/languge"
+                                android:contentDescription="@string/desc"/>
+
+                            <TextView
+                                android:id="@+id/lang"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="4dp"
+                                android:layout_weight="0.8"
+                                android:fontFamily="sans-serif"
+                                android:padding="8dp"
+                                android:paddingLeft="12dp"
+                                android:text="English"
+                                android:textAppearance="?android:attr/textAppearanceSmall"
+                                android:textColor="@color/bg_main"
+                                android:textSize="16sp"
+                                tools:targetApi="jelly_bean" />
+
+
+                        </LinearLayout>
+
+                    </LinearLayout>
+
+
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".1"
+                        android:visibility="invisible" />
+
+
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:orientation="horizontal"
+                    android:layout_weight="2">
+
+                    <TextView
+
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.9"
+                        android:paddingLeft="7dp"
+                        android:text="Update History"
+                        android:textSize="16sp"
+                        android:fontFamily="sans-serif-medium"
+                        android:textColor="#50BAA0"
+                        tools:targetApi="jelly_bean" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".1"
+                        android:visibility="invisible" />
+
+                    <Button
+                        android:id="@+id/editlastUpdate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/side_nav_bar"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:paddingLeft="5dp"
+                        android:text="Edit Last Update"
+                        android:textColor="#ffffff"
+                        android:textSize="16sp"
+                        android:visibility="invisible"
+                        tools:targetApi="jelly_bean" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="0.9"
+                        android:scrollbars="vertical"
+                        app:layoutManager="GridLayoutManager"
+                        app:spanCount="1" />
+
+                       <include layout="@layout/footer"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
+

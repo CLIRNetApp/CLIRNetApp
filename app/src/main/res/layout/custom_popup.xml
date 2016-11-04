@@ -1,0 +1,122 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffffffff"
+    android:layout_gravity="center">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/change_password"
+        android:textSize="20sp"
+        android:fontFamily="Ariel"
+        android:gravity="center"
+        android:background="#A9A9A9"
+        android:visibility="gone"
+        tools:targetApi="jelly_bean" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:id="@+id/a"
+        android:gravity="center"
+        android:contentDescription="@string/desc"
+        android:scaleType="fitCenter" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Please Enter A New Password "
+        android:textSize="14sp"/>
+
+    <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:text="(** Having 1 capital, 1 Small,1 Number and 1 special charecter "
+    android:textSize="14sp"/>
+
+
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp" >
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/linearlayout_bg"
+            android:hint="@string/hint_password"
+            android:inputType="textPassword"
+            android:drawableLeft="@drawable/ic_action_lock"
+            android:padding="10dp"
+            android:textColor="@color/input_login"
+            android:textColorHint="@color/input_login_hint"
+            android:maxLines="1" />
+
+        <EditText
+            android:id="@+id/confirmpassword"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+
+            android:background="@drawable/linearlayout_bg"
+            android:hint="@string/hint_password"
+            android:inputType="textPassword"
+            android:drawableLeft="@drawable/ic_action_lock"
+            android:padding="10dp"
+            android:textColor="@color/input_login"
+            android:textColorHint="@color/input_login_hint"
+            android:maxLines="1" />
+
+
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="CANCEL"
+            android:id="@+id/cancel"
+            android:padding="5dp"
+            android:textSize="18sp"
+            android:textColor="#ff000000"
+            android:gravity="center_horizontal"
+            android:background="@color/button_text_color"
+            android:visibility="gone"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="3dp"
+            android:text=""/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Submit "
+            android:id="@+id/submit"
+            android:background="@color/button_text_color"
+
+            android:padding="5dp"
+            android:textSize="18sp"
+            android:textColor="#ff000000"
+            android:gravity="center_horizontal" />
+
+    </LinearLayout>
+</LinearLayout>
