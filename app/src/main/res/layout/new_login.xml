@@ -121,7 +121,8 @@
             android:text="Remember me"
             android:textColor="#fff"
             android:textSize="18sp"
-            app:buttonTint="@color/white"/>
+            app:buttonTint="@color/white"
+            android:visibility="gone"/>
         <Button
             android:id="@+id/btnLogin"
             android:layout_width="match_parent"

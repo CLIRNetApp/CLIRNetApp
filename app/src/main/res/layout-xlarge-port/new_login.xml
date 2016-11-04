@@ -109,7 +109,8 @@
                     android:text="Remember me"
                     android:textColor="#fff"
                     android:textSize="18sp"
-                    app:buttonTint="@color/white"/>
+                    app:buttonTint="@color/white"
+                    android:visibility="gone"/>
 
                 <!-- Login Button -->
 

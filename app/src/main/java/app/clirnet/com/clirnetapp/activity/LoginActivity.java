@@ -280,7 +280,7 @@ public class LoginActivity extends Activity {
 
             } else {
 
-                boolean isLogin = false;
+                boolean isLogin ;
                 try {
                     isLogin = sqlController.validateUser(name, md5EncyptedDataPassword);
 
@@ -314,7 +314,7 @@ public class LoginActivity extends Activity {
         } else {
             // Prompt user to enter credentials
             Toast.makeText(getApplicationContext(),
-                    "Please enter the credentials!", Toast.LENGTH_LONG)
+                    "Please Enter the Credentials!!!", Toast.LENGTH_LONG)
                     .show();
         }
 
