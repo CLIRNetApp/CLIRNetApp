@@ -989,11 +989,10 @@ public class RegistrationActivity extends AppCompatActivity {
 
         // prescriptions = precription.getText().toString().trim();
         String clinical_note = clinical_Notes.getText().toString().trim();
-        int length=current_age.length();
+        int length = current_age.length();
 
         Log.e("counter", "   " + length);
-        if(length >=4)
-        {
+        if (length >= 4) {
             age.setError("Please enter Valid Age !");
             return;
         }
@@ -1207,10 +1206,62 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d("Android", "The onDestroy() event");
         // session.setLogin(false);
-        dbController.close();//Close the all database connection opened here 31/10/2008 By. Ashish
-        databaseClass.close();
-        lastNamedb.close();
+        if(dbController !=null){
+            dbController.close();//Close the all database connection opened here 31/10/2008 By. Ashish
+        }
+        if(databaseClass !=null){
+            databaseClass.close();//Close the all database connection opened here 31/10/2008 By. Ashish
+        }
+        if(lastNamedb !=null){
+            lastNamedb.close();//Close the all database connection opened here 31/10/2008 By. Ashish
+        }
+        cleanResources();
         System.gc();
+    }
+
+    private void cleanResources() {
+        firstName = null;
+        middleName = null;
+        lastName = null;
+        date_of_birth = null;
+        phone_no = null;
+        age = null;
+        follow_up_date = null;
+        follow_up_days = null;
+        follow_up_weeks = null;
+        follow_up_Months = null;
+        patientimage = null;
+        imageViewprescription = null;
+        clinical_Notes = null;
+        radioSexGroup = null;
+        multiAutoComplete = null;
+        sysdate = null;
+
+        mAilmemtArrayList = null;
+        lastNameList = null;
+        selectedLanguage = null;
+        imageIntent = null;
+        imagesFolder = null;
+        first_name = null;
+        middle_name = null;
+        last_name = null;
+        imageName = null;
+        uriSavedImage = null;
+        follow_up_dates = null;
+        prescriptionImgPath = null;
+        patientImagePath = null;
+        followupdateSellected = null;
+        usersellectedDate = null;
+        monthSel = null;
+        fowSel = null;
+        mLastNameList = null;
+        showfodtext = null;
+        dt = null;
+        sdf1 = null;
+        doctor_membership_number = null;
+        docId = null;
+        addedTime = null;
+        language = null;
     }
 
     private void goToNavigation() {

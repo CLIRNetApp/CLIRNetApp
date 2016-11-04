@@ -131,16 +131,13 @@ public class NavigationActivity extends AppCompatActivity
             if (cursor != null) {
                 cursor.close();
             }
+            if(sqlController != null){
+                sqlController.close();
+            }
         }
 
 
-
-
-
-
-
-
-      /*  fragmentManager = getSupportFragmentManager();
+        /*  fragmentManager = getSupportFragmentManager();
 
         fragmentManager.beginTransaction().replace(R.id.flContent, new HomeFragment()).commit();*/
 
@@ -305,8 +302,14 @@ public class NavigationActivity extends AppCompatActivity
         if(fragmentManager != null){
             fragmentManager=null;
         }
+         cleanResources();
+        //System.gc();
+    }
 
-        System.gc();
+    private void cleanResources() {
+         pDialog=null;
+         docName=null;
+         emailId=null;
     }
 
     private void showDialog() {

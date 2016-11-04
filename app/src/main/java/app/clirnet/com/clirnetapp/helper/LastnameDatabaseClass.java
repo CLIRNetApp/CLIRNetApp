@@ -23,7 +23,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
     @SuppressLint("SdCardPath")
     private static final String DB_PATH = "/data/data/app.clirnet.com.clirnetapp/databases/";
 
-    private static final String DB_NAME = "namelast.db";
+    private static final String DB_NAME = "namelast";
     public static final String DATABASE_NAME = "clirnetApp.db";
 
     private SQLiteDatabase myDataBase;

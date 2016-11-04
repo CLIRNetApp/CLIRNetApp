@@ -284,13 +284,13 @@ public class EditPatientUpdate extends AppCompatActivity {
             try {
                 int id = databaseClass.getMaxAimId();
                 maxid = id + 1;
-            }catch(Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
 
             }
-            }
+        }
 
-        Cursor cursor =null;
+        Cursor cursor = null;
         try {
             cursor = databaseClass.getAilmentsList();
             mAilmemtArrayList = new ArrayList<>();
@@ -302,9 +302,8 @@ public class EditPatientUpdate extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally {
-            if(cursor !=null){
+        } finally {
+            if (cursor != null) {
                 cursor.close();
             }
         }
@@ -814,7 +813,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             patientImagePath = uriSavedImage.getPath();
             Log.e("path", "" + patientImagePath);
             if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
-                     setUpGlide(patientImagePath,imageViewprescription);
+                setUpGlide(patientImagePath, imageViewprescription);
                       /*Glide.with(EditPatientUpdate.this)
                         .load(patientImagePath)
                         .crossFade()
@@ -926,17 +925,52 @@ public class EditPatientUpdate extends AppCompatActivity {
 
         super.onDestroy();
 
-        if(sqlController != null){
+        if (sqlController != null) {
             sqlController = null;
         }
-        if(dbController != null){
-            dbController=null;
+        if (dbController != null) {
+            dbController = null;
         }
-        if(databaseClass != null){
-            databaseClass=null;
+        if (databaseClass != null) {
+            databaseClass = null;
         }
-        sdf1=null;
-       // System.gc();
+        sdf1 = null;
+        // System.gc();
+        cleanResources();
 
+    }
+
+    private void cleanResources() {
+        ailments1=null;
+        strPhone = null;
+        strAge = null;
+        strLanguage = null;
+        strgender = null;
+        strPatientPhoto = null;
+        txtfollow_up_date = null;
+        follow_up_days = null;
+        follow_up_weeks = null;
+        follow_up_Months = null;
+        clinicalNotes = null;
+        strFirstName = null;
+        strMiddleName = null;
+        strLastName = null;
+        strDob = null;
+        strId = null;
+        txtfollow_up_date = null;
+        fowSel = null;
+        usersellectedDate = null;
+        monthSel = null;
+        imageName = null;
+        imageIntent = null;
+        imagesFolder = null;
+        uriSavedImage = null;
+        patientImagePath = null;
+        sdf1 = null;
+         updatedTime = null;
+         sysdate = null;
+         noRecordsText = null;
+        docId = null;
+         strVisitId = null;
     }
 }
