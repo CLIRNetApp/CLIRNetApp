@@ -460,6 +460,30 @@ public class SQLController {
             this.db1.close();
         }
     }
+    public boolean validateUser(String username, String password) throws CustomeException {
+
+        db1 = dbHelper.getReadableDatabase();
+        int count;
+        Cursor c=null;
+        try {
+             c = db1.rawQuery(
+                    "SELECT * FROM " + SQLiteHandler.TABLE_USER + " WHERE "
+                            + SQLiteHandler.KEY_NAME + "='" + username + "'AND " + SQLiteHandler.KEY_PASSWORD + "='" + password + "'", null);
+            count = c.getCount();
+        }catch(Exception e){
+            throw new CustomeException("Not able to search records");
+        }
+        finally {
+            if(c != null){
+                c.close();
+            }
+        }
+        if (count>0)
+            return true;
+        return false;
+    }
+
+
 }
 
 

@@ -35,6 +35,7 @@ import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.Utility.MD5;
 import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.helper.CustomeException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
@@ -129,17 +130,17 @@ public class LoginActivity extends Activity {
 
 
         //open database controller class for further operations on database
-        Cursor cursor = null;
+       // Cursor cursor = null;
         try {
 
             sqlController = new SQLController(LoginActivity.this);
             sqlController.open();
             dbController = new SQLiteHandler(LoginActivity.this);
-
-            cursor = sqlController.getUserLoginRecords();
+            // commented this and created validateUser method to validate user from database directly 4-11-2016 By.Ashish
+            /*  cursor = sqlController.getUserLoginRecords();
             // mLoginList = new ArrayList<String>();
 
-            while (cursor.moveToNext()) {
+          while (cursor.moveToNext()) {
 
                 LoginModel user = new LoginModel(cursor.getString(0), cursor.getString(1));
 
@@ -150,15 +151,15 @@ public class LoginActivity extends Activity {
                 mLoginList.add(user); //add the item
             }
             count = mLoginList.size();
-            Log.e("size", "" + count);
+            Log.e("size", "" + count);*/
 
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            if (cursor != null) {
+           /* if (cursor != null) {
                 cursor.close();
-            }
+            }*/
             //Close db here
             if(sqlController != null){
                 sqlController.close();
@@ -231,9 +232,12 @@ public class LoginActivity extends Activity {
                                         public void onClick(View view) {
                                             name = inputEmail.getText().toString().trim();
                                             strPassword = inputPassword.getText().toString().trim();
-                                            //This code used for Remember Me(ie. save login id and password for future ref.)
 
-                                            rememberMeCheckbox();
+
+                                            //This code used for Remember Me(ie. save login id and password for future ref.)
+                                            rememberMe(name, ""); //save username only
+
+                                            //rememberMeCheckbox();//Removed remeber me check box for safety concern 04-11-16
                                             //to authenticate user credentials
                                             LoginAuthentication();
 
@@ -274,17 +278,36 @@ public class LoginActivity extends Activity {
                 checkLogin(name, md5EncyptedDataPassword);
                 getDoctorDetails(name, md5EncyptedDataPassword);
 
-            } else if (count > 0) {
-                if (name.equals(savedUserName) && md5EncyptedDataPassword.equals(savedUserPassword)) {
+            } else {
+
+                boolean isLogin = false;
+                try {
+                    isLogin = sqlController.validateUser(name, md5EncyptedDataPassword);
+
+                    if (isLogin) {
+                        Toast.makeText(LoginActivity.this, "Login Successfully!!! ", Toast.LENGTH_LONG).show();
+                        goToNavigation();
+
+                    } else {
+                        Toast.makeText(LoginActivity.this, " No Records found for the user : " + name, Toast.LENGTH_LONG).show();
+                        //By calling this method and empty database will be created into the default system path
+                        //of your application so we are gonna be able to overwrite that database with our database.
+
+                /*if (name.equals(savedUserName) && md5EncyptedDataPassword.equals(savedUserPassword)) {
                     //Redirect to Navigation activity
                     goToNavigation();
                 } else {
                     Toast.makeText(LoginActivity.this, " No Database found for the user " + name, Toast.LENGTH_LONG).show();
+                }*/
+                        Toast.makeText(LoginActivity.this, " You are not connected to Internet!! ", Toast.LENGTH_LONG).show();
+                    }
+                } catch (CustomeException e) {
+                    e.printStackTrace();
+                } finally {
+                    if (sqlController != null) {
+                        sqlController.close();
+                    }
                 }
-                Toast.makeText(LoginActivity.this, " You are not connected to Internet ", Toast.LENGTH_LONG).show();
-            } else {
-
-                Toast.makeText(LoginActivity.this, " You are not connected to Internet ", Toast.LENGTH_LONG).show();
             }
 
 
