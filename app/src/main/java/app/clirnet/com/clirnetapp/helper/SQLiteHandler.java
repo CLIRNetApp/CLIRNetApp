@@ -559,7 +559,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     //add patient records from add pateint update page
-    public void addPatientNextVisitRecord(String visit_id, String strPatientId, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String visit_date, String doc_id, String doc_mem_id, String addedOnDate, String addedTime, String flag, String added_by) {
+    public void addPatientNextVisitRecord(String visit_id, String strPatientId, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String visit_date, String doc_id, String doc_mem_id, String addedOnDate, String addedTime, String flag, String added_by,String action, String patInfoType) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -583,6 +583,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         values.put(DOCTOR_MEMBERSHIP_ID, doc_mem_id);
         values.put(SYCHRONIZED, flag);
         values.put(ADDED_BY, added_by);
+        values.put(ACTION, action);
+        values.put(PATIENT_INFO_TYPE_FORM, patInfoType);
 
         // Inserting Row
         long id = db.insert(TABLE_PATIENT_HISTORY, null, values);

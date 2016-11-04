@@ -710,7 +710,6 @@ public class EditPersonalInfo extends AppCompatActivity {
         radioSexButton = null;
         sex = null;
         modified_on_date = null;
-        mLastNameList = null;
         docId = null;
         modifiedTime = null;
         middle_name = null;

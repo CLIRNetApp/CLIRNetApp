@@ -663,6 +663,11 @@ public class AddPatientUpdate extends AppCompatActivity {
         String follow_up_dates = follow_up_date.getText().toString().trim();
 
         String followupdateSellected;
+
+        if (TextUtils.isEmpty(ailments)) {
+            ailments1.setError("Please enter Ailment !");
+            return;
+        }
         if (follow_up_weeks.getText().toString().length() == 0 & follow_up_Months.getText().toString().length() == 0 & follow_up_days.getText().toString().length() == 0 & follow_up_date.getText().toString().length() > 0) {
             followupdateSellected = follow_up_date.getText().toString();
             try {
@@ -770,9 +775,11 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         String flag = "0";
         String added_by = docId;
+        String patientInfoType = "App";
+        String action = "added";
 
         //  dbController.updatePatientPersonalforNewVisit(strPatientId, "2", modified_on.toString());//thiis will update pateint data for new visit
-        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, PrescriptionimageName, ailments, visit_date, docId, doctor_membership_number, addedOnDate, addedTime, flag, added_by);
+        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, PrescriptionimageName, ailments, visit_date, docId, doctor_membership_number, addedOnDate, addedTime, flag, added_by,action,patientInfoType);
 
         Toast.makeText(AddPatientUpdate.this, "Patient Record Updated Successfully!!!", Toast.LENGTH_LONG).show();
         //Redirect to navigation Activity
@@ -932,7 +939,7 @@ public class AddPatientUpdate extends AppCompatActivity {
     private void cleanResources() {
 
         patientHistoryData = null;
-        backChangingImages = null;
+       // backChangingImages = null;
         sdf1 = null;
         strPhone = null;
         strAge = null;

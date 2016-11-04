@@ -225,6 +225,7 @@ public class RegistrationActivity extends AppCompatActivity {
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 //get doctor  id
             docId = sqlController.getDoctorId();
+            Log.e("docId",""+docId);
             //this will give us a max of patient_id from patient records which will help to store records locally
             maxPatientIdCount = sqlController.getPatientIdCount();
             maxVisitId = sqlController.getPatientVisitIdCount();
@@ -1237,8 +1238,6 @@ public class RegistrationActivity extends AppCompatActivity {
         multiAutoComplete = null;
         sysdate = null;
 
-        mAilmemtArrayList = null;
-        lastNameList = null;
         selectedLanguage = null;
         imageIntent = null;
         imagesFolder = null;

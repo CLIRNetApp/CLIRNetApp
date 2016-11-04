@@ -261,9 +261,10 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         }
 
         //open database for further interaction with database
+
         try {
 
-            sqlController = new SQLController(getContext());
+            sqlController= new SQLController(getContext());
             sqlController.open();
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
             JSONArray patientInfoarray = dbController.getResultsForPatientInformation();
@@ -350,7 +351,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
             public void onClick(View v) {
                 Intent i = new Intent(getContext(), RegistrationActivity.class);
                 i.putExtra("number", searchNumber);
-                 startActivity(i);
+                startActivity(i);
 
 
             }
@@ -380,18 +381,21 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
 
         ArrayList<RegistrationModel> patientData = null;
+        SQLController sqlController1=null;
         try {
-            patientData = (sqlController.getPatientList());
+            sqlController1 = new SQLController(getActivity());
+            sqlController1.open();
+            patientData = sqlController1.getPatientList();
             filteredModelList1 = filterBySystemDate(patientData, sysdate.toString()); //filter data from patient list via system date
 
             patientDataforPhoneFilter = new ArrayList<>();
 
-            patientDataforPhoneFilter = (sqlController.getPatientListForPhoneNumberFilter()); //get all patient data from db
+            patientDataforPhoneFilter = (sqlController1.getPatientListForPhoneNumberFilter()); //get all patient data from db
         } catch (Exception e) {
             e.printStackTrace();
         }
-        if(sqlController !=null){
-            sqlController.close();
+        if(sqlController1 !=null){
+            sqlController1.close();
         }
         Log.e("sizew", "" + patientData.size());
 
@@ -439,7 +443,36 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
                     if (date1.before(currentdate)) {
 
-                        beforeAddPatientUpdate(position);
+                        //beforeAddPatientUpdate(position);
+                        //  System.out.println("Date1 is before or equal to Date2");
+                        Intent i = new Intent(getContext(), AddPatientUpdate.class);
+                        i.putExtra("PATIENTPHOTO", book.getPhoto());
+                        i.putExtra("PatientID", book.getPat_id());
+                        Log.e("Patientkaid", "" + book.getPat_id());
+                        Log.e("Patientkaid", "" + book.getVisit_date());
+
+                        i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
+                        i.putExtra("FIRSTTNAME", book.getFirstName());
+                        i.putExtra("MIDDLENAME", book.getMiddleName());
+                        i.putExtra("LASTNAME", book.getLastName());
+                        i.putExtra("DOB", book.getDob());
+
+                        i.putExtra("PHONE", book.getMobileNumber());
+
+                        i.putExtra("AGE", book.getAge());
+                        i.putExtra("LANGUAGE", book.getLanguage());
+                        i.putExtra("GENDER", book.getGender());
+                        i.putExtra("FOD", book.getFollowUpDate());
+                        i.putExtra("AILMENT", book.getAilments());
+                        i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
+                        i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
+                        i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
+                        i.putExtra("CLINICALNOTES", book.getClinicalNotes());
+                        i.putExtra("PRESCRIPTION", book.getPres_img());
+                        Log.e("img", "" + book.getPres_img());
+
+                        startActivity(i);
+//                        Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
 
 
 
@@ -477,14 +510,15 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
     private void getDataFromDatabase() {
         Cursor cursor = null;
+        SQLController sqlController1 = null;
         try {
 
-            sqlController = new SQLController(getActivity());
-            sqlController.open();
+            sqlController1 = new SQLController(getActivity());
+            sqlController1.open();
 
 
 
-            cursor = sqlController.getUserLoginRecords();
+            cursor = sqlController1.getUserLoginRecords();
             // mLoginList = new ArrayList<String>();
 
             while (cursor.moveToNext()) {
@@ -496,7 +530,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
                 Log.e("qwert", "" + savedUserName + "/ " + savedUserPassword);
                 mLoginList.add(user); //add the item
             }
-            asyn_value = sqlController.getAsyncvalue();
+            asyn_value = sqlController.getAsyncvalue().trim();
             Log.e("asyn_value","asyn_value is "+asyn_value);
 
         } catch (Exception e) {
@@ -506,8 +540,8 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
             if (cursor != null) {
                 cursor.close();
             }
-            if(sqlController !=null){
-                sqlController.close();
+            if(sqlController1 !=null){
+                sqlController1.close();
             }
         }
     }
@@ -524,6 +558,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
             boolean isInternetPresent = connectionDetector.isConnectingToInternet();
             if (isInternetPresent) {
                 if (asynTaskValue == "1") {
+
                     cao.setValue("2");
 
                     getPatientRecords(savedUserName, savedUserPassword);
@@ -950,8 +985,6 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         }
     }
 
-
-
     //This method will filter data from our database generated list according to user query By Sys Date 6/8/i Ashish
     private List<RegistrationModel> filterBySystemDate(List<RegistrationModel> models, String query) {
         query = query.toLowerCase();
@@ -1216,8 +1249,6 @@ private void sendDataToServer(final String patient_details, final String patient
 
                         if (msg.equals("OK")) {
 
-
-
                             Log.e("ashish", "" + patientIds_List.size());
                             int size = patientIds_List.size();
                             for(int i=0;i<size;i++){
@@ -1226,9 +1257,6 @@ private void sendDataToServer(final String patient_details, final String patient
                                 Log.e("Idis"+i," "+patientId);
                                 dbController.FlagupdatePatientPersonal(patientId,flag);
                             }
-
-
-
 
                             Log.e("ashish", "" + getPatientVisitIdsList.size());
                             int listsize = getPatientVisitIdsList.size();
@@ -1239,7 +1267,6 @@ private void sendDataToServer(final String patient_details, final String patient
                                 Log.e("IdisVisit" + i, " " + patientId + "patientVisitId  "+patientVisitId);
                                 dbController.FlagupdatePatientVisit(patientVisitId,flag);
                             }
-
 
                             toast = Toast.makeText(getContext(), "Data Send Successfully to Server" + msg, Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER, 0, 0);
@@ -1581,7 +1608,7 @@ private void sendDataToServer(final String patient_details, final String patient
 
         }
         if(sva !=null){
-            sva=null;
+           // sva=null;
         }
         addaNewPatient.setOnClickListener(null);
         recyclerView.setOnClickListener(null);

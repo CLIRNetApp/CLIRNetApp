@@ -68,7 +68,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             }
         }
 
-        if (dbExist) {
+       /* if (dbExist) {
             //do nothing - database already exist
         } else {
 
@@ -86,7 +86,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
 
             }
         }
-
+*/
     }
 
 
@@ -218,14 +218,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
                     null, null, null, null);
         } catch (Exception e) {
             throw new CustomeException("Error getting last name");
-        }
-        finally {
-           if(db1 != null){
-                //db1.close();
-            }
-            if(c != null){
-               // c.close();
-            }
+
         }
 
         return c;

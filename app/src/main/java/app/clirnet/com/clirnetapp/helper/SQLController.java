@@ -347,20 +347,30 @@ public class SQLController {
 
     //get doctor id from db
     public String getDoctorId() throws CustomeException {
-        SQLiteStatement stmt = null;
         SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        String returnString = ""; // Your default if none is found
         try {
             db1 = dbHelper.getReadableDatabase();
-            stmt = db1.compileStatement("select doctor_id from doctor_perInfo order by doctor_id desc limit 1");
+         //   stmt = db1.compileStatement("select doctor_id from doctor_perInfo order by doctor_id desc limit 1");
+
+            String query = "select doctor_id from doctor_perInfo order by doctor_id desc limit 1";
+
+
+            cursor = db1.rawQuery(query, null);
+
+
+            if (cursor.moveToFirst()) {
+                returnString = cursor.getString(cursor.getColumnIndex("doctor_id"));
+            }
         } catch (Exception e) {
             throw new CustomeException("Something went wrong");
         } finally {
-            if (db1 != null) {
-                /*db1.close();
-                stmt.close();*/
+            if (cursor != null) {
+               cursor.close();
             }
         }
-        return stmt.simpleQueryForString();
+        return returnString;
 
 
     }
@@ -389,12 +399,22 @@ public class SQLController {
     }
 
     public String getPhoneNumber() throws CustomeException {
-
+        Cursor cursor = null;
+        String returnString = ""; // Your default if none is found
         db1 = dbHelper.getReadableDatabase();
         SQLiteStatement stmt = null;
         try {
 
-            stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
+           // stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
+            String query = "select phonenumber from doctor_perInfo order by phonenumber desc limit 1";
+
+
+            cursor = db1.rawQuery(query, null);
+
+
+            if (cursor.moveToFirst()) {
+                returnString = cursor.getString(cursor.getColumnIndex("phonenumber"));
+            }
 
         } catch (Exception e) {
             throw new CustomeException("something went wrong");
@@ -403,12 +423,13 @@ public class SQLController {
             if(db1 !=null){
                 //close database
             }
-            if(stmt !=null){
+            if(cursor !=null){
                 //close statment
+                cursor.close();
             }
         }
 
-        return stmt.simpleQueryForString();
+        return returnString;
     }
 
     //get doctor mail id
@@ -416,29 +437,52 @@ public class SQLController {
 
         SQLiteStatement stmt = null;
         SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        String returnString = ""; // Your default if none is found
         try {
             db1 = dbHelper.getReadableDatabase();
-            stmt = db1.compileStatement("select email from doctor_perInfo order by email desc limit 1");
+
+
+            // stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
+            String query = "select email from doctor_perInfo order by email desc limit 1";
+
+
+            cursor = db1.rawQuery(query, null);
+
+
+            if (cursor.moveToFirst()) {
+                returnString = cursor.getString(cursor.getColumnIndex("email"));
+            }
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (Exception e) {
             throw new CustomeException("something went wrong");
         } finally {
-            if (db1 != null) {
-                //db1.close();
+            if (cursor != null) {
+                cursor.close();
             }
         }
 
-        return stmt.simpleQueryForString();
+        return returnString;
     }
 
     public String getAsyncvalue() throws CustomeException {
-
-        SQLiteStatement stmt = null;
+        Cursor cursor = null;
+        String returnString = null; // Your default if none is found
         SQLiteDatabase db1=null;
         try {
             db1 = dbHelper.getReadableDatabase();
-            stmt = db1.compileStatement("select value from async order by id desc limit 1");
+           // stmt = db1.compileStatement("select value from async order by id desc limit 1");
+
+            String query = "select value from async order by id desc limit 1";
+
+
+            cursor = db1.rawQuery(query, null);
+
+
+            if (cursor.moveToFirst()) {
+                returnString = cursor.getString(cursor.getColumnIndex("value"));
+            }
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (Exception e) {
@@ -448,7 +492,7 @@ public class SQLController {
               //  db1.close();
             }
         }
-        return stmt.simpleQueryForString();
+        return returnString;
     }
 
     //This will close the Cursor and Database 1-11-2016
@@ -460,6 +504,8 @@ public class SQLController {
             this.db1.close();
         }
     }
+
+    //To validate user from sqlite stored values
     public boolean validateUser(String username, String password) throws CustomeException {
 
         db1 = dbHelper.getReadableDatabase();

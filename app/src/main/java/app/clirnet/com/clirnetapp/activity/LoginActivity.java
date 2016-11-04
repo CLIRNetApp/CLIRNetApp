@@ -183,6 +183,11 @@ public class LoginActivity extends Activity {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        finally {
+            if(databaseClass !=null){
+                databaseClass.close();
+            }
+        }
 
 
         try {
@@ -202,6 +207,11 @@ public class LoginActivity extends Activity {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        finally {
+            if(lastnameDatabaseClass !=null){
+                lastnameDatabaseClass.close();
+            }
         }
 
 
@@ -656,7 +666,7 @@ public class LoginActivity extends Activity {
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String username = pref.getString(PREF_USERNAME, null);
         String password = pref.getString(PREF_PASSWORD, null);
-        Log.e("password", "" + username + "" + password);
+      //  Log.e("password", "" + username + "" + password);
 
         if (username != null || password != null) {
             //directly show logout form
@@ -681,7 +691,7 @@ public class LoginActivity extends Activity {
         if(connectionDetector != null){
             connectionDetector=null;
         }
-        pDialog=null;
+      //  pDialog=null;
         savedUserName=null;
         savedUserPassword=null;
         md5=null;
