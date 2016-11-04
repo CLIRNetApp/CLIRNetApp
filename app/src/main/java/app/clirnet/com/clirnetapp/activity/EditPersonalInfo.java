@@ -363,6 +363,22 @@ public class EditPersonalInfo extends AppCompatActivity {
                 String editPno = editmobile_no.getText().toString();
                 strdateob = editdob.getText().toString();
 
+                int length = editAge.length();
+
+                Log.e("counter", "   " + length);
+                if (length >= 4) {
+                    editage.setError("Please enter Valid Age !");
+                    return;
+                }
+                int age= Integer.parseInt(editAge);
+                if(age >100){
+                    editage.setError("Please enter Valid Age !");
+                    return;
+                }
+                else{
+                    //age is valid
+                }
+
                 if (TextUtils.isEmpty(editfname)) {
                     editfirstname.setError("Please enter First Name !");
                     return;

@@ -939,7 +939,6 @@ public class AddPatientUpdate extends AppCompatActivity {
     private void cleanResources() {
 
         patientHistoryData = null;
-       // backChangingImages = null;
         sdf1 = null;
         strPhone = null;
         strAge = null;

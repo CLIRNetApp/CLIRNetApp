@@ -225,7 +225,7 @@ public class RegistrationActivity extends AppCompatActivity {
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 //get doctor  id
             docId = sqlController.getDoctorId();
-            Log.e("docId",""+docId);
+            Log.e("docId", "" + docId);
             //this will give us a max of patient_id from patient records which will help to store records locally
             maxPatientIdCount = sqlController.getPatientIdCount();
             maxVisitId = sqlController.getPatientVisitIdCount();
@@ -997,6 +997,15 @@ public class RegistrationActivity extends AppCompatActivity {
             age.setError("Please enter Valid Age !");
             return;
         }
+
+        int nwage = Integer.parseInt(current_age);
+        if (nwage > 100) {
+            age.setError("Please enter Valid Age !");
+            return;
+        } else {
+            //age is valid
+        }
+
         if (TextUtils.isEmpty(first_name)) {
             firstName.setError("Please enter First Name !");
             return;
@@ -1207,13 +1216,13 @@ public class RegistrationActivity extends AppCompatActivity {
         super.onDestroy();
         Log.d("Android", "The onDestroy() event");
         // session.setLogin(false);
-        if(dbController !=null){
+        if (dbController != null) {
             dbController.close();//Close the all database connection opened here 31/10/2008 By. Ashish
         }
-        if(databaseClass !=null){
+        if (databaseClass != null) {
             databaseClass.close();//Close the all database connection opened here 31/10/2008 By. Ashish
         }
-        if(lastNamedb !=null){
+        if (lastNamedb != null) {
             lastNamedb.close();//Close the all database connection opened here 31/10/2008 By. Ashish
         }
         cleanResources();

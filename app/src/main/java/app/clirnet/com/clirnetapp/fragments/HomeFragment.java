@@ -167,6 +167,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         if (getArguments() != null) {
 
             //getSupportActionBar().setTitle(Html.fromHtml("<font color='#877AFF'>Edit Personal Informationt</font>"));
+           // this will handle screen rotation
             setRetainInstance(true);
 
         }
@@ -304,6 +305,23 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
                     sqlController.open();
                     patientIds_List=  sqlController.getPatientIdsFalg0();
                     getPatientVisitIdsList=sqlController.getPatientVisitIdsFalg0();
+
+                    Log.e("patientIds_List", "data is sending"+patientIds_List.size());
+                    Log.e("patientIds_List12","no data to send"+patientIds_List.size());
+                    if(patientIds_List.size()!= 0 || getPatientVisitIdsList.size()!= 0) {
+
+
+                            sendDataToServer();
+
+
+
+                    }else{
+                        Log.e("nodata","no data to send");
+                        makeToast("No Data to Send");
+
+
+                    }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -313,23 +331,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
                     }
                 }
 
-                Log.e("patientIds_List", "data is sending"+patientIds_List.size());
-                Log.e("patientIds_List12","no data to send"+patientIds_List.size());
-                if(patientIds_List.size()!= 0 || getPatientVisitIdsList.size()!= 0) {
 
-                    try {
-                        sendDataToServer();
-                    } catch (CustomeException e) {
-                        e.printStackTrace();
-                    }
-
-
-                }else{
-                    Log.e("nodata","no data to send");
-                         makeToast("No Data to Send");
-
-
-                }
 
             }
 
@@ -443,35 +445,9 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
                     if (date1.before(currentdate)) {
 
-                        //beforeAddPatientUpdate(position);
+                         beforeAddPatientUpdate(position);
                         //  System.out.println("Date1 is before or equal to Date2");
-                        Intent i = new Intent(getContext(), AddPatientUpdate.class);
-                        i.putExtra("PATIENTPHOTO", book.getPhoto());
-                        i.putExtra("PatientID", book.getPat_id());
-                        Log.e("Patientkaid", "" + book.getPat_id());
-                        Log.e("Patientkaid", "" + book.getVisit_date());
 
-                        i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
-                        i.putExtra("FIRSTTNAME", book.getFirstName());
-                        i.putExtra("MIDDLENAME", book.getMiddleName());
-                        i.putExtra("LASTNAME", book.getLastName());
-                        i.putExtra("DOB", book.getDob());
-
-                        i.putExtra("PHONE", book.getMobileNumber());
-
-                        i.putExtra("AGE", book.getAge());
-                        i.putExtra("LANGUAGE", book.getLanguage());
-                        i.putExtra("GENDER", book.getGender());
-                        i.putExtra("FOD", book.getFollowUpDate());
-                        i.putExtra("AILMENT", book.getAilments());
-                        i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
-                        i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
-                        i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
-                        i.putExtra("CLINICALNOTES", book.getClinicalNotes());
-                        i.putExtra("PRESCRIPTION", book.getPres_img());
-                        Log.e("img", "" + book.getPres_img());
-
-                        startActivity(i);
 //                        Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
 
 
