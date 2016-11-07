@@ -176,7 +176,7 @@ public class RegistrationActivity extends AppCompatActivity {
         privacyPolcicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(RegistrationActivity.this, PrivacyPolicy.class);
+                Intent intent = new Intent(getApplicationContext(), PrivacyPolicy.class);
                 startActivity(intent);
                 finish();
 
@@ -187,7 +187,7 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent intent = new Intent(RegistrationActivity.this, TermsCondition.class);
+                Intent intent = new Intent(getApplicationContext(), TermsCondition.class);
                 startActivity(intent);
                 finish();
 
@@ -1186,14 +1186,16 @@ public class RegistrationActivity extends AppCompatActivity {
         return isDuplicate;
     }
 
-    //Custom Toast.......................................
-    public void customToast(CharSequence charSequence) {
-
-        int duration = Toast.LENGTH_LONG;
-        Toast toast = Toast.makeText(RegistrationActivity.this, charSequence, duration);
-        toast.setGravity(Gravity.CENTER, 0, 0);
-        toast.show();
-    }
+// --Commented out by Inspection START (07-11-2016 16:44):
+//    //Custom Toast.......................................
+//    public void customToast(CharSequence charSequence) {
+//
+//        int duration = Toast.LENGTH_LONG;
+//        Toast toast = Toast.makeText(RegistrationActivity.this, charSequence, duration);
+//        toast.setGravity(Gravity.CENTER, 0, 0);
+//        toast.show();
+//    }
+// --Commented out by Inspection STOP (07-11-2016 16:44)
 
     //method to add days to current day;s
     public static Date addDay(Date date, int i) {
@@ -1288,7 +1290,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void goToNavigation() {
 
-        Intent i = new Intent(RegistrationActivity.this, NavigationActivity.class);
+        Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
         startActivity(i);
         finish();
 

@@ -77,15 +77,7 @@ public class PoHistoryFragment extends Fragment {
         rootview=null;
     }
 
-    // TODO: Rename and change types and number of parameters
-    public static PoHistoryFragment newInstance(String param1, String param2) {
-        PoHistoryFragment fragment = new PoHistoryFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

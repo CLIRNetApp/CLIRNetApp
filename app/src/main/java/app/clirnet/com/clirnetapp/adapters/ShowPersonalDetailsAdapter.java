@@ -14,7 +14,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersonalDetailsAdapter.HistoryViewHolder> {
 
-    final List<RegistrationModel> patientList;
+    private final List<RegistrationModel> patientList;
 
     public ShowPersonalDetailsAdapter(List<RegistrationModel> patientList) {
         this.patientList = patientList;

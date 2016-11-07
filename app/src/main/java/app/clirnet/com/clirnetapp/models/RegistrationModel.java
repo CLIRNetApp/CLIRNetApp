@@ -5,6 +5,7 @@ package app.clirnet.com.clirnetapp.models;
  */
 //model class
 public class RegistrationModel {
+
     public String getAction() {
         return action;
     }
@@ -18,9 +19,7 @@ public class RegistrationModel {
     private String actualFollowupDate;
     private  String added_Time;
 
-    public String getAdded_Time() {
-        return added_Time;
-    }
+
 
     public String getActualFollowupDate() {
         return actualFollowupDate;
@@ -35,13 +34,6 @@ public class RegistrationModel {
         this.key_visit_id=visitId;
     }
 
-    public String getFlag() {
-        return flag;
-    }
-
-    public String getPhadded_on() {
-        return phadded_on;
-    }
 
     public String getPat_id() {
         return pat_id;
@@ -91,81 +83,13 @@ public class RegistrationModel {
 
     private String visit_date;
 
-    public String getAdded_by() {
-        return added_by;
-    }
+
 
     public String getAdded_on() {
         return added_on;
     }
 
-    public String getModified_by() {
-        return modified_by;
-    }
 
-    public String getModified_on() {
-        return modified_on;
-    }
-
-    public String getIs_disabled() {
-        return is_disabled;
-    }
-
-    public String getDisabled_by() {
-        return disabled_by;
-    }
-
-    public String getDisabled_on() {
-        return disabled_on;
-    }
-
-    public String getIs_deleted() {
-        return is_deleted;
-    }
-
-    public String getDeleted_by() {
-        return deleted_by;
-    }
-
-    public String getDeleted_on() {
-        return deleted_on;
-    }
-
-    public String getSpecial_instruction() {
-        return special_instruction;
-    }
-
-    public String getPin_code() {
-        return pin_code;
-    }
-
-    public String getDistrict() {
-        return district;
-    }
-
-    public String getConsent() {
-        return consent;
-    }
-
-    public String getDoctor_id() {
-        return doctor_id;
-    }
-
-    public String getDoc_mem_id() {
-        return doc_mem_id;
-    }
-
-    public String getPatient_address() {
-        return patient_address;
-    }
-
-    public String getPatient_info_typ() {
-        return patient_info_typ;
-    }
-
-    public String getPatient_city_town() {
-        return patient_city_town;
-    }
 
     private String deleted_by;
     private String deleted_on;
@@ -211,13 +135,7 @@ public class RegistrationModel {
 
 
     }
-    public String getPatient_createdDate() {
-        return patient_createdDate;
-    }
 
-    public void setPatient_createdDate(String patient_createdDate) {
-        this.patient_createdDate = patient_createdDate;
-    }
 
     public String getClinicalNotes() {
         return clinicalNotes;

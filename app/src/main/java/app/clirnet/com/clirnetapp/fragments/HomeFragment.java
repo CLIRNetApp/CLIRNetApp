@@ -109,7 +109,6 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
     private RecyclerView recyclerView;
     private LinearLayout norecordtv;
-    private android.support.v4.app.FragmentTransaction ft;
     private final int[] imageArray = {R.drawable.one, R.drawable.two, R.drawable.three, R.drawable.four, R.drawable.five};
     private ImageView backChangingImages;
 
@@ -151,15 +150,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
     }
 
 
-    // TODO: Rename and change types and number of parameters
-    public static HomeFragment newInstance(String param1, String param2) {
-        HomeFragment fragment = new HomeFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -270,8 +261,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
             sqlController= new SQLController(getContext());
              sqlController.open();
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
-           // JSONArray patientInfoarray = dbController.getResultsForPatientInformation();
-           // Log.e("PatientInfoarray", " " + patientInfoarray);
+
             patientInfoArayString = String.valueOf(dbController.getResultsForPatientInformation());
             JSONArray patientVisitHistoryarray = dbController.getResultsForPatientHistory();
 
@@ -287,8 +277,6 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         }
 
 
-        // this will get the json array from sqlite database
-
 
         new Thread(new Runnable() {
             @Override
@@ -303,8 +291,10 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
             @Override
             public void onClick(View v) {
                 try {
-                    sqlController = new SQLController(getActivity());
-                    sqlController.open();
+                    if(sqlController == null) {
+                        sqlController = new SQLController(getActivity());
+                        sqlController.open();
+                    }
                     patientIds_List=  sqlController.getPatientIdsFalg0();
                     getPatientVisitIdsList=sqlController.getPatientVisitIdsFalg0();
 
@@ -402,10 +392,6 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         }
 
 
-
-
-
-
         sva = new SearchViewdapter(filteredModelList);
         //To check if there is data or not in arraylist in case of no internet connectivity or no data downloads
         if (filteredModelList1.size() <= 0) {
@@ -424,10 +410,10 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
             @Override
             public void onClick(View view, int position) {
-                                 /*latitudefrom_server=book.getLat();
-                                     longitudefrom_server=book.getLonl();*/
+
                 RegistrationModel book = filteredModelList1.get(position);
                 String visit_date = book.getVisit_date();
+
                 try {
                     date1 = sdf1.parse(visit_date);
 
@@ -439,20 +425,15 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
                        // Toast.makeText(getContext(), "Date1 is after sysdate", Toast.LENGTH_LONG).show();
                                 afterDateEditPatientUpdate(position);
 
-
-
-                       /* Toast.makeText(getContext(), book.getFirstName() + " is selected!", Toast.LENGTH_SHORT).show();*/
+                        /* Toast.makeText(getContext(), book.getFirstName() + " is selected!", Toast.LENGTH_SHORT).show();*/
                     }
 
                     if (date1.before(currentdate)) {
 
-                         beforeAddPatientUpdate(position);
+                        beforeDateAddPatientUpdate(position);
                         //  System.out.println("Date1 is before or equal to Date2");
 
 //                        Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
-
-
-
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -555,7 +536,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
     }
 
-    private void beforeAddPatientUpdate(int position) {
+    private void beforeDateAddPatientUpdate(int position) {
 
         RegistrationModel book = filteredModelList1.get(position);
 

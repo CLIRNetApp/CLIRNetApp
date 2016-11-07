@@ -177,7 +177,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(EditPatientUpdate.this, PrivacyPolicy.class);
+                Intent intent = new Intent(getApplicationContext(), PrivacyPolicy.class);
                 startActivity(intent);
                 finish();
 
@@ -188,7 +188,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         termsandCondition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(EditPatientUpdate.this, TermsCondition.class);
+                Intent intent = new Intent(getApplicationContext(), TermsCondition.class);
                 startActivity(intent);
                 finish();
 
@@ -369,7 +369,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent i = new Intent(EditPatientUpdate.this, EditPersonalInfo.class);
+                Intent i = new Intent(getApplicationContext(), EditPersonalInfo.class);
 
                 i.putExtra("PATIENTPHOTO", strPatientPhoto);
                 i.putExtra("ID", strId);
@@ -767,7 +767,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        Toast.makeText(EditPatientUpdate.this, "Patient Record Updated Successfully!!!", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Patient Record Updated Successfully!!!", Toast.LENGTH_LONG).show();
 //redirect to navigation activity
 
         goToNavigation();
@@ -916,7 +916,7 @@ public class EditPatientUpdate extends AppCompatActivity {
     }
 
     private void goToNavigation() {
-        Intent i = new Intent(EditPatientUpdate.this, NavigationActivity.class);
+        Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
         startActivity(i);
         finish();
     }

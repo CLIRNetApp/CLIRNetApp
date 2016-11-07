@@ -44,7 +44,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String TABLE_DOCTORINFO = "doctor_perInfo";
 
     // Login Table Columns names
-    public static final String KEY_ID = "id";
+    private static final String KEY_ID = "id";
     private static final String ADDED_TIME = "added_time";
     private static final String MODIFIED_TIME = "modified_time";
     private static final String SYCHRONIZED = "flag";
@@ -85,7 +85,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     private static final String FIRST_NAME = "first_name";
     private static final String MIDDLE_NAME = "middle_name";
-    public static final String LAST_NAME = "last_name";
+    private static final String LAST_NAME = "last_name";
     private static final String GENDER = "gender";
     private static final String DOB = "dob";
 
@@ -101,7 +101,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String DAYS = "days";
     private static final String WEEKS = "weeks";
     private static final String MONTHS = "months";
-    public static final String AILMENT = "ailment";
+    private static final String AILMENT = "ailment";
     private static final String PRESCRIPTION = "prescription";
     private static final String CLINICAL_NOTES = "clinical_notes";
     private static final String ACTION = "action";
@@ -868,7 +868,31 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d("addedailemnt", "New patient inserted into sqlite: " + id);
 
     }
+    public void addAilments(String ailments) {
+        SQLiteDatabase db = null;
+        long id = 0;
 
+        try {
+            db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("ailment", ailments);
+
+            // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            id = db.insert(MASTER_AILMENT, null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+
+        Log.d("addedailemnt", "New ailment inserted into sqlite: " + id);
+
+
+    }
 
 
     public void addMe() {

@@ -217,17 +217,19 @@ public class NavigationActivity extends AppCompatActivity
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
         finish();
-        //  System.exit(0);
+
     }
 
-    private void logoutUser() {
-
-
-        //db.deleteUsers();
-
-        // Launching the login activity
-        goToLoginActivity();
-    }
+// --Commented out by Inspection START (07-11-2016 16:44):
+//    private void logoutUser() {
+//
+//
+//        //db.deleteUsers();
+//
+//        // Launching the login activity
+//        goToLoginActivity();
+//    }
+// --Commented out by Inspection STOP (07-11-2016 16:44)
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -283,7 +285,5 @@ public class NavigationActivity extends AppCompatActivity
         docName = null;
         emailId = null;
     }
-
-
 
 }

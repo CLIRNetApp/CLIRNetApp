@@ -59,14 +59,6 @@ public class SQLController {
                     null, null, null, null);
         } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong");
-        } finally {
-          /*if(cursor !=null){
-                //close statment
-                cursor.close();
-            }
-            if(database1 !=null){
-                database1.close();
-            }*/
         }
 
         return cursor;
@@ -285,7 +277,12 @@ public class SQLController {
         } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong");
         } finally {
-            closeConnection(cursor, db1);
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
         }
         return hotelList;
 
@@ -609,9 +606,25 @@ public class SQLController {
         if (count>0)
             return true;
         return false;
+
     }
 
+    public Cursor getAilmentsListSql() throws ClirNetAppException {
+        SQLiteDatabase db1 = null;
+        String[] cols = {"id","ailment"};
+        Cursor cursor=null;
+        try {
 
+            db1 = dbHelper.getReadableDatabase();
+            cursor=db1.query("table_MasterAilment", cols, null,
+                    null, null, null, null);
+        } catch (Exception e) {
+            throw new ClirNetAppException("Error while getting records");
+        }
+
+        //	c.close();
+        return cursor;
+    }
 }
 
 

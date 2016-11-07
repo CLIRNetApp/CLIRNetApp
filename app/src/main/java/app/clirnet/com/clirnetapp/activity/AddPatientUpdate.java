@@ -162,7 +162,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AddPatientUpdate.this, PrivacyPolicy.class);
+                Intent intent = new Intent(getApplicationContext(), PrivacyPolicy.class);
                 startActivity(intent);
                 finish();
 
@@ -172,7 +172,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         termsandCondition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AddPatientUpdate.this, TermsCondition.class);
+                Intent intent = new Intent(getApplicationContext(), TermsCondition.class);
                 startActivity(intent);
                 finish();
 
@@ -580,7 +580,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 }
             });
         } else {
-            Toast.makeText(AddPatientUpdate.this, "There is no history to update!!!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "There is no history to update!!!", Toast.LENGTH_LONG).show();
         }
         setupAnimation();
     }
@@ -775,7 +775,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         //  dbController.updatePatientPersonalforNewVisit(strPatientId, "2", modified_on.toString());//thiis will update pateint data for new visit
         dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, PrescriptionimageName, ailments, visit_date, docId, doctor_membership_number, addedOnDate, addedTime, flag, added_by, action, patientInfoType);
 
-        Toast.makeText(AddPatientUpdate.this, "Patient Record Updated Successfully!!!", Toast.LENGTH_LONG).show();
+        Toast.makeText(getApplicationContext(), "Patient Record Updated Successfully!!!", Toast.LENGTH_LONG).show();
         //Redirect to navigation Activity
         goToNavigation();
 
@@ -889,7 +889,7 @@ public class AddPatientUpdate extends AppCompatActivity {
     }
 
     private void goToNavigation() {
-        Intent i = new Intent(AddPatientUpdate.this, NavigationActivity.class);
+        Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
         startActivity(i);
         finish();
     }

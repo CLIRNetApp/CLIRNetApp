@@ -105,11 +105,13 @@ public class MultipleFilterPatientAdapter extends RecyclerView.Adapter<MultipleF
 
     }
 
-    public void setFilter(List<RegistrationModel> hotelModels) {
-        patientList = new ArrayList<>();
-        patientList.addAll(hotelModels);
-        notifyDataSetChanged();
-    }
+// --Commented out by Inspection START (07-11-2016 16:44):
+//    public void setFilter(List<RegistrationModel> hotelModels) {
+//        patientList = new ArrayList<>();
+//        patientList.addAll(hotelModels);
+//        notifyDataSetChanged();
+//    }
+// --Commented out by Inspection STOP (07-11-2016 16:44)
 
 
 }

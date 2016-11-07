@@ -101,7 +101,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ShowPersonalDetailsActivity.this, PrivacyPolicy.class);
+                Intent intent = new Intent(getApplicationContext(), PrivacyPolicy.class);
                 startActivity(intent);
                 finish();
 
@@ -111,7 +111,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         termsandCondition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ShowPersonalDetailsActivity.this, TermsCondition.class);
+                Intent intent = new Intent(getApplicationContext(), TermsCondition.class);
                 startActivity(intent);
                 finish();
 
@@ -162,7 +162,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // back button pressed
-                Intent i = new Intent(ShowPersonalDetailsActivity.this, NavigationActivity.class);
+                Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
                 startActivity(i);
                 finish();
 
@@ -197,13 +197,13 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         if (patientPersonalData.size() > 0) {
 
         } else {
-            Toast.makeText(ShowPersonalDetailsActivity.this, "There is no history to update!!!", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "There is no history to update!!!", Toast.LENGTH_LONG).show();
         }
 
     }
 
     private void setUpGlide(ImageView patientImage) {
-        Glide.with(ShowPersonalDetailsActivity.this)
+        Glide.with(getApplicationContext())
                 .load(strPatientPhoto)
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -214,7 +214,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
     private void redirectToEditPersonalInfo() {
 
-        Intent i = new Intent(ShowPersonalDetailsActivity.this, EditPersonalInfo.class);
+        Intent i = new Intent(getApplicationContext(), EditPersonalInfo.class);
 
         i.putExtra("PATIENTPHOTO", strPatientPhoto);
         i.putExtra("ID", strId);
@@ -294,6 +294,6 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         strAge=null;
         strDob=null;
         strLastName=null;
-        System.gc();
+       // System.gc();
     }
 }

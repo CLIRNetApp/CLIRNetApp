@@ -87,7 +87,7 @@ public class EditPersonalInfo extends AppCompatActivity {
     private ImageView backChangingImages;
     private LastnameDatabaseClass lastNamedb;
     private String middle_name;
-    Spinner language;
+    private Spinner language;
 
 
     @Override
@@ -437,7 +437,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                         dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId);
                         Log.e("bt", "2");
                     }
-                    Toast.makeText(EditPersonalInfo.this, "Records Updated Successfully !!!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Records Updated Successfully !!!", Toast.LENGTH_LONG).show();
                     goToNavigation();
 
                 } catch (Exception e) {
@@ -684,7 +684,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
     private void goToNavigation() {
 
-        Intent i = new Intent(EditPersonalInfo.this, NavigationActivity.class);
+        Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
         startActivity(i);
         finish();
     }

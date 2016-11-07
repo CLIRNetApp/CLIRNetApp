@@ -8,7 +8,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import java.io.File;
@@ -22,14 +21,15 @@ public class DatabaseClass extends SQLiteOpenHelper {
     @SuppressLint("SdCardPath")
     private static final String DB_PATH = "/data/data/app.clirnet.com.clirnetapp/databases/";
 
-    private static final String DB_NAME = "Ailments.db";
-    public static final String DATABASE_NAME = "clirnetApp.db";
+    private static final String DB_NAME = "ailments";
+    private static final String DATABASE_NAME = "clirnetApp.db";
 
     private SQLiteDatabase myDataBase;
 
     private final Context myContext;
     private SQLiteHandler dbHelper;
     private SQLiteDatabase database;
+
 
     public DatabaseClass(Context context) {
 
@@ -128,20 +128,18 @@ public class DatabaseClass extends SQLiteOpenHelper {
         InputStream myInput = myContext.getAssets().open(DB_NAME);
 
         // Path to the just created empty db
-        String outFileName = DB_PATH + DB_NAME;
+        String outFileName = DB_PATH + DB_NAME ;
 
         //Open the empty db as the output stream
         OutputStream myOutput = new FileOutputStream(outFileName);
 
         //transfer bytes from the inputfile to the outputfile
-        byte[] buffer = new byte[1024];
+        byte[] buffer = new byte[1024] ;
         int length;
         int i=0;
 
         while ((length = myInput.read(buffer)) > 0) {
-            myOutput.write(buffer, 0, length);
-
-
+            myOutput.write(buffer, 0, length) ;
         }
 
         //Close the streams
@@ -213,16 +211,20 @@ public class DatabaseClass extends SQLiteOpenHelper {
     public Cursor getAilmentsList() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
         String[] cols = {"id", "ailment_name"};
+         Cursor cursor=null;
         try {
 
             db1 = this.getReadableDatabase();
+            cursor=db1.query("temp_ailment_table", cols, null,
+                    null, null, null, null);
         } catch (Exception e) {
             throw new ClirNetAppException("Error while getting records");
         }
 
+
         //	c.close();
-        return db1.query("temp_ailment_table", cols, null,
-                null, null, null, null);
+        return cursor;
+
     }
 
     public void addAilments(String ailments, int ailid) {

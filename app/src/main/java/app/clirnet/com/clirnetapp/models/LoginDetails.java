@@ -1,6 +1,6 @@
 package app.clirnet.com.clirnetapp.models;
 
-public class LoginDetails {
+class LoginDetails {
 
 	private  String mActive;
 	private  String mUnicode;
