@@ -8,24 +8,22 @@ package app.clirnet.com.clirnetapp.helper;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
+
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
+
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-
-import app.clirnet.com.clirnetapp.activity.LoginActivity;
 
 public class SQLiteHandler extends SQLiteOpenHelper {
 
     private static final String TAG = "SQLHandler";
 
     private SQLiteDatabase db;
+    private static SQLiteHandler sInstance;
 
     // All Static variables
     // Database Version
@@ -38,8 +36,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public static final String TABLE_USER = "user";
     private static final String TABLE_PATIENT = "patient";
     private static final String TABLE_PATIENT_HISTORY = "patient_history";
-    public static final String MASTER_AILMENT = "table_MasterAilment";
-    public static final String LAST_NAMETBL = "table_LastNames";
+    private static final String MASTER_AILMENT = "table_MasterAilment";
+    private static final String LAST_NAMETBL = "table_LastNames";
     private static final String TABLE_PATIENTPERSONALINFO_HIOTORY = "table_persoplushistorydata";
 
     private static final String TABLE_AILMENT = "ailment_new";
@@ -245,20 +243,33 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
+    public static synchronized SQLiteHandler getInstance(Context context) {
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (sInstance == null) {
+            sInstance = new SQLiteHandler(context.getApplicationContext());
+        }
+        return sInstance;
+    }
+
+
     // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
 
         db.execSQL(CREATE_LOGIN_TABLE);
         db.execSQL(CREATE_TABLE_PATIENT);
-        //db.execSQL(CREATE_TABLE_AILMENT);
-        //db.execSQL(CREATE_TABLE_LASTNAME);
+        db.execSQL(CREATE_TABLE_AILMENT);
+        db.execSQL(CREATE_TABLE_LASTNAME);
         db.execSQL(CREATE_PATIENT_HISTORY);
         db.execSQL(CREATE_TABLE_PATIENT_INFO_HIOTORY);
         db.execSQL(CREATE_DOCTORPERINFO_TABLE);
         db.execSQL(CREATE_ASYNC);
 
+        //addMe();
         Log.d(TAG, "Database tables created");
+
     }
 
     // Upgrading database
@@ -268,8 +279,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_PATIENT);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_LOGIN_TABLE);
-        //db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_AILMENT);
-        //db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_LASTNAME);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_AILMENT);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_LASTNAME);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_PATIENT_HISTORY);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_PATIENT_INFO_HIOTORY);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_DOCTORPERINFO_TABLE);
@@ -282,30 +293,39 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     /**
      * Updating Patient Personal details in database
-     * */
-    public void updatePatientPersonalInfo(String keyid, String firstname, String middlename, String lastname, String gender, String dateofbirth, String age, String phNo, String language, String imgPath, String modified_on_date, String modified_by, String modifiedTime, String action, String flag, String docId) {
+     */
+    public void updatePatientPersonalInfo(String keyid, String firstname, String middlename, String lastname, String gender, String dateofbirth, String age, String phNo, String language, String imgPath, String modified_on_date, String modified_by, String modifiedTime, String action, String flag, String docId) throws ClirNetAppException {
         SQLiteDatabase db = this.getWritableDatabase();
+        long id = 0;
+        try {
 
-        ContentValues values = new ContentValues();
-        values.put(MODIFIED_ON, modified_on_date);
-        values.put(FIRST_NAME, firstname); // Name
-        values.put(MIDDLE_NAME, middlename);
-        values.put(LAST_NAME, lastname);
-        values.put(GENDER, gender);
-        values.put(DOB, dateofbirth);
-        values.put(AGE, age);
-        values.put(PHONE_NUMBER, phNo);
-        values.put(LANGUAGE, language);
-        values.put(PHOTO, imgPath);
-        values.put(MODIFIED_BY, modified_by);
-        values.put(MODIFIED_TIME, modifiedTime);
-        values.put(ACTION, action);
-        values.put(SYCHRONIZED, flag);
-        values.put(DOCTOR_ID, docId);
+            ContentValues values = new ContentValues();
+            values.put(MODIFIED_ON, modified_on_date);
+            values.put(FIRST_NAME, firstname); // Name
+            values.put(MIDDLE_NAME, middlename);
+            values.put(LAST_NAME, lastname);
+            values.put(GENDER, gender);
+            values.put(DOB, dateofbirth);
+            values.put(AGE, age);
+            values.put(PHONE_NUMBER, phNo);
+            values.put(LANGUAGE, language);
+            values.put(PHOTO, imgPath);
+            values.put(MODIFIED_BY, modified_by);
+            values.put(MODIFIED_TIME, modifiedTime);
+            values.put(ACTION, action);
+            values.put(SYCHRONIZED, flag);
+            values.put(DOCTOR_ID, docId);
 
-        // Inserting Row
-        long id = db.update(TABLE_PATIENT, values, KEY_PATIENT_ID + "=" + keyid, null);
-        db.close(); // Closing database connection
+            // Inserting Row
+            id = db.update(TABLE_PATIENT, values, KEY_PATIENT_ID + "=" + keyid, null);
+        } catch (Exception e) {
+            throw new ClirNetAppException("Error inserting data");
+        } finally {
+            if (db != null) {
+                db.close(); // Closing database connection
+            }
+        }
+
 
         Log.d("update", " user data updatedinto sqlite: " + id);
     }
@@ -313,7 +333,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     /**
      * Re crate database Delete all tables and create them again
-     * */
+     */
     //never used in app
     public void deleteUsers() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -331,17 +351,26 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
     //add user login credentails into db
-    public void addLoginRecord(String username, String password) {
+    public void addLoginRecord(String username, String password) throws ClirNetAppException {
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValue = new ContentValues();
+        long id = 0;
+        try {
+            ContentValues contentValue = new ContentValues();
 
-        contentValue.put(KEY_NAME, username);
-        contentValue.put(KEY_PASSWORD, password);
+            contentValue.put(KEY_NAME, username);
+            contentValue.put(KEY_PASSWORD, password);
 
-        // Inserting Row
-        db.delete(TABLE_USER, KEY_NAME + " = ?", new String[]{username});
-        long id = db.insert(TABLE_USER, null, contentValue);
-        db.close(); // Closing database connection
+            // Inserting Row
+            db.delete(TABLE_USER, KEY_NAME + " = ?", new String[]{username});
+            id = db.insert(TABLE_USER, null, contentValue);
+        } catch (Exception e) {
+            throw new ClirNetAppException("Error inserting data");
+        } finally {
+            if (db != null) {
+                db.close(); // Closing database connection
+            }
+        }
+
 
         Log.d(TAG, "New Login Info into sqlite: " + id);
 
@@ -350,30 +379,37 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
     //update the patient visit records into db
-    public void updatePatientOtherInfo(String strId, String visitId, String usersellectedDate, String strfollow_up_date, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String modified_dateon, String modified_time, String modified_by, String action, String patInfoType, String flag) {
+    public void updatePatientOtherInfo(String strId, String visitId, String usersellectedDate, String strfollow_up_date, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String modified_dateon, String modified_time, String modified_by, String action, String patInfoType, String flag) throws ClirNetAppException {
         SQLiteDatabase db = this.getWritableDatabase();
+        long id = 0;
+        try {
+            ContentValues values = new ContentValues();
+            values.put(ACTUAL_FOLLOW_UP_DATE, usersellectedDate); // Name
+            values.put(FOLLOW_UP_DATE, strfollow_up_date); // Name
+            values.put(DAYS, daysSel); // Email
+            values.put(WEEKS, fowSel); // Email
+            values.put(MONTHS, monthSel); // Created At
+            values.put(CLINICAL_NOTES, clinical_note);
+            values.put(PRESCRIPTION, patientImagePath);
+            values.put(AILMENT, ailments);
+            values.put(MODIFIED_ON, modified_dateon);
+            values.put(MODIFIED_TIME, modified_time);
+            values.put(MODIFIED_BY, modified_by);
+            values.put(ACTION, action);
+            values.put(PATIENT_INFO_TYPE_FORM, patInfoType);
+            values.put(SYCHRONIZED, flag);
 
-        ContentValues values = new ContentValues();
-        values.put(ACTUAL_FOLLOW_UP_DATE, usersellectedDate); // Name
-        values.put(FOLLOW_UP_DATE, strfollow_up_date); // Name
-        values.put(DAYS, daysSel); // Email
-        values.put(WEEKS, fowSel); // Email
-        values.put(MONTHS, monthSel); // Created At
-        values.put(CLINICAL_NOTES, clinical_note);
-        values.put(PRESCRIPTION, patientImagePath);
-        values.put(AILMENT, ailments);
-        values.put(MODIFIED_ON, modified_dateon);
-        values.put(MODIFIED_TIME, modified_time);
-        values.put(MODIFIED_BY, modified_by);
-        values.put(ACTION, action);
-        values.put(PATIENT_INFO_TYPE_FORM, patInfoType);
-        values.put(SYCHRONIZED, flag);
+            // Inserting Row
+            id = db.update(TABLE_PATIENT_HISTORY, values, KEY_PATIENT_ID + "=" + strId + " AND " + KEY_VISIT_ID + "=" + visitId, null);
+        } catch (Exception e) {
+            throw new ClirNetAppException("Error inserting data");
+        } finally {
+            if (db != null) {
+                db.close(); // Closing database connection
+            }
 
-        // Inserting Row
-        long id = db.update(TABLE_PATIENT_HISTORY, values, KEY_PATIENT_ID + "=" + strId + " AND " + KEY_VISIT_ID + "=" + visitId, null);
-        db.close(); // Closing database connection
-
-        Log.d("update", " user data updatedinto sqlite: " + id);
+            Log.d("update", " user data updatedinto sqlite: " + id);
+        }
     }
 
     //this is used to add the patient prsonal info  from serevr int db
@@ -387,56 +423,67 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                           String deleted_by, String deleted_on, String flag) {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValue = new ContentValues();
+        long id = 0;
+        try {
+            ContentValues contentValue = new ContentValues();
 
-        contentValue.put(KEY_PATIENT_ID, pat_id);
-        contentValue.put(DOCTOR_ID, doctor_id);
-        contentValue.put(DOCTOR_MEMBERSHIP_ID, doc_membership_id);
-        contentValue.put(PATIENT_INFO_TYPE_FORM, patient_info_type_form);
-        contentValue.put(FIRST_NAME, pat_first_name);
-        contentValue.put(MIDDLE_NAME, pat_middle_name);
-        contentValue.put(LAST_NAME, pat_last_name);
-
-
-        contentValue.put(GENDER, pat_gender);
-        contentValue.put(DOB, pat_date_of_birth);
-        contentValue.put(AGE, pat_age);
-        contentValue.put(PHONE_NUMBER, pat_mobile_no);
-        contentValue.put(PATIENT_ADDRESS, pat_address);
-        contentValue.put(PATIENT_CIT_CITY_TOWN, pat_city_town);
+            contentValue.put(KEY_PATIENT_ID, pat_id);
+            contentValue.put(DOCTOR_ID, doctor_id);
+            contentValue.put(DOCTOR_MEMBERSHIP_ID, doc_membership_id);
+            contentValue.put(PATIENT_INFO_TYPE_FORM, patient_info_type_form);
+            contentValue.put(FIRST_NAME, pat_first_name);
+            contentValue.put(MIDDLE_NAME, pat_middle_name);
+            contentValue.put(LAST_NAME, pat_last_name);
 
 
-        contentValue.put(PIN_CODE, pat_pincode);
-        contentValue.put(DISTRICT, pat_district);
-        contentValue.put(LANGUAGE, pref_lang);
-        contentValue.put(PHOTO, photo_name);
-        contentValue.put(CONSENT, consent);
-        contentValue.put(SPECIAL_INSTRUCTION, special_instruction);
+            contentValue.put(GENDER, pat_gender);
+            contentValue.put(DOB, pat_date_of_birth);
+            contentValue.put(AGE, pat_age);
+            contentValue.put(PHONE_NUMBER, pat_mobile_no);
+            contentValue.put(PATIENT_ADDRESS, pat_address);
+            contentValue.put(PATIENT_CIT_CITY_TOWN, pat_city_town);
 
 
-        contentValue.put(ADDED_BY, added_by);
-        contentValue.put(ADDED_ON, added_on);
-        contentValue.put(ADDED_TIME, addedTime);
-        contentValue.put(MODIFIED_BY, modified_by);
-        contentValue.put(MODIFIED_ON, modified_on);
-        contentValue.put(IS_DISABLED, is_disabled);
-        contentValue.put(DISABLED_BY, disabled_by);
-
-        contentValue.put(DISABLED_ON, disabled_on);
-        contentValue.put(IS_DELETED, is_deleted);
-        contentValue.put(DELETED_BY, deleted_by);
-        contentValue.put(DELETED_ON, deleted_on);
-        contentValue.put(SYCHRONIZED, flag);
+            contentValue.put(PIN_CODE, pat_pincode);
+            contentValue.put(DISTRICT, pat_district);
+            contentValue.put(LANGUAGE, pref_lang);
+            contentValue.put(PHOTO, photo_name);
+            contentValue.put(CONSENT, consent);
+            contentValue.put(SPECIAL_INSTRUCTION, special_instruction);
 
 
-        db.delete(TABLE_PATIENT, KEY_PATIENT_ID + " = ?" + " AND " + DOB + " = ? " + " AND " + PHONE_NUMBER + " = ? " + " AND " + ADDED_ON + " = ? ", new String[]{pat_id, pat_date_of_birth, pat_mobile_no, added_on});
-        // Inserting Row
-        long id = db.insert(TABLE_PATIENT, null, contentValue);
-        db.close(); // Closing database connection
+            contentValue.put(ADDED_BY, added_by);
+            contentValue.put(ADDED_ON, added_on);
+            contentValue.put(ADDED_TIME, addedTime);
+            contentValue.put(MODIFIED_BY, modified_by);
+            contentValue.put(MODIFIED_ON, modified_on);
+            contentValue.put(IS_DISABLED, is_disabled);
+            contentValue.put(DISABLED_BY, disabled_by);
 
-        Log.d(TAG, "New Login Info into sqlite: " + id);
+            contentValue.put(DISABLED_ON, disabled_on);
+            contentValue.put(IS_DELETED, is_deleted);
+            contentValue.put(DELETED_BY, deleted_by);
+            contentValue.put(DELETED_ON, deleted_on);
+            contentValue.put(SYCHRONIZED, flag);
 
+
+            db.delete(TABLE_PATIENT, KEY_PATIENT_ID + " = ?" + " AND " + DOB + " = ? " + " AND " + PHONE_NUMBER + " = ? " + " AND " + ADDED_ON + " = ? ", new String[]{pat_id, pat_date_of_birth, pat_mobile_no, added_on});
+            // Inserting Row
+
+            id = db.insert(TABLE_PATIENT, null, contentValue);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close(); // Closing database connection
+            }
+
+            Log.d("update", " user data updatedinto sqlite: " + id);
+
+
+        }
     }
+
 
     //this is used to add the patient visits from server info int db
     public void addPatientHistoryRecords(String visit_id, String pat_id, String ailment, String visit_date, String follow_up_date,
@@ -446,40 +493,49 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                          String disabled_on, String is_deleted, String deleted_by, String deleted_on, String flag, String patient_info_type_form) {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        ContentValues contentValue = new ContentValues();
+        long id = 0;
+        try {
+            ContentValues contentValue = new ContentValues();
 
-        contentValue.put(KEY_VISIT_ID, visit_id);
-        contentValue.put(KEY_PATIENT_ID, pat_id);
-        contentValue.put(AILMENT, ailment);
-        contentValue.put(VISIT_DATE, visit_date);
-        contentValue.put(FOLLOW_UP_DATE, follow_up_date);
-        contentValue.put(DAYS, follow_up_days);
+            contentValue.put(KEY_VISIT_ID, visit_id);
+            contentValue.put(KEY_PATIENT_ID, pat_id);
+            contentValue.put(AILMENT, ailment);
+            contentValue.put(VISIT_DATE, visit_date);
+            contentValue.put(FOLLOW_UP_DATE, follow_up_date);
+            contentValue.put(DAYS, follow_up_days);
 
 
-        contentValue.put(WEEKS, follow_up_weeks);
-        contentValue.put(MONTHS, follow_up_months);
-        contentValue.put(ACTUAL_FOLLOW_UP_DATE, act_follow_up_date);
-        contentValue.put(CLINICAL_NOTES, notes);
+            contentValue.put(WEEKS, follow_up_weeks);
+            contentValue.put(MONTHS, follow_up_months);
+            contentValue.put(ACTUAL_FOLLOW_UP_DATE, act_follow_up_date);
+            contentValue.put(CLINICAL_NOTES, notes);
 
-        contentValue.put(ADDED_BY, added_by);
-        contentValue.put(ADDED_ON, added_on);
-        contentValue.put(ADDED_TIME, addedTime);
-        contentValue.put(MODIFIED_BY, modified_by);
-        contentValue.put(MODIFIED_ON, modified_on);
-        contentValue.put(IS_DISABLED, is_disabled);
-        contentValue.put(DISABLED_BY, disabled_by);
+            contentValue.put(ADDED_BY, added_by);
+            contentValue.put(ADDED_ON, added_on);
+            contentValue.put(ADDED_TIME, addedTime);
+            contentValue.put(MODIFIED_BY, modified_by);
+            contentValue.put(MODIFIED_ON, modified_on);
+            contentValue.put(IS_DISABLED, is_disabled);
+            contentValue.put(DISABLED_BY, disabled_by);
 
-        contentValue.put(DISABLED_ON, disabled_on);
-        contentValue.put(IS_DELETED, is_deleted);
-        contentValue.put(DELETED_BY, deleted_by);
-        contentValue.put(DELETED_ON, deleted_on);
-        contentValue.put(SYCHRONIZED, flag);
-        contentValue.put(PATIENT_INFO_TYPE_FORM, patient_info_type_form);
+            contentValue.put(DISABLED_ON, disabled_on);
+            contentValue.put(IS_DELETED, is_deleted);
+            contentValue.put(DELETED_BY, deleted_by);
+            contentValue.put(DELETED_ON, deleted_on);
+            contentValue.put(SYCHRONIZED, flag);
+            contentValue.put(PATIENT_INFO_TYPE_FORM, patient_info_type_form);
 
-        db.delete(TABLE_PATIENT_HISTORY, KEY_PATIENT_ID + " = ?" + " AND " + KEY_VISIT_ID + " = ? ", new String[]{pat_id, visit_id});
-        // Inserting Row
-        long id = db.insert(TABLE_PATIENT_HISTORY, null, contentValue);
-        db.close(); // Closing database connection
+            db.delete(TABLE_PATIENT_HISTORY, KEY_PATIENT_ID + " = ?" + " AND " + KEY_VISIT_ID + " = ? ", new String[]{pat_id, visit_id});
+            // Inserting Row
+            id = db.insert(TABLE_PATIENT_HISTORY, null, contentValue);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+
 
         Log.d(TAG, "New Login Info into sqlite: " + id);
 
@@ -490,35 +546,43 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public void addPatientPersonalfromLocal(String patient_id, String doctor_id, String first_name, String middle_name, String last_name, String sex, String strdate_of_birth, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String create_date, String doctor_membership_number, String flag, String patientInfoType, String addedTime, String added_by, String action) {
 
         SQLiteDatabase db = this.getWritableDatabase();
+        long id = 0;
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_PATIENT_ID, patient_id);
+            values.put(DOCTOR_ID, doctor_id);
+            values.put(FIRST_NAME, first_name); // Name
+            values.put(MIDDLE_NAME, middle_name); // Email
+            values.put(LAST_NAME, last_name); // Email
+            values.put(GENDER, sex); // Created At
 
-        ContentValues values = new ContentValues();
-        values.put(KEY_PATIENT_ID, patient_id);
-        values.put(DOCTOR_ID, doctor_id);
-        values.put(FIRST_NAME, first_name); // Name
-        values.put(MIDDLE_NAME, middle_name); // Email
-        values.put(LAST_NAME, last_name); // Email
-        values.put(GENDER, sex); // Created At
+            values.put(DOB, strdate_of_birth); // Name
+            values.put(AGE, current_age); // Email
 
-        values.put(DOB, strdate_of_birth); // Name
-        values.put(AGE, current_age); // Email
+            values.put(PHONE_NUMBER, phone_number); // Email
+            values.put(LANGUAGE, selectedLanguage); // Email
+            values.put(PHOTO, patientImagePath); // Created At
 
-        values.put(PHONE_NUMBER, phone_number); // Email
-        values.put(LANGUAGE, selectedLanguage); // Email
-        values.put(PHOTO, patientImagePath); // Created At
+            values.put(ADDED_ON, create_date);
 
-        values.put(ADDED_ON, create_date);
-
-        values.put(DOCTOR_MEMBERSHIP_ID, doctor_membership_number);
-        values.put(SYCHRONIZED, flag);
-        values.put(PATIENT_INFO_TYPE_FORM, patientInfoType);
-        values.put(ADDED_TIME, addedTime);
-        values.put(ADDED_BY, added_by);
-        values.put(ACTION, action);
+            values.put(DOCTOR_MEMBERSHIP_ID, doctor_membership_number);
+            values.put(SYCHRONIZED, flag);
+            values.put(PATIENT_INFO_TYPE_FORM, patientInfoType);
+            values.put(ADDED_TIME, addedTime);
+            values.put(ADDED_BY, added_by);
+            values.put(ACTION, action);
 
 
-        // Inserting Row
-        long id = db.insert(TABLE_PATIENT, null, values);
-        db.close(); // Closing database connection
+            // Inserting Row
+            id = db.insert(TABLE_PATIENT, null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+
 
         Log.d(TAG, "New patient inserted into sqlite: " + id);
 
@@ -529,66 +593,82 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public void addHistoryPatientRecords(String visit_id, String patient_id, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String ailments, String prescriptionImgPath, String clinical_note, String added_on_date, String visit_date, String doc_id, String doc_mem_id, String flag, String addedTime, String patientInfoType, String added_by, String action) {
 
         SQLiteDatabase db = this.getWritableDatabase();
+        long id = 0;
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_VISIT_ID, visit_id);
+            values.put(KEY_PATIENT_ID, patient_id);
+            values.put(ACTUAL_FOLLOW_UP_DATE, usersellectedDate);
+            values.put(FOLLOW_UP_DATE, follow_up_dates);
+            values.put(DAYS, daysSel);
+            values.put(WEEKS, fowSel);
 
-        ContentValues values = new ContentValues();
-        values.put(KEY_VISIT_ID, visit_id);
-        values.put(KEY_PATIENT_ID, patient_id);
-        values.put(ACTUAL_FOLLOW_UP_DATE, usersellectedDate);
-        values.put(FOLLOW_UP_DATE, follow_up_dates);
-        values.put(DAYS, daysSel);
-        values.put(WEEKS, fowSel);
+            values.put(MONTHS, monthSel);
+            values.put(AILMENT, ailments);
+            values.put(PRESCRIPTION, prescriptionImgPath);
+            values.put(CLINICAL_NOTES, clinical_note);
+            values.put(ADDED_ON, added_on_date);
+            values.put(VISIT_DATE, visit_date);
+            values.put(DOCTOR_ID, doc_id);
+            values.put(DOCTOR_MEMBERSHIP_ID, doc_mem_id);
+            values.put(SYCHRONIZED, flag);
+            values.put(ADDED_TIME, addedTime);
+            values.put(PATIENT_INFO_TYPE_FORM, patientInfoType);
+            values.put(ACTION, action);
+            values.put(ADDED_BY, added_by);
 
-        values.put(MONTHS, monthSel);
-        values.put(AILMENT, ailments);
-        values.put(PRESCRIPTION, prescriptionImgPath);
-        values.put(CLINICAL_NOTES, clinical_note);
-        values.put(ADDED_ON, added_on_date);
-        values.put(VISIT_DATE, visit_date);
-        values.put(DOCTOR_ID, doc_id);
-        values.put(DOCTOR_MEMBERSHIP_ID, doc_mem_id);
-        values.put(SYCHRONIZED, flag);
-        values.put(ADDED_TIME, addedTime);
-        values.put(PATIENT_INFO_TYPE_FORM, patientInfoType);
-        values.put(ACTION, action);
-        values.put(ADDED_BY, added_by);
+            id = db.insert(TABLE_PATIENT_HISTORY, null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
 
-        long id = db.insert(TABLE_PATIENT_HISTORY, null, values);
-        db.close(); // Closing database connection
 
         Log.d(TAG, "New patient inserted into sqlite: " + id);
     }
 
     //add patient records from add pateint update page
-    public void addPatientNextVisitRecord(String visit_id, String strPatientId, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String visit_date, String doc_id, String doc_mem_id, String addedOnDate, String addedTime, String flag, String added_by,String action, String patInfoType) {
+    public void addPatientNextVisitRecord(String visit_id, String strPatientId, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String visit_date, String doc_id, String doc_mem_id, String addedOnDate, String addedTime, String flag, String added_by, String action, String patInfoType) {
 
         SQLiteDatabase db = this.getWritableDatabase();
+        long id = 0;
+        try {
+            ContentValues values = new ContentValues();
 
-        ContentValues values = new ContentValues();
+            values.put(KEY_VISIT_ID, visit_id);
 
-        values.put(KEY_VISIT_ID, visit_id);
+            values.put(KEY_PATIENT_ID, strPatientId);
+            values.put(ACTUAL_FOLLOW_UP_DATE, usersellectedDate); // Name
+            values.put(FOLLOW_UP_DATE, follow_up_dates);
+            values.put(DAYS, daysSel); // Email
+            values.put(WEEKS, fowSel); // Email
+            values.put(MONTHS, monthSel); // Created At
+            values.put(CLINICAL_NOTES, clinical_note);
+            values.put(PRESCRIPTION, patientImagePath);
+            values.put(AILMENT, ailments);
+            values.put(VISIT_DATE, visit_date);
+            values.put(ADDED_ON, addedOnDate);
+            values.put(ADDED_TIME, addedTime);
+            values.put(DOCTOR_ID, doc_id);
+            values.put(DOCTOR_MEMBERSHIP_ID, doc_mem_id);
+            values.put(SYCHRONIZED, flag);
+            values.put(ADDED_BY, added_by);
+            values.put(ACTION, action);
+            values.put(PATIENT_INFO_TYPE_FORM, patInfoType);
 
-        values.put(KEY_PATIENT_ID, strPatientId);
-        values.put(ACTUAL_FOLLOW_UP_DATE, usersellectedDate); // Name
-        values.put(FOLLOW_UP_DATE, follow_up_dates);
-        values.put(DAYS, daysSel); // Email
-        values.put(WEEKS, fowSel); // Email
-        values.put(MONTHS, monthSel); // Created At
-        values.put(CLINICAL_NOTES, clinical_note);
-        values.put(PRESCRIPTION, patientImagePath);
-        values.put(AILMENT, ailments);
-        values.put(VISIT_DATE, visit_date);
-        values.put(ADDED_ON, addedOnDate);
-        values.put(ADDED_TIME, addedTime);
-        values.put(DOCTOR_ID, doc_id);
-        values.put(DOCTOR_MEMBERSHIP_ID, doc_mem_id);
-        values.put(SYCHRONIZED, flag);
-        values.put(ADDED_BY, added_by);
-        values.put(ACTION, action);
-        values.put(PATIENT_INFO_TYPE_FORM, patInfoType);
+            // Inserting Row
+            id = db.insert(TABLE_PATIENT_HISTORY, null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
 
-        // Inserting Row
-        long id = db.insert(TABLE_PATIENT_HISTORY, null, values);
-        db.close(); // Closing database connection
 
         Log.d("update", " user Visit data added into sqlite: " + id);
     }
@@ -597,7 +677,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     //this will give u a json array of patient records where flag =o
     public JSONArray getResultsForPatientInformation() {
 
-//or you can use `context.getDatabasePath("my_db_test.db")`
+        //or you can use `context.getDatabasePath("my_db_test.db")`
 
         SQLiteDatabase db1 = getReadableDatabase();
         //Cursor cursor = db1.rawQuery(selectQuery, null);
@@ -708,7 +788,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     //update the flag once data send to server successfully
     public void FlagupdatePatientVisit(String strVisitId, String flag) {
-        long id=0;
+        long id = 0;
         SQLiteDatabase db = null;
         try {
             db = this.getWritableDatabase();
@@ -733,23 +813,33 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     //add doctor personal info into db
     public void addDoctorPerInfo(String doc_id, String doctor_login_id, String membership_id, String first_name, String middle_name, String last_name, String email_id, String phone_no) {
         SQLiteDatabase db = this.getWritableDatabase();
+        long id = 0;
+        try {
 
-        ContentValues values = new ContentValues();
+            ContentValues values = new ContentValues();
 
-        values.put(DOCTOR_ID, doc_id);
-        values.put(DOCTOR_LOGIN_ID, doctor_login_id);
-        values.put(DOCTOR_MEMBERSHIP_ID, membership_id);
-        values.put(FIRST_NAME, first_name); // Name
-        values.put(MIDDLE_NAME, middle_name); // Email
-        values.put(LAST_NAME, last_name); // Email
-        values.put(KEY_EMAIL, email_id);
-        values.put(PHONE_NUMBER, phone_no);
+            values.put(DOCTOR_ID, doc_id);
+            values.put(DOCTOR_LOGIN_ID, doctor_login_id);
+            values.put(DOCTOR_MEMBERSHIP_ID, membership_id);
+            values.put(FIRST_NAME, first_name); // Name
+            values.put(MIDDLE_NAME, middle_name); // Email
+            values.put(LAST_NAME, last_name); // Email
+            values.put(KEY_EMAIL, email_id);
+            values.put(PHONE_NUMBER, phone_no);
 
-        db.delete(TABLE_DOCTORINFO, DOCTOR_ID + " = ?" + " AND " + DOCTOR_LOGIN_ID + " = ? " + " AND " + DOCTOR_MEMBERSHIP_ID + " = ? ", new String[]{doc_id, doctor_login_id, DOCTOR_MEMBERSHIP_ID});
+            db.delete(TABLE_DOCTORINFO, DOCTOR_ID + " = ?" + " AND " + DOCTOR_LOGIN_ID + " = ? " + " AND " + DOCTOR_MEMBERSHIP_ID + " = ? ", new String[]{doc_id, doctor_login_id, DOCTOR_MEMBERSHIP_ID});
 
-        // Inserting Row
-        long id = db.insert(TABLE_DOCTORINFO, null, values);
-        db.close(); // Closing database connection
+            // Inserting Row
+            id = db.insert(TABLE_DOCTORINFO, null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+
+                db.close(); // Closing database connection
+            }
+        }
+
 
         Log.d(TAG, "New doctor personal info inserted into sqlite: " + id);
 
@@ -759,16 +849,44 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public void addAsync() {
 
         SQLiteDatabase db = this.getWritableDatabase();
+        long id = 0;
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_VALUE, "true");
 
-        ContentValues values = new ContentValues();
-        values.put(KEY_VALUE, "true");
+            id = db.insert(TABLE_ASYNC, null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
 
-        long id = db.insert(TABLE_ASYNC, null, values);
-        db.close(); // Closing database connection
+                db.close(); // Closing database connection
+            }
+        }
+
 
         Log.d("addedailemnt", "New patient inserted into sqlite: " + id);
 
     }
 
 
+
+    public void addMe() {
+
+        try {
+            SQLiteDatabase db = this.getWritableDatabase();
+
+            // SQLiteDatabase  db = this.getWritableDatabase();
+            db.execSQL("INSERT INTO table_MasterAilment(ailment) values('Acidity');");
+            db.execSQL("INSERT INTO table_MasterAilment(ailment) values('Abdominal Colic');");
+            db.execSQL("INSERT INTO table_MasterAilment(ailment) values('Abdominal Cramps');");
+            db.setTransactionSuccessful();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+    }
 }

@@ -113,7 +113,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private int maxid;//this is for ailments table
     private LastnameDatabaseClass lastNamedb;
     private int maxLastId;
-    Spinner language;
+    private Spinner language;
 
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -171,7 +171,8 @@ public class RegistrationActivity extends AppCompatActivity {
 
         TextView privacyPolcicy = (TextView) findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
-//open privacy poilicy page
+        //open privacy poilicy page
+
         privacyPolcicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -228,7 +229,13 @@ public class RegistrationActivity extends AppCompatActivity {
             Log.e("docId", "" + docId);
             //this will give us a max of patient_id from patient records which will help to store records locally
             maxPatientIdCount = sqlController.getPatientIdCount();
+            //int getPatientIdCountnew = sqlController.getPatientIdCountnew();
+            Log.e("maxPatientIdCount", "" + maxPatientIdCount);
             maxVisitId = sqlController.getPatientVisitIdCount();
+
+
+          //  int getPatientIdCountnew = sqlController.getPatientVisitIdCountNew();
+           // Log.e("maxPatientIdCount", "" + getPatientIdCountnew);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -245,8 +252,10 @@ public class RegistrationActivity extends AppCompatActivity {
         try {
             databaseClass.openDataBase();
             int nameId = lastNamedb.getMaxLastNameId();
+
             maxLastId = nameId + 1;
             int id = databaseClass.getMaxAimId();
+            Log.e("getMaxAimId",""+id);
             maxid = id + 1;
 
             lastNamedb.openDataBase();
@@ -1002,8 +1011,6 @@ public class RegistrationActivity extends AppCompatActivity {
         if (nwage > 100) {
             age.setError("Please enter Valid Age !");
             return;
-        } else {
-            //age is valid
         }
 
         if (TextUtils.isEmpty(first_name)) {
@@ -1085,7 +1092,6 @@ public class RegistrationActivity extends AppCompatActivity {
 
             usersellectedDate = sdf1.format(date1);
 
-
         }
 
         // Date date= cal.getTime();
@@ -1152,17 +1158,22 @@ public class RegistrationActivity extends AppCompatActivity {
             String added_by = docId;//INSERTING DOC ID IN ADDED BY COLUMN AS PER PUSHPAL SAID
             String action = "added";
             String patientInfoType = "App";
+            //  for(int j=0;j<1000;j++) {
             dbController.addPatientPersonalfromLocal(patient_id, docId, first_name, middle_name, last_name, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, sysdate.toString(), doctor_membership_number, flag, patientInfoType, addedTime, added_by, action);
 
             dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, ailments, prescriptionImgPath, clinical_note, sysdate.toString(), visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action);
 
+            // patient_id=String.valueOf(patient_id + 1);
+            // visit_id=String.valueOf(visit_id + 1);
 
+            //  }
             Toast.makeText(RegistrationActivity.this, "Patient Record Saved Successfully!!!", Toast.LENGTH_LONG).show();
 
             goToNavigation();
         }
     }
 
+    // to do remove it and write update while inserting
     //Method to validate if there is allready records in db to check
     public boolean isDuplicate(List<String> col, String value) {
         boolean isDuplicate = false;
@@ -1270,11 +1281,16 @@ public class RegistrationActivity extends AppCompatActivity {
         docId = null;
         addedTime = null;
         language = null;
+        mAilmemtArrayList = null;
+        lastNameList = null;
+
     }
 
     private void goToNavigation() {
+
         Intent i = new Intent(RegistrationActivity.this, NavigationActivity.class);
         startActivity(i);
         finish();
+
     }
 }

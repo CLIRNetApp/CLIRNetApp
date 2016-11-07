@@ -40,7 +40,7 @@ import java.util.Date;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.adapters.AddPatientUpdateAdapter;
-import app.clirnet.com.clirnetapp.helper.CustomeException;
+import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
@@ -103,12 +103,13 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        try {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
+
+       try {
+           getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+           getSupportActionBar().setDisplayShowHomeEnabled(true);
+       }catch(NullPointerException e){
+           e.printStackTrace();
+       }
 
 
         databaseClass = new DatabaseClass(AddPatientUpdate.this);
@@ -228,21 +229,18 @@ public class AddPatientUpdate extends AppCompatActivity {
                 recyclerView.setAdapter(pha);
 
             }
-        } catch (CustomeException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
+            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
+            docId = sqlController.getDoctorId();
+            maxVisitId = sqlController.getPatientVisitIdCount();
+        } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
         } finally {
-            try {
-                doctor_membership_number = sqlController.getDoctorMembershipIdNew();
-                docId = sqlController.getDoctorId();
-                maxVisitId = sqlController.getPatientVisitIdCount();
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (sqlController != null) {
+                sqlController.close();
             }
         }
 
-        Cursor cursor =null;
+        Cursor cursor = null;
         try {
 
             databaseClass.openDataBase();
@@ -252,20 +250,18 @@ public class AddPatientUpdate extends AppCompatActivity {
             while (cursor.moveToNext()) {
                 mAilmemtArrayList.add(cursor.getString(columnIndex)); //add the item
             }
+            int id = databaseClass.getMaxAimId();
+            maxid = id + 1;
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try{
-            int id = databaseClass.getMaxAimId();
-            maxid = id + 1;
-            }
-            catch (Exception e)
-            {
-                e.printStackTrace();
-            }
-            if(cursor !=null){
+
+            if (cursor != null) {
                 cursor.close();
+            }
+            if (databaseClass != null) {
+                databaseClass.close();
             }
         }
 
@@ -750,8 +746,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                 maxid = maxid + 1;
                 Log.e("ailment", "" + aTemp);
 
-            } else {
-              /*  Toast.makeText(AddPatientUpdate.this, "Your Ailment is  already exists!", Toast.LENGTH_SHORT).show();*/
             }
         }
 //  System.out.println("Date1 is before or equal to Date2");
@@ -779,7 +773,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         String action = "added";
 
         //  dbController.updatePatientPersonalforNewVisit(strPatientId, "2", modified_on.toString());//thiis will update pateint data for new visit
-        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, PrescriptionimageName, ailments, visit_date, docId, doctor_membership_number, addedOnDate, addedTime, flag, added_by,action,patientInfoType);
+        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, PrescriptionimageName, ailments, visit_date, docId, doctor_membership_number, addedOnDate, addedTime, flag, added_by, action, patientInfoType);
 
         Toast.makeText(AddPatientUpdate.this, "Patient Record Updated Successfully!!!", Toast.LENGTH_LONG).show();
         //Redirect to navigation Activity
@@ -932,7 +926,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         }
 
         cleanResources();
-       // System.gc();
+        System.gc();
 
     }
 

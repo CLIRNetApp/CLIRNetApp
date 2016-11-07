@@ -23,7 +23,7 @@ import java.util.Map;
 
 import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
-import app.clirnet.com.clirnetapp.helper.CustomeException;
+import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
@@ -103,14 +103,14 @@ public class SyncDataService extends Service {
 			//DisplayLoggingInfo();   //this used to test the service weather it is sending data to activity or not 29/8/2016 Ashish
 			try {
 				asyncTask();
-			} catch (CustomeException e) {
+			} catch (ClirNetAppException e) {
 				e.printStackTrace();
 			}
 			handler.postDelayed(this, 1800000); // 10 seconds 10000 //1800000
 		}
 	};
 
-	private void asyncTask() throws CustomeException {
+	private void asyncTask() throws ClirNetAppException {
 
 		patientIds_List=  sqlController.getPatientIdsFalg0();
 		getPatientVisitIdsList=sqlController.getPatientVisitIdsFalg0();
@@ -157,10 +157,7 @@ public class SyncDataService extends Service {
 
 				try {
 					JSONObject jObj = new JSONObject(response);
-					boolean error = false;
 
-					// Check for error node in json
-					if (!error) {
 
 						JSONObject user = jObj.getJSONObject("data");
 
@@ -197,10 +194,7 @@ public class SyncDataService extends Service {
 							Log.e("TAG", "" + msg);
 
 						}
-					} else {
-						// Error in login. Get the error message
 
-					}
 				} catch (JSONException e) {
 					// JSON error
 					e.printStackTrace();

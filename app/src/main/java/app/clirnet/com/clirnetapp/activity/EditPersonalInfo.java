@@ -170,33 +170,40 @@ public class EditPersonalInfo extends AppCompatActivity {
                 lastNamedb = new LastnameDatabaseClass(EditPersonalInfo.this);
                 lastNamedb.openDataBase();
             }
+            if (sqlController == null) {
+                sqlController = new SQLController(EditPersonalInfo.this);
+                sqlController.open();
+            }
 
-            sqlController = new SQLController(EditPersonalInfo.this);
-            sqlController.open();
+            dbController = new SQLiteHandler(EditPersonalInfo.this);
             docId = sqlController.getDoctorId();
             Log.e("docId", "" + docId);
+            String sbdob;
+            if (strDob.equals("30-11-0002")) {
+
+
+                sbdob = strDob.replace(strDob, "");
+                editdob.setText(sbdob);
+
+                strDob = sbdob;
+            } else {
+
+                editdob.setText(strDob);
+
+
+            }
+
 
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            String sbdob;
-            try {
-                if (strDob.equals("30-11-0002")) {
-
-
-                    sbdob = strDob.replace(strDob, "");
-                    editdob.setText(sbdob);
-
-                    strDob = sbdob;
-                } else {
-
-                    editdob.setText(strDob);
-
-
-                }
-            } catch (NullPointerException e) {
-                e.printStackTrace();
+            if (sqlController != null) {
+                sqlController.close();
             }
+            if (lastNamedb != null) {
+                lastNamedb.close();
+            }
+
         }
 
 
@@ -257,12 +264,14 @@ public class EditPersonalInfo extends AppCompatActivity {
 
         //set Language value to  spinner
         setLanguageSpinnerAdapters();
-        Cursor cursor=null;
+        Cursor cursor = null;
         try {
 
-            sqlController = new SQLController(EditPersonalInfo.this);
-            sqlController.open();
-            dbController = new SQLiteHandler(EditPersonalInfo.this);
+            if (sqlController == null) {
+                sqlController = new SQLController(EditPersonalInfo.this);
+                sqlController.open();
+            }
+
             lastNamedb.openDataBase();
 
             cursor = lastNamedb.getLastNameList();
@@ -274,10 +283,15 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally {
-            if(cursor != null){
+        } finally {
+            if (cursor != null) {
                 cursor.close();
+            }
+            if(lastNamedb !=null){
+                lastNamedb.close();
+            }
+            if(sqlController !=null){
+                sqlController.close();
             }
 
         }
@@ -370,13 +384,10 @@ public class EditPersonalInfo extends AppCompatActivity {
                     editage.setError("Please enter Valid Age !");
                     return;
                 }
-                int age= Integer.parseInt(editAge);
-                if(age >100){
+                int age = Integer.parseInt(editAge);
+                if (age > 100) {
                     editage.setError("Please enter Valid Age !");
                     return;
-                }
-                else{
-                    //age is valid
                 }
 
                 if (TextUtils.isEmpty(editfname)) {
@@ -431,6 +442,11 @@ public class EditPersonalInfo extends AppCompatActivity {
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                }
+                finally {
+                    if (dbController != null) {
+                        dbController.close();
+                    }
                 }
             }
         });
@@ -540,7 +556,6 @@ public class EditPersonalInfo extends AppCompatActivity {
 
                 goToNavigation();
                 dialog.dismiss();
-                // System.exit(0);
 
             }
         });
@@ -663,11 +678,8 @@ public class EditPersonalInfo extends AppCompatActivity {
     @Override
     public void onStop() {
         super.onStop();
-        if (backChangingImages != null) {
-            // backChangingImages=null;
-           // backChangingImages.setImageDrawable(null);
-        }
-        System.gc();
+
+
     }
 
     private void goToNavigation() {

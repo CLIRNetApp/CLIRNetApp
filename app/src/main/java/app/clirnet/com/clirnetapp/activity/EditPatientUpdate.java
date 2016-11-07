@@ -1,10 +1,12 @@
 package app.clirnet.com.clirnetapp.activity;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -35,9 +37,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.adapters.EditPatientAdapter;
+import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
@@ -95,6 +99,7 @@ public class EditPatientUpdate extends AppCompatActivity {
     private int maxid;
 
 
+    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -103,6 +108,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         try {
+            //noinspection ConstantConditions
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
@@ -219,9 +225,11 @@ public class EditPatientUpdate extends AppCompatActivity {
         updatedTime = sdf3.format(todayDate3);
 
 
-        if (strFollowupDays == "0") {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            if (Objects.equals(strFollowupDays, "0")) {
 
-            strFollowupDays = "";
+                strFollowupDays = "";
+            }
         }
 
         if (strFollowupWeeks == "0") {
@@ -229,7 +237,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             strFollowupWeeks = "";
         }
 
-        if (strFollowupMonth == "0") {
+        if (Objects.equals(strFollowupMonth, "0")) {
 
             strFollowupMonth = "";
         }
@@ -753,7 +761,11 @@ public class EditPatientUpdate extends AppCompatActivity {
 
         String patientInfoType = "App";
         String action = "updated";
-        dbController.updatePatientOtherInfo(strId, strVisitId, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, clinical_note, patientImagePath, ailments, sysdate, updatedTime, modified_by, action, patientInfoType, flag);
+        try {
+            dbController.updatePatientOtherInfo(strId, strVisitId, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, clinical_note, patientImagePath, ailments, sysdate, updatedTime, modified_by, action, patientInfoType, flag);
+        } catch (ClirNetAppException e) {
+            e.printStackTrace();
+        }
 
         Toast.makeText(EditPatientUpdate.this, "Patient Record Updated Successfully!!!", Toast.LENGTH_LONG).show();
 //redirect to navigation activity
@@ -935,7 +947,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             databaseClass = null;
         }
         sdf1 = null;
-        // System.gc();
+         System.gc();
         cleanResources();
 
     }

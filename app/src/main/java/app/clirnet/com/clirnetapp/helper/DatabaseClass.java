@@ -136,8 +136,12 @@ public class DatabaseClass extends SQLiteOpenHelper {
         //transfer bytes from the inputfile to the outputfile
         byte[] buffer = new byte[1024];
         int length;
+        int i=0;
+
         while ((length = myInput.read(buffer)) > 0) {
             myOutput.write(buffer, 0, length);
+
+
         }
 
         //Close the streams
@@ -177,27 +181,43 @@ public class DatabaseClass extends SQLiteOpenHelper {
     }
 
 
-    public int getMaxAimId() throws CustomeException {
+    public int getMaxAimId() throws ClirNetAppException {
         SQLiteDatabase db1 =null;
-        SQLiteStatement stmt =null;
+
+        Cursor cursor=null;
+        int returnValue = 0;
         try {
             db1 = this.getReadableDatabase();
-            stmt = db1.compileStatement("select max(id) from temp_ailment_table");
+           // stmt = db1.compileStatement("select max(id) from temp_ailment_table");
+            String query="select max(id) from temp_ailment_table";
+            cursor=db1.rawQuery(query,null);
+            if(cursor.moveToFirst()){
+                returnValue=cursor.getInt(0);
+            }
         }catch (Exception e){
-            throw new CustomeException("Error while getting max id");
+            throw new ClirNetAppException("Error while getting max id");
         }
-        return Integer.parseInt(stmt.simpleQueryForString());
+        finally {
+            if (cursor != null){
+                cursor.close();
+            }
+            if(db1 != null) {
+                db1.close();
+            }
+        }
+      //  Log.e("returnValue",""+returnValue);
+        return returnValue;
 
     }
 
-    public Cursor getAilmentsList() throws CustomeException {
+    public Cursor getAilmentsList() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
         String[] cols = {"id", "ailment_name"};
         try {
 
             db1 = this.getReadableDatabase();
         } catch (Exception e) {
-            throw new CustomeException("Error while getting records");
+            throw new ClirNetAppException("Error while getting records");
         }
 
         //	c.close();
@@ -215,6 +235,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put("ailment_name", ailments);
             values.put("id", ailid);
+           // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
             id = db.insert("temp_ailment_table", null, values);
         } catch (Exception e) {
             e.printStackTrace();
@@ -230,8 +251,8 @@ public class DatabaseClass extends SQLiteOpenHelper {
 
     }
 
-    boolean isTableExists(SQLiteDatabase db, String tableName) {
-        if (tableName == null || db == null || !db.isOpen()) {
+    private boolean isTableExists(SQLiteDatabase db, String tableName) {
+        if ("temp_ailment_table" == null || db == null || !db.isOpen()) {
             return false;
         }
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM sqlite_master WHERE type = ? AND name = ?", new String[]{"table", tableName});

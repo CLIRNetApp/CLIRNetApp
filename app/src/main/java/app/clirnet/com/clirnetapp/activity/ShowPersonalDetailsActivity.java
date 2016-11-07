@@ -62,6 +62,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         try {
+            //noinspection ConstantConditions
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {

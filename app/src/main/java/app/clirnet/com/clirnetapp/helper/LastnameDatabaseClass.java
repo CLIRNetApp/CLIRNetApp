@@ -184,30 +184,44 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
 
     }
 
-    public int getMaxLastNameId() throws CustomeException {
+    public int getMaxLastNameId() throws ClirNetAppException {
 
         SQLiteDatabase db1 = null;
-        SQLiteStatement stmt = null;
+
+        Cursor cursor=null;
+        int returnValue = 0;
+
         try{
             db1 = dbHelper.getReadableDatabase();
-            stmt = db1.compileStatement("select max(id) from last_name_master");
+            String query="select max(id) from last_name_master";
+            cursor = db1.rawQuery(query, null);
+
+
+            if (cursor.moveToFirst()) {
+                returnValue=cursor.getInt(0);
+            }
+
         }
         catch(Exception e)
         {
-            throw new CustomeException("error while getting records");
+            throw new ClirNetAppException("error while getting records");
         }
         finally {
-            if(db1 != null){
-              //  db1.close();
+            if (cursor != null){
+                cursor.close();
+            }
+            if(db1 != null) {
+                db1.close();
             }
         }
+       // Log.e("returnValue",""+ returnValue);
 
-        return Integer.parseInt(stmt.simpleQueryForString());
+        return returnValue;
 
 
     }
 
-    public Cursor getLastNameList() throws CustomeException {
+    public Cursor getLastNameList() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
         Cursor c = null;
         try {
@@ -217,7 +231,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             c = db1.query("last_name_master", cols, null,
                     null, null, null, null);
         } catch (Exception e) {
-            throw new CustomeException("Error getting last name");
+            throw new ClirNetAppException("Error getting last name");
 
         }
 
@@ -234,8 +248,11 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put("last_name", lastName);
             values.put("id", nameid);
-            id = db.insert("last_name_master", null, values);
-        } catch (Exception e) {
+
+            int rows = db.update("last_name_master", values, "last_name" + "= ?", new String[]{lastName});
+            id =db.insertWithOnConflict("last_name_master", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+           // id = db.insert("last_name_master", null, values);
+        }   catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (db != null) {

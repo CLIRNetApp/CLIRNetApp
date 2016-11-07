@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -39,6 +40,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
+import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
+import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,13 +54,13 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
@@ -72,7 +75,7 @@ import app.clirnet.com.clirnetapp.adapters.RVAdapter;
 import app.clirnet.com.clirnetapp.adapters.SearchViewdapter;
 import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
-import app.clirnet.com.clirnetapp.helper.CustomeException;
+import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.helper.SessionManager;
@@ -80,9 +83,8 @@ import app.clirnet.com.clirnetapp.models.CallAsynOnce;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
-import static app.clirnet.com.clirnetapp.R.id.email;
 
-
+@SuppressWarnings("ConstantConditions")
 public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -266,10 +268,10 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         try {
 
             sqlController= new SQLController(getContext());
-            sqlController.open();
+             sqlController.open();
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
-            JSONArray patientInfoarray = dbController.getResultsForPatientInformation();
-            Log.e("PatientInfoarray", " " + patientInfoarray);
+           // JSONArray patientInfoarray = dbController.getResultsForPatientInformation();
+           // Log.e("PatientInfoarray", " " + patientInfoarray);
             patientInfoArayString = String.valueOf(dbController.getResultsForPatientInformation());
             JSONArray patientVisitHistoryarray = dbController.getResultsForPatientHistory();
 
@@ -306,20 +308,20 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
                     patientIds_List=  sqlController.getPatientIdsFalg0();
                     getPatientVisitIdsList=sqlController.getPatientVisitIdsFalg0();
 
-                    Log.e("patientIds_List", "data is sending"+patientIds_List.size());
-                    Log.e("patientIds_List12","no data to send"+patientIds_List.size());
-                    if(patientIds_List.size()!= 0 || getPatientVisitIdsList.size()!= 0) {
+                 //   Log.e("patientIds_List", "data is sending"+patientIds_List.size());
+                  //  Log.e("patientIds_List12","no data to send"+patientIds_List.size());
+                    int patientIds_ListSize=patientIds_List.size();
+                    int getPatientVisitIdsListSize=getPatientVisitIdsList.size();
 
+                    if(patientIds_ListSize!= 0 || getPatientVisitIdsListSize!= 0) {
 
-                            sendDataToServer();
-
-
+                        sendDataToServer();
 
                     }else{
-                        Log.e("nodata","no data to send");
-                        makeToast("No Data to Send");
+                        //Log.e("nodata","no data to send");
+                        //makeToast("No Data to Send");
 
-
+                        showAnotherAlert("                        No Data to Send ");
                     }
 
                 } catch (Exception e) {
@@ -330,8 +332,6 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
                         sqlController.close();
                     }
                 }
-
-
 
             }
 
@@ -393,13 +393,14 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
             patientDataforPhoneFilter = new ArrayList<>();
 
             patientDataforPhoneFilter = (sqlController1.getPatientListForPhoneNumberFilter()); //get all patient data from db
+            Log.e("sizew", "" + patientData.size());
         } catch (Exception e) {
             e.printStackTrace();
         }
         if(sqlController1 !=null){
             sqlController1.close();
         }
-        Log.e("sizew", "" + patientData.size());
+
 
 
 
@@ -470,7 +471,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
 
         setupAnimation();
-        getDataFromDatabase();
+        getUsernamePasswordFromDatabase();
         callDataFromServer();
 
         return view;
@@ -484,15 +485,13 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         }
     }
 
-    private void getDataFromDatabase() {
+    private void getUsernamePasswordFromDatabase() {
         Cursor cursor = null;
         SQLController sqlController1 = null;
         try {
 
             sqlController1 = new SQLController(getActivity());
             sqlController1.open();
-
-
 
             cursor = sqlController1.getUserLoginRecords();
             // mLoginList = new ArrayList<String>();
@@ -503,10 +502,13 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
                 savedUserName = cursor.getString(0);
                 savedUserPassword = cursor.getString(1);
-                Log.e("qwert", "" + savedUserName + "/ " + savedUserPassword);
+                Log.e("passwordashish", "" + savedUserName + "/ " + savedUserPassword);
                 mLoginList.add(user); //add the item
             }
-            asyn_value = sqlController.getAsyncvalue().trim();
+            asyn_value = sqlController.getAsyncvalue();
+            if(asyn_value !=null){
+                asyn_value.trim();
+            }
             Log.e("asyn_value","asyn_value is "+asyn_value);
 
         } catch (Exception e) {
@@ -533,14 +535,16 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
             boolean isInternetPresent = connectionDetector.isConnectingToInternet();
             if (isInternetPresent) {
-                if (asynTaskValue == "1") {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    if (Objects.equals(asynTaskValue, "1")) {
 
-                    cao.setValue("2");
+                        cao.setValue("2");
 
-                    getPatientRecords(savedUserName, savedUserPassword);
+                        getPatientRecords(savedUserName, savedUserPassword);
 
-                } else {
-                    Log.e("repeat", "allready data is downloaded");
+                    } else {
+                        Log.e("repeat", "allready data is downloaded");
+                    }
                 }
             } else {
                 Log.e("nonet", "no inetenet");
@@ -637,7 +641,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         }
     }
 //send data to server
-    private void sendDataToServer() throws CustomeException {
+    private void sendDataToServer() throws ClirNetAppException {
         patientIds_List=  sqlController.getPatientIdsFalg0();
         getPatientVisitIdsList=sqlController.getPatientVisitIdsFalg0();
 
@@ -703,6 +707,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
     /////////////Show Search Bar//////////////////
 
+    @SuppressWarnings("ConstantConditions")
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.navigation, menu);
@@ -711,14 +716,13 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         //  MenuItem item = menu.findItem(R.id.spinner);
         try {
             if(searchView == null )
-            searchView = new SearchView(((NavigationActivity) getActivity()).getSupportActionBar().getThemedContext());
+                //noinspection ConstantConditions
+                searchView = new SearchView(((NavigationActivity) getActivity()).getSupportActionBar().getThemedContext());
             searchView.setIconifiedByDefault(false);
             searchView.setInputType(InputType.TYPE_CLASS_NUMBER);//this will do not let user to enter any other text than digit 0-9 only
             searchView.setQueryHint(getResources().getString(R.string.hint_search));
 
-
-
-        }catch (NullPointerException e){
+            }catch (NullPointerException e){
             e.printStackTrace();
         }
 
@@ -1564,6 +1568,37 @@ private void sendDataToServer(final String patient_details, final String patient
         hideDialog();
         makeToast("Data Downloded Successfully from server !!");
     }
+    //custom dialog  for the sync button result
+    private void showAnotherAlert(String message){
+        Effectstype effect;
+        effect=Effectstype.Fadein;
+        final NiftyDialogBuilder dialogBuilder=NiftyDialogBuilder.getInstance(getContext());
+
+        dialogBuilder
+                .withTitle("Data Sychronization")                                  //.withTitle(null)  no title
+                .withTitleColor("#808000")                                  //def
+                .withDividerColor("#800000")                              //def
+                .withMessage(message)                     //.withMessage(null)  no Msg
+                .withMessageColor("#808080")                              //def  | withMessageColor(int resid)
+                .withDialogColor("#FFFFFF")                               //def  | withDialogColor(int resid)                               //def
+                .withIcon(getResources().getDrawable(R.drawable.info))
+                .isCancelableOnTouchOutside(true)                           //def    | isCancelable(true)
+                .withDuration(700)                                          //def
+                .withEffect(effect)                                         //def Effectstype.Slidetop
+                .withButton1Text("OK")
+
+                .setCustomView(R.layout.custom_dialog_view,getContext())         //.setCustomView(View or ResId,context)
+                .setButton1Click(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //  Toast.makeText(v.getContext(), "i'm btn1", Toast.LENGTH_SHORT).show();
+                        dialogBuilder.dismiss();
+                    }
+                })
+
+                .show();
+    }
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -1583,9 +1618,7 @@ private void sendDataToServer(final String patient_details, final String patient
             dbController=null;
 
         }
-        if(sva !=null){
-           // sva=null;
-        }
+
         addaNewPatient.setOnClickListener(null);
         recyclerView.setOnClickListener(null);
         //  searchView.setOnClickListener(null);

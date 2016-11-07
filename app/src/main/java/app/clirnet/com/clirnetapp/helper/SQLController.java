@@ -18,14 +18,14 @@ public class SQLController {
     private final Context ourcontext;
     private SQLiteHandler dbHelper;
     private SQLiteDatabase database;
-    private SQLiteDatabase db1;
 
 
     public SQLController(Context c) {
         ourcontext = c;
     }
 
-    public SQLController open() throws SQLException {
+    public synchronized SQLController open() throws SQLException {
+
         if (dbHelper == null) {
             dbHelper = new SQLiteHandler(ourcontext);
             database = dbHelper.getWritableDatabase();
@@ -47,26 +47,26 @@ public class SQLController {
 
 
     //method to fetch user name and password
-    public Cursor getUserLoginRecords() throws CustomeException {
+    public Cursor getUserLoginRecords() throws ClirNetAppException {
 
         String[] cols = {SQLiteHandler.KEY_NAME, SQLiteHandler.KEY_PASSWORD};
         Cursor cursor = null;
+        SQLiteDatabase database1 = null;
+
         try {
-            open();
-            cursor = database.query(SQLiteHandler.TABLE_USER, cols, null,
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.query(SQLiteHandler.TABLE_USER, cols, null,
                     null, null, null, null);
-        } catch (SQLException e) {
-            throw new CustomeException("Something went wrong");
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong");
         } finally {
-            if (db1 != null ) {
-               // closeConnection(cursor, db1);
-              //  db1.close();
-
+          /*if(cursor !=null){
+                //close statment
+                cursor.close();
             }
-            if(cursor != null){
-               // cursor.close();
-            }
-
+            if(database1 !=null){
+                database1.close();
+            }*/
         }
 
         return cursor;
@@ -74,16 +74,16 @@ public class SQLController {
     }
 
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments
-    public ArrayList<RegistrationModel> getPatientList() throws CustomeException {
+    public ArrayList<RegistrationModel> getPatientList() throws ClirNetAppException {
 
         ArrayList<RegistrationModel> hotelList = new ArrayList<>();
-        SQLiteDatabase db1 = null;
+        SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
             String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id order by ph.key_visit_id desc";
 
-            db1 = dbHelper.getReadableDatabase();
-            cursor = db1.rawQuery(selectQuery, null);
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
 
             if (cursor.moveToFirst()) {
                 do {
@@ -99,56 +99,80 @@ public class SQLController {
             }
         } catch (Exception e) {
             //TODO Create cutom exception and throw from here
-            throw new CustomeException("Something went wrong");
+            throw new ClirNetAppException("Something went wrong");
         } finally {
             //create method & pass cursor & db1 ref.
-            closeConnection(cursor, db1);
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
         }
 
         return hotelList;
 
     }
 
+
     //get max count of patient id
-    public int getPatientIdCount() throws CustomeException {
+    public int getPatientIdCount() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
-        SQLiteStatement stmt = null;
+        Cursor cursor = null;
+        int returnValue = 0;
+
         try {
             db1 = dbHelper.getReadableDatabase();
-            stmt = db1.compileStatement("select max(patient_id) from patient");
+            //stmt = db1.compileStatement("select max(patient_id) from patient");
+            cursor=db1.rawQuery("select max(patient_id) from patient",null);
+            if(cursor.moveToFirst()){
+                returnValue=cursor.getInt(0);
+            }
         } catch (Exception e) {
-            throw new CustomeException("Something went wrong");
+            throw new ClirNetAppException("Something went wrong");
         } finally {
-            if (db1 != null && stmt != null) {
-                //  closeQuietly(stmt, db1);
+            if (cursor != null){
+              cursor.close();
+            }
+            if(db1 != null) {
+                db1.close();
             }
         }
-        return (int) stmt.simpleQueryForLong();
-
+        return returnValue;
     }
+
+
+
 
 
     //get max visit count  from patient_history table
-    public int getPatientVisitIdCount() throws CustomeException {
+    public int getPatientVisitIdCount() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
-        SQLiteStatement stmt = null;
+        Cursor cursor = null;
+        int returnValue = 0;
+
         try {
             db1 = dbHelper.getReadableDatabase();
-            stmt = db1.compileStatement("select max(key_visit_id) from patient_history");
+            //stmt = db1.compileStatement("select max(patient_id) from patient");
+            cursor=db1.rawQuery("select max(key_visit_id) from patient_history",null);
+            if(cursor.moveToFirst()){
+                returnValue=cursor.getInt(0);
+            }
         } catch (Exception e) {
-            throw new CustomeException("Something went wrong");
+            throw new ClirNetAppException("Something went wrong while getting max visit id from patient_history");
         } finally {
-            if (db1 != null && stmt != null) {
-                //closeQuietly(stmt, db1);
+            if (cursor != null){
+                cursor.close();
+            }
+            if(db1 != null) {
+                db1.close();
             }
         }
-        return (int) stmt.simpleQueryForLong();
-
+        return returnValue;
     }
 
-
     //used to fileter data from Patient history module
-    public ArrayList<RegistrationModel> getFilterDatanew(String fname, String lname, String gender, String phoneno, String age) throws CustomeException {
+    public ArrayList<RegistrationModel> getFilterDatanew(String fname, String lname, String gender, String phoneno, String age) throws ClirNetAppException {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         ArrayList<RegistrationModel> pList = new ArrayList<>();
@@ -174,9 +198,14 @@ public class SQLController {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            throw new CustomeException("Something went wrong");
+            throw new ClirNetAppException("Something went wrong");
         } finally {
-            closeConnection(cursor, db1);
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
         }
 
         return pList;
@@ -184,7 +213,7 @@ public class SQLController {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //this will search for user entered phone number from Patient Central Page
-    public ArrayList<RegistrationModel> getPatientListForPhoneNumberFilter() throws CustomeException {
+    public ArrayList<RegistrationModel> getPatientListForPhoneNumberFilter() throws ClirNetAppException {
 
         ArrayList<RegistrationModel> hotelList = new ArrayList<>();
         SQLiteDatabase db1 = null;
@@ -214,9 +243,14 @@ public class SQLController {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            throw new CustomeException("Something went wrong");
+            throw new ClirNetAppException("Something went wrong");
         } finally {
-            closeConnection(cursor, db1);
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
         }
         return hotelList;
 
@@ -224,7 +258,7 @@ public class SQLController {
 
     //This will show all the visit  history of patient to show on AddPatientUpdate and ShowPaersonalDetals page
     //ashish
-    public ArrayList<RegistrationModel> getPatientHistoryListAll(String patient_id) throws CustomeException {
+    public ArrayList<RegistrationModel> getPatientHistoryListAll(String patient_id) throws ClirNetAppException {
 
         ArrayList<RegistrationModel> hotelList = new ArrayList<>();
         SQLiteDatabase db1 = null;
@@ -249,7 +283,7 @@ public class SQLController {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            throw new CustomeException("Something went wrong");
+            throw new ClirNetAppException("Something went wrong");
         } finally {
             closeConnection(cursor, db1);
         }
@@ -260,7 +294,7 @@ public class SQLController {
     ///////////////////////////////////////////////////////////////
     //get all patients which is yet to send to server
     //get all patients which is yet to send to server
-    public ArrayList<RegistrationModel> getPatientIdsFalg0() throws CustomeException {
+    public ArrayList<RegistrationModel> getPatientIdsFalg0() throws ClirNetAppException {
 
         ArrayList<RegistrationModel> idList = new ArrayList<>();
         SQLiteDatabase db1 = null;
@@ -280,16 +314,21 @@ public class SQLController {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            throw new CustomeException("Something went wrong");
+            throw new ClirNetAppException("Something went wrong");
         } finally {
-            closeConnection(cursor, db1);
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
         }
         return idList;
 
     }
 
     //get all patients  visits data which is yet to send to server
-    public ArrayList<RegistrationModel> getPatientVisitIdsFalg0() throws CustomeException {
+    public ArrayList<RegistrationModel> getPatientVisitIdsFalg0() throws ClirNetAppException {
 
         ArrayList<RegistrationModel> VisitidList = new ArrayList<>();
         SQLiteDatabase db1 = null;
@@ -311,9 +350,14 @@ public class SQLController {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            throw new CustomeException("Something went wrong");
+            throw new ClirNetAppException("Something went wrong");
         } finally {
-            closeConnection(cursor, db1);
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
         }
 
         return VisitidList;
@@ -321,7 +365,7 @@ public class SQLController {
     }
 
     //get docot membership id from db
-    public String getDoctorMembershipIdNew() throws CustomeException {
+    public String getDoctorMembershipIdNew() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         String returnString = ""; // Your default if none is found
@@ -337,16 +381,21 @@ public class SQLController {
                 returnString = cursor.getString(cursor.getColumnIndex("doc_mem_id"));
             }
         } catch (Exception e) {
-            throw new CustomeException("Something went wrong");
+            throw new ClirNetAppException("Something went wrong");
         } finally {
-            closeConnection(cursor, db1);
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
         }
         return returnString;
     }
 
 
     //get doctor id from db
-    public String getDoctorId() throws CustomeException {
+    public String getDoctorId() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         String returnString = ""; // Your default if none is found
@@ -364,10 +413,13 @@ public class SQLController {
                 returnString = cursor.getString(cursor.getColumnIndex("doctor_id"));
             }
         } catch (Exception e) {
-            throw new CustomeException("Something went wrong");
+            throw new ClirNetAppException("Something went wrong");
         } finally {
             if (cursor != null) {
-               cursor.close();
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
             }
         }
         return returnString;
@@ -376,40 +428,56 @@ public class SQLController {
     }
 
     //doctor first and last name to set to navigation bar
-    public String getDocdoctorName() throws CustomeException {
-        SQLiteStatement stmt = null;
-        SQLiteStatement stmt2 = null;
+    public String getDocdoctorName() throws ClirNetAppException {
+       // SQLiteStatement stmt = null;
+       // SQLiteStatement stmt2 = null;
         SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        String firstNaame = null;
+        String lastName = null;
         try {
             db1 = dbHelper.getReadableDatabase();
-            stmt = db1.compileStatement("select first_name from doctor_perInfo order by doctor_id desc limit 1");
-            stmt2 = db1.compileStatement("select last_name from doctor_perInfo order by doctor_id desc limit 1");
+            String query = "select first_name,last_name from doctor_perInfo order by doctor_id desc limit 1";
+           /* stmt = db1.compileStatement("select first_name from doctor_perInfo order by doctor_id desc limit 1");
+            stmt2 = db1.compileStatement("select last_name from doctor_perInfo order by doctor_id desc limit 1");*/
+            cursor = db1.rawQuery(query, null);
+
+
+            if (cursor.moveToFirst()) {
+                firstNaame = cursor.getString(cursor.getColumnIndex("first_name"));
+                lastName=cursor.getString(cursor.getColumnIndex("last_name"));
+            }
+
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (Exception e) {
-            throw new CustomeException("something went wrong");
+            throw new ClirNetAppException("something went wrong");
         } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
             if (db1 != null) {
-               // db1.close();
+                db1.close();
             }
         }
-        return stmt.simpleQueryForString() + " " + stmt2.simpleQueryForString();
+      //  Log.e("ashishu"," "+firstNaame + ""+lastName);
+        return firstNaame + " " + lastName;
 
 
     }
 
-    public String getPhoneNumber() throws CustomeException {
+    public String getPhoneNumber() throws ClirNetAppException {
         Cursor cursor = null;
         String returnString = ""; // Your default if none is found
-        db1 = dbHelper.getReadableDatabase();
-        SQLiteStatement stmt = null;
+        database = dbHelper.getReadableDatabase();
+
         try {
 
            // stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
             String query = "select phonenumber from doctor_perInfo order by phonenumber desc limit 1";
 
 
-            cursor = db1.rawQuery(query, null);
+            cursor = database.rawQuery(query, null);
 
 
             if (cursor.moveToFirst()) {
@@ -417,25 +485,27 @@ public class SQLController {
             }
 
         } catch (Exception e) {
-            throw new CustomeException("something went wrong");
+            throw new ClirNetAppException("something went wrong");
         }
         finally {
-            if(db1 !=null){
-                //close database
-            }
+
             if(cursor !=null){
                 //close statment
                 cursor.close();
             }
+            if(database !=null){
+                database.close();
+            }
+
         }
 
         return returnString;
     }
 
     //get doctor mail id
-    public String getDocdoctorEmail() throws CustomeException {
+    public String getDocdoctorEmail() throws ClirNetAppException {
 
-        SQLiteStatement stmt = null;
+
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         String returnString = ""; // Your default if none is found
@@ -456,17 +526,21 @@ public class SQLController {
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (Exception e) {
-            throw new CustomeException("something went wrong");
+            throw new ClirNetAppException("something went wrong");
         } finally {
-            if (cursor != null) {
+            if(cursor !=null){
+                //close statment
                 cursor.close();
+            }
+            if(db1 !=null){
+                db1.close();
             }
         }
 
         return returnString;
     }
 
-    public String getAsyncvalue() throws CustomeException {
+    public String getAsyncvalue() throws ClirNetAppException {
         Cursor cursor = null;
         String returnString = null; // Your default if none is found
         SQLiteDatabase db1=null;
@@ -486,43 +560,51 @@ public class SQLController {
         } catch (NullPointerException e) {
             e.printStackTrace();
         } catch (Exception e) {
-            throw new CustomeException("no value found");
+            throw new ClirNetAppException("no values found");
         } finally {
-            if (db1 != null) {
-              //  db1.close();
+            if(cursor !=null){
+                //close statment
+                cursor.close();
+            }
+            if(db1 !=null){
+                db1.close();
             }
         }
         return returnString;
     }
 
     //This will close the Cursor and Database 1-11-2016
-    private void closeConnection(Cursor cursor, SQLiteDatabase db1) {
+    private void closeConnection(Cursor cursor, SQLiteDatabase db2) {
         if (cursor != null) {
             cursor.close();
         }
-        if (this.db1 != null) {
-            this.db1.close();
+        if (db2 != null) {
+            db2.close();
         }
     }
 
     //To validate user from sqlite stored values
-    public boolean validateUser(String username, String password) throws CustomeException {
+    public boolean validateUser(String username, String password) throws ClirNetAppException {
 
-        db1 = dbHelper.getReadableDatabase();
+        database = dbHelper.getReadableDatabase();
         int count;
         Cursor c=null;
         try {
-             c = db1.rawQuery(
+             c = database.rawQuery(
                     "SELECT * FROM " + SQLiteHandler.TABLE_USER + " WHERE "
                             + SQLiteHandler.KEY_NAME + "='" + username + "'AND " + SQLiteHandler.KEY_PASSWORD + "='" + password + "'", null);
             count = c.getCount();
         }catch(Exception e){
-            throw new CustomeException("Not able to search records");
+            throw new ClirNetAppException("Not able to search records");
         }
         finally {
-            if(c != null){
+            if (c != null) {
                 c.close();
             }
+            if (database != null) {
+                database.close();
+            }
+            // todo close db here
         }
         if (count>0)
             return true;

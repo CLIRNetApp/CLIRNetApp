@@ -18,47 +18,25 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
+
 import app.clirnet.com.clirnetapp.Utility.SyncDataService;
-import app.clirnet.com.clirnetapp.app.AppConfig;
-import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
 import app.clirnet.com.clirnetapp.fragments.HomeFragment;
 import app.clirnet.com.clirnetapp.fragments.PoHistoryFragment;
 import app.clirnet.com.clirnetapp.fragments.ReportFragment;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
-import app.clirnet.com.clirnetapp.helper.SessionManager;
-import app.clirnet.com.clirnetapp.models.CallAsynOnce;
-import app.clirnet.com.clirnetapp.models.LoginModel;
-import app.clirnet.com.clirnetapp.models.RegistrationModel;
+
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
         , ReportFragment.OnFragmentInteractionListener {
 
-    private static final String TAG = "Login";
+
     private FragmentManager fragmentManager;
 
 
@@ -98,7 +76,6 @@ public class NavigationActivity extends AppCompatActivity
         imgvw.setImageResource(R.drawable.emp_img);
 
 
-
         dbController = new SQLiteHandler(NavigationActivity.this);
 
         //this will start the background service which sends data to server on 30 min interval
@@ -109,9 +86,7 @@ public class NavigationActivity extends AppCompatActivity
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
 
-//chk internet connection
-        ConnectionDetector connectionDetector = new ConnectionDetector(getApplicationContext());
-        Cursor cursor = null;
+
         try {
 
             sqlController = new SQLController(NavigationActivity.this);
@@ -127,11 +102,7 @@ public class NavigationActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-
-            if (cursor != null) {
-                cursor.close();
-            }
-            if(sqlController != null){
+            if (sqlController != null) {
                 sqlController.close();
             }
         }
@@ -143,15 +114,14 @@ public class NavigationActivity extends AppCompatActivity
 
         Fragment fragment = getSupportFragmentManager().
                 findFragmentById(R.id.flContent);
-        if ( fragment == null ) {
+        if (fragment == null) {
             fragment = new HomeFragment();
             getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.flContent, fragment, "SOME_TAG_IF_YOU_WANT_TO_REFERENCE_YOUR_FRAGMENT_LATER")
                     .commit();
-        }
-        else{
-            Log.e("fragment","Fragment is allready opened");
+        } else {
+            Log.e("fragment", "Fragment is allready opened");
         }
 
         Glide.get(NavigationActivity.this).clearMemory();
@@ -244,10 +214,10 @@ public class NavigationActivity extends AppCompatActivity
     }
 
     private void goToLoginActivity() {
-        Intent intent = new Intent(NavigationActivity.this, LoginActivity.class);
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
         finish();
-      //  System.exit(0);
+        //  System.exit(0);
     }
 
     private void logoutUser() {
@@ -294,34 +264,26 @@ public class NavigationActivity extends AppCompatActivity
         Log.d(msg, "The onDestroy() event");
         // session.setLogin(false);
         //Close the all database connection opened here 31/10/2008 By. Ashish
-        if(sqlController != null){
+        if (sqlController != null) {
             sqlController = null;
         }
-        if(dbController != null){
-            dbController=null;
+        if (dbController != null) {
+            dbController = null;
         }
-        if(fragmentManager != null){
-            fragmentManager=null;
+        if (fragmentManager != null) {
+            fragmentManager = null;
         }
-         cleanResources();
-        //System.gc();
+
+        cleanResources();
+        System.gc();
     }
 
     private void cleanResources() {
-         pDialog=null;
-         docName=null;
-         emailId=null;
+        pDialog = null;
+        docName = null;
+        emailId = null;
     }
 
-    private void showDialog() {
-        if (!pDialog.isShowing())
-            pDialog.show();
-    }
-
-    private void hideDialog() {
-        if (pDialog.isShowing())
-            pDialog.dismiss();
-    }
 
 
 }

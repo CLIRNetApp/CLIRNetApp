@@ -70,11 +70,7 @@ public class ReportFragment extends Fragment implements RecyclerView.OnItemTouch
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
 
-
-
-        }
     }
 
     @Override
@@ -112,9 +108,6 @@ public class ReportFragment extends Fragment implements RecyclerView.OnItemTouch
 
         if (patientData.size() <= 0) {
             errorimg.setVisibility(View.VISIBLE);
-        } else {
-
-          //  recyclerView.setAdapter(adapter);
         }
 
 

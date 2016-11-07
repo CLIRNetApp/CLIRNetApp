@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -35,15 +34,19 @@ import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.Utility.MD5;
 import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
-import app.clirnet.com.clirnetapp.helper.CustomeException;
+import app.clirnet.com.clirnetapp.app.AsyncTaskFinished;
+import app.clirnet.com.clirnetapp.app.DoctorDeatilsAsynTask;
+import app.clirnet.com.clirnetapp.app.LoginAsyncTask;
+import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
 import app.clirnet.com.clirnetapp.models.LoginModel;
+import app.clirnet.com.clirnetapp.models.LoginResult;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity implements AsyncTaskFinished {
     private static final String TAG = "Login";
     private static final String PREFS_NAME = "savedCredit";
     private static final String PREF_USERNAME = "username";
@@ -67,8 +70,7 @@ public class LoginActivity extends Activity {
 
     private SQLController sqlController;
     private final ArrayList<LoginModel> mLoginList = new ArrayList<>();
-    private String savedUserName;
-    private String savedUserPassword;
+
     private int count;
 
 
@@ -131,11 +133,13 @@ public class LoginActivity extends Activity {
 
         //open database controller class for further operations on database
        // Cursor cursor = null;
+
         try {
 
             sqlController = new SQLController(LoginActivity.this);
             sqlController.open();
             dbController = new SQLiteHandler(LoginActivity.this);
+
             // commented this and created validateUser method to validate user from database directly 4-11-2016 By.Ashish
             /*  cursor = sqlController.getUserLoginRecords();
             // mLoginList = new ArrayList<String>();
@@ -184,7 +188,7 @@ public class LoginActivity extends Activity {
             e.printStackTrace();
         }
         finally {
-            if(databaseClass !=null){
+            if(databaseClass != null){
                 databaseClass.close();
             }
         }
@@ -209,7 +213,7 @@ public class LoginActivity extends Activity {
             e.printStackTrace();
         }
         finally {
-            if(lastnameDatabaseClass !=null){
+            if(lastnameDatabaseClass != null){
                 lastnameDatabaseClass.close();
             }
         }
@@ -285,13 +289,21 @@ public class LoginActivity extends Activity {
             isInternetPresent = connectionDetector.isConnectingToInternet();
             if (isInternetPresent) {
                 //Toast.makeText(this, " Connected ", Toast.LENGTH_LONG).show();
-                checkLogin(name, md5EncyptedDataPassword);
-                getDoctorDetails(name, md5EncyptedDataPassword);
+                //checkLogin(name, md5EncyptedDataPassword);
+                new LoginAsyncTask(LoginActivity.this,name,md5EncyptedDataPassword);
+
+                new DoctorDeatilsAsynTask(LoginActivity.this,name,md5EncyptedDataPassword);
+               // hideDialog();
+
+
+               // doctorDeatilsAsynTask.getDoctorDetails(name, md5EncyptedDataPassword);
+               // getDoctorDetails(name, md5EncyptedDataPassword);
 
             } else {
 
                 boolean isLogin ;
                 try {
+
                     isLogin = sqlController.validateUser(name, md5EncyptedDataPassword);
 
                     if (isLogin) {
@@ -300,18 +312,10 @@ public class LoginActivity extends Activity {
 
                     } else {
                         Toast.makeText(LoginActivity.this, " No Records found for the user : " + name, Toast.LENGTH_LONG).show();
-                        //By calling this method and empty database will be created into the default system path
-                        //of your application so we are gonna be able to overwrite that database with our database.
 
-                /*if (name.equals(savedUserName) && md5EncyptedDataPassword.equals(savedUserPassword)) {
-                    //Redirect to Navigation activity
-                    goToNavigation();
-                } else {
-                    Toast.makeText(LoginActivity.this, " No Database found for the user " + name, Toast.LENGTH_LONG).show();
-                }*/
                         Toast.makeText(LoginActivity.this, " You are not connected to Internet!! ", Toast.LENGTH_LONG).show();
                     }
-                } catch (CustomeException e) {
+                } catch (ClirNetAppException e) {
                     e.printStackTrace();
                 } finally {
                     if (sqlController != null) {
@@ -487,12 +491,11 @@ public class LoginActivity extends Activity {
 
                         }
 
-                } catch (JSONException e) {
+                } catch (JSONException | ClirNetAppException e) {
                     // JSON error
                     e.printStackTrace();
                 /*    Toast.makeText(getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();*/
-                }
-                finally {
+                } finally {
                     if(dbController != null){
                         dbController.close();
                     }
@@ -529,7 +532,7 @@ public class LoginActivity extends Activity {
 
     private void goToNavigation() {
 
-        Intent  intent = new Intent(LoginActivity.this,
+        Intent  intent = new Intent(getApplicationContext(),
                 NavigationActivity.class);
         startActivity(intent);
         finish();
@@ -545,7 +548,7 @@ public class LoginActivity extends Activity {
             pDialog.dismiss();
     }
 
-    //This will get doctors detailed Information
+    /*//This will get doctors detailed Information
     private void getDoctorDetails(final String name, final String password) {
 
         String tag_string_req = "req_login";
@@ -593,10 +596,7 @@ public class LoginActivity extends Activity {
                             if(responce.equals("404")){
                                 Toast.makeText(getApplicationContext(),"Username Password Invalid OR Not Found" ,Toast.LENGTH_LONG).show();
                             }
-                            else{
 
-                              // Toast.makeText(LoginActivity.this, "" + msg, Toast.LENGTH_LONG).show();
-                            }
 
                         }
 
@@ -611,8 +611,8 @@ public class LoginActivity extends Activity {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Login Error: " + error.getMessage());
-               /* Toast.makeText(getApplicationContext(),
-                        error.getMessage(), Toast.LENGTH_LONG).show();*/
+               *//* Toast.makeText(getApplicationContext(),
+                        error.getMessage(), Toast.LENGTH_LONG).show();*//*
                 hideDialog();
             }
 
@@ -623,8 +623,8 @@ public class LoginActivity extends Activity {
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<>();
-             /*   params.put("email", email);
-                params.put("password", password);*/
+             *//*   params.put("email", email);
+                params.put("password", password);*//*
 
                 params.put("username", name);
                 params.put("password", password);
@@ -637,7 +637,7 @@ public class LoginActivity extends Activity {
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
@@ -692,12 +692,30 @@ public class LoginActivity extends Activity {
             connectionDetector=null;
         }
       //  pDialog=null;
-        savedUserName=null;
-        savedUserPassword=null;
         md5=null;
         md5EncyptedDataPassword=null;
         inputEmail=null;
         inputPassword=null;
         System.gc();
+    }
+
+    @Override
+    public void assignResult(Object fetchedInfo) {
+        Boolean fet= (Boolean) fetchedInfo;
+        Log.e("Result",""+fet);
+        if(fet){
+            Intent intent = new Intent(getApplicationContext(),
+                    NavigationActivity.class);
+            startActivity(intent);
+            finish();
+        }
+      /* CallAsynOnce cao=new CallAsynOnce();
+       String result= cao.getValue1();*/
+
+    }
+
+    @Override
+    public void forgetResult(Object fetchInfo) {
+
     }
 }

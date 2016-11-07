@@ -43,7 +43,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
 
 
         try{
-            if(follow_up_date == null || follow_up_date == "0000-00-00" || follow_up_date.equals("30-11-0002") ){
+            if(follow_up_date == null || follow_up_date .equals("0000-00-00") || follow_up_date.equals("30-11-0002") ){
                 holder.tv_fod.setText("--");
             }
             else{
