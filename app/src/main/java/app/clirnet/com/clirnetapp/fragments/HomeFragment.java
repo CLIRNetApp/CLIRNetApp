@@ -28,6 +28,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -215,7 +216,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getContext(), PrivacyPolicy.class);
+                Intent intent=new Intent(getActivity().getApplicationContext(), PrivacyPolicy.class);
                 startActivity(intent);
 
 
@@ -225,7 +226,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         termsandCondition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getContext(), TermsCondition.class);
+                Intent intent=new Intent(getActivity().getApplicationContext(), TermsCondition.class);
                 startActivity(intent);
 
             }
@@ -258,7 +259,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
         try {
 
-            sqlController= new SQLController(getContext());
+            sqlController= new SQLController(getActivity().getApplicationContext());
              sqlController.open();
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
@@ -266,7 +267,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
             JSONArray patientVisitHistoryarray = dbController.getResultsForPatientHistory();
 
             patientVisitHistorArayString = String.valueOf(dbController.getResultsForPatientHistory());
-            Log.e("PatientVisitHistor", " " + patientVisitHistoryarray);
+          //  Log.e("PatientVisitHistor", " " + patientVisitHistoryarray);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -292,7 +293,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
             public void onClick(View v) {
                 try {
                     if(sqlController == null) {
-                        sqlController = new SQLController(getActivity());
+                        sqlController = new SQLController(getActivity().getApplicationContext());
                         sqlController.open();
                     }
                     patientIds_List=  sqlController.getPatientIdsFalg0();
@@ -341,7 +342,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         addaNewPatient.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent i = new Intent(getContext(), RegistrationActivity.class);
+                Intent i = new Intent(getActivity().getApplicationContext(), RegistrationActivity.class);
                 i.putExtra("number", searchNumber);
                 startActivity(i);
 
@@ -406,7 +407,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
             recyclerView.setAdapter(rvadapter);
         }
 
-        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getContext(), recyclerView, new ItemClickListener() {
+        recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getContext().getApplicationContext(), recyclerView, new ItemClickListener() {
 
             @Override
             public void onClick(View view, int position) {
@@ -471,7 +472,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         SQLController sqlController1 = null;
         try {
 
-            sqlController1 = new SQLController(getActivity());
+            sqlController1 = new SQLController(getActivity().getApplicationContext());
             sqlController1.open();
 
             cursor = sqlController1.getUserLoginRecords();
@@ -483,7 +484,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
                 savedUserName = cursor.getString(0);
                 savedUserPassword = cursor.getString(1);
-                Log.e("passwordashish", "" + savedUserName + "/ " + savedUserPassword);
+              //  Log.e("passwordashish", "" + savedUserName + "/ " + savedUserPassword);
                 mLoginList.add(user); //add the item
             }
             asyn_value = sqlController.getAsyncvalue();
@@ -542,7 +543,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
 
         //  System.out.println("Date1 is before or equal to Date2");
-        Intent i = new Intent(getContext(), AddPatientUpdate.class);
+        Intent i = new Intent(getContext().getApplicationContext(), AddPatientUpdate.class);
         i.putExtra("PATIENTPHOTO", book.getPhoto());
         i.putExtra("PatientID", book.getPat_id());
         Log.e("Patientkaid", "" + book.getPat_id());
@@ -571,7 +572,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
     private void afterDateEditPatientUpdate(int position) {
         RegistrationModel book = filteredModelList1.get(position);
-        Intent i = new Intent(getContext(), EditPatientUpdate.class);
+        Intent i = new Intent(getContext().getApplicationContext(), EditPatientUpdate.class);
 
         i.putExtra("PATIENTPHOTO", book.getPhoto());
         i.putExtra("ID", book.getPat_id());
@@ -596,7 +597,6 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
         i.putExtra("PRESCRIPTION", book.getPres_img());
         i.putExtra("VISITID",book.getKey_visit_id());
         Log.e("VISITID", "" + book.getKey_visit_id());
-
         startActivity(i);
     }
 
@@ -763,7 +763,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
                         System.out.println("on query submit: " + newText);
                         searchView.clearFocus();
                     } else {
-                        Toast.makeText(getContext(), "Please Enter Min 5 Digit's to Search Records", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext().getApplicationContext(), "Please Enter Min 5 Digit's to Search Records", Toast.LENGTH_SHORT).show();
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -771,7 +771,6 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
 
                 return false;
-
             }
 
             @Override
@@ -784,7 +783,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
             }
         });
 
-        Searchrecycler_view.addOnItemTouchListener(new RecyclerTouchListener(getContext(), Searchrecycler_view, new ItemClickListener() {
+        Searchrecycler_view.addOnItemTouchListener(new RecyclerTouchListener(getActivity().getApplicationContext(), Searchrecycler_view, new ItemClickListener() {
 
             @Override
             public void onClick(View view, int position) {
@@ -837,7 +836,7 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
 
     private void dateisCurrent(int position) {
         RegistrationModel book = filteredModelList.get(position);
-        Intent i = new Intent(getContext(), EditPatientUpdate.class);
+        Intent i = new Intent(getActivity().getApplicationContext(), EditPatientUpdate.class);
 
         i.putExtra("PATIENTPHOTO", book.getPhoto());
         i.putExtra("ID", book.getPat_id());
@@ -1003,9 +1002,10 @@ public class HomeFragment extends Fragment implements  RecyclerView.OnItemTouchL
             public void onClick(View v) {
                 searchView.clearFocus();
 
-                Intent i = new Intent(getContext(), RegistrationActivity.class);
+                Intent i = new Intent(getActivity().getApplicationContext(), RegistrationActivity.class);
                 i.putExtra("number", number);
                 startActivity(i);
+                getActivity().finish();
 
                 dialog.dismiss();
 
@@ -1229,7 +1229,7 @@ private void sendDataToServer(final String patient_details, final String patient
                                 dbController.FlagupdatePatientVisit(patientVisitId,flag);
                             }
 
-                            toast = Toast.makeText(getContext(), "Data Send Successfully to Server" + msg, Toast.LENGTH_LONG);
+                            toast = Toast.makeText(getContext().getApplicationContext(), "Data Send Successfully to Server" + msg, Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.CENTER, 0, 0);
                             toast.show();
                         } else {
@@ -1240,7 +1240,7 @@ private void sendDataToServer(final String patient_details, final String patient
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext().getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
         }, new Response.ErrorListener() {
@@ -1442,7 +1442,7 @@ private void sendDataToServer(final String patient_details, final String patient
 
 
         }
-        SessionManager session = new SessionManager(getContext());
+        SessionManager session = new SessionManager(getContext().getApplicationContext());
         session.setLogin(true);
 
 
@@ -1599,6 +1599,10 @@ private void sendDataToServer(final String patient_details, final String patient
             dbController=null;
 
         }
+        if(searchView !=null){
+            searchView.clearFocus();
+            searchView=null;
+        }
 
         addaNewPatient.setOnClickListener(null);
         recyclerView.setOnClickListener(null);
@@ -1609,10 +1613,20 @@ private void sendDataToServer(final String patient_details, final String patient
         view = null; // now cleaning up view!
         date1=null;
         toast=null;
-       // asyn_value=null;
+        asyn_value=null;//
         searchNumber=null;
         patientVisitHistorArayString=null;
+        Searchrecycler_view=null;
+        recyclerView=null;
         Log.e("onDetach","onDetach Home Fragment");
+    }
+    @Override
+    public void onPause() {
+        Log.e("DEBUG", "OnPause of HomeFragment");
+        InputMethodManager inputMethodManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        inputMethodManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+        super.onPause();
     }
 }
 

@@ -262,7 +262,7 @@ public class EditPatientUpdate extends AppCompatActivity {
 
         try {
 
-            sqlController = new SQLController(EditPatientUpdate.this);
+            sqlController = new SQLController(getApplicationContext());
             sqlController.open();
             docId = sqlController.getDoctorId();
 
@@ -283,7 +283,7 @@ public class EditPatientUpdate extends AppCompatActivity {
 
             } else {
                 recyclerView.setVisibility(View.GONE);
-                noRecordsText.setVisibility(View.VISIBLE);
+              //  noRecordsText.setVisibility(View.VISIBLE);
             }
 
         } catch (Exception e) {
@@ -948,7 +948,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         }
         sdf1 = null;
          System.gc();
-        cleanResources();
+         cleanResources();
 
     }
 

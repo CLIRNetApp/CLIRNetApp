@@ -216,9 +216,9 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         try {
 
-            sqlController = new SQLController(AddPatientUpdate.this);
+            sqlController = new SQLController(getApplicationContext());
             sqlController.open();
-            dbController = new SQLiteHandler(AddPatientUpdate.this);
+            dbController = new SQLiteHandler(getApplicationContext());
             //This will get all the visit  history of patient
             patientHistoryData = (sqlController.getPatientHistoryListAll(strPatientId)); //get all patient data from db
             int size = patientHistoryData.size();
@@ -267,7 +267,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
 
         //this code is for setting list to auto complete text view  8/6/16
-        ArrayAdapter<String> adp = new ArrayAdapter<>(AddPatientUpdate.this,
+        ArrayAdapter<String> adp = new ArrayAdapter<>(getApplicationContext(),
                 android.R.layout.simple_dropdown_item_1line, mAilmemtArrayList);
 
         adp.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -337,7 +337,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                Intent i = new Intent(AddPatientUpdate.this, EditPersonalInfo.class);
+                Intent i = new Intent(getApplicationContext(), EditPersonalInfo.class);
 
                 i.putExtra("PATIENTPHOTO", strPatientPhoto);
                 i.putExtra("ID", strPatientId);

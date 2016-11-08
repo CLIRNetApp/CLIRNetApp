@@ -33,7 +33,7 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
 
-public class LoginActivity extends Activity implements AsyncTaskFinished {
+public class LoginActivity extends Activity {
     private static final String TAG = "Login";
     private static final String PREFS_NAME = "savedCredit";
     private static final String PREF_USERNAME = "username";
@@ -218,7 +218,7 @@ public class LoginActivity extends Activity implements AsyncTaskFinished {
 
     }
 // --Commented out by Inspection START (07-11-2016 16:43):
-//// This method to add ailments from asset folder to our db ie. clirnetApp.db
+//// This method to add ailments from asset folder to our db ie. ailments
 //    private void saveAilmentToDb() {
 //        Thread thread = new Thread(){
 //            public void run(){
@@ -266,7 +266,7 @@ public class LoginActivity extends Activity implements AsyncTaskFinished {
             if (isInternetPresent) {
                 //Toast.makeText(this, " Connected ", Toast.LENGTH_LONG).show();
                //  checkLogin(name, md5EncyptedDataPassword);
-              new LoginAsyncTask(LoginActivity.this,name,md5EncyptedDataPassword);
+                new LoginAsyncTask(LoginActivity.this,name,md5EncyptedDataPassword);
 
                 new DoctorDeatilsAsynTask(LoginActivity.this,name,md5EncyptedDataPassword);
                // hideDialog();
@@ -506,25 +506,6 @@ public class LoginActivity extends Activity implements AsyncTaskFinished {
         System.gc();
     }
 
-    @Override
-    public void assignResult(Object fetchedInfo) {
-        Boolean fet= (Boolean) fetchedInfo;
-        Log.e("Result",""+fet);
-      if(fet){
-            Intent intent = new Intent(getApplicationContext(),
-                    NavigationActivity.class);
-            startActivity(intent);
-            finish();
-        }
-      /* CallAsynOnce cao=new CallAsynOnce();
-       String result= cao.getValue1();*/
-
-    }
-
-    @Override
-    public void forgetResult(Object fetchInfo) {
-
-    }
 
 
 }

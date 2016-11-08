@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -126,7 +127,7 @@ public class ConsultationLogFragment extends Fragment {
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), PrivacyPolicy.class);
+                Intent intent = new Intent(getContext().getApplicationContext(), PrivacyPolicy.class);
                 startActivity(intent);
 
             }
@@ -135,7 +136,7 @@ public class ConsultationLogFragment extends Fragment {
         termsandCondition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getContext(), TermsCondition.class);
+                Intent intent=new Intent(getContext().getApplicationContext(), TermsCondition.class);
                 startActivity(intent);
 
             }
@@ -144,7 +145,7 @@ public class ConsultationLogFragment extends Fragment {
         //open database for further interaction with database
         try {
 
-            sqlController = new SQLController(getContext());
+            sqlController = new SQLController(getContext().getApplicationContext());
             sqlController.open();
             patientData = (sqlController.getPatientList());
 
@@ -236,7 +237,7 @@ public class ConsultationLogFragment extends Fragment {
                         followUpDateSearchAdapter.setFilter(filteredModelList);
                         recycler_view.setAdapter(followUpDateSearchAdapter);
 
-                        recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext(), recycler_view, new ItemClickListener() {
+                        recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
 
                             @Override
                             public void onClick(View view, int position) {
@@ -266,7 +267,7 @@ public class ConsultationLogFragment extends Fragment {
                         rvAdapterforUpdateDate.setFilter(visitDateDataFilter);
                         recycler_view.setAdapter(rvAdapterforUpdateDate);
                         //   Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
-                        recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext(), recycler_view, new ItemClickListener() {
+                        recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
 
                             @Override
                             public void onClick(View view, int position) {
@@ -304,7 +305,7 @@ public class ConsultationLogFragment extends Fragment {
     private void setrvAdapterforUpdateDateToRecyclerView(int position) {
 
         RegistrationModel book = visitDateDataFilter.get(position);
-        Intent i = new Intent(getContext(), ShowPersonalDetailsActivity.class);
+        Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
 
         i.putExtra("PATIENTPHOTO", book.getPhoto());
         i.putExtra("ID", book.getPat_id());
@@ -335,7 +336,7 @@ public class ConsultationLogFragment extends Fragment {
 
         RegistrationModel book = filteredModelList.get(position);
 
-        Intent i = new Intent(getContext(), ShowPersonalDetailsActivity.class);
+        Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
 
         i.putExtra("PATIENTPHOTO", book.getPhoto());
         i.putExtra("ID", book.getPat_id());
@@ -405,17 +406,7 @@ public class ConsultationLogFragment extends Fragment {
         super.onAttach(context);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        if(sqlController != null){
-            sqlController= null;
-        }
 
-        view = null; // now cleaning up!
-        mListener = null;
-        Log.e("onDetach","onDetach");
-    }
 
 
     public interface OnFragmentInteractionListener {
@@ -486,7 +477,49 @@ public class ConsultationLogFragment extends Fragment {
         };
         backChangingImages.postDelayed(runnable, 100); //for initial delay..
     }
+    @Override
+    public void onPause() {
+        Log.e("DEBUG", "OnPause of HomeFragment");
+        InputMethodManager inputMethodManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
+        inputMethodManager.hideSoftInputFromWindow(date.getWindowToken(), 0);
+        super.onPause();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+        view = null; // now cleaning up!
+
+        if(sqlController != null){
+            sqlController.close();
+            sqlController= null;
+        }
+        if(followUpDateSearchAdapter != null){
+            followUpDateSearchAdapter=null;
+        }
+        if(rvAdapterforUpdateDate !=null){
+            rvAdapterforUpdateDate=null;
+        }
+
+        patientData.clear();
+        patientData=null;
+
+        recycler_view.setOnClickListener(null);
+        //  searchView.setOnClickListener(null);
+
+        norecordtv = null;
+
+        searchdate=null;
+        sysdate= null;
+        filteredModelList = null;
+        visitDateDataFilter = null;
+        date= null;
+        txtfod= null;
+
+        Log.e("onDetach","onDetach Home Fragment");
+    }
 }
 
 

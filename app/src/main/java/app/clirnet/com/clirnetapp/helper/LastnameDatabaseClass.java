@@ -8,7 +8,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import java.io.File;
@@ -23,7 +22,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
     @SuppressLint("SdCardPath")
     private static final String DB_PATH = "/data/data/app.clirnet.com.clirnetapp/databases/";
 
-    private static final String DB_NAME = "namelast";
+    private static final String DB_NAME = "clirnetApp.db";
     public static final String DATABASE_NAME = "clirnetApp.db";
 
     private SQLiteDatabase myDataBase;
@@ -68,7 +67,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             }
         }
 
-       /* if (dbExist) {
+        /*if (dbExist) {
             //do nothing - database already exist
         } else {
 
@@ -85,8 +84,8 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
                 throw new Error("Error copying database");
 
             }
-        }
-*/
+        }*/
+
     }
 
 
@@ -127,7 +126,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
 
 
         // Path to the just created empty db
-        String outFileName = DB_PATH + DATABASE_NAME;
+        String outFileName = DB_PATH + DB_NAME;
 
         //Open the empty db as the output stream
         OutputStream myOutput = new FileOutputStream(outFileName);
@@ -214,7 +213,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
                 db1.close();
             }
         }
-       // Log.e("returnValue",""+ returnValue);
+        // Log.e("returnValue",""+ returnValue);
 
         return returnValue;
 
@@ -251,7 +250,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
 
             int rows = db.update("last_name_master", values, "last_name" + "= ?", new String[]{lastName});
             id =db.insertWithOnConflict("last_name_master", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-           // id = db.insert("last_name_master", null, values);
+            // id = db.insert("last_name_master", null, values);
         }   catch (Exception e) {
             e.printStackTrace();
         } finally {

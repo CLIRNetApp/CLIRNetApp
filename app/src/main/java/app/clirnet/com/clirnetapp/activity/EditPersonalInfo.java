@@ -167,15 +167,15 @@ public class EditPersonalInfo extends AppCompatActivity {
 //open database controller class for further operations on database
         try {
             if (lastNamedb == null) {
-                lastNamedb = new LastnameDatabaseClass(EditPersonalInfo.this);
+                lastNamedb = new LastnameDatabaseClass(getApplicationContext());
                 lastNamedb.openDataBase();
             }
             if (sqlController == null) {
-                sqlController = new SQLController(EditPersonalInfo.this);
+                sqlController = new SQLController(getApplicationContext());
                 sqlController.open();
             }
 
-            dbController = new SQLiteHandler(EditPersonalInfo.this);
+            dbController = new SQLiteHandler(getApplicationContext());
             docId = sqlController.getDoctorId();
             Log.e("docId", "" + docId);
             String sbdob;
@@ -222,11 +222,11 @@ public class EditPersonalInfo extends AppCompatActivity {
             editdob.setText("");
         }
 
-        Glide.get(EditPersonalInfo.this).clearMemory();
+        Glide.get(getApplicationContext()).clearMemory();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                Glide.get(EditPersonalInfo.this).clearDiskCache();
+                Glide.get(getApplicationContext()).clearDiskCache();
             }
         }).start();
 
@@ -268,7 +268,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         try {
 
             if (sqlController == null) {
-                sqlController = new SQLController(EditPersonalInfo.this);
+                sqlController = new SQLController(getApplicationContext());
                 sqlController.open();
             }
 
@@ -745,7 +745,7 @@ public class EditPersonalInfo extends AppCompatActivity {
     }
 
     private void setUpGlide(String strPatientPhoto, ImageView patientImage) {
-        Glide.with(EditPersonalInfo.this)
+                 Glide.with(getApplicationContext())
                 .load(strPatientPhoto)
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)

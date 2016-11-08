@@ -21,8 +21,9 @@ public class DatabaseClass extends SQLiteOpenHelper {
     @SuppressLint("SdCardPath")
     private static final String DB_PATH = "/data/data/app.clirnet.com.clirnetapp/databases/";
 
-    private static final String DB_NAME = "ailments";
-    private static final String DATABASE_NAME = "clirnetApp.db";
+    private static final String DB_NAME = "clirnetApp.db";
+    public static final String DATABASE_NAME = "clirnetApp.db";
+
 
     private SQLiteDatabase myDataBase;
 
@@ -48,7 +49,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
 
         boolean dbExist = checkDataBase();
 
-        boolean tblExist = isTableExists(database, "temp_ailment_table");
+        boolean tblExist = isTableExists(database, "ailments");
 
         if (tblExist) {
             //do nothing - database already exist
@@ -186,8 +187,8 @@ public class DatabaseClass extends SQLiteOpenHelper {
         int returnValue = 0;
         try {
             db1 = this.getReadableDatabase();
-           // stmt = db1.compileStatement("select max(id) from temp_ailment_table");
-            String query="select max(id) from temp_ailment_table";
+            // stmt = db1.compileStatement("select max(id) from temp_ailment_table");
+            String query="select max(id) from ailments";
             cursor=db1.rawQuery(query,null);
             if(cursor.moveToFirst()){
                 returnValue=cursor.getInt(0);
@@ -203,7 +204,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
                 db1.close();
             }
         }
-      //  Log.e("returnValue",""+returnValue);
+        //  Log.e("returnValue",""+returnValue);
         return returnValue;
 
     }
@@ -211,11 +212,11 @@ public class DatabaseClass extends SQLiteOpenHelper {
     public Cursor getAilmentsList() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
         String[] cols = {"id", "ailment_name"};
-         Cursor cursor=null;
+        Cursor cursor=null;
         try {
 
             db1 = this.getReadableDatabase();
-            cursor=db1.query("temp_ailment_table", cols, null,
+            cursor=db1.query("ailments", cols, null,
                     null, null, null, null);
         } catch (Exception e) {
             throw new ClirNetAppException("Error while getting records");
@@ -237,8 +238,8 @@ public class DatabaseClass extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put("ailment_name", ailments);
             values.put("id", ailid);
-           // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-            id = db.insert("temp_ailment_table", null, values);
+            // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            id = db.insert("ailments", null, values);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -254,7 +255,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
     }
 
     private boolean isTableExists(SQLiteDatabase db, String tableName) {
-        if ("temp_ailment_table" == null || db == null || !db.isOpen()) {
+        if ("ailments" == null || db == null || !db.isOpen()) {
             return false;
         }
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM sqlite_master WHERE type = ? AND name = ?", new String[]{"table", tableName});
@@ -266,5 +267,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
         cursor.close();
         return count > 0;
     }
+
+
 }
 

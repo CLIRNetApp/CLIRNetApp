@@ -76,10 +76,10 @@ public class NavigationActivity extends AppCompatActivity
         imgvw.setImageResource(R.drawable.emp_img);
 
 
-        dbController = new SQLiteHandler(NavigationActivity.this);
+        dbController = new SQLiteHandler(getApplicationContext());
 
         //this will start the background service which sends data to server on 30 min interval
-        Intent serviceIntent = new Intent(this, SyncDataService.class);
+        Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
         startService(serviceIntent);
 
 
@@ -89,7 +89,7 @@ public class NavigationActivity extends AppCompatActivity
 
         try {
 
-            sqlController = new SQLController(NavigationActivity.this);
+            sqlController = new SQLController(getApplicationContext());
             sqlController.open();
 
             docName = sqlController.getDocdoctorName();
@@ -124,7 +124,7 @@ public class NavigationActivity extends AppCompatActivity
             Log.e("fragment", "Fragment is allready opened");
         }
 
-        Glide.get(NavigationActivity.this).clearMemory();
+        Glide.get(getApplicationContext()).clearMemory();
     }
 
 

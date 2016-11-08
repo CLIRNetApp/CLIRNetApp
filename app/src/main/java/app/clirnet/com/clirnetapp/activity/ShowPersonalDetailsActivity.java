@@ -129,7 +129,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         txtSysDate.setText("Today's Date " + dd);
         try {
 
-            sqlController = new SQLController(ShowPersonalDetailsActivity.this);
+            sqlController = new SQLController(getApplicationContext());
             sqlController.open();
             patientPersonalData = (sqlController.getPatientHistoryListAll(strId)); //get all patient data from db
             int size = patientPersonalData.size();

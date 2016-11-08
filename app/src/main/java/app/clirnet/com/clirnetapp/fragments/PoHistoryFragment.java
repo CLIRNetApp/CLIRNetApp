@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -121,7 +122,7 @@ public class PoHistoryFragment extends Fragment {
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), PrivacyPolicy.class);
+                Intent intent = new Intent(getContext().getApplicationContext(), PrivacyPolicy.class);
                 startActivity(intent);
 
             }
@@ -131,7 +132,7 @@ public class PoHistoryFragment extends Fragment {
         termsandCondition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getContext(), TermsCondition.class);
+                Intent intent = new Intent(getContext().getApplicationContext(), TermsCondition.class);
                 startActivity(intent);
 
             }
@@ -141,7 +142,7 @@ public class PoHistoryFragment extends Fragment {
         setupAnimation();
         try {
 
-            sqlController = new SQLController(getContext());
+            sqlController = new SQLController(getContext().getApplicationContext());
             sqlController.open();
 
         } catch (Exception e) {
@@ -233,7 +234,7 @@ public class PoHistoryFragment extends Fragment {
 
         RegistrationModel book = patientData.get(position);
 
-        Intent i = new Intent(getContext(), ShowPersonalDetailsActivity.class);
+        Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
 
         i.putExtra("PATIENTPHOTO", book.getPhoto());
         i.putExtra("ID", book.getPat_id());
@@ -295,12 +296,7 @@ public class PoHistoryFragment extends Fragment {
         super.onAttach(context);
     }
 
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-        rootview = null; // now cleaning up!
-    }
+
 
 
     public interface OnFragmentInteractionListener {
@@ -325,7 +321,46 @@ public class PoHistoryFragment extends Fragment {
         };
         backChangingImages.postDelayed(runnable, 100); //for initial delay..
     }
+    @Override
+    public void onPause() {
+        Log.e("DEBUG", "OnPause of HomeFragment");
+        InputMethodManager inputMethodManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
+        inputMethodManager.hideSoftInputFromWindow(firstName.getWindowToken(), 0);
+        super.onPause();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+        rootview = null; // now cleaning up!
+
+        if(sqlController != null){
+            sqlController.close();
+            sqlController= null;
+        }
+        if(adapter != null){
+            adapter=null;
+        }
+
+        patientData.clear();
+        patientData=null;
+
+        recyclerView.setOnClickListener(null);
+        //  searchView.setOnClickListener(null);
+
+        norecordtv = null;
+
+        recyclerView=null;
+        sex= null;
+        strfname = null;
+        strlname = null;
+        strpno= null;
+        strage= null;
+
+        Log.e("onDetach","onDetach Home Fragment");
+    }
 }
 
 

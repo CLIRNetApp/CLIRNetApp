@@ -9,8 +9,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 
+
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
+
+ import android.database.sqlite.SQLiteOpenHelper;
 
 import android.util.Log;
 
@@ -21,6 +23,9 @@ import org.json.JSONObject;
 public class SQLiteHandler extends SQLiteOpenHelper {
 
     private static final String TAG = "SQLHandler";
+    private final Context myContext;
+
+
 
     private SQLiteDatabase db;
     private static SQLiteHandler sInstance;
@@ -31,6 +36,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     // Database Name
     public static final String DATABASE_NAME = "clirnetApp.db";
+
 
     // Login table name
     public static final String TABLE_USER = "user";
@@ -241,6 +247,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        this.myContext = context;
     }
 
     public static synchronized SQLiteHandler getInstance(Context context) {
@@ -913,4 +920,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
     }
+
+
 }

@@ -3,6 +3,7 @@ package app.clirnet.com.clirnetapp.activity;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -20,8 +21,9 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.Gravity;
+
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -131,9 +133,9 @@ public class RegistrationActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        databaseClass = new DatabaseClass(RegistrationActivity.this);
+        databaseClass = new DatabaseClass(getApplicationContext());
 
-        lastNamedb = new LastnameDatabaseClass(RegistrationActivity.this);
+        lastNamedb = new LastnameDatabaseClass(getApplicationContext());
 
         getSupportActionBar().setTitle(Html.fromHtml("<font color='#fffff'>Add New Patient</font>"));
 
@@ -219,9 +221,9 @@ public class RegistrationActivity extends AppCompatActivity {
 
         try {
 
-            sqlController = new SQLController(RegistrationActivity.this);
+            sqlController = new SQLController( getApplicationContext());
             sqlController.open();
-            dbController = new SQLiteHandler(RegistrationActivity.this);
+            dbController = new SQLiteHandler(getApplicationContext());
             //get doctor membership id
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 //get doctor  id
@@ -234,8 +236,8 @@ public class RegistrationActivity extends AppCompatActivity {
             maxVisitId = sqlController.getPatientVisitIdCount();
 
 
-          //  int getPatientIdCountnew = sqlController.getPatientVisitIdCountNew();
-           // Log.e("maxPatientIdCount", "" + getPatientIdCountnew);
+            //  int getPatientIdCountnew = sqlController.getPatientVisitIdCountNew();
+            // Log.e("maxPatientIdCount", "" + getPatientIdCountnew);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -255,7 +257,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
             maxLastId = nameId + 1;
             int id = databaseClass.getMaxAimId();
-            Log.e("getMaxAimId",""+id);
+            Log.e("getMaxAimId", "" + id);
             maxid = id + 1;
 
             lastNamedb.openDataBase();
@@ -284,7 +286,7 @@ public class RegistrationActivity extends AppCompatActivity {
         }
 
         //this code is for setting list to auto complete text view  8/6/16
-        ArrayAdapter<String> adp = new ArrayAdapter<>(RegistrationActivity.this,
+        ArrayAdapter<String> adp = new ArrayAdapter<>(getBaseContext(),
                 android.R.layout.simple_dropdown_item_1line, mAilmemtArrayList);
 
         adp.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
@@ -309,7 +311,7 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         }
         //this code is for setting list to auto complete text view
-        ArrayAdapter<String> lastnamespin = new ArrayAdapter<>(RegistrationActivity.this,
+        ArrayAdapter<String> lastnamespin = new ArrayAdapter<>(this.getApplicationContext(),
                 android.R.layout.simple_dropdown_item_1line, mLastNameList);
 
         multiAutoComplete.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
@@ -347,8 +349,6 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
                 selectedLanguage = (String) parent.getItemAtPosition(position);
-
-
             }
 
             @Override
@@ -494,29 +494,15 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         });
 
-        follow_up_date.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-            }
-
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-
-            }
-        });
 
         follow_up_days.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
-
+                int days=0;
                 try {
 
 
-                    int days = Integer.parseInt(follow_up_days.getText().toString());
+                    days = Integer.parseInt(follow_up_days.getText().toString());
                     String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), days));
 
                     showfodtext.setText(dateis);
@@ -683,7 +669,7 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // back button pressed
-                Intent i = new Intent(RegistrationActivity.this, NavigationActivity.class);
+                Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
                 startActivity(i);
                 finish();
 
@@ -694,7 +680,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     private void setLanguageSpiner() {
         ArrayAdapter<CharSequence> language_reasonAdapter = ArrayAdapter
-                .createFromResource(RegistrationActivity.this, R.array.language_group,
+                .createFromResource(getBaseContext(), R.array.language_group,
                         android.R.layout.simple_spinner_item);
         language_reasonAdapter
                 .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -862,7 +848,7 @@ public class RegistrationActivity extends AppCompatActivity {
             patientImagePath = uriSavedImage.getPath().trim();
             if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
                 if (patientImagePath.length() > 0) {
-                    Glide.with(RegistrationActivity.this)
+                    Glide.with(getApplicationContext())
                             .load(patientImagePath)
                             .crossFade()
                             .diskCacheStrategy(DiskCacheStrategy.ALL)
@@ -1006,8 +992,13 @@ public class RegistrationActivity extends AppCompatActivity {
             age.setError("Please enter Valid Age !");
             return;
         }
+        int nwage = 0;
+        try {
+            nwage = Integer.parseInt(current_age.trim());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        int nwage = Integer.parseInt(current_age);
         if (nwage > 100) {
             age.setError("Please enter Valid Age !");
             return;
@@ -1039,7 +1030,7 @@ public class RegistrationActivity extends AppCompatActivity {
 //mobile no validations
         if (phone_number.length() < 10) {
 
-            Toast.makeText(RegistrationActivity.this, "Phone Number Should be of 10 digit! ", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), "Phone Number Should be of 10 digit! ", Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -1158,16 +1149,16 @@ public class RegistrationActivity extends AppCompatActivity {
             String added_by = docId;//INSERTING DOC ID IN ADDED BY COLUMN AS PER PUSHPAL SAID
             String action = "added";
             String patientInfoType = "App";
-            //  for(int j=0;j<1000;j++) {
+            //   for(int j=0;j<50;j++) {
             dbController.addPatientPersonalfromLocal(patient_id, docId, first_name, middle_name, last_name, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, sysdate.toString(), doctor_membership_number, flag, patientInfoType, addedTime, added_by, action);
 
             dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, ailments, prescriptionImgPath, clinical_note, sysdate.toString(), visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action);
 
-            // patient_id=String.valueOf(patient_id + 1);
+            //  patient_id=String.valueOf(patient_id + 1);
             // visit_id=String.valueOf(visit_id + 1);
 
-            //  }
-            Toast.makeText(RegistrationActivity.this, "Patient Record Saved Successfully!!!", Toast.LENGTH_LONG).show();
+            // }
+            Toast.makeText(getApplicationContext(), "Patient Record Saved Successfully!!!", Toast.LENGTH_LONG).show();
 
             goToNavigation();
         }
@@ -1239,7 +1230,7 @@ public class RegistrationActivity extends AppCompatActivity {
             lastNamedb.close();//Close the all database connection opened here 31/10/2008 By. Ashish
         }
         cleanResources();
-        System.gc();
+
     }
 
     private void cleanResources() {
@@ -1283,9 +1274,20 @@ public class RegistrationActivity extends AppCompatActivity {
         docId = null;
         addedTime = null;
         language = null;
-        mAilmemtArrayList = null;
+        //  mAilmemtArrayList = null;
         lastNameList = null;
+        System.gc();
 
+    }
+
+    /* hide the keybaord so that we can not get getExtractedText on inactive InputConnection warning */
+    @Override
+    public void onPause() {
+        Log.e("DEBUG", "OnPause of HomeFragment");
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        inputMethodManager.hideSoftInputFromWindow(follow_up_Months.getWindowToken(), 0);
+        super.onPause();
     }
 
     private void goToNavigation() {
