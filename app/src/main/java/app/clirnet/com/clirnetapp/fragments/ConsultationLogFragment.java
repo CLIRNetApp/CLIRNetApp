@@ -64,11 +64,13 @@ public class ConsultationLogFragment extends Fragment {
     private StringBuilder sysdate;
     private TextView txtupdateDate;
     private TextView txtfod;
-    private List<RegistrationModel> filteredModelList;
+
     private List<RegistrationModel> visitDateDataFilter= new ArrayList<>();
     private RVAdapterforUpdateDate rvAdapterforUpdateDate;
     private FollowUpDateSearchAdapter followUpDateSearchAdapter;
     private View view;
+    private ArrayList<RegistrationModel> filterfodList;
+    private ArrayList<RegistrationModel> filterVistDateList;
 
     public ConsultationLogFragment() {
         // this.setHasOptionsMenu(true);
@@ -147,7 +149,7 @@ public class ConsultationLogFragment extends Fragment {
 
             sqlController = new SQLController(getContext().getApplicationContext());
             sqlController.open();
-            patientData = (sqlController.getPatientList());
+           // patientData = (sqlController.getPatientList());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -156,9 +158,8 @@ public class ConsultationLogFragment extends Fragment {
 
 //To changes backgound images on time slot
 
-
-
         final Calendar c = Calendar.getInstance();
+
         int year1 = c.get(Calendar.YEAR);
         int month1 = c.get(Calendar.MONTH);
         int day1 = c.get(Calendar.DAY_OF_MONTH);
@@ -192,12 +193,13 @@ public class ConsultationLogFragment extends Fragment {
             public void onClick(View v) {
                 SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy");
                 SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
-                filteredModelList = new ArrayList<>();
+
                 searchdate = date.getText().toString();
                 String reformattedStr = "";
                 try {
 
                     reformattedStr = myFormat.format(fromUser.parse(searchdate));
+                    Log.e("reformattedStr",""+reformattedStr);
 
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -208,21 +210,8 @@ public class ConsultationLogFragment extends Fragment {
                     return;
                 }
 
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                    if (!Objects.equals(reformattedStr, "")) {
-                        filteredModelList = filter(patientData, reformattedStr);
-                        visitDateDataFilter=visitDateFilter(patientData, reformattedStr);
-                    }
-                }
 
-                int filterModelSize= filteredModelList.size();
-                int filterSize= visitDateDataFilter.size();
 
-                if (filterModelSize <= 0 && filterSize <= 0) {
-
-                } else {
-                    norecordtv.setVisibility(View.GONE);
-                }
                 try {
                     SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
                     Date date1 = sdf1.parse(searchdate);
@@ -230,11 +219,19 @@ public class ConsultationLogFragment extends Fragment {
                     Date currentdate = sdf1.parse(String.valueOf(sysdate));
 
                     if (date1.after(currentdate) || date1.equals(currentdate)) {
+                        filterfodList = new ArrayList<>();
+                      //get records from database vai entered follow up date
+                        filterfodList= sqlController.getPatientListnew(reformattedStr);
+                        Log.e("ashishsize",""+filterfodList.size());
+                        int filterModelSize= filterfodList.size();
+                        if (filterModelSize > 0 ) {
+                            norecordtv.setVisibility(View.GONE);
+                        }
 
                         //  Toast.makeText(getContext(), "Date1 is after sysdate", Toast.LENGTH_LONG).show();
                         txtfod.setVisibility(View.GONE);
                         txtupdateDate.setVisibility(View.VISIBLE);
-                        followUpDateSearchAdapter.setFilter(filteredModelList);
+                        followUpDateSearchAdapter.setFilter(filterfodList);
                         recycler_view.setAdapter(followUpDateSearchAdapter);
 
                         recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
@@ -244,8 +241,6 @@ public class ConsultationLogFragment extends Fragment {
 
                                 followUpDateSearchAdapterToRecyclerView(position);
 
-
-
                             }
 
                             @Override
@@ -254,17 +249,24 @@ public class ConsultationLogFragment extends Fragment {
                             }
 
                         }));
-
                     }
-
                     if (date1.before(currentdate)) {
 
+                        filterVistDateList = new ArrayList<>();
+                        //get records from database vai entered visit  date
+                        filterVistDateList= sqlController.getPatientListVisitDateSearch(reformattedStr);
+                        Log.e("ashishsize1",""+filterVistDateList.size());
                         //  System.out.println("Date1 is before or equal to Date2");
+
+                        int filterModelSize= filterVistDateList.size();
+                        if (filterModelSize > 0 ) {
+                            norecordtv.setVisibility(View.GONE);
+                        }
 
                         txtfod.setVisibility(View.VISIBLE);
                         txtupdateDate.setVisibility(View.GONE);
 
-                        rvAdapterforUpdateDate.setFilter(visitDateDataFilter);
+                        rvAdapterforUpdateDate.setFilter(filterVistDateList);
                         recycler_view.setAdapter(rvAdapterforUpdateDate);
                         //   Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
                         recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
@@ -273,11 +275,7 @@ public class ConsultationLogFragment extends Fragment {
                             public void onClick(View view, int position) {
 
 
-
                                 setrvAdapterforUpdateDateToRecyclerView(position);
-
-
-
 
                                 //Toast.makeText(getContext(), book.getFirstName() + " is selected!", Toast.LENGTH_SHORT).show();
                             }
@@ -334,7 +332,8 @@ public class ConsultationLogFragment extends Fragment {
 
     private void followUpDateSearchAdapterToRecyclerView(int position) {
 
-        RegistrationModel book = filteredModelList.get(position);
+      //  RegistrationModel book = filteredModelList.get(position);
+         RegistrationModel book = filterfodList.get(position);
 
         Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
 
@@ -415,49 +414,8 @@ public class ConsultationLogFragment extends Fragment {
     }
 
 
-    //This method will filter data from our database generated list according to user query 6/8/16 Ashish
-    private List<RegistrationModel> filter(List<RegistrationModel> models, String query) {
-        query = query.toLowerCase();
-
-        final List<RegistrationModel> filteredModelList = new ArrayList<>();
-        for (RegistrationModel model : models) {
-
-            String fod;
-            try {
-                // fod = model.getFollowUpDate();
-                fod = model.getActualFollowupDate();
 
 
-                if (fod.contains(query)) {
-
-                    filteredModelList.add(model);
-
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-        }
-        return filteredModelList;
-    }
-
-    //This method will filter data from our database generated list according to user query 6/8/16 Ashish
-    private List<RegistrationModel> visitDateFilter(List<RegistrationModel> models, String query) {
-        query = query.toLowerCase();
-
-        final List<RegistrationModel> filteredModelList = new ArrayList<>();
-        for (RegistrationModel model : models) {
-            final String visit_date = model.getVisit_date();
-
-            if (visit_date.contains(query)) {
-
-                filteredModelList.add(model);
-
-            }
-        }
-        return filteredModelList;
-    }
     //show captured patient image into image view
     private void setupAnimation() {
 
@@ -513,7 +471,7 @@ public class ConsultationLogFragment extends Fragment {
 
         searchdate=null;
         sysdate= null;
-        filteredModelList = null;
+
         visitDateDataFilter = null;
         date= null;
         txtfod= null;

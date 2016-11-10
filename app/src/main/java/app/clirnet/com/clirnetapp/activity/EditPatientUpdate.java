@@ -114,8 +114,11 @@ public class EditPatientUpdate extends AppCompatActivity {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-        databaseClass = new DatabaseClass(EditPatientUpdate.this);
-        dbController = new SQLiteHandler(EditPatientUpdate.this);
+        if (databaseClass == null && dbController == null) {
+            databaseClass = new DatabaseClass(getApplicationContext());
+            dbController = new SQLiteHandler(getApplicationContext());
+        }
+
         strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
         Log.e("photo", "" + strPatientPhoto);
         String strName = getIntent().getStringExtra("NAME");
@@ -283,38 +286,37 @@ public class EditPatientUpdate extends AppCompatActivity {
 
             } else {
                 recyclerView.setVisibility(View.GONE);
-              //  noRecordsText.setVisibility(View.VISIBLE);
+                //  noRecordsText.setVisibility(View.VISIBLE);
             }
-
+            int id = databaseClass.getMaxAimId();
+            maxid = id + 1;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                int id = databaseClass.getMaxAimId();
-                maxid = id + 1;
-            } catch (Exception e) {
-                e.printStackTrace();
-
+            if (sqlController != null) {
+                sqlController.close();
             }
         }
 
-        Cursor cursor = null;
         try {
-            cursor = databaseClass.getAilmentsList();
-            mAilmemtArrayList = new ArrayList<>();
-            int columnIndex = cursor.getColumnIndex("ailment_name");
-            while (cursor.moveToNext()) {
-                mAilmemtArrayList.add(cursor.getString(columnIndex)); //add the item
-                //  Log.e("ali", "ali is:" + cursor.getString(columnIndex));
+
+            mAilmemtArrayList = databaseClass.getAilmentsListNew();
+            if (mAilmemtArrayList.size() != 0) {
+                ArrayAdapter<String> adp = new ArrayAdapter<>(getBaseContext(),
+                        android.R.layout.simple_dropdown_item_1line, mAilmemtArrayList);
+
+                adp.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                ailments1.setThreshold(1);
+
+                ailments1.setAdapter(adp);
+                ailments1.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
+
         //this code is for setting list to auto complete text view  8/6/16
         ArrayAdapter<String> adp = new ArrayAdapter<>(EditPatientUpdate.this,
                 android.R.layout.simple_dropdown_item_1line, mAilmemtArrayList);
@@ -688,6 +690,11 @@ public class EditPatientUpdate extends AppCompatActivity {
             // followupdateSellected = follow_up_days.getText().toString();
 
             int days = Integer.parseInt(follow_up_days.getText().toString());
+
+            if (days > 366) {
+                follow_up_days.setError("Please enter date between 0 to 366 !");
+                return;
+            }
             // int days = fow + day2;
 
             daysSel = String.valueOf(days);
@@ -707,6 +714,12 @@ public class EditPatientUpdate extends AppCompatActivity {
 
             //Used to conert weeks into date
             int fow = Integer.parseInt(follow_up_weeks.getText().toString());
+
+            if (fow > 52) {
+                follow_up_weeks.setError("Please enter valid weeks  !");
+                return;
+            }
+
             fowSel = String.valueOf(fow);
 
             int daysFromWeeks = fow * 7;
@@ -727,6 +740,11 @@ public class EditPatientUpdate extends AppCompatActivity {
             //followupdateSellected = follow_up_Months.getText().toString();
 
             int monthselected = Integer.parseInt(follow_up_Months.getText().toString());
+            if (monthselected > 12) {
+                follow_up_Months.setError("You can not enter more than 12 months !");
+                return;
+            }
+
             monthSel = String.valueOf(monthselected);
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
@@ -947,13 +965,14 @@ public class EditPatientUpdate extends AppCompatActivity {
             databaseClass = null;
         }
         sdf1 = null;
-         System.gc();
-         cleanResources();
+
+        cleanResources();
+        System.gc();
 
     }
 
     private void cleanResources() {
-        ailments1=null;
+        ailments1 = null;
         strPhone = null;
         strAge = null;
         strLanguage = null;
@@ -979,10 +998,13 @@ public class EditPatientUpdate extends AppCompatActivity {
         uriSavedImage = null;
         patientImagePath = null;
         sdf1 = null;
-         updatedTime = null;
-         sysdate = null;
-         noRecordsText = null;
+        updatedTime = null;
+        sysdate = null;
+        noRecordsText = null;
         docId = null;
-         strVisitId = null;
+        strVisitId = null;
+        if (mAilmemtArrayList != null) {
+            mAilmemtArrayList = null;
+        }
     }
 }

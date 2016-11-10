@@ -15,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+
 
 //this class is used import ailments.db file from asset folder into database for further use
 public class DatabaseClass extends SQLiteOpenHelper {
@@ -22,7 +24,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
     private static final String DB_PATH = "/data/data/app.clirnet.com.clirnetapp/databases/";
 
     private static final String DB_NAME = "clirnetApp.db";
-    public static final String DATABASE_NAME = "clirnetApp.db";
+
 
 
     private SQLiteDatabase myDataBase;
@@ -206,7 +208,6 @@ public class DatabaseClass extends SQLiteOpenHelper {
         }
         //  Log.e("returnValue",""+returnValue);
         return returnValue;
-
     }
 
     public Cursor getAilmentsList() throws ClirNetAppException {
@@ -221,12 +222,45 @@ public class DatabaseClass extends SQLiteOpenHelper {
         } catch (Exception e) {
             throw new ClirNetAppException("Error while getting records");
         }
-
-
         //	c.close();
         return cursor;
-
     }
+
+    //method to fetch ailments from db
+    public ArrayList<String> getAilmentsListNew() throws ClirNetAppException {
+        ArrayList<String> loginList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "SELECT  ailment_name  FROM ailments ";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    String user=cursor.getString(0);
+                  //  AilmentModel user = new AilmentModel(cursor.getString(0), cursor.getString(1) );
+
+                    loginList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            //TODO Create cutom exception and throw from here
+            throw new ClirNetAppException("Something went wrong while getting login records");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+        return  loginList;
+    }
+
 
     public void addAilments(String ailments, int ailid) {
         SQLiteDatabase db = null;

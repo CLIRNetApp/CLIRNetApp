@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 
 //this class is used import lastname.db file from asset folder into database for further use
 @SuppressWarnings("ALL")
@@ -236,6 +237,41 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
 
         return c;
 
+    }
+
+    //method to fetch ailments from db
+    public ArrayList<String> getAilmentsListNew() throws ClirNetAppException {
+        ArrayList<String> ailmentList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "SELECT  last_name  FROM last_name_master ";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    String user=cursor.getString(0);
+                    //  AilmentModel user = new AilmentModel(cursor.getString(0), cursor.getString(1) );
+
+                    ailmentList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            //TODO Create cutom exception and throw from here
+            throw new ClirNetAppException("Something went wrong while getting login records");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+        return  ailmentList;
     }
 
     public void addLastName(String lastName, int nameid) {

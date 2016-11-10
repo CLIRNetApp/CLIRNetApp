@@ -104,15 +104,16 @@ public class AddPatientUpdate extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-       try {
-           getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-           getSupportActionBar().setDisplayShowHomeEnabled(true);
-       }catch(NullPointerException e){
-           e.printStackTrace();
-       }
+        try {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
 
-
-        databaseClass = new DatabaseClass(AddPatientUpdate.this);
+        if (databaseClass == null) {
+            databaseClass = new DatabaseClass(getApplicationContext());
+        }
 
 
         strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
@@ -215,9 +216,10 @@ public class AddPatientUpdate extends AppCompatActivity {
 
 
         try {
-
-            sqlController = new SQLController(getApplicationContext());
-            sqlController.open();
+            if (sqlController == null) {
+                sqlController = new SQLController(getApplicationContext());
+                sqlController.open();
+            }
             dbController = new SQLiteHandler(getApplicationContext());
             //This will get all the visit  history of patient
             patientHistoryData = (sqlController.getPatientHistoryListAll(strPatientId)); //get all patient data from db
@@ -244,14 +246,22 @@ public class AddPatientUpdate extends AppCompatActivity {
         try {
 
             databaseClass.openDataBase();
-            cursor = databaseClass.getAilmentsList();
-            mAilmemtArrayList = new ArrayList<>();
-            int columnIndex = cursor.getColumnIndex("ailment_name");
-            while (cursor.moveToNext()) {
-                mAilmemtArrayList.add(cursor.getString(columnIndex)); //add the item
-            }
+            mAilmemtArrayList=databaseClass.getAilmentsListNew();
             int id = databaseClass.getMaxAimId();
             maxid = id + 1;
+            if(mAilmemtArrayList.size()>0){
+
+                //this code is for setting list to auto complete text view  8/6/16
+
+                ArrayAdapter<String> adp = new ArrayAdapter<>(AddPatientUpdate.this,
+                        android.R.layout.simple_dropdown_item_1line, mAilmemtArrayList);
+
+                adp.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                ailments1.setThreshold(1);
+
+                ailments1.setAdapter(adp);
+                ailments1.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -266,15 +276,6 @@ public class AddPatientUpdate extends AppCompatActivity {
         }
 
 
-        //this code is for setting list to auto complete text view  8/6/16
-        ArrayAdapter<String> adp = new ArrayAdapter<>(getApplicationContext(),
-                android.R.layout.simple_dropdown_item_1line, mAilmemtArrayList);
-
-        adp.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        ailments1.setThreshold(1);
-
-        ailments1.setAdapter(adp);
-        ailments1.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
 
         new Thread(new Runnable() {
             @Override
@@ -285,6 +286,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         //this is to check of image url is null or not for handle null pointer exception 13-8-16 Ashish
         if (strPatientPhoto != null && !TextUtils.isEmpty(strPatientPhoto)) {
+
             if (strPatientPhoto.length() > 0) {
                 // Bitmap bitmap = BitmapFactory.decodeFile(strPatientPhoto);
                 setUpGlide(strPatientPhoto, patientImage);
@@ -481,20 +483,22 @@ public class AddPatientUpdate extends AppCompatActivity {
         follow_up_days.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
+                String mFod = follow_up_days.getText().toString();
 
                 try {
-
-
-                    int days = Integer.parseInt(follow_up_days.getText().toString());
-                    String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), days));
-                    Log.e("cdate", "" + dateis);
-                    txtfollow_up_date.setText(dateis);
-                    follow_up_date.getText().clear();
-                    follow_up_weeks.getText().clear();
-                    follow_up_Months.getText().clear();
-                } catch (Exception e) {
+                    if (mFod != null) {
+                        int days = 0;
+                        days = Integer.parseInt(mFod);
+                        String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), days));
+                        Log.e("cdate", "" + dateis);
+                        txtfollow_up_date.setText(dateis);
+                        follow_up_date.getText().clear();
+                        follow_up_weeks.getText().clear();
+                        follow_up_Months.getText().clear();
+                    }
+                } catch (Exception e)
+                {
                     e.printStackTrace();
-
                 }
             }
 
@@ -511,18 +515,21 @@ public class AddPatientUpdate extends AppCompatActivity {
         follow_up_weeks.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
+                String strFow = follow_up_weeks.getText().toString();
 
                 try {
-
-                    int fow = Integer.parseInt(follow_up_weeks.getText().toString());
-                    fowSel = String.valueOf(fow);
-                    Log.e("fowSel", "" + fowSel);
-                    int daysFromWeeks = fow * 7;
-                    String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), daysFromWeeks));
-                    txtfollow_up_date.setText(dateis);
-                    follow_up_date.getText().clear();
-                    follow_up_days.getText().clear();
-                    follow_up_Months.getText().clear();
+                    if (strFow != null) {
+                        int fow = 0;
+                        fow = Integer.parseInt(strFow);
+                        fowSel = String.valueOf(fow);
+                        Log.e("fowSel", "" + fowSel);
+                        int daysFromWeeks = fow * 7;
+                        String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), daysFromWeeks));
+                        txtfollow_up_date.setText(dateis);
+                        follow_up_date.getText().clear();
+                        follow_up_days.getText().clear();
+                        follow_up_Months.getText().clear();
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -542,19 +549,20 @@ public class AddPatientUpdate extends AppCompatActivity {
 
             public void afterTextChanged(Editable s) {
 
+                String mFom = follow_up_Months.getText().toString();
                 try {
-                    int monthselected = Integer.parseInt(follow_up_Months.getText().toString());
-                    monthSel = String.valueOf(monthselected);
+                    if (mFom != null) {
+                        int monthselected = 0;
+                        monthselected = Integer.parseInt(mFom);
+                        monthSel = String.valueOf(monthselected);
+                        String dateis = sdf1.format(RegistrationActivity.addMonth(new Date(), monthselected));
+                        txtfollow_up_date.setText(dateis);
 
+                        follow_up_date.getText().clear();
+                        follow_up_days.getText().clear();
+                        follow_up_weeks.getText().clear();
 
-                    String dateis = sdf1.format(RegistrationActivity.addMonth(new Date(), monthselected));
-                    txtfollow_up_date.setText(dateis);
-
-                    follow_up_date.getText().clear();
-                    follow_up_days.getText().clear();
-                    follow_up_weeks.getText().clear();
-
-
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -636,7 +644,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
     private void setUpGlide(String imgPath, ImageView patientImage) {
 
-        Glide.with(AddPatientUpdate.this)
+        Glide.with(getApplicationContext())
                 .load(imgPath)
                 .crossFade()
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
@@ -684,6 +692,10 @@ public class AddPatientUpdate extends AppCompatActivity {
 
             int days = Integer.parseInt(follow_up_days.getText().toString());
             // int days = fow + day2;
+            if (days > 366) {
+                follow_up_days.setError("Please enter date between 0 to 366 !");
+                return;
+            }
 
             daysSel = String.valueOf(days);
 
@@ -703,6 +715,13 @@ public class AddPatientUpdate extends AppCompatActivity {
 
             //Used to conert weeks into date
             int fow = Integer.parseInt(follow_up_weeks.getText().toString());
+
+
+            if (fow > 52) {
+                follow_up_weeks.setError("Please enter valid weeks  !");
+                return;
+            }
+
             fowSel = String.valueOf(fow);
             Log.e("fowSel", "" + fowSel);
             int daysFromWeeks = fow * 7;
@@ -723,6 +742,11 @@ public class AddPatientUpdate extends AppCompatActivity {
             //followupdateSellected = follow_up_Months.getText().toString();
 
             int monthselected = Integer.parseInt(follow_up_Months.getText().toString());
+
+            if (monthselected > 12) {
+                follow_up_Months.setError("You can not enter more than 12 months !");
+                return;
+            }
             monthSel = String.valueOf(monthselected);
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");

@@ -47,7 +47,6 @@ import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 
 public class EditPersonalInfo extends AppCompatActivity {
 
-
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
     private static final int DATE_DIALOG_ID = 0;
     private final int[] imageArray = {R.drawable.one, R.drawable.two, R.drawable.three, R.drawable.four, R.drawable.five};
@@ -274,13 +273,13 @@ public class EditPersonalInfo extends AppCompatActivity {
 
             lastNamedb.openDataBase();
 
-            cursor = lastNamedb.getLastNameList();
-            mLastNameList = new ArrayList<>();
-            int columnIndex = cursor.getColumnIndex("last_name");
-            while (cursor.moveToNext()) {
-                mLastNameList.add(cursor.getString(columnIndex)); //add the item
 
+            mLastNameList = lastNamedb.getAilmentsListNew();
+
+            if(mLastNameList.size() > 0){
+                setLastnameSpinner();
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -385,7 +384,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                     return;
                 }
                 int age = Integer.parseInt(editAge);
-                if (age > 100) {
+                if (age > 150) {
                     editage.setError("Please enter Valid Age !");
                     return;
                 }

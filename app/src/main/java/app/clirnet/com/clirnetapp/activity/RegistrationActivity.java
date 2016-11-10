@@ -5,7 +5,7 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
+
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -50,6 +50,7 @@ import java.util.Date;
 import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
@@ -78,7 +79,8 @@ public class RegistrationActivity extends AppCompatActivity {
     private StringBuilder sysdate;
     private SQLController sqlController;
     private SQLiteHandler dbController;
-    private ArrayList<String> mAilmemtArrayList;
+  private ArrayList<String> mAilmemtArrayList;
+//    private ArrayList<AilmentModel> mAilmemtArrayList;
     private List<String> lastNameList;
     private String selectedLanguage;
 
@@ -111,6 +113,8 @@ public class RegistrationActivity extends AppCompatActivity {
     private String addedTime;
     private DatabaseClass databaseClass;
     private final int[] imageArray = {R.drawable.one, R.drawable.two, R.drawable.three, R.drawable.four, R.drawable.five};
+    private final int[] imageArray1 = {R.drawable.brethnom, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom, R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest, R.drawable.revituz, R.drawable.strathspey_brand, R.drawable.suprizon};
+
     private ImageView backChangingImages;
     private int maxid;//this is for ailments table
     private LastnameDatabaseClass lastNamedb;
@@ -221,12 +225,12 @@ public class RegistrationActivity extends AppCompatActivity {
 
         try {
 
-            sqlController = new SQLController( getApplicationContext());
+            sqlController = new SQLController(getApplicationContext());
             sqlController.open();
             dbController = new SQLiteHandler(getApplicationContext());
             //get doctor membership id
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
-//get doctor  id
+                 //get doctor  id
             docId = sqlController.getDoctorId();
             Log.e("docId", "" + docId);
             //this will give us a max of patient_id from patient records which will help to store records locally
@@ -266,58 +270,47 @@ public class RegistrationActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        Cursor cursor = null;
+
         //this will populate ailments  from asset folder ailment table
         try {
-            cursor = databaseClass.getAilmentsList();
-            mAilmemtArrayList = new ArrayList<>();
-            int columnIndex = cursor.getColumnIndex("ailment_name");
-            while (cursor.moveToNext()) {
-                mAilmemtArrayList.add(cursor.getString(columnIndex)); //add the item
-                // Log.e("ali", "ali is:" + cursor.getString(columnIndex));
+
+            mAilmemtArrayList=databaseClass.getAilmentsListNew();
+            if(mAilmemtArrayList.size() != 0) {
+                ArrayAdapter<String> adp = new ArrayAdapter<>(getBaseContext(),
+                        android.R.layout.simple_dropdown_item_1line, mAilmemtArrayList);
+
+                adp.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                multiAutoComplete.setThreshold(1);
+
+                multiAutoComplete.setAdapter(adp);
+
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
         }
 
         //this code is for setting list to auto complete text view  8/6/16
-        ArrayAdapter<String> adp = new ArrayAdapter<>(getBaseContext(),
-                android.R.layout.simple_dropdown_item_1line, mAilmemtArrayList);
 
-        adp.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        multiAutoComplete.setThreshold(1);
 
-        multiAutoComplete.setAdapter(adp);
-
-        Cursor cursor1 = null;
         try {
-            cursor1 = lastNamedb.getLastNameList();
-            mLastNameList = new ArrayList<>();
-            int columnIndex = cursor1.getColumnIndex("last_name");
-            while (cursor1.moveToNext()) {
-                mLastNameList.add(cursor1.getString(columnIndex)); //add the item
-            }
+            mLastNameList = lastNamedb.getAilmentsListNew();
+            if(mLastNameList.size() > 0){
+                ArrayAdapter<String> lastnamespin = new ArrayAdapter<>(RegistrationActivity.this,
+                        android.R.layout.simple_dropdown_item_1line, mLastNameList);
 
-        } catch (Exception e) {
+                multiAutoComplete.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+                lastnamespin.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                lastName.setThreshold(1);
+                lastName.setAdapter(lastnamespin);
+            }
+        } catch (ClirNetAppException e) {
             e.printStackTrace();
-        } finally {
-            if (cursor1 != null) {
-                cursor1.close();
-            }
         }
-        //this code is for setting list to auto complete text view
-        ArrayAdapter<String> lastnamespin = new ArrayAdapter<>(this.getApplicationContext(),
-                android.R.layout.simple_dropdown_item_1line, mLastNameList);
 
-        multiAutoComplete.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
-        lastnamespin.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        lastName.setThreshold(1);
-        lastName.setAdapter(lastnamespin);
+
+        //this code is for setting list to auto complete text view
+
 
         // when the user clicks an item of the drop-down list
 
@@ -449,6 +442,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         int daysFromWeeks = fow * 7;
                         String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), daysFromWeeks));
                         showfodtext.setText(dateis);
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -463,7 +457,6 @@ public class RegistrationActivity extends AppCompatActivity {
 
                 if (!hasFocus) {
                     try {
-
 
                         int monthselected = Integer.parseInt(follow_up_Months.getText().toString());
                         monthSel = String.valueOf(monthselected);
@@ -498,7 +491,7 @@ public class RegistrationActivity extends AppCompatActivity {
         follow_up_days.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
-                int days=0;
+                int days = 0;
                 try {
 
 
@@ -692,8 +685,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     //start changing image into some time interval
     private void setUpAnimation() {
-
-
+        backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
         Runnable runnable = new Runnable() {
             int i = 0;
 
@@ -706,7 +698,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 backChangingImages.postDelayed(this, 10000);  //for interval...
             }
         };
-        backChangingImages.postDelayed(runnable, 100); //for initial delay..
+        backChangingImages.postDelayed(runnable, 100); //for initial delay...
     }
 
 
@@ -977,8 +969,6 @@ public class RegistrationActivity extends AppCompatActivity {
         //  Toast.makeText(RegistrationActivity.this, " Gender" + radioSexButton.getText().toString(), Toast.LENGTH_SHORT).show();
         String sex = radioSexButton.getText().toString();
 
-        // dofollowupValidations();
-
 
         //  String languages = language.getText().toString().trim();
         follow_up_dates = follow_up_date.getText().toString().trim();
@@ -994,15 +984,15 @@ public class RegistrationActivity extends AppCompatActivity {
         }
         int nwage = 0;
         try {
-            nwage = Integer.parseInt(current_age.trim());
+            nwage = Integer.parseInt(current_age);
+            if (nwage > 150) {
+                age.setError("Please enter Valid Age !");
+                return;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        if (nwage > 100) {
-            age.setError("Please enter Valid Age !");
-            return;
-        }
 
         if (TextUtils.isEmpty(first_name)) {
             firstName.setError("Please enter First Name !");
@@ -1014,12 +1004,12 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
         lastNameList.add(last_name);
-        if (!isDuplicate(mLastNameList, last_name)) {
+       /* if (!isDuplicate(mLastNameList, last_name)) {
 
             //dbController.addLastName(last_name);
             lastNamedb.addLastName(last_name, maxLastId);
 
-        }
+        }*/
         if (TextUtils.isEmpty(phone_number)) {
             phone_no.setError("Please enter Phone Number !");
 
@@ -1040,7 +1030,6 @@ public class RegistrationActivity extends AppCompatActivity {
             return;
         }
         if (current_age == String.valueOf(0)) {
-
 
             age.setError("Please enter proper date");
             date_of_birth.setError("Please enter proper date");
@@ -1092,7 +1081,10 @@ public class RegistrationActivity extends AppCompatActivity {
 
             int days = Integer.parseInt(follow_up_days.getText().toString());
             //
-
+            if (days > 366) {
+                follow_up_days.setError("Please enter days between 1 to 366 !");
+                return;
+            }
             daysSel = String.valueOf(days);
 
             SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
@@ -1108,14 +1100,19 @@ public class RegistrationActivity extends AppCompatActivity {
             followupdateSellected = follow_up_weeks.getText().toString();
 
             //Used to conert weeks into date
-            int fow = Integer.parseInt(follow_up_weeks.getText().toString());
+            int fow = Integer.parseInt(follow_up_weeks .getText().toString());
+            if (followupdateSellected != null) {
+                if (fow > 52) {
+                    follow_up_weeks.setError("Please enter valid weeks  !");
+                    return;
+                }
+            }
             fowSel = String.valueOf(fow);
 
             int daysFromWeeks = fow * 7;
 
 
             SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
-
 
             usersellectedDate = sdf1.format(addDay(new Date(), daysFromWeeks));
 
@@ -1125,12 +1122,16 @@ public class RegistrationActivity extends AppCompatActivity {
             followupdateSellected = follow_up_Months.getText().toString();
 
             int monthselected = Integer.parseInt(follow_up_Months.getText().toString());
+
+            if (monthselected > 12) {
+                follow_up_Months.setError("You can not enter more than 12 months !");
+                return;
+            }
             monthSel = String.valueOf(monthselected);
 
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
             usersellectedDate = sdf.format(addMonth(new Date(), monthselected));
-
 
         }
 
@@ -1163,12 +1164,11 @@ public class RegistrationActivity extends AppCompatActivity {
             goToNavigation();
         }
     }
-
     // to do remove it and write update while inserting
     //Method to validate if there is allready records in db to check
     public boolean isDuplicate(List<String> col, String value) {
         boolean isDuplicate = false;
-        for (String s : col) {
+        for (String  s : col) {
             if (s.equals(value)) {
                 isDuplicate = true;
                 break;
@@ -1176,6 +1176,8 @@ public class RegistrationActivity extends AppCompatActivity {
         }
         return isDuplicate;
     }
+
+
 
 // --Commented out by Inspection START (07-11-2016 16:44):
 //    //Custom Toast.......................................
@@ -1222,12 +1224,15 @@ public class RegistrationActivity extends AppCompatActivity {
         // session.setLogin(false);
         if (dbController != null) {
             dbController.close();//Close the all database connection opened here 31/10/2008 By. Ashish
+            dbController=null;
         }
         if (databaseClass != null) {
             databaseClass.close();//Close the all database connection opened here 31/10/2008 By. Ashish
+            databaseClass=null;
         }
         if (lastNamedb != null) {
             lastNamedb.close();//Close the all database connection opened here 31/10/2008 By. Ashish
+            lastNamedb=null;
         }
         cleanResources();
 
@@ -1267,6 +1272,7 @@ public class RegistrationActivity extends AppCompatActivity {
         monthSel = null;
         fowSel = null;
         mLastNameList = null;
+        mAilmemtArrayList=null;
         showfodtext = null;
         dt = null;
         sdf1 = null;

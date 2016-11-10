@@ -68,7 +68,12 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
+       /* Bundle bundle = getIntent().getExtras();
 
+              //Extract the data…
+
+        String venName = bundle.getString("VENUE_NAME");
+        Log.e("ashish"," "+venName);*/
 
         strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
 
@@ -296,4 +301,10 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         strLastName=null;
        // System.gc();
     }
+  //this will stop user presing tab back button
+    @Override
+    public void onBackPressed() {
+
+    }
+
 }

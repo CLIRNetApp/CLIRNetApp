@@ -12,7 +12,7 @@ import android.database.Cursor;
 
 import android.database.sqlite.SQLiteDatabase;
 
- import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteOpenHelper;
 
 import android.util.Log;
 
@@ -24,7 +24,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     private static final String TAG = "SQLHandler";
     private final Context myContext;
-
 
 
     private SQLiteDatabase db;
@@ -691,7 +690,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         //SQLiteDatabase myDataBase = SQLiteDatabase.openDatabase(DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY);
 
-        String searchQuery = "SELECT  * FROM patient where flag=0 ";
+        String searchQuery = "SELECT  * FROM patient where flag = 0 ";
         Cursor cursor = db1.rawQuery(searchQuery, null);
 
         JSONArray resultSet = new JSONArray();
@@ -714,12 +713,16 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     } catch (Exception e) {
                         Log.d("TAG_NAME", e.getMessage());
                     }
+
+
                 }
             }
             resultSet.put(rowObject);
             cursor.moveToNext();
         }
+
         cursor.close();
+        db1.close();
         Log.d("TAG_NAME", resultSet.toString());
         return resultSet;
     }
@@ -757,12 +760,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     } catch (Exception e) {
                         Log.d("TAG_NAME", e.getMessage());
                     }
+
                 }
             }
             resultSet.put(rowObject);
             cursor.moveToNext();
         }
         cursor.close();
+        db1.close();
         Log.d("TAG_NAME", resultSet.toString());
         return resultSet;
     }
@@ -875,6 +880,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d("addedailemnt", "New patient inserted into sqlite: " + id);
 
     }
+
     public void addAilments(String ailments) {
         SQLiteDatabase db = null;
         long id = 0;

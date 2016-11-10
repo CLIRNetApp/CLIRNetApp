@@ -4,10 +4,12 @@ package app.clirnet.com.clirnetapp.activity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +18,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
+import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
 import java.io.IOException;
 
@@ -33,7 +38,7 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
 
-public class LoginActivity extends Activity {
+public class LoginActivity extends Activity  {
     private static final String TAG = "Login";
     private static final String PREFS_NAME = "savedCredit";
     private static final String PREF_USERNAME = "username";
@@ -42,7 +47,6 @@ public class LoginActivity extends Activity {
     private EditText inputEmail;
     private EditText inputPassword;
     private ProgressDialog pDialog;
-
 
 
     private EditText confirmPassord, password;
@@ -56,10 +60,6 @@ public class LoginActivity extends Activity {
     private String md5EncyptedDataPassword;
 
     private SQLController sqlController;
-
-
-
-
 
 
     @Override
@@ -76,15 +76,15 @@ public class LoginActivity extends Activity {
         TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
 
-        DatabaseClass databaseClass = new DatabaseClass(LoginActivity.this);
-        LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(LoginActivity.this);
+        DatabaseClass databaseClass = new DatabaseClass(getApplicationContext());
+        LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
 
         //redirect to PrivacyPolicy Page
 
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), PrivacyPolicy.class);
+                Intent intent = new Intent(getApplicationContext(), PrivacyPolicy.class);
                 startActivity(intent);
 
             }
@@ -94,7 +94,7 @@ public class LoginActivity extends Activity {
         termsandCondition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getBaseContext(), TermsCondition.class);
+                Intent intent = new Intent(getApplicationContext(), TermsCondition.class);
                 startActivity(intent);
 
             }
@@ -114,18 +114,18 @@ public class LoginActivity extends Activity {
         pDialog.setCancelable(false);
 
         // SQLite database handler
+       // showDialog12();
 
         connectionDetector = new ConnectionDetector(getApplicationContext());
 
 
         //open database controller class for further operations on database
-       // Cursor cursor = null;
+        // Cursor cursor = null;
 
         try {
-
-            sqlController = new SQLController(LoginActivity.this);
+            sqlController = new SQLController(getApplicationContext());
             sqlController.open();
-            dbController = new SQLiteHandler(LoginActivity.this);
+            dbController = new SQLiteHandler(getApplicationContext());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -148,9 +148,8 @@ public class LoginActivity extends Activity {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally {
-            if(databaseClass != null){
+        } finally {
+            if (databaseClass != null) {
                 databaseClass.close();
             }
         }
@@ -173,9 +172,8 @@ public class LoginActivity extends Activity {
 
         } catch (Exception e) {
             e.printStackTrace();
-        }
-        finally {
-            if(lastnameDatabaseClass != null){
+        } finally {
+            if (lastnameDatabaseClass != null) {
                 lastnameDatabaseClass.close();
             }
         }
@@ -217,6 +215,8 @@ public class LoginActivity extends Activity {
         );
 
     }
+
+
 // --Commented out by Inspection START (07-11-2016 16:43):
 //// This method to add ailments from asset folder to our db ie. ailments
 //    private void saveAilmentToDb() {
@@ -265,16 +265,16 @@ public class LoginActivity extends Activity {
             isInternetPresent = connectionDetector.isConnectingToInternet();
             if (isInternetPresent) {
                 //Toast.makeText(this, " Connected ", Toast.LENGTH_LONG).show();
-               //  checkLogin(name, md5EncyptedDataPassword);
-                new LoginAsyncTask(LoginActivity.this,name,md5EncyptedDataPassword);
+                //  checkLogin(name, md5EncyptedDataPassword);
+                new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword);
 
-                new DoctorDeatilsAsynTask(LoginActivity.this,name,md5EncyptedDataPassword);
-               // hideDialog();
+                new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword);
+                // hideDialog();
 
 
             } else {
 
-                boolean isLogin ;
+                boolean isLogin;
                 try {
 
                     isLogin = sqlController.validateUser(name, md5EncyptedDataPassword);
@@ -429,21 +429,13 @@ public class LoginActivity extends Activity {
 
     private void goToNavigation() {
 
-        Intent  intent = new Intent(getApplicationContext(),
+        Intent intent = new Intent(getApplicationContext(),
                 NavigationActivity.class);
         startActivity(intent);
         finish();
     }
 
-    private void showDialog() {
-        if (!pDialog.isShowing())
-            pDialog.show();
-    }
 
-    private void hideDialog() {
-        if (pDialog.isShowing())
-            pDialog.dismiss();
-    }
 
 
     @Override
@@ -462,10 +454,12 @@ public class LoginActivity extends Activity {
 
     }
 
+
     public void onStart() {
         super.onStart();
         //read username and password from SharedPreferences
         getUser();
+
     }
 
     //this method will set username and password to edit text if remember me chkbox is checked previously
@@ -473,7 +467,7 @@ public class LoginActivity extends Activity {
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         String username = pref.getString(PREF_USERNAME, null);
         String password = pref.getString(PREF_PASSWORD, null);
-      //  Log.e("password", "" + username + "" + password);
+        //  Log.e("password", "" + username + "" + password);
 
         if (username != null || password != null) {
             //directly show logout form
@@ -482,30 +476,29 @@ public class LoginActivity extends Activity {
             inputPassword.setText(password);
         }
     }
+
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d("onDestroy", "The onDestroy() event");
         // session.setLogin(false);
         //Close the all database connection opened here 31/10/2008 By. Ashish
-        if(sqlController != null){
+        if (sqlController != null) {
             sqlController = null;
         }
-        if(dbController != null){
+        if (dbController != null) {
             dbController.close();
-            dbController=null;
+            dbController = null;
         }
-        if(connectionDetector != null){
-            connectionDetector=null;
+        if (connectionDetector != null) {
+            connectionDetector = null;
         }
-      //  pDialog=null;
-        md5=null;
-        md5EncyptedDataPassword=null;
-        inputEmail=null;
-        inputPassword=null;
+        //  pDialog=null;
+        md5 = null;
+        md5EncyptedDataPassword = null;
+        inputEmail = null;
+        inputPassword = null;
         System.gc();
     }
-
-
-
 }

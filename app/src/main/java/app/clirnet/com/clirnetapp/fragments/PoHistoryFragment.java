@@ -235,7 +235,11 @@ public class PoHistoryFragment extends Fragment {
         RegistrationModel book = patientData.get(position);
 
         Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
-
+        Bundle bundle = new Bundle();
+//Add your data from getFactualResults method to bundle
+        bundle.putString("VENUE_NAME", "Umredkar");
+//Add the bundle to the intent
+        i.putExtras(bundle);
         i.putExtra("PATIENTPHOTO", book.getPhoto());
         i.putExtra("ID", book.getPat_id());
         Log.e("book.getPat_id()", "" + book.getPat_id());

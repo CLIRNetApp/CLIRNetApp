@@ -9,6 +9,7 @@ import android.util.Log;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 //this class is most imp class which used to query the database
@@ -60,10 +61,42 @@ public class SQLController {
         } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong");
         }
-
         return cursor;
-
     }
+
+    //method to fetch user name and password
+    public ArrayList<LoginModel> getUserLoginRecrodsNew() throws ClirNetAppException {
+        ArrayList<LoginModel> loginList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "SELECT name,password  FROM user limit 1  ";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    LoginModel user = new LoginModel(cursor.getString(0), cursor.getString(1) );
+
+                    loginList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            //TODO Create cutom exception and throw from here
+            throw new ClirNetAppException("Something went wrong while getting login records");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+         return  loginList;
+        }
 
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments
     public ArrayList<RegistrationModel> getPatientList() throws ClirNetAppException {
@@ -104,6 +137,88 @@ public class SQLController {
         return hotelList;
 
     }
+
+    //get all the patient imp data from db, which will used in Consultation fragments and home fragments
+    public ArrayList<RegistrationModel> getPatientListnew(String date) throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.actual_follow_up_date = '" + date + "' order by ph.key_visit_id  desc";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                            cursor.getString(7), cursor.getString(8),
+                            cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
+                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21));
+
+                    hotelList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            //TODO Create cutom exception and throw from here
+            throw new ClirNetAppException("Something went wrong");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+
+        return hotelList;
+
+    }
+
+    //get all the patient imp data from db, which will used in Consultation fragments and home fragments
+    public ArrayList<RegistrationModel> getPatientListVisitDateSearch(String date) throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+          //  String selectQuery ="SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date like '"+ "%" + date +"'order by ph.key_visit_id  desc limit 25";
+            String selectQuery ="SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' order by ph.key_visit_id  desc";
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                            cursor.getString(7), cursor.getString(8),
+                            cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
+                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21));
+
+                    hotelList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            //TODO Create cutom exception and throw from here
+            throw new ClirNetAppException("Something went wrong");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+
+        return hotelList;
+
+    }
+
 
 
     //get max count of patient id

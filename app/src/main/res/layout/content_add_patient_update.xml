@@ -8,14 +8,12 @@
     android:orientation="vertical"
     android:padding="5dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".activity.EditPatientUpdate"
-    >
+    tools:context=".activity.EditPatientUpdate">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
-
 
 
         <LinearLayout
@@ -68,10 +66,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="120dp"
                     android:layout_gravity="start"
+                    android:contentDescription="@string/desc"
                     android:orientation="vertical"
-                    android:src="@drawable/change_imgfive_converted"
-                    android:contentDescription="@string/desc">
-                </ImageView>
+                    android:src="@drawable/change_imgfive_converted"></ImageView>
 
             </LinearLayout>
 
@@ -97,8 +94,8 @@
                         app:civ_border_color="#EEEEEE"
                         app:civ_border_width="4dp"
                         app:civ_shadow="true"
-                        app:civ_shadow_radius="10"
-                        app:civ_shadow_color="#FF0000"/>
+                        app:civ_shadow_color="#FF0000"
+                        app:civ_shadow_radius="10" />
 
                     <!-- <ImageView
                          android:id="@+id/patientImage"
@@ -141,8 +138,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.1"
-                        android:src="@drawable/editprofile"
-                        android:contentDescription="@string/desc"/>
+                        android:contentDescription="@string/desc"
+                        android:src="@drawable/editprofile" />
 
 
                 </LinearLayout>
@@ -150,9 +147,9 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:baselineAligned="false"
                     android:orientation="horizontal"
-                    android:weightSum="4"
-                    android:baselineAligned="false">
+                    android:weightSum="4">
 
 
                     <LinearLayout
@@ -165,8 +162,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.2"
-                            android:src="@drawable/age"
-                            android:contentDescription="@string/desc"/>
+                            android:contentDescription="@string/desc"
+                            android:src="@drawable/age" />
 
                         <TextView
                             android:id="@+id/age1"
@@ -195,8 +192,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.2"
-                            android:src="@drawable/mobile"
-                            android:contentDescription="@string/desc"/>
+                            android:contentDescription="@string/desc"
+                            android:src="@drawable/mobile" />
 
                         <TextView
                             android:id="@+id/mobileno"
@@ -223,8 +220,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.2"
-                            android:src="@drawable/sex"
-                            android:contentDescription="@string/desc"/>
+                            android:contentDescription="@string/desc"
+                            android:src="@drawable/sex" />
 
                         <TextView
                             android:id="@+id/gender"
@@ -240,6 +237,7 @@
                             android:textSize="16sp"
                             tools:targetApi="jelly_bean" />
                     </LinearLayout>
+
                     <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -250,8 +248,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.2"
-                            android:src="@drawable/languge"
-                            android:contentDescription="@string/desc"/>
+                            android:contentDescription="@string/desc"
+                            android:src="@drawable/languge" />
 
                         <TextView
                             android:id="@+id/lang"
@@ -357,8 +355,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:paddingLeft="5dp"
-                            android:textColor="@color/bg_main"
-                            />
+                            android:textColor="@color/bg_main" />
                     </LinearLayout>
 
                     <LinearLayout
@@ -375,18 +372,18 @@
                             android:layout_margin="4dp"
                             android:layout_weight="0.5"
                             android:background="@drawable/rectangle_corner"
-                            android:drawableRight="@android:drawable/ic_menu_my_calendar"
-                            android:fontFamily="sans-serif"
-                            android:hint="Follow up Date"
                             android:clickable="false"
                             android:cursorVisible="false"
+                            android:drawableRight="@android:drawable/ic_menu_my_calendar"
                             android:focusable="false"
                             android:focusableInTouchMode="false"
+                            android:fontFamily="sans-serif"
+                            android:hint="Follow up Date"
                             android:inputType="date"
+                            android:maxLines="1"
                             android:padding="10dp"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            tools:targetApi="jelly_bean"
-                            android:maxLines="1" />
+                            tools:targetApi="jelly_bean" />
 
                         <TextView
                             android:layout_width="0dp"
@@ -407,10 +404,11 @@
                             android:hint="Follow up Days"
                             android:inputType="date"
 
+                            android:maxLength="3"
+                            android:maxLines="1"
                             android:padding="10dp"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            tools:targetApi="jelly_bean"
-                            android:maxLines="1" />
+                            tools:targetApi="jelly_bean" />
 
                     </LinearLayout>
 
@@ -430,11 +428,11 @@
                             android:fontFamily="sans-serif"
                             android:hint="Follow up Weeks"
                             android:inputType="number"
-
+                            android:maxLength="2"
+                            android:maxLines="1"
                             android:padding="10dp"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            tools:targetApi="jelly_bean"
-                            android:maxLines="1" />
+                            tools:targetApi="jelly_bean" />
 
                         <TextView
                             android:layout_width="0dp"
@@ -454,11 +452,11 @@
                             android:fontFamily="sans-serif"
                             android:hint="Follow up Month"
                             android:inputType="number"
-
+                            android:maxLength="2"
+                            android:maxLines="1"
                             android:padding="10dp"
                             android:textAppearance="?android:attr/textAppearanceSmall"
-                            tools:targetApi="jelly_bean"
-                            android:maxLines="1" />
+                            tools:targetApi="jelly_bean" />
                     </LinearLayout>
 
 
@@ -481,12 +479,12 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.4"
-                        android:text="Add Prescription"
                         android:background="#50BAA0"
-                        android:paddingRight="5dp"
-                        android:textColor="#ffffff"
-                        android:gravity="center"
                         android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:paddingRight="5dp"
+                        android:text="Add Prescription"
+                        android:textColor="#ffffff"
                         android:textSize="16sp"
                         tools:targetApi="jelly_bean" />
 
@@ -495,10 +493,9 @@
                         android:layout_width="0dp"
                         android:layout_height="40dp"
                         android:layout_weight="0.5"
-                        android:padding="10dp"
-                        android:src="@drawable/emp_img"
                         android:contentDescription="@string/desc"
-                        />
+                        android:padding="10dp"
+                        android:src="@drawable/emp_img" />
 
                     <!--<com.mikhaellopez.circularimageview.CircularImageView
                         android:id="@+id/imageViewprescription"
@@ -517,10 +514,12 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="10dp" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -542,13 +541,13 @@
                             android:layout_height="100dp"
                             android:layout_margin="4dp"
                             android:background="@drawable/rectangle_corner"
-                            android:hint="Clinical Notes"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
                             android:fontFamily="sans-serif"
-                            android:padding="10dp"
-                            android:maxLines="4"
-                            android:inputType="text|textMultiLine|textCapSentences"
                             android:gravity="left"
+                            android:hint="Clinical Notes"
+                            android:inputType="text|textMultiLine|textCapSentences"
+                            android:maxLines="4"
+                            android:padding="10dp"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
                             tools:targetApi="jelly_bean" />
 
                     </LinearLayout>
@@ -600,15 +599,12 @@
                             tools:targetApi="jelly_bean" />
 
 
-
-
                     </LinearLayout>
 
 
                 </LinearLayout>
 
             </LinearLayout>
-
 
 
             <LinearLayout
@@ -625,22 +621,23 @@
                     android:layout_height="wrap_content"
                     android:layout_weight=".1"
                     android:visibility="invisible" />
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:layout_weight="2">
+                    android:layout_weight="2"
+                    android:orientation="horizontal">
 
                     <TextView
 
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="0.9"
+                        android:fontFamily="sans-serif-medium"
                         android:paddingLeft="7dp"
                         android:text="Update History"
-                        android:textSize="16sp"
-                        android:fontFamily="sans-serif-medium"
                         android:textColor="#50BAA0"
+                        android:textSize="16sp"
                         tools:targetApi="jelly_bean" />
 
                     <TextView
@@ -667,8 +664,6 @@
                 </LinearLayout>
 
 
-
-
             </LinearLayout>
 
 
@@ -676,6 +671,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_view"
                     android:layout_width="match_parent"
@@ -685,15 +681,10 @@
                     app:layoutManager="GridLayoutManager"
                     app:spanCount="1" />
 
-                <include layout="@layout/footer"
+                <include
+                    layout="@layout/footer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
-
-
-
-
-
-
 
 
             </LinearLayout>

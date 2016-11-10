@@ -373,7 +373,8 @@
                     android:padding="10dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     tools:targetApi="jelly_bean"
-                    android:maxLines="1" />
+                    android:maxLines="1"
+                    android:maxLength="3"/>
 
             </LinearLayout>
 
