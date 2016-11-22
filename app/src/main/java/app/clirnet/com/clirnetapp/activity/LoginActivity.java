@@ -4,31 +4,33 @@ package app.clirnet.com.clirnetapp.activity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.Cursor;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
-import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
-
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.Utility.MD5;
-import app.clirnet.com.clirnetapp.app.AsyncTaskFinished;
+import app.clirnet.com.clirnetapp.Utility.SyncDataService;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.app.DoctorDeatilsAsynTask;
 import app.clirnet.com.clirnetapp.app.LoginAsyncTask;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
@@ -37,6 +39,7 @@ import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
+import app.clirnet.com.clirnetapp.models.Counts;
 
 public class LoginActivity extends Activity  {
     private static final String TAG = "Login";
@@ -60,6 +63,8 @@ public class LoginActivity extends Activity  {
     private String md5EncyptedDataPassword;
 
     private SQLController sqlController;
+    private AppController appController;
+    private Button btnLogin;
 
 
     @Override
@@ -69,7 +74,7 @@ public class LoginActivity extends Activity  {
 
         inputEmail = (EditText) findViewById(R.id.email);
         inputPassword = (EditText) findViewById(R.id.password);
-        TextView btnLogin = (Button) findViewById(R.id.btnLogin);
+        btnLogin = (Button) findViewById(R.id.btnLogin);
 
 
         Button btnLinkToForgetScreen = (Button) findViewById(R.id.btnLinkToForgetScreen);
@@ -78,8 +83,11 @@ public class LoginActivity extends Activity  {
 
         DatabaseClass databaseClass = new DatabaseClass(getApplicationContext());
         LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
-
+        appController=new AppController();
         //redirect to PrivacyPolicy Page
+
+        Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
+        startService(serviceIntent);
 
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,6 +97,7 @@ public class LoginActivity extends Activity  {
 
             }
         });
+        Log.e("timeis",""+appController.getDateTime());
 
         //redirect to TermsCondition Page
         termsandCondition.setOnClickListener(new View.OnClickListener() {
@@ -129,6 +138,7 @@ public class LoginActivity extends Activity  {
 
         } catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Home" + e);
         }
 
         try {
@@ -136,8 +146,10 @@ public class LoginActivity extends Activity  {
             databaseClass.createDataBase();
 
         } catch (Exception ioe) {
+            appController.appendLog(appController.getDateTime()+"" +"/"+"Home" + ioe);
 
             throw new Error("Unable to create database");
+
 
         }
 
@@ -148,6 +160,7 @@ public class LoginActivity extends Activity  {
 
         } catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+"" +"/"+"Home" + e);
         } finally {
             if (databaseClass != null) {
                 databaseClass.close();
@@ -160,6 +173,7 @@ public class LoginActivity extends Activity  {
             lastnameDatabaseClass.createDataBase();
 
         } catch (IOException ioe) {
+            appController.appendLog(appController.getDateTime()+"" +"/"+"Home" + ioe);
 
             throw new Error("Unable to create database");
 
@@ -172,12 +186,28 @@ public class LoginActivity extends Activity  {
 
         } catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+"" +"/"+"Home" + e);
         } finally {
             if (lastnameDatabaseClass != null) {
                 lastnameDatabaseClass.close();
             }
         }
+        btnLogin.setOnTouchListener(new View.OnTouchListener() {
 
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    btnLogin.setBackgroundColor(getResources().getColor(R.color.white));
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    btnLogin.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
+            }
+
+        });
 
         // Login button Click Event
         btnLogin.setOnClickListener(new View.OnClickListener() {
@@ -189,7 +219,7 @@ public class LoginActivity extends Activity  {
 
 
                                             //This code used for Remember Me(ie. save login id and password for future ref.)
-                                            rememberMe(name, ""); //save username only
+                                            rememberMe(name); //save username only
 
                                             //rememberMeCheckbox();//Removed remeber me check box for safety concern 04-11-16
                                             //to authenticate user credentials
@@ -207,14 +237,21 @@ public class LoginActivity extends Activity  {
 
                                                      public void onClick(View view) {
 
-                                                         showChangePassDialog();
+                                                         //   showChangePassDialog();
 
                                                      }
                                                  }
 
         );
 
+       /* String size=getScreenResolution(this);
+        Log.e("screen size",""+size);*/
+
+
+
     }
+
+
 
 
 // --Commented out by Inspection START (07-11-2016 16:43):
@@ -256,6 +293,20 @@ public class LoginActivity extends Activity  {
     private void LoginAuthentication() {
 
         md5EncyptedDataPassword = MD5.getMD5(strPassword);
+/*String uname=null;
+        try {
+            uname=sqlController.getUserMailId();
+            Log.e("uname",""+uname);
+            if(uname.equals( null)){
+                Toast.makeText(getApplicationContext(),
+                        "Initialize Application.", Toast.LENGTH_LONG)
+                        .show();
+            }
+        } catch (ClirNetAppException e) {
+            e.printStackTrace();
+        }*/
+
+
 
         // Check for empty data in the form
         if (!name.isEmpty() && !strPassword.isEmpty()) {
@@ -271,7 +322,6 @@ public class LoginActivity extends Activity  {
                 new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword);
                 // hideDialog();
 
-
             } else {
 
                 boolean isLogin;
@@ -280,16 +330,17 @@ public class LoginActivity extends Activity  {
                     isLogin = sqlController.validateUser(name, md5EncyptedDataPassword);
 
                     if (isLogin) {
-                        Toast.makeText(getApplicationContext(), "Login Successfully!!! ", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_LONG).show();
                         goToNavigation();
 
                     } else {
-                        Toast.makeText(getApplicationContext(), " No Records found for the user : " + name, Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "Username/Password Mismatch", Toast.LENGTH_LONG).show();
 
-                        Toast.makeText(getApplicationContext(), " You are not connected to Internet!! ", Toast.LENGTH_LONG).show();
+                       // Toast.makeText(getApplicationContext(), " You are not connected to Internet!! ", Toast.LENGTH_LONG).show();
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
+                    appController.appendLog("Home" + e);
                 } finally {
                     if (sqlController != null) {
                         sqlController.close();
@@ -301,7 +352,7 @@ public class LoginActivity extends Activity  {
         } else {
             // Prompt user to enter credentials
             Toast.makeText(getApplicationContext(),
-                    "Please Enter the Credentials!!!", Toast.LENGTH_LONG)
+                    "Username/Password Incomplete", Toast.LENGTH_LONG)
                     .show();
         }
 
@@ -328,7 +379,7 @@ public class LoginActivity extends Activity  {
 
         final Dialog dialog = new Dialog(LoginActivity.this);
         dialog.setContentView(R.layout.change_password_dialog);
-        dialog.setTitle("Change Password...");
+        dialog.setTitle("Forgot Password");
 
         // set the custom dialog components - text, image and button
 
@@ -350,10 +401,10 @@ public class LoginActivity extends Activity  {
                 String email_forgot = email_forget.getText().toString();
 
                 if (TextUtils.isEmpty(pass)) {
-                    password.setError("Please enter Username !");
+                    password.setError("Please Enter Username");
                     return;
                 }
-
+                //To be fixed. User enters registered phone number and email id.
                 if (TextUtils.isEmpty(email_forgot)) {
                     confirmPassord.setError("Please enter Conform Password !");
                 }
@@ -444,12 +495,12 @@ public class LoginActivity extends Activity  {
     }
 
     //save username and password in SharedPreferences
-    private void rememberMe(String user, String password) {
+    private void rememberMe(String user) {
 
         getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
                 .edit()
                 .putString(PREF_USERNAME, user)
-                .putString(PREF_PASSWORD, password)
+                .putString(PREF_PASSWORD, "")
                 .apply();
 
     }
@@ -494,6 +545,9 @@ public class LoginActivity extends Activity  {
         if (connectionDetector != null) {
             connectionDetector = null;
         }
+        if(appController !=null) {
+            appController = null;
+        }
         //  pDialog=null;
         md5 = null;
         md5EncyptedDataPassword = null;
@@ -501,4 +555,15 @@ public class LoginActivity extends Activity  {
         inputPassword = null;
         System.gc();
     }
+    /*private static String getScreenResolution(Context context)
+    {
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getMetrics(metrics);
+        int width = metrics.widthPixels;
+        int height = metrics.heightPixels;
+
+        return "{" + width + "," + height + "}";
+    }*/
 }

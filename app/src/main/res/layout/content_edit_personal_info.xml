@@ -180,7 +180,7 @@
                     android:layout_margin="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/rectangle_corner"
-                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    android:digits="@string/digits"
                     android:fontFamily="sans-serif"
                     android:hint="First Name"
                     android:padding="8dp"
@@ -196,7 +196,7 @@
                     android:layout_margin="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/rectangle_corner"
-                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    android:digits="@string/digits"
                     android:fontFamily="sans-serif"
                     android:hint="Middle Name"
                     android:padding="8dp"
@@ -210,7 +210,7 @@
                     android:layout_margin="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/rectangle_corner"
-                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    android:digits="@string/digits"
                     android:fontFamily="sans-serif"
                     android:hint="Last Name "
                     android:padding="5dp"
@@ -314,6 +314,7 @@
                         android:text="Age"
                         android:textColor="@color/input_register"
                         android:textSize="18sp"
+                        android:maxLength="3"
                         android:textStyle="bold" />
 
 

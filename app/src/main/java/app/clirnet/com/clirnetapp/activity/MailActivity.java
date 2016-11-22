@@ -9,12 +9,14 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.app.AppController;
 
 public class MailActivity extends AppCompatActivity {
 
     private EditText textTo;
     private EditText textSubject;
     private EditText textMessage;
+    private AppController appController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +26,7 @@ public class MailActivity extends AppCompatActivity {
         textTo = (EditText) findViewById(R.id.editTextTo);
         textSubject = (EditText) findViewById(R.id.editTextSubject);
         textMessage = (EditText) findViewById(R.id.editTextMessage);
+        appController=new AppController();
 
         buttonSend.setOnClickListener(new View.OnClickListener() {
 

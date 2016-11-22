@@ -26,5 +26,7 @@
     <color name="text_background">#90000000</color>
     <color name="rate">#0a599d</color>
     <color name= "bg_login1">#85b1d8</color>
+    <color name= "btn_back_sbmt">#50BAA0</color>
+    <color name="cancelbtn">#c0c0c0</color>
 
 </resources>

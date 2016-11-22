@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import app.clirnet.com.clirnetapp.app.AppController;
+
 
 //this class is used import ailments.db file from asset folder into database for further use
 public class DatabaseClass extends SQLiteOpenHelper {
@@ -33,7 +35,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
     private SQLiteHandler dbHelper;
     private SQLiteDatabase database;
 
-
+    private AppController appController;
     public DatabaseClass(Context context) {
 
         super(context, DB_NAME, null, 1);
@@ -41,6 +43,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
         if (dbHelper == null) {
             dbHelper = new SQLiteHandler(myContext);
             database = dbHelper.getWritableDatabase();
+            appController = new AppController();
         } else {
             Log.e("DB Opended1", "Database is allready opened");
         }
@@ -49,7 +52,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
 
     public void createDataBase() {
 
-        boolean dbExist = checkDataBase();
+
 
         boolean tblExist = isTableExists(database, "ailments");
 
@@ -66,58 +69,13 @@ public class DatabaseClass extends SQLiteOpenHelper {
                 copyDataBase();
 
             } catch (IOException e) {
+                appController.appendLog("Database"+e);
 
                 throw new Error("Error copying database");
 
             }
         }
 
-   /* if (dbExist) {
-            //do nothing - database already exist
-        } else {
-
-            //By calling this method and empty database will be created into the default system path
-            //of your application so we are gonna be able to overwrite that database with our database.
-            this.getReadableDatabase();
-
-            try {
-
-                copyDataBase();
-
-            } catch (IOException e) {
-
-                throw new Error("Error copying database");
-
-            }
-        }*/
-
-    }
-
-
-    private boolean checkDataBase() {
-
-        SQLiteDatabase checkDB = null;
-
-        try {
-            String myPath = DB_PATH + DB_NAME;
-            File file = new File(myPath);
-            if (file.exists() && !file.isDirectory())
-
-                checkDB = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
-
-        } catch (SQLiteException e) {
-
-            //database does't exist yet.
-
-        }
-
-        if (checkDB != null) {
-
-            checkDB.close();
-
-        }
-
-        return checkDB != null;
     }
 
     /**
@@ -166,7 +124,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
 
         if (myDataBase != null)
             myDataBase.close();
-        SQLiteDatabase.releaseMemory();
+        //SQLiteDatabase.releaseMemory();
         super.close();
 
     }
@@ -196,6 +154,8 @@ public class DatabaseClass extends SQLiteOpenHelper {
                 returnValue=cursor.getInt(0);
             }
         }catch (Exception e){
+
+            appController.appendLog("Database"+e);
             throw new ClirNetAppException("Error while getting max id");
         }
         finally {
@@ -210,21 +170,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
         return returnValue;
     }
 
-    public Cursor getAilmentsList() throws ClirNetAppException {
-        SQLiteDatabase db1 = null;
-        String[] cols = {"id", "ailment_name"};
-        Cursor cursor=null;
-        try {
 
-            db1 = this.getReadableDatabase();
-            cursor=db1.query("ailments", cols, null,
-                    null, null, null, null);
-        } catch (Exception e) {
-            throw new ClirNetAppException("Error while getting records");
-        }
-        //	c.close();
-        return cursor;
-    }
 
     //method to fetch ailments from db
     public ArrayList<String> getAilmentsListNew() throws ClirNetAppException {
@@ -247,6 +193,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
+            appController.appendLog("Database"+e);
             //TODO Create cutom exception and throw from here
             throw new ClirNetAppException("Something went wrong while getting login records");
         } finally {
@@ -275,6 +222,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
             // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
             id = db.insert("ailments", null, values);
         } catch (Exception e) {
+            appController.appendLog("Database"+e);
             e.printStackTrace();
         } finally {
             if (db != null) {

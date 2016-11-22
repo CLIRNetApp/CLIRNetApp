@@ -9,6 +9,8 @@ import android.util.Log;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import app.clirnet.com.clirnetapp.models.Counts;
+import app.clirnet.com.clirnetapp.models.GenderWiseDataModel;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
@@ -137,6 +139,47 @@ public class SQLController {
         return hotelList;
 
     }
+
+    //get all the patient imp data from db, which will used in Consultation fragments and home fragments
+    public ArrayList<RegistrationModel> getPatientList(String date) throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "'  order by ph.key_visit_id desc";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                            cursor.getString(7), cursor.getString(8),
+                            cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
+                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21));
+
+                    hotelList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            //TODO Create cutom exception and throw from here
+            throw new ClirNetAppException("Something went wrong");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+
+        return hotelList;
+
+    }
+
 
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments
     public ArrayList<RegistrationModel> getPatientListnew(String date) throws ClirNetAppException {
@@ -362,6 +405,51 @@ public class SQLController {
 
     }
 
+
+    public ArrayList<RegistrationModel> getPatientListForPhoneNumberFilter(String number) throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {                                                                                                                                                                                                                                                                                                                                                                                          //p.first_name like '%" + fname + "%'
+           // String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like  '% " + number + " %'  group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc " ;
+                String selectQuery="select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like % " + number + " group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc ";
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+            Log.d("cursor", "" + cursor.getCount());
+
+
+            int count = cursor.getCount();
+            Log.d("count", "" + count);
+            // looping through all rows and adding to list
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                            cursor.getString(7), cursor.getString(8),
+                            cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
+                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21));
+
+                    hotelList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return hotelList;
+
+    }
+
+
     //This will show all the visit  history of patient to show on AddPatientUpdate and ShowPaersonalDetals page
     //ashish
     public ArrayList<RegistrationModel> getPatientHistoryListAll(String patient_id) throws ClirNetAppException {
@@ -503,7 +591,37 @@ public class SQLController {
         }
         return returnString;
     }
+    public String getUserMailId() throws ClirNetAppException {
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        String returnString = ""; // Your default if none is found
+        try {
+            db1 = dbHelper.getReadableDatabase();
+            //   stmt = db1.compileStatement("select doctor_id from doctor_perInfo order by doctor_id desc limit 1");
 
+            String query = "select name from user order by id desc limit 1";
+
+
+            cursor = db1.rawQuery(query, null);
+
+
+            if (cursor.moveToFirst()) {
+                returnString = cursor.getString(cursor.getColumnIndex("doctor_id"));
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return returnString;
+
+
+    }
 
     //get doctor id from db
     public String getDoctorId() throws ClirNetAppException {
@@ -739,6 +857,173 @@ public class SQLController {
         //	c.close();
         return cursor;
     }
+
+    public ArrayList<Counts> countPerDay() throws ClirNetAppException {
+
+        ArrayList<Counts> VisitidList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "SELECT added_on as date,COUNT(id) as count FROM patient WHERE added_on<  DATE('now','-7 days') GROUP BY added_on ORDER BY id DESC limit 7";
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    Counts ids = new Counts(cursor.getString(0), cursor.getString(1));
+
+                    VisitidList.add(ids);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return VisitidList;
+
+    }
+
+    public ArrayList<Counts> countPerDay (String fromdate, String todate) throws ClirNetAppException {
+
+        ArrayList<Counts> VisitidList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "SELECT pvd.visit_date , count( * ) AS tot FROM patient dpr, patient_history pvd WHERE dpr.patient_id = pvd.patient_id AND pvd.is_deleted =0 AND pvd.is_disabled =0 AND  date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date LIMIT 0 , 30";
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    Counts ids = new Counts(cursor.getString(0), cursor.getString(1));
+
+                    VisitidList.add(ids);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return VisitidList;
+
+    }
+    public ArrayList<String> getCountTopTenAilment (String fromdate, String todate) throws ClirNetAppException {
+
+        ArrayList<String> ailmnetList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+           // String selectQuery = "SELECT pvd.ailment as ailment FROM patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0 AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2))  Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date LIMIT 0 , 30";
+            String selectQuery="SELECT pvd.ailment as ailment FROM \n" +
+                    "patient dpr , patient_history pvd \n" +
+                    "WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0 \n" +
+                    "AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) \n" +
+                    "Between Date('"+fromdate+"') AND Date('"+todate+"')\n";
+
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                  String  value = cursor.getString(cursor.getColumnIndex("ailment"));
+                    ailmnetList.add(value);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return ailmnetList;
+
+    }
+    public ArrayList<GenderWiseDataModel> genderWiseData (String fromdate, String todate) throws ClirNetAppException {
+
+        ArrayList<GenderWiseDataModel> genderList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "SELECT COUNT(CASE WHEN UPPER(dpr.gender) = 'MALE' THEN 1 END) Male,\n" +
+                    "COUNT(CASE WHEN UPPER(dpr.gender) = 'MALE' THEN 1 END) Female,\n" +
+                    "  CASE\n" +
+                    "\tWHEN CAST(dpr.age AS Integer) BETWEEN 0 AND 5 THEN '00-05'\n" +
+                    "\tWHEN CAST(dpr.age AS Integer) BETWEEN 5 AND 15 THEN '05-15'\n" +
+                    "\tWHEN CAST(dpr.age AS Integer) BETWEEN 15 AND 25 THEN '15-25'\n" +
+                    "\tWHEN CAST(dpr.age AS Integer) BETWEEN 25 AND 35 THEN '25-35'\n" +
+                    "\tWHEN CAST(dpr.age AS Integer) BETWEEN 35 AND 45 THEN '35-45'\n" +
+                    "\tWHEN CAST(dpr.age AS Integer) BETWEEN 45 AND 55 THEN '45-55'\n" +
+                    "\tWHEN CAST(dpr.age AS Integer) BETWEEN 55 AND 65 THEN '55-65'\n" +
+                    "\tWHEN CAST(dpr.age AS Integer) BETWEEN 65 AND 150 THEN '65-Above'\n" +
+                    "  END AS ageband\n" +
+                    "FROM\n" +
+                    " patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0  \n" +
+                    " AND  date(substr(pvd.visit_date,7,4)||'-'||substr(pvd.visit_date,4,2)||'-'||substr(pvd.visit_date,1,2)) \n" +
+                    "Between Date('"+fromdate+"') AND Date('"+todate+"')\n" +
+                    "GROUP BY  gender, ageband ORDER by ageband,gender ";
+
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                  String    maleCount = cursor.getString(cursor.getColumnIndex("Male"));
+                  String femaleCount=cursor.getString(cursor.getColumnIndex("Female"));
+                    String ageBound=cursor.getString(cursor.getColumnIndex("ageband"));
+                    GenderWiseDataModel ids = new GenderWiseDataModel(maleCount,femaleCount,ageBound);
+                    genderList.add(ids);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return genderList;
+
+    }
+
 }
 
 

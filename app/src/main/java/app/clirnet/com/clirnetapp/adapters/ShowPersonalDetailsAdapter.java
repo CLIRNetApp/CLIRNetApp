@@ -9,12 +9,15 @@ import android.widget.TextView;
 import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
 public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersonalDetailsAdapter.HistoryViewHolder> {
 
     private final List<RegistrationModel> patientList;
+    private AppController appController;
+
 
     public ShowPersonalDetailsAdapter(List<RegistrationModel> patientList) {
         this.patientList = patientList;
@@ -38,7 +41,7 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
         RegistrationModel model = patientList.get(position);
 
 
-
+        appController=new AppController();
         String follow_up_date = patientList.get(position).getFollowUpDate();
 
 
@@ -49,6 +52,7 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
 
         } catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Srach View Adapter" + e);
         }
 
 

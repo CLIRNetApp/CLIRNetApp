@@ -2,7 +2,6 @@ package app.clirnet.com.clirnetapp.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -24,17 +23,21 @@ import com.bumptech.glide.Glide;
 import app.clirnet.com.clirnetapp.R;
 
 import app.clirnet.com.clirnetapp.Utility.SyncDataService;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
+import app.clirnet.com.clirnetapp.fragments.DemoFragment;
 import app.clirnet.com.clirnetapp.fragments.HomeFragment;
+import app.clirnet.com.clirnetapp.fragments.PatientUpdateFragment;
 import app.clirnet.com.clirnetapp.fragments.PoHistoryFragment;
 import app.clirnet.com.clirnetapp.fragments.ReportFragment;
+import app.clirnet.com.clirnetapp.fragments.TopTenAilmentFragment;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
-        , ReportFragment.OnFragmentInteractionListener {
+        , ReportFragment.OnFragmentInteractionListener,PatientUpdateFragment.OnFragmentInteractionListener,DemoFragment.OnFragmentInteractionListener,TopTenAilmentFragment.OnFragmentInteractionListener {
 
 
     private FragmentManager fragmentManager;
@@ -47,6 +50,7 @@ public class NavigationActivity extends AppCompatActivity
     private ProgressDialog pDialog;
     private String docName;
     private String emailId;
+    private AppController appController;
 
 
     @Override
@@ -57,7 +61,7 @@ public class NavigationActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
+        appController=new AppController();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -79,8 +83,8 @@ public class NavigationActivity extends AppCompatActivity
         dbController = new SQLiteHandler(getApplicationContext());
 
         //this will start the background service which sends data to server on 30 min interval
-        Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
-        startService(serviceIntent);
+        /* Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
+        startService(serviceIntent);*/
 
 
         pDialog = new ProgressDialog(this);
@@ -101,6 +105,7 @@ public class NavigationActivity extends AppCompatActivity
 
         } catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+"" +"/"+"Navigation" + e);
         } finally {
             if (sqlController != null) {
                 sqlController.close();
@@ -121,16 +126,17 @@ public class NavigationActivity extends AppCompatActivity
                     .add(R.id.flContent, fragment, "SOME_TAG_IF_YOU_WANT_TO_REFERENCE_YOUR_FRAGMENT_LATER")
                     .commit();
         } else {
-            Log.e("fragment", "Fragment is allready opened");
+            Log.e("fragment", "Fragment is already open");
         }
 
         Glide.get(getApplicationContext()).clearMemory();
     }
 
+    //this will prevent user to access back press from tab
 
     @Override
     public void onBackPressed() {
-        /*DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+       /* DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -180,10 +186,9 @@ public class NavigationActivity extends AppCompatActivity
                 fragment = new PoHistoryFragment();
                 break;
 
+            case R.id.nav_report:
 
-            case R.id.nav_manage:
-
-                fragment = new HomeFragment();
+                fragment= new ReportFragment();
                 break;
 
             case R.id.nav_logout:
@@ -220,16 +225,6 @@ public class NavigationActivity extends AppCompatActivity
 
     }
 
-// --Commented out by Inspection START (07-11-2016 16:44):
-//    private void logoutUser() {
-//
-//
-//        //db.deleteUsers();
-//
-//        // Launching the login activity
-//        goToLoginActivity();
-//    }
-// --Commented out by Inspection STOP (07-11-2016 16:44)
 
     @Override
     public void onFragmentInteraction(Uri uri) {
@@ -274,6 +269,9 @@ public class NavigationActivity extends AppCompatActivity
         }
         if (fragmentManager != null) {
             fragmentManager = null;
+        }
+        if(appController !=null) {
+            appController = null;
         }
 
         cleanResources();

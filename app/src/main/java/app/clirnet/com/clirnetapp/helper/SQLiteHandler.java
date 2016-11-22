@@ -264,7 +264,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL(CREATE_LOGIN_TABLE);
+       /* db.execSQL(CREATE_LOGIN_TABLE);
         db.execSQL(CREATE_TABLE_PATIENT);
         db.execSQL(CREATE_TABLE_AILMENT);
         db.execSQL(CREATE_TABLE_LASTNAME);
@@ -274,7 +274,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.execSQL(CREATE_ASYNC);
 
         //addMe();
-        Log.d(TAG, "Database tables created");
+        Log.d(TAG, "Database tables created");*/
 
     }
 
@@ -282,7 +282,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
+       /* db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_PATIENT);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_LOGIN_TABLE);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_AILMENT);
@@ -290,11 +290,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_PATIENT_HISTORY);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_PATIENT_INFO_HIOTORY);
         db.execSQL("DROP TABLE IF EXISTS " + CREATE_DOCTORPERINFO_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_ASYNC);
+        db.execSQL("DROP TABLE IF EXISTS " + CREATE_ASYNC);*/
 
 
         // Create tables again
-        onCreate(db);
+       // onCreate(db);
     }
 
     /**
@@ -549,7 +549,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     //This will add records from registration page into patient table  28/8/2016 ashish u
-    public void addPatientPersonalfromLocal(String patient_id, String doctor_id, String first_name, String middle_name, String last_name, String sex, String strdate_of_birth, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String create_date, String doctor_membership_number, String flag, String patientInfoType, String addedTime, String added_by, String action) {
+    public void addPatientPersonalfromLocal(int patient_id, String doctor_id, String first_name, String middle_name, String last_name, String sex, String strdate_of_birth, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String create_date, String doctor_membership_number, String flag, String patientInfoType, String addedTime, String added_by, String action) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -596,7 +596,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     //add  new patient records into db from registration page
-    public void addHistoryPatientRecords(String visit_id, String patient_id, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String ailments, String prescriptionImgPath, String clinical_note, String added_on_date, String visit_date, String doc_id, String doc_mem_id, String flag, String addedTime, String patientInfoType, String added_by, String action) {
+    public void addHistoryPatientRecords(int visit_id, int patient_id, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String ailments, String prescriptionImgPath, String clinical_note, String added_on_date, String visit_date, String doc_id, String doc_mem_id, String flag, String addedTime, String patientInfoType, String added_by, String action) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;

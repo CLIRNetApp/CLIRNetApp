@@ -317,6 +317,7 @@
                         android:fontFamily="sans-serif"
                         android:padding="10dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:digits="@string/digitsnumber"
                         tools:targetApi="jelly_bean" />
 
                 </LinearLayout>

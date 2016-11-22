@@ -31,6 +31,8 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 public class SyncDataService extends Service {
 	private static final String TAG = "SyncDataService";
 	private static final String BROADCAST_ACTION = "com.websmithing.broadcasttest.displayevent";
+	private static final String PREFS_NAME = "SyncFlag";
+	private static final String PREF_VALUE = "status";
 	private final Handler handler = new Handler();
 	int counter = 0;
 
@@ -41,6 +43,9 @@ public class SyncDataService extends Service {
 	private SQLiteHandler dbController;
 	private String patientInfoArayString;
 	private String patientVisitHistorArayString;
+	private AppController appController;
+
+
 
 
 	@Override
@@ -49,6 +54,8 @@ public class SyncDataService extends Service {
 
 		Intent intent = new Intent(BROADCAST_ACTION);
 		connectionDetector = new ConnectionDetector(getApplicationContext());
+		appController= new AppController();
+
 	}
 
 	@Override
@@ -56,45 +63,33 @@ public class SyncDataService extends Service {
 		//get imei no of user ph
 		TelephonyManager mngr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 		String imeiid = mngr.getDeviceId();
-		Log.e("id", imeiid);
+		Log.e("id","servic started"+ imeiid);
 
 		try {
 
 			sqlController = new SQLController(getApplicationContext());
 			sqlController.open();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-
 			dbController = new SQLiteHandler(getApplicationContext());
-			// dbController.open();
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			//get patient personal info from db
 			JSONArray patientInfoarray = dbController.getResultsForPatientInformation();
 			Log.e("PatientInfoarray", " " + patientInfoarray);
 			patientInfoArayString = String.valueOf(dbController.getResultsForPatientInformation());
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 
-		try {
-			//get patient visits info from db
 			JSONArray patientVisitHistoryarray = dbController.getResultsForPatientHistory();
 
 			patientVisitHistorArayString = String.valueOf(dbController.getResultsForPatientHistory());
 			Log.e("PatientVisitHistor", " " + patientVisitHistoryarray);
+
 		} catch (Exception e) {
 			e.printStackTrace();
+			appController.appendLog(appController.getDateTime()+" " +"/ "+"Sync Service" + e);
 		}
 
+
+
 		handler.removeCallbacks(sendUpdatesToUI);
+
 		handler.postDelayed(sendUpdatesToUI, 1000); // 1 second
+		Log.e("imsending", "I am sending the data after 1 sec");
 
 	}
 
@@ -105,6 +100,8 @@ public class SyncDataService extends Service {
 				asyncTask();
 			} catch (ClirNetAppException e) {
 				e.printStackTrace();
+				appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + e);
+
 			}
 			handler.postDelayed(this, 1800000); // 10 seconds 10000 //1800000
 		}
@@ -115,17 +112,29 @@ public class SyncDataService extends Service {
 		patientIds_List=  sqlController.getPatientIdsFalg0();
 		getPatientVisitIdsList=sqlController.getPatientVisitIdsFalg0();
 
+		Log.e("nodata12","no data to send"+patientIds_List.size());
+		Log.e("nodata12","no data to send"+getPatientVisitIdsList.size());
+
 
 		boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
-		if (isInternetPresent) {if(patientIds_List.size()!= 0 || getPatientVisitIdsList.size()!= 0) {
+		if (isInternetPresent) {
+			if(patientIds_List.size()!= 0 || getPatientVisitIdsList.size()!= 0)
+			{
 
 			//Toast.makeText(this, " Connected ", Toast.LENGTH_LONG).show();
 			//send data to server after 30 min
-			sendDataToServer(patientInfoArayString, patientVisitHistorArayString);
-			Log.e("sending12","data is sending");
-		}else{
-			Log.e("nodata12","no data to send");
 
+				getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+						.edit()
+						.putString(PREF_VALUE, "1")
+						.apply();
+				Log.e("sending12", "data is sending");
+				sendDataToServer(patientInfoArayString, patientVisitHistorArayString);
+
+
+
+		}else{
+				Log.e("nodata12", "no data to send");
 		}
 		}
 	}
@@ -139,6 +148,7 @@ public class SyncDataService extends Service {
 	@Override
 	public void onDestroy() {
 		handler.removeCallbacks(sendUpdatesToUI);
+		Log.e("stoped","service stoped");
 		super.onDestroy();
 	}
 
@@ -187,7 +197,11 @@ public class SyncDataService extends Service {
 								//update flag after success
 								dbController.FlagupdatePatientVisit(patientVisitId,flag);
 							}
-
+							Log.e("sending12",  "Data Sent");
+							getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+									.edit()
+									.putString(PREF_VALUE, "2")
+									.apply();
 
 
 						} else {
@@ -198,6 +212,8 @@ public class SyncDataService extends Service {
 				} catch (JSONException e) {
 					// JSON error
 					e.printStackTrace();
+					appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + e);
+
 					Log.e("Json error", "Json error: " + e.getMessage());
 
 				}
@@ -207,6 +223,8 @@ public class SyncDataService extends Service {
 			@Override
 			public void onErrorResponse(VolleyError error) {
 				Log.e(TAG, "Login Error: " + error.getMessage());
+				appController.appendLog(appController.getDateTime()+" " +"/ "+"Sync Service" + error);
+
 
 
 			}

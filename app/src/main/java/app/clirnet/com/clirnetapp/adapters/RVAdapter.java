@@ -11,13 +11,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder> {
 
     private List<RegistrationModel> patientList;
-
+    private  AppController appController=new AppController();
 
     public RVAdapter(List<RegistrationModel> patientList) {
         this.patientList = patientList;
@@ -44,7 +45,9 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder>
         String middle_name = patientList.get(position).getMiddleName();
         String last_name = patientList.get(position).getLastName();
 
-        holder.name.setText(first_name + " " + middle_name + " " + last_name);
+        String name=appController.toCamelCase(first_name + " " + middle_name + " " + last_name);
+
+        holder.name.setText(name);
 
 
         holder.follow_up_date.setText(model.getActualFollowupDate());
@@ -96,11 +99,11 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder>
         }
     }
 
-    public void setFilter(List<RegistrationModel> hotelModels) {
-        patientList = new ArrayList<>();
-        patientList.addAll(hotelModels);
-        notifyDataSetChanged();
-    }
+//    public void setFilter(List<RegistrationModel> hotelModels) {
+//        patientList = new ArrayList<>();
+//        patientList.addAll(hotelModels);
+//        notifyDataSetChanged();
+//    }
 
 
 }

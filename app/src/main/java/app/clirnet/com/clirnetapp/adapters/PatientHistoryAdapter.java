@@ -9,6 +9,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
@@ -18,6 +19,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAdapter.HistoryViewHolder> {
 
     private final List<RegistrationModel> patientList;
+    private final AppController appController=new AppController();
 
     public PatientHistoryAdapter(List<RegistrationModel> patientList) {
         this.patientList = patientList;
@@ -51,6 +53,7 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
         }
         catch(Exception e){
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+" Patient HIstory Adapter"+e);
         }
 
 

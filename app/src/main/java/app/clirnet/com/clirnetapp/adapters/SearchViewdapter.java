@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
 public class SearchViewdapter extends RecyclerView.Adapter<SearchViewdapter.PatientViewHolder> {
 
     private List<RegistrationModel> patientList;
+    private AppController appController;
 
 
     public SearchViewdapter(List<RegistrationModel> patientList) {
@@ -42,8 +44,10 @@ public class SearchViewdapter extends RecyclerView.Adapter<SearchViewdapter.Pati
         String middle_name = patientList.get(position).getMiddleName();
         String last_name = patientList.get(position).getLastName();
 
-        holder.name.setText(first_name + " " + middle_name + " " + last_name);
+        String name=appController.toCamelCase(first_name + " " + middle_name + " " + last_name);
+        holder.name.setText(name);
 
+        appController=new AppController();
 
         String fod = model.getActualFollowupDate();
 
@@ -55,6 +59,7 @@ public class SearchViewdapter extends RecyclerView.Adapter<SearchViewdapter.Pati
             }
         }catch(Exception e){
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Srach View Adapter"+e);
         }
 
            /* if (fod.equals("30-11-0002")) {

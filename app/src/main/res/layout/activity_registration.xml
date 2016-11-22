@@ -69,7 +69,7 @@
                     android:layout_margin="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/rectangle_corner"
-                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    android:digits="@string/digits"
                     android:fontFamily="sans-serif"
                     android:hint="First Name"
                     android:maxLines="1"
@@ -84,7 +84,7 @@
                     android:layout_margin="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/rectangle_corner"
-                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    android:digits="@string/digits"
                     android:fontFamily="sans-serif"
                     android:hint="Middle Name"
                     android:maxLines="1"
@@ -100,7 +100,7 @@
                     android:layout_margin="4dp"
                     android:layout_weight="1"
                     android:background="@drawable/rectangle_corner"
-                    android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                    android:digits="@string/digits"
                     android:ems="13"
                     android:fontFamily="sans-serif"
                     android:hint="Last Name"
@@ -118,6 +118,7 @@
                 android:orientation="horizontal"
                 android:padding="3dp">
 
+
                 <EditText
                     android:id="@+id/dob"
                     android:layout_width="match_parent"
@@ -130,13 +131,12 @@
                     android:focusable="false"
                     android:focusableInTouchMode="false"
                     android:fontFamily="sans-serif"
-                    android:hint="DOB"
+                    android:hint="Date Of Birth"
                     android:inputType="date"
                     android:maxLines="1"
                     android:padding="10dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     tools:targetApi="jelly_bean" />
-
             </LinearLayout>
 
             <LinearLayout
@@ -155,6 +155,7 @@
                     android:hint="Age"
                     android:inputType="number"
                     android:maxLines="1"
+                    android:maxLength="3"
                     android:padding="10dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     tools:targetApi="jelly_bean" />
@@ -338,6 +339,7 @@
                     android:ems="13"
                     android:fontFamily="sans-serif"
                     android:hint="Ailments"
+                    android:digits="@string/digitsnumber"
                     android:padding="10dp"
                     tools:targetApi="jelly_bean" />
 
@@ -449,7 +451,7 @@
                     android:layout_weight="0.5"
                     android:background="@drawable/rectangle_corner"
                     android:fontFamily="sans-serif"
-                    android:hint="Follow up Weeks"
+                    android:hint="Follow up Week"
                     android:inputType="number"
                     android:maxLength="2"
                     android:maxLines="1"
@@ -567,7 +569,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="0.5"
-                    android:background="#c0c0c0"
+                    android:background="@color/cancelbtn"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
                     android:paddingLeft="5dp"

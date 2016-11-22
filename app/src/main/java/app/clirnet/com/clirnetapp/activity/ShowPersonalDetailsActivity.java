@@ -21,13 +21,14 @@ import java.util.Date;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.adapters.ShowPersonalDetailsAdapter;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
     private SQLController sqlController;
-    private ArrayList<RegistrationModel> patientPersonalData = new ArrayList<>();
+    private ArrayList<RegistrationModel> patientPersonalData ;
 
     private String strName;
     private String strgender;
@@ -49,6 +50,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private TextView editmobileno;
     private TextView editgender;
     private TextView editlang;
+    private AppController appController;
 
 
     @Override
@@ -60,6 +62,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
 
         setSupportActionBar(toolbar);
+        appController = new AppController();
 
         try {
             //noinspection ConstantConditions
@@ -67,6 +70,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Show personal Detail" + e);
         }
        /* Bundle bundle = getIntent().getExtras();
 
@@ -136,6 +140,8 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
+
+            patientPersonalData  = new ArrayList<>();
             patientPersonalData = (sqlController.getPatientHistoryListAll(strId)); //get all patient data from db
             int size = patientPersonalData.size();
             if (size > 0) {
@@ -148,6 +154,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Show personal Details" + e);
         }
         //To changes backgound images on time slot
 
@@ -223,6 +230,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
         i.putExtra("PATIENTPHOTO", strPatientPhoto);
         i.putExtra("ID", strId);
+
         i.putExtra("FIRSTNAME", strFirstName);
         i.putExtra("MIDDLEAME", strMiddleName);
         i.putExtra("LASTNAME", strLastName);
@@ -276,35 +284,35 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             backChangingImages.setImageDrawable(null);
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d("OnDestroy", "The onDestroy() event");
         // session.setLogin(false);
         //Close the all database connection opened here 31/10/2008 By. Ashish
-        try{
-            if(sqlController != null){
-                sqlController=null;
-            }
 
+        if (sqlController != null) {
+            sqlController = null;
         }
-        catch(Exception e){
-            e.printStackTrace();
+        if (appController != null) {
+            appController = null;
         }
 
-        patientPersonalData=null;
-        strPatientPhoto=null;
-        strLanguage=null;
-        strgender=null;
-        strAge=null;
-        strDob=null;
-        strLastName=null;
-       // System.gc();
+
+        patientPersonalData = null;
+        strPatientPhoto = null;
+        strLanguage = null;
+        strgender = null;
+        strAge = null;
+        strDob = null;
+        strLastName = null;
+        // System.gc();
     }
-  //this will stop user presing tab back button
+
+    //this will prevent user to access back press from tab
     @Override
     public void onBackPressed() {
 
     }
-
 }

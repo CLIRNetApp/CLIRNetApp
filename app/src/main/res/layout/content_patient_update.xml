@@ -324,6 +324,7 @@
                         android:fontFamily="sans-serif"
                         android:padding="10dp"
                         android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:digits="@string/digitsnumber"
                         tools:targetApi="jelly_bean" />
 
                 </LinearLayout>
@@ -559,7 +560,7 @@
 
                     </LinearLayout>
 
-                    <EditText
+                    <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:height="5dp" />

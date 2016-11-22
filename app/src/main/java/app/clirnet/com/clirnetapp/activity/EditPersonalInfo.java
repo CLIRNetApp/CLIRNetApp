@@ -12,10 +12,13 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -41,6 +44,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
@@ -87,6 +91,8 @@ public class EditPersonalInfo extends AppCompatActivity {
     private LastnameDatabaseClass lastNamedb;
     private String middle_name;
     private Spinner language;
+    private AppController appController;
+    private Button save;
 
 
     @Override
@@ -95,12 +101,14 @@ public class EditPersonalInfo extends AppCompatActivity {
         setContentView(R.layout.activity_edit_personal_info);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        appController=new AppController();
 
         try {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
+            appController.appendLog("Edit Personal Info" + e);
         }
 
         getSupportActionBar().setTitle(Html.fromHtml("<font color='white'>Edit Personal Information</font>"));
@@ -128,7 +136,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         editmobile_no = (EditText) findViewById(R.id.mobile_no);
         radioSexGroup = (RadioGroup) findViewById(R.id.radioGender);
         language = (Spinner) findViewById(R.id.language);
-        Button save = (Button) findViewById(R.id.save);
+         save = (Button) findViewById(R.id.save);
         backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
         TextView date = (TextView) findViewById(R.id.sysdate);
 
@@ -148,7 +156,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         Date todayDate1 = new Date();
 
         String dd = sdf1.format(todayDate1);
-        date.setText("Today's Date " + dd);
+        date.setText("Today's Date: " + dd);
 
 
         //this date is ued to set update records date in patient history table
@@ -176,7 +184,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
             dbController = new SQLiteHandler(getApplicationContext());
             docId = sqlController.getDoctorId();
-            Log.e("docId", "" + docId);
+         //   Log.e("docId", "" + docId);
             String sbdob;
             if (strDob.equals("30-11-0002")) {
 
@@ -195,6 +203,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Personal Info" + e);
         } finally {
             if (sqlController != null) {
                 sqlController.close();
@@ -259,6 +268,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Personal Info" + e);
         }
 
         //set Language value to  spinner
@@ -282,6 +292,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Personal Info" + e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -299,7 +310,23 @@ public class EditPersonalInfo extends AppCompatActivity {
         setLastnameSpinner();
 
 
-        Button cancel = (Button) findViewById(R.id.cancel);
+        final Button cancel = (Button) findViewById(R.id.cancel);
+        cancel.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    cancel.setBackgroundColor(getResources().getColor(R.color.white));
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    cancel.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
+            }
+
+        });
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -334,22 +361,17 @@ public class EditPersonalInfo extends AppCompatActivity {
 
 
                 if (TextUtils.isEmpty(first_name)) {
-                    editfirstname.setError("Please enter First Name !");
-                    return;
-                }
-
-                if (TextUtils.isEmpty(last_name)) {
-                    editmiddlename.setError("Please enter Last Name !");
+                    editfirstname.setError("Please enter First Name");
                     return;
                 }
 
 
                 if (TextUtils.isEmpty(last_name)) {
-                    editmiddlename.setError("Please enter Last Name !");
+                    editlasttname.setError("Please enter Last Name");
                     return;
                 }
 
-                imageName = "imgs_" + first_name + "_" + last_name + ".png";
+                imageName = "imgs_" + first_name + "_" + last_name +"_"+ docId +"_"+appController.getDateTime()+  ".png";
 
 
                 File image = new File(imagesFolder, imageName);
@@ -363,6 +385,57 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         });
 
+        //Remove red error after text changes By.Ashish 15-11-2016
+
+        editfirstname.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                editfirstname.setError(null);
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                editfirstname.setError(null);
+            }
+        });
+
+        editlasttname.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+                editlasttname.setError(null);
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                editlasttname.setError(null);
+            }
+        });
+
+        save.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    save.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    save.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
+            }
+
+        });
+
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -372,44 +445,57 @@ public class EditPersonalInfo extends AppCompatActivity {
                 String editfname = editfirstname.getText().toString();
                 String editmname = editmiddlename.getText().toString();
                 String editlname = editlasttname.getText().toString();
-                String editAge = editage.getText().toString();
+                String editAge = editage.getText().toString().trim();
                 String editPno = editmobile_no.getText().toString();
                 strdateob = editdob.getText().toString();
+                   //Removes  leading zeros from age filed  11-11-2016 By.Ashish
+                int length=0;
+                int age=0;
+                if(editAge.length() > 0) {
+                    try {
+                        editAge = AppController.removeLeadingZeroes(editAge);
+                        length = editAge.length();
+                        age = Integer.parseInt(editAge);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration Page : " + e);
+                    }
+                }
+             //   editAge = AppController.removeLeadingZeroes(editAge);
 
-                int length = editAge.length();
 
                 Log.e("counter", "   " + length);
                 if (length >= 4) {
-                    editage.setError("Please enter Valid Age !");
+                    editage.setError("Invalid Age Entered");
                     return;
                 }
-                int age = Integer.parseInt(editAge);
+
                 if (age > 150) {
-                    editage.setError("Please enter Valid Age !");
+                    editage.setError("Age should be less than 150 Years");
                     return;
                 }
 
                 if (TextUtils.isEmpty(editfname)) {
-                    editfirstname.setError("Please enter First Name !");
+                    editfirstname.setError("Please enter First Name");
                     return;
                 }
 
                 if (TextUtils.isEmpty(editlname)) {
-                    editlasttname.setError("Please enter Last Name !");
+                    editlasttname.setError("Please enter Last Name");
                     return;
                 }
 
                 if (TextUtils.isEmpty(editAge)) {
-                    editage.setError("Please enter Age !");
+                    editage.setError("Please enter Age");
                     return;
                 }
 
                 if (TextUtils.isEmpty(editPno)) {
-                    editmobile_no.setError("Please enter Mobile Number !");
+                    editmobile_no.setError("Please enter Mobile Number");
                     return;
                 }
                 if (editPno.length() < 10) {
-                    editmobile_no.setError("Phone No should be 10 digit!");
+                    editmobile_no.setError("Mobile Number should be 10 digits");
                     return;
                 }
 
@@ -431,16 +517,17 @@ public class EditPersonalInfo extends AppCompatActivity {
                     if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
 
                         dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId);
-                        Log.e("kt", "1");
+                       // Log.e("kt", "1");
                     } else {
                         dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId);
-                        Log.e("bt", "2");
+                        //Log.e("bt", "2");
                     }
-                    Toast.makeText(getApplicationContext(), "Records Updated Successfully !!!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Record Updated", Toast.LENGTH_LONG).show();
                     goToNavigation();
 
                 } catch (Exception e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Personal Info" + e);
                 }
                 finally {
                     if (dbController != null) {
@@ -500,7 +587,6 @@ public class EditPersonalInfo extends AppCompatActivity {
 
         // Apply the adapter to the spinner commented fro
         language.setAdapter(language_reasonAdapter);
-
         language.setSelection(position);
         language.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -527,7 +613,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         dialog.setContentView(R.layout.custom_cancelalert);
 
 
-        dialog.setTitle("Please Confirm ");
+        dialog.setTitle("Please Confirm");
 
         Button dialogButtonCancel = (Button) dialog.findViewById(R.id.customDialogCancel);
         Button dialogButtonOk = (Button) dialog.findViewById(R.id.customDialogOk);
@@ -584,6 +670,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Personal Info" + e);
         }
     }
 
@@ -611,6 +698,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             //  patientImage.setImageBitmap(bitmap);
         } catch (NullPointerException e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Personal Info"+e);
         }
 
     }
@@ -639,7 +727,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                                         + (monthOfYear + 1) + "-" + year);
 
                                 // we calculate age from dob and set to text view.
-                                pateintAge = new RegistrationActivity().getAge(year, monthOfYear, dayOfMonth);
+                                pateintAge = appController.getAge(year, monthOfYear, dayOfMonth);
                                 String ageid = String.valueOf(pateintAge);
                                 editage.setText(ageid);
                                 editage.setEnabled(false);
@@ -705,6 +793,10 @@ public class EditPersonalInfo extends AppCompatActivity {
         }
         if (dbController != null) {
             dbController = null;
+        }
+
+        if(appController !=null) {
+            appController = null;
         }
         cleanResources();
         System.gc();

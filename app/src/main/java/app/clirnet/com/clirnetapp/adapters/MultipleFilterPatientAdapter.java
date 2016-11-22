@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
@@ -19,7 +20,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 public class MultipleFilterPatientAdapter extends RecyclerView.Adapter<MultipleFilterPatientAdapter.PatientViewHolder> {
 
     private List<RegistrationModel> patientList;
-
+    private  AppController appController=new AppController();
 
     public MultipleFilterPatientAdapter(List<RegistrationModel> patientList) {
         this.patientList = patientList;
@@ -46,7 +47,12 @@ public class MultipleFilterPatientAdapter extends RecyclerView.Adapter<MultipleF
         String middle_name = patientList.get(position).getMiddleName();
         String last_name = patientList.get(position).getLastName();
 
-        holder.name.setText(first_name + " " + middle_name + " " + last_name);
+
+        String name=appController.toCamelCase(first_name + " " + middle_name + " " + last_name);
+
+
+        holder.name.setText(name);
+
 
 
         String fod = model.getActualFollowupDate();

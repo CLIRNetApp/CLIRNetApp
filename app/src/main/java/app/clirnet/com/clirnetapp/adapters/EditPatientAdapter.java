@@ -10,6 +10,7 @@ import android.widget.TextView;
 import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
@@ -19,6 +20,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 public class EditPatientAdapter  extends RecyclerView.Adapter<EditPatientAdapter.HistoryViewHolder> {
 
     private final List<RegistrationModel> patientList;
+    private AppController appController;
 
     public EditPatientAdapter(List<RegistrationModel> patientList) {
         this.patientList = patientList;
@@ -44,7 +46,7 @@ public class EditPatientAdapter  extends RecyclerView.Adapter<EditPatientAdapter
         String ailments = patientList.get(position).getAilments();
         String follow_up_date = patientList.get(position).getActualFollowupDate();
 
-
+        appController=new AppController();
         try{
             if(follow_up_date == null || follow_up_date.equals("0000-00-00") ){
                 holder.tv_fod.setText("--");
@@ -56,15 +58,8 @@ public class EditPatientAdapter  extends RecyclerView.Adapter<EditPatientAdapter
         }
         catch(Exception e){
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Patient Adapter"+e);
         }
-
-
-
-
-        Log.d("ailments", "" + ailments);
-        Log.d("ailmentsvisit_date", "" + visit_date);
-        Log.d("c", "" + follow_up_date);
-        Log.d("ailmentsmodelgetC", "" + model.getClinicalNotes());
 
 
         holder.tv_visit_date.setText(model.getVisit_date());

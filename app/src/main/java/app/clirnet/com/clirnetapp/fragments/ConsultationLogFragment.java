@@ -3,6 +3,7 @@ package app.clirnet.com.clirnetapp.fragments;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -36,6 +38,7 @@ import app.clirnet.com.clirnetapp.activity.ShowPersonalDetailsActivity;
 import app.clirnet.com.clirnetapp.activity.TermsCondition;
 import app.clirnet.com.clirnetapp.adapters.FollowUpDateSearchAdapter;
 import app.clirnet.com.clirnetapp.adapters.RVAdapterforUpdateDate;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
@@ -47,7 +50,6 @@ public class ConsultationLogFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
 
 
     private final int[] imageArray = {R.drawable.one, R.drawable.two, R.drawable.three, R.drawable.four, R.drawable.five};
@@ -65,18 +67,18 @@ public class ConsultationLogFragment extends Fragment {
     private TextView txtupdateDate;
     private TextView txtfod;
 
-    private List<RegistrationModel> visitDateDataFilter= new ArrayList<>();
+
     private RVAdapterforUpdateDate rvAdapterforUpdateDate;
     private FollowUpDateSearchAdapter followUpDateSearchAdapter;
     private View view;
     private ArrayList<RegistrationModel> filterfodList;
     private ArrayList<RegistrationModel> filterVistDateList;
+    private AppController appController;
 
     public ConsultationLogFragment() {
         // this.setHasOptionsMenu(true);
 
     }
-
 
 
     @Override
@@ -88,6 +90,7 @@ public class ConsultationLogFragment extends Fragment {
 
         }
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -104,7 +107,7 @@ public class ConsultationLogFragment extends Fragment {
 
         view = inflater.inflate(R.layout.fragment_consultation_log, container, false);
         date = (EditText) view.findViewById(R.id.date);
-        Button searchRecords = (Button) view.findViewById(R.id.search);
+        final Button searchRecords = (Button) view.findViewById(R.id.search);
         TextView currdate = (TextView) view.findViewById(R.id.sysdate);
         recycler_view = (RecyclerView) view.findViewById(R.id.recycler_view);
         backChangingImages = (ImageView) view.findViewById(R.id.backChangingImages);
@@ -113,15 +116,15 @@ public class ConsultationLogFragment extends Fragment {
         txtupdateDate = (TextView) view.findViewById(R.id.txtupdateDate);
         txtfod = (TextView) view.findViewById(R.id.txtfod);
 
-        SimpleDateFormat sdf=new SimpleDateFormat("dd MMMM,yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy");
         Date todayDate = new Date();
 
         String dd = sdf.format(todayDate);
-        currdate.setText("Today's Date "+dd);
+        currdate.setText("Today's Date " + dd);
 
 
-        followUpDateSearchAdapter=new FollowUpDateSearchAdapter(patientData);
-        rvAdapterforUpdateDate = new RVAdapterforUpdateDate(patientData);
+        followUpDateSearchAdapter = new FollowUpDateSearchAdapter(filterfodList);
+        rvAdapterforUpdateDate = new RVAdapterforUpdateDate(filterfodList);
 
         TextView privacyPolicy = (TextView) view.findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) view.findViewById(R.id.termsandCondition);
@@ -138,7 +141,7 @@ public class ConsultationLogFragment extends Fragment {
         termsandCondition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getContext().getApplicationContext(), TermsCondition.class);
+                Intent intent = new Intent(getContext().getApplicationContext(), TermsCondition.class);
                 startActivity(intent);
 
             }
@@ -149,10 +152,12 @@ public class ConsultationLogFragment extends Fragment {
 
             sqlController = new SQLController(getContext().getApplicationContext());
             sqlController.open();
-           // patientData = (sqlController.getPatientList());
+            appController = new AppController();
+            // patientData = (sqlController.getPatientList());
 
         } catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
         }
 
 
@@ -185,6 +190,22 @@ public class ConsultationLogFragment extends Fragment {
 
             }
         });
+        searchRecords.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    searchRecords.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    searchRecords.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
+            }
+
+        });
         //search the records from user query
         searchRecords.setOnClickListener(new View.OnClickListener() {
 
@@ -199,17 +220,17 @@ public class ConsultationLogFragment extends Fragment {
                 try {
 
                     reformattedStr = myFormat.format(fromUser.parse(searchdate));
-                    Log.e("reformattedStr",""+reformattedStr);
+                    Log.e("reformattedStr", "" + reformattedStr);
 
                 } catch (ParseException e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
                 }
 
                 if (TextUtils.isEmpty(searchdate)) {
-                    date.setError("Please enter Phone Number !");
+                    date.setError("Please enter Mobile Number");
                     return;
                 }
-
 
 
                 try {
@@ -219,12 +240,19 @@ public class ConsultationLogFragment extends Fragment {
                     Date currentdate = sdf1.parse(String.valueOf(sysdate));
 
                     if (date1.after(currentdate) || date1.equals(currentdate)) {
+
+                        if (filterVistDateList != null) {
+
+                            filterVistDateList.clear();
+                            Log.e("clear", "clear after date records");
+                        }
+
                         filterfodList = new ArrayList<>();
-                      //get records from database vai entered follow up date
-                        filterfodList= sqlController.getPatientListnew(reformattedStr);
-                        Log.e("ashishsize",""+filterfodList.size());
-                        int filterModelSize= filterfodList.size();
-                        if (filterModelSize > 0 ) {
+                        //get records from database vai entered follow up date
+                        filterfodList = sqlController.getPatientListnew(reformattedStr);
+
+                        int filterModelSize = filterfodList.size();
+                        if (filterModelSize > 0) {
                             norecordtv.setVisibility(View.GONE);
                         }
 
@@ -252,14 +280,21 @@ public class ConsultationLogFragment extends Fragment {
                     }
                     if (date1.before(currentdate)) {
 
+                        if (filterfodList != null) {
+
+                            filterfodList.clear();
+
+                            Log.e("clear", "clear before date records");
+                        }
+
                         filterVistDateList = new ArrayList<>();
                         //get records from database vai entered visit  date
-                        filterVistDateList= sqlController.getPatientListVisitDateSearch(reformattedStr);
-                        Log.e("ashishsize1",""+filterVistDateList.size());
+                        filterVistDateList = sqlController.getPatientListVisitDateSearch(reformattedStr);
+
                         //  System.out.println("Date1 is before or equal to Date2");
 
-                        int filterModelSize= filterVistDateList.size();
-                        if (filterModelSize > 0 ) {
+                        int filterModelSize = filterVistDateList.size();
+                        if (filterModelSize > 0) {
                             norecordtv.setVisibility(View.GONE);
                         }
 
@@ -291,6 +326,7 @@ public class ConsultationLogFragment extends Fragment {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
                 }
 
             }
@@ -302,7 +338,7 @@ public class ConsultationLogFragment extends Fragment {
 
     private void setrvAdapterforUpdateDateToRecyclerView(int position) {
 
-        RegistrationModel book = visitDateDataFilter.get(position);
+        RegistrationModel book = filterVistDateList.get(position);
         Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
 
         i.putExtra("PATIENTPHOTO", book.getPhoto());
@@ -327,13 +363,14 @@ public class ConsultationLogFragment extends Fragment {
         i.putExtra("CLINICALNOTES", book.getClinicalNotes());
         i.putExtra("PRESCRIPTION", book.getPres_img());
         Log.e("img", "" + book.getPres_img());
+
         startActivity(i);
     }
 
     private void followUpDateSearchAdapterToRecyclerView(int position) {
 
-      //  RegistrationModel book = filteredModelList.get(position);
-         RegistrationModel book = filterfodList.get(position);
+        //  RegistrationModel book = filteredModelList.get(position);
+        RegistrationModel book = filterfodList.get(position);
 
         Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
 
@@ -406,14 +443,10 @@ public class ConsultationLogFragment extends Fragment {
     }
 
 
-
-
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
 
 
     //show captured patient image into image view
@@ -435,10 +468,11 @@ public class ConsultationLogFragment extends Fragment {
         };
         backChangingImages.postDelayed(runnable, 100); //for initial delay..
     }
+
     @Override
     public void onPause() {
         Log.e("DEBUG", "OnPause of HomeFragment");
-        InputMethodManager inputMethodManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         inputMethodManager.hideSoftInputFromWindow(date.getWindowToken(), 0);
         super.onPause();
@@ -450,33 +484,33 @@ public class ConsultationLogFragment extends Fragment {
         mListener = null;
         view = null; // now cleaning up!
 
-        if(sqlController != null){
+        if (sqlController != null) {
             sqlController.close();
-            sqlController= null;
+            sqlController = null;
         }
-        if(followUpDateSearchAdapter != null){
-            followUpDateSearchAdapter=null;
+        if (followUpDateSearchAdapter != null) {
+            followUpDateSearchAdapter = null;
         }
-        if(rvAdapterforUpdateDate !=null){
-            rvAdapterforUpdateDate=null;
+        if (rvAdapterforUpdateDate != null) {
+            rvAdapterforUpdateDate = null;
         }
-
+        if (appController != null) {
+            appController = null;
+        }
         patientData.clear();
-        patientData=null;
+        patientData = null;
 
         recycler_view.setOnClickListener(null);
         //  searchView.setOnClickListener(null);
 
         norecordtv = null;
 
-        searchdate=null;
-        sysdate= null;
+        searchdate = null;
+        sysdate = null;
+        date = null;
+        txtfod = null;
 
-        visitDateDataFilter = null;
-        date= null;
-        txtfod= null;
-
-        Log.e("onDetach","onDetach Home Fragment");
+        Log.e("onDetach", "onDetach Home Fragment");
     }
 }
 

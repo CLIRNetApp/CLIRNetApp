@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
@@ -32,6 +33,7 @@ import app.clirnet.com.clirnetapp.activity.PrivacyPolicy;
 import app.clirnet.com.clirnetapp.activity.ShowPersonalDetailsActivity;
 import app.clirnet.com.clirnetapp.activity.TermsCondition;
 import app.clirnet.com.clirnetapp.adapters.MultipleFilterPatientAdapter;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
@@ -65,6 +67,8 @@ public class PoHistoryFragment extends Fragment {
     private ArrayList<RegistrationModel> patientData=new ArrayList<>();
     private LinearLayout norecordtv;
     private View rootview;
+    private AppController appController;
+    private Button submit;
 
 
     public PoHistoryFragment() {
@@ -95,6 +99,7 @@ public class PoHistoryFragment extends Fragment {
         rootview = inflater.inflate(R.layout.fragment_po_history, container, false);
 
 
+
         firstName = (EditText) rootview.findViewById(R.id.firstname);
 
         lastName = (EditText) rootview.findViewById(R.id.lastname);
@@ -104,6 +109,7 @@ public class PoHistoryFragment extends Fragment {
         TextView currdate = (TextView) rootview.findViewById(R.id.sysdate);
         backChangingImages = (ImageView) rootview.findViewById(R.id.backChangingImages);
         norecordtv = (LinearLayout) rootview.findViewById(R.id.norecordtv);
+
 
         phone_no = (EditText) rootview.findViewById(R.id.mobile_no);
         age = (TextView) rootview.findViewById(R.id.age);
@@ -137,6 +143,9 @@ public class PoHistoryFragment extends Fragment {
 
             }
         });
+         appController=new AppController();
+
+        //appController. setValuesSharedPrefrence("VALUE", "one");
 
 
         setupAnimation();
@@ -147,6 +156,7 @@ public class PoHistoryFragment extends Fragment {
 
         } catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Po History Frgament" + e);
         }
 
 
@@ -155,7 +165,24 @@ public class PoHistoryFragment extends Fragment {
         patientData.clear(); //This method will clear all previous data from  Array list  24-8-2016
 
 
-        Button submit = (Button) rootview.findViewById(R.id.submit);
+         submit = (Button) rootview.findViewById(R.id.submit);
+
+        submit.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    submit.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    submit.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
+            }
+
+        });
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -178,6 +205,7 @@ public class PoHistoryFragment extends Fragment {
                     patientData = (sqlController.getFilterDatanew(strfname, strlname, sex, strpno, strage));
                 } catch (Exception e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Po History Fragment" + e);
                 }
                 finally {
                     if(sqlController !=null){
@@ -209,6 +237,7 @@ public class PoHistoryFragment extends Fragment {
 
                 }catch(Exception e){
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Po History Fragment" + e);
                 }
 
             }
@@ -272,7 +301,7 @@ public class PoHistoryFragment extends Fragment {
     /////////////Show Search Bar//////////////////
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.retailer_navigation, menu);
+        inflater.inflate(R.menu.other_navigation, menu);
 
         //  MenuItem item = menu.findItem(R.id.spinner);
 
@@ -347,6 +376,11 @@ public class PoHistoryFragment extends Fragment {
         if(adapter != null){
             adapter=null;
         }
+
+        if(appController !=null) {
+            appController = null;
+        }
+
 
         patientData.clear();
         patientData=null;

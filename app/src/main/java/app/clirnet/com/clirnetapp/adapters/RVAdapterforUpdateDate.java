@@ -10,12 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
 public class RVAdapterforUpdateDate extends RecyclerView.Adapter<RVAdapterforUpdateDate.PatientViewHolder> {
 
     private List<RegistrationModel> patientList;
+    private AppController appController=new AppController();
 
 
     public RVAdapterforUpdateDate(List<RegistrationModel> patientList) {
@@ -43,7 +45,10 @@ public class RVAdapterforUpdateDate extends RecyclerView.Adapter<RVAdapterforUpd
         String middle_name = patientList.get(position).getMiddleName();
         String last_name = patientList.get(position).getLastName();
 
-        holder.name.setText(first_name + " " + middle_name + " " + last_name);
+        String name=appController.toCamelCase(first_name + " " + middle_name + " " + last_name);
+
+
+        holder.name.setText(name);
 
         String fod = model.getActualFollowupDate();
 
@@ -57,6 +62,7 @@ public class RVAdapterforUpdateDate extends RecyclerView.Adapter<RVAdapterforUpd
                 holder.modified_on.setText(fod);
             }
         }catch (Exception e){e.printStackTrace();
+
         }
 
 
