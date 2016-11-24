@@ -61,6 +61,8 @@ import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 
 public class RegistrationActivity extends AppCompatActivity {
 
+    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom,R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest,R.drawable.revituz,R.drawable.suprizon};
+
     private static final int DATE_DIALOG_ID = 0;
     private static final int DATE_DIALOG_ID1 = 1;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
@@ -115,7 +117,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private String docId;
     private String addedTime;
     private DatabaseClass databaseClass;
-    private final int[] imageArray = {R.drawable.one, R.drawable.two, R.drawable.three, R.drawable.four, R.drawable.five};
+
     //private final int[] imageArray1 = {R.drawable.brethnom, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom, R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest, R.drawable.revituz, R.drawable.strathspey_brand, R.drawable.suprizon};
 
     private ImageView backChangingImages;
@@ -1441,5 +1443,10 @@ public class RegistrationActivity extends AppCompatActivity {
         startActivity(i);
         finish();
 
+    }
+    //this will prevent user to access back press from tab
+    @Override
+    public void onBackPressed() {
+                   goToNavigation();
     }
 }

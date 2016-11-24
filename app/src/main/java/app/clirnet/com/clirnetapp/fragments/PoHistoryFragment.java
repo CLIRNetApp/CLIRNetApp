@@ -29,6 +29,7 @@ import java.util.Date;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.ItemClickListener;
+import app.clirnet.com.clirnetapp.activity.NavigationActivity;
 import app.clirnet.com.clirnetapp.activity.PrivacyPolicy;
 import app.clirnet.com.clirnetapp.activity.ShowPersonalDetailsActivity;
 import app.clirnet.com.clirnetapp.activity.TermsCondition;
@@ -45,7 +46,7 @@ public class PoHistoryFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private final int[] imageArray = {R.drawable.one, R.drawable.two, R.drawable.three, R.drawable.four, R.drawable.five};
+    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom,R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest,R.drawable.revituz,R.drawable.suprizon};
     private OnFragmentInteractionListener mListener;
     private EditText firstName;
     private EditText lastName;
@@ -98,7 +99,7 @@ public class PoHistoryFragment extends Fragment {
 
         rootview = inflater.inflate(R.layout.fragment_po_history, container, false);
 
-
+        ((NavigationActivity) getActivity()).setActionBarTitle("Patient History");
 
         firstName = (EditText) rootview.findViewById(R.id.firstname);
 
@@ -290,6 +291,7 @@ public class PoHistoryFragment extends Fragment {
         i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
         i.putExtra("CLINICALNOTES", book.getClinicalNotes());
         i.putExtra("PRESCRIPTION", book.getPres_img());
+        i.putExtra("FROMWHERE", "3"); //thi will identify from which fragment we are navigating
         Log.e("img", "" + book.getPres_img());
         startActivity(i);
 

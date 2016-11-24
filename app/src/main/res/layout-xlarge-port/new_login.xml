@@ -78,7 +78,9 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:orientation="vertical"
-                android:paddingTop="20dp">
+                android:paddingTop="20dp"
+                android:paddingLeft="100dp"
+                android:paddingRight="100dp">
 
                 <EditText
                     android:id="@+id/email"

@@ -18,6 +18,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +31,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 
 import java.text.ParseException;
@@ -37,14 +39,14 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 
 import app.clirnet.com.clirnetapp.R;
 
+import app.clirnet.com.clirnetapp.activity.NavigationActivity;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.SQLController;
-
-
 
 
 /**
@@ -75,9 +77,10 @@ public class ReportFragment extends Fragment {
     private Button lastmonth;
     private Button lastquarter;
     private android.support.v4.app.FragmentManager mFragmentManager;
-    private String startDate,endDate;
+    private String startDate, endDate;
     private DemoFragment fragment;
     private View rootview;
+    private long diffInHours;
 
 
     //this is of no use
@@ -98,38 +101,61 @@ public class ReportFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-        appController = new AppController();
-         rootview = inflater.inflate(R.layout.fragment_reports, container, false);
 
-
+        rootview = inflater.inflate(R.layout.fragment_reports, container, false);
+        ((NavigationActivity) getActivity()).setActionBarTitle("Reports");
 
         fromdate = (EditText) rootview.findViewById(R.id.fromdate);
         todate = (EditText) rootview.findViewById(R.id.todate);
 
-        lastweek=(Button)rootview.findViewById(R.id.lastweek);
-        lastmonth=(Button)rootview.findViewById(R.id.lastmonth);
-        lastquarter=(Button)rootview.findViewById(R.id.lastquarter);
+        lastweek = (Button) rootview.findViewById(R.id.lastweek);
+        lastmonth = (Button) rootview.findViewById(R.id.lastmonth);
+        lastquarter = (Button) rootview.findViewById(R.id.lastquarter);
 
         viewPager = (ViewPager) rootview.findViewById(R.id.viewpager);
         tabLayout = (TabLayout) rootview.findViewById(R.id.tabLayout);
 
         setCurrentDateOnView();
         addListenerOnButton();
+
+        getDateValues();
+        //this will by default set reports for the week from todays date
+
         mFragmentManager = getChildFragmentManager();
+        CallLastWeek();
 
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         assert activity.getSupportActionBar() != null;
         activity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
+        appController = new AppController();
 
-        filterDate=(ImageView)rootview.findViewById(R.id.filterDate);
+        filterDate = (ImageView) rootview.findViewById(R.id.filterDate);
         filterDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
 
-               // getDateValues();
-                startDate=fromdate.getText().toString().trim();
-                endDate=todate.getText().toString().trim();
+                // getDateValues();
+                startDate = fromdate.getText().toString().trim();
+                endDate = todate.getText().toString().trim();
+
+                String format = "yyyy-MM-dd";
+                SimpleDateFormat sdf = new SimpleDateFormat(format);
+                try {
+                    Date fromDate = sdf.parse(startDate);
+                    Date toDate = sdf.parse(endDate);
+
+
+                    long duration = toDate.getTime() - fromDate.getTime();
+
+                    long diffInSeconds = TimeUnit.MILLISECONDS.toSeconds(duration);
+                    long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(duration);
+                    diffInHours = TimeUnit.MILLISECONDS.toHours(duration);
+
+                    Log.e("diffInHours", "       " + diffInHours);
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 
                 SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
                 SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -143,20 +169,27 @@ public class ReportFragment extends Fragment {
 
                 } catch (ParseException e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
                 }
 
+                if( diffInHours <= 0){
 
+                    Toast   toast = Toast.makeText(getContext().getApplicationContext(), "To-Date Must Be Greater Than From-Date", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER, 0, 0);
+                    toast.show();
 
-                  // todo get data from db
-                    DemoFragment  fragment = new DemoFragment();
-                    Bundle b = new Bundle();
-                    b.putString("FROMDATE", reformattedStrDate);
-                    b.putString("TODATE", endDate);
-                    fragment.setArguments(b);
+                    return;
+                }
+
+                // todo get data from db
+                DemoFragment fragment = new DemoFragment();
+                Bundle b = new Bundle();
+                b.putString("FROMDATE", reformattedStrDate);
+                b.putString("TODATE", endDate);
+                fragment.setArguments(b);
 
                 mFragmentManager.beginTransaction()
-                            .replace(R.id.framecontainer, fragment).addToBackStack("true")
+                        .replace(R.id.framecontainer, fragment).addToBackStack("true")
                         .commit();
 
 
@@ -166,19 +199,20 @@ public class ReportFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                date=appController.addDay(new Date(),-7);
+                date = appController.addDay(new Date(), -7);
                 fromdate.setText(date);
 
                 getDateValues();
+                CallLastWeek();
 
-             DemoFragment
-                     fragment = new DemoFragment();
+                /*DemoFragment
+                        fragment = new DemoFragment();
                 Bundle b = new Bundle();
                 b.putString("FROMDATE", startDate);
-                b.putString("TODATE",endDate);
+                b.putString("TODATE", endDate);
                 fragment.setArguments(b);
                 mFragmentManager.beginTransaction()
-                        .replace(R.id.framecontainer, fragment).commit();
+                        .replace(R.id.framecontainer, fragment).commit();*/
             }
         });
 
@@ -186,15 +220,15 @@ public class ReportFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                date=appController.addDay(new Date(),-30);
+                date = appController.addDay(new Date(), -30);
                 fromdate.setText(date);
 
-               getDateValues();
+                getDateValues();
 
-                DemoFragment  fragment = new DemoFragment();
+                DemoFragment fragment = new DemoFragment();
                 Bundle b = new Bundle();
                 b.putString("FROMDATE", startDate);
-                b.putString("TODATE",endDate);
+                b.putString("TODATE", endDate);
                 fragment.setArguments(b);
                 mFragmentManager.beginTransaction()
                         .replace(R.id.framecontainer, fragment).commit();
@@ -205,15 +239,15 @@ public class ReportFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                date=appController.addDay(new Date(),-90);
+                date = appController.addDay(new Date(), -90);
                 fromdate.setText(date);
 
                 getDateValues();
 
-               DemoFragment fragment = new DemoFragment();
+                DemoFragment fragment = new DemoFragment();
                 Bundle b = new Bundle();
                 b.putString("FROMDATE", startDate);
-                b.putString("TODATE",endDate);
+                b.putString("TODATE", endDate);
                 fragment.setArguments(b);
                 mFragmentManager.beginTransaction()
                         .replace(R.id.framecontainer, fragment).commit();
@@ -223,9 +257,21 @@ public class ReportFragment extends Fragment {
         return rootview;
     }
 
+    private void CallLastWeek() {
+
+        fragment = new DemoFragment();
+        Bundle b = new Bundle();
+        b.putString("FROMDATE", startDate);
+        b.putString("TODATE", endDate);
+        fragment.setArguments(b);
+        mFragmentManager.beginTransaction()
+                .replace(R.id.framecontainer, fragment).commit();
+    }
+
+
     private void getDateValues() {
-        startDate=fromdate.getText().toString().trim();
-        endDate=todate.getText().toString().trim();
+        startDate = fromdate.getText().toString().trim();
+        endDate = todate.getText().toString().trim();
     }
 
     private void setCurrentDateOnView() {
@@ -235,12 +281,13 @@ public class ReportFragment extends Fragment {
         day = c.get(Calendar.DAY_OF_MONTH);
 
         // set current date into textview
-        fromdate.setText(new StringBuilder()
+        todate.setText(new StringBuilder()
                 // Month is 0 based, just add 1
                 .append(year).append("-").append(month + 1).append("-")
                 .append(day).append(" "));
 
-        todate.setText(fromdate.getText().toString());
+        date = appController.addDay(new Date(), -7);
+        fromdate.setText(date);
     }
 
     private void addListenerOnButton() {
@@ -347,7 +394,6 @@ public class ReportFragment extends Fragment {
         int mDay2 = c2.get(Calendar.DAY_OF_MONTH);
 
 
-
         DatePickerDialog dpd1 = new DatePickerDialog(getContext(),
                 new DatePickerDialog.OnDateSetListener() {
 
@@ -357,16 +403,16 @@ public class ReportFragment extends Fragment {
 
                         if (s.equals("1")) {
 
-                            String date=dayOfMonth + "-"
+                            String date = dayOfMonth + "-"
                                     + (monthOfYear + 1) + "-" + year;
 
                           /*  fromdate.setText(dayOfMonth + "-"
                                     + (monthOfYear + 1) + "-" + year);*/
 
-                            fromdate.setText(year+ "-"+ (monthOfYear + 1) + "-"
+                            fromdate.setText(year + "-" + (monthOfYear + 1) + "-"
                                     + dayOfMonth);
                         } else {
-                            todate.setText(year+ "-"+ (monthOfYear + 1) + "-"
+                            todate.setText(year + "-" + (monthOfYear + 1) + "-"
                                     + dayOfMonth);
                         }
 
@@ -404,14 +450,27 @@ public class ReportFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        if(rootview !=null){
-            rootview=null;
+        if (rootview != null) {
+            rootview = null;
         }
-        if(appController !=null){
-            appController=null;
+        if (appController != null) {
+            appController = null;
+        }
+        if (fragment != null) {
+            fragment = null;
         }
         mListener = null;
-        mFragmentManager=null;
+        mFragmentManager = null;
+        fromdate = null;
+        todate = null;
+        viewPager = null;
+        tabLayout = null;
+        filterDate = null;
+        lastweek = null;
+        lastmonth = null;
+        lastquarter = null;
+        startDate = null;
+        endDate = null;
 
     }
 

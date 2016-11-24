@@ -3,14 +3,13 @@ package app.clirnet.com.clirnetapp.helper;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteStatement;
 import android.util.Log;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 import app.clirnet.com.clirnetapp.models.Counts;
-import app.clirnet.com.clirnetapp.models.GenderWiseDataModel;
+import app.clirnet.com.clirnetapp.reports.GenderWiseDataModel;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
@@ -327,7 +326,7 @@ public class SQLController {
         ArrayList<RegistrationModel> pList = new ArrayList<>();
         try {
             open();
-            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%' and p.gender like '" + gender + "' and p.phonenumber like '%" + phoneno + "%' and p.age like '%" + age + "%'  and ph.actual_follow_up_date = (select actual_follow_up_date from patient_history ph2 where ph2.patient_id = p.patient_id order by ph2.actual_follow_up_date desc) order by ph.key_visit_id desc";
+            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%' and p.gender like '" + gender + "' and p.phonenumber like '%" + phoneno + "%' and p.age like '%" + age + "%'  and ph.actual_follow_up_date = (select actual_follow_up_date from patient_history ph2 where ph2.patient_id = p.patient_id order by ph2.actual_follow_up_date desc) order by ph.key_visit_id desc limit 30";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
             Log.d("cursor", "" + cursor.getCount());
@@ -413,7 +412,7 @@ public class SQLController {
         Cursor cursor = null;
         try {                                                                                                                                                                                                                                                                                                                                                                                          //p.first_name like '%" + fname + "%'
            // String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like  '% " + number + " %'  group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc " ;
-                String selectQuery="select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like % " + number + " group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc ";
+                String selectQuery="select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like '%" + number + "%' group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc ";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
             Log.d("cursor", "" + cursor.getCount());
@@ -900,7 +899,8 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery = "SELECT pvd.visit_date , count( * ) AS tot FROM patient dpr, patient_history pvd WHERE dpr.patient_id = pvd.patient_id AND pvd.is_deleted =0 AND pvd.is_disabled =0 AND  date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date LIMIT 0 , 30";
+            String selectQuery = "SELECT pvd.visit_date , count( * ) AS tot FROM patient dpr, patient_history pvd WHERE dpr.patient_id = pvd.patient_id AND" +
+                    " date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
 
@@ -938,7 +938,7 @@ public class SQLController {
            // String selectQuery = "SELECT pvd.ailment as ailment FROM patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0 AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2))  Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date LIMIT 0 , 30";
             String selectQuery="SELECT pvd.ailment as ailment FROM \n" +
                     "patient dpr , patient_history pvd \n" +
-                    "WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0 \n" +
+                    "WHERE dpr.patient_id = pvd.patient_id \n" +
                     "AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) \n" +
                     "Between Date('"+fromdate+"') AND Date('"+todate+"')\n";
 
@@ -976,7 +976,7 @@ public class SQLController {
         Cursor cursor = null;
         try {
             String selectQuery = "SELECT COUNT(CASE WHEN UPPER(dpr.gender) = 'MALE' THEN 1 END) Male,\n" +
-                    "COUNT(CASE WHEN UPPER(dpr.gender) = 'MALE' THEN 1 END) Female,\n" +
+                    "COUNT(CASE WHEN UPPER(dpr.gender) = 'FEMALE' THEN 1 END) Female,\n" +
                     "  CASE\n" +
                     "\tWHEN CAST(dpr.age AS Integer) BETWEEN 0 AND 5 THEN '00-05'\n" +
                     "\tWHEN CAST(dpr.age AS Integer) BETWEEN 5 AND 15 THEN '05-15'\n" +
@@ -985,13 +985,13 @@ public class SQLController {
                     "\tWHEN CAST(dpr.age AS Integer) BETWEEN 35 AND 45 THEN '35-45'\n" +
                     "\tWHEN CAST(dpr.age AS Integer) BETWEEN 45 AND 55 THEN '45-55'\n" +
                     "\tWHEN CAST(dpr.age AS Integer) BETWEEN 55 AND 65 THEN '55-65'\n" +
-                    "\tWHEN CAST(dpr.age AS Integer) BETWEEN 65 AND 150 THEN '65-Above'\n" +
+                    "\tWHEN CAST(dpr.age AS Integer) BETWEEN 65 AND 300 THEN '65-Above'\n" +
                     "  END AS ageband\n" +
                     "FROM\n" +
-                    " patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0  \n" +
+                    " patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id  \n" +
                     " AND  date(substr(pvd.visit_date,7,4)||'-'||substr(pvd.visit_date,4,2)||'-'||substr(pvd.visit_date,1,2)) \n" +
                     "Between Date('"+fromdate+"') AND Date('"+todate+"')\n" +
-                    "GROUP BY  gender, ageband ORDER by ageband,gender ";
+                    "GROUP BY ageband ORDER by ageband";
 
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);

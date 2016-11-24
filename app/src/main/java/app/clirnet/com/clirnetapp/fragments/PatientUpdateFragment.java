@@ -30,16 +30,18 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.Utility.BarChartItem;
-import app.clirnet.com.clirnetapp.Utility.ChartItem;
-import app.clirnet.com.clirnetapp.Utility.LineChartItem;
+import app.clirnet.com.clirnetapp.reports.BarChartItem;
+import app.clirnet.com.clirnetapp.reports.ChartItem;
+import app.clirnet.com.clirnetapp.reports.LineChartItem;
 import app.clirnet.com.clirnetapp.adapters.ChartDataAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.Counts;
-import app.clirnet.com.clirnetapp.models.GenderWiseDataModel;
+import app.clirnet.com.clirnetapp.reports.GenderWiseDataModel;
 import app.clirnet.com.clirnetapp.reports.MyValueFormatter;
 
 import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
@@ -63,6 +65,9 @@ public class PatientUpdateFragment extends Fragment {
 
     private AppController appController;
     private String fromDate, toDate;
+
+  // private static final List<Float> ageBoundArray = Arrays.asList(00.05f, 05.15f, 15.25f, 25.35f, 35.45f, 45.55f, 55.65f, 75.0f);
+    private static final List<Float> ageBoundArray = Arrays.asList(05.0f, 15f, 25f, 35f, 45f, 55f, 65f, 75.0f);
 
     public PatientUpdateFragment() {
         // Required empty public constructor
@@ -107,13 +112,15 @@ public class PatientUpdateFragment extends Fragment {
         //setSackedBarView();
 
         //list.add(new BarChartItem(generateDataBar(2), getContext()));
-        list.add(new LineChartItem(generateDataLine(1), getContext(), fromDate, toDate));
-        list.add(new BarChartItem(generateDataBarNew(2), getContext()));
+       list.add(new LineChartItem(generateDataLine(1), getContext(), fromDate, toDate));
+       list.add(new BarChartItem(generateDataBarNew(2), getContext()));
 
         ChartDataAdapter cda = new ChartDataAdapter(getContext(), list);
         lv.setAdapter(cda);
         return view;
     }
+
+    List<String> supplierNames = Arrays.asList("00.05", "05.15", "15.25", "25.35", "35.45", "45.55", "55.65", "65");
 
 
     private ChartData<?> generateDataBarNew(int e) {
@@ -126,121 +133,31 @@ public class PatientUpdateFragment extends Fragment {
             ArrayList<GenderWiseDataModel> gd = new ArrayList<>();
             gd = sqlController.genderWiseData(fromDate, toDate);
             int size1 = gd.size();
-            Log.e("asize", "" + size1);
 
+            int ab = 1;
             if (size1 > 0) {
                 for (int im = 0; im < size1; im++) {
                     String mcount = gd.get(im).getmCount();
                     String fCount = gd.get(im).getfCount();
                     String ageBound = gd.get(im).getAgeBound();
 
+                    Float val = ageBoundArray.get(im);
+                    // String val=supplierNames.get(im);
+                   // int a = Integer.parseInt(val);
+                   // float f = Float.parseFloat(val);
+                    //  Log.e("asize", ""+f);
 
                     float val1 = Float.parseFloat(mcount);
                     float val2 = Float.parseFloat(fCount);
-                    float m1 = 3;
-                    float m2 = 0;
+
 
                     Log.e("Records", " " + mcount + "-" + fCount + " - " + ageBound);
-                    yVals1.add(new BarEntry(im, new float[]{val1, val2}));
-
-                /*if (ageBound != null) {
-                    if (ageBound.equals("00-05")) {
-                        if (gender.equals("Male")) {
-                            ml = Float.parseFloat(count);
-                        } else {
-                            if (gender.equals("Female") && count != null || count != "0") {
-                                m2 = Float.parseFloat(count);
-                            } else {
-                                m2 = 0;
-                            }
-                        }
-                    } else if(ageBound.equals("05-15")){
-
-                        if (gender.equals("Male")) {
-                            ml = Float.parseFloat(count);
-                        } else {
-                            if (gender.equals("Female") && count != null || count != "0") {
-                                m2 = Float.parseFloat(count);
-                            } else {
-                                m2 = 0;
-                            }
-                        }
-                    }
-                    else if(ageBound.equals("15-25")){
-
-                        if (gender.equals("Male")) {
-                            ml = Float.parseFloat(count);
-                        } else {
-                            if (gender.equals("Female") && count != null || count != "0") {
-                                m2 = Float.parseFloat(count);
-                            } else {
-                                m2 = 0;
-                            }
-                        }
-                    }
-
-                    else if(ageBound.equals("25-35")){
-
-                        if (gender.equals("Male")) {
-                            ml = Float.parseFloat(count);
-                        } else {
-                            if (gender.equals("Female") && count != null || count != "0") {
-                                m2 = Float.parseFloat(count);
-                            } else {
-                                m2 = 0;
-                            }
-                        }
-                    }
-                    else if(ageBound.equals("35-45")){
-
-                        if (gender.equals("Male")) {
-                            ml = Float.parseFloat(count);
-                        } else {
-                            if (gender.equals("Female") && count != null || count != "0") {
-                                m2 = Float.parseFloat(count);
-                            } else {
-                                m2 = 0;
-                            }
-                        }
-                    }
-                    else if(ageBound.equals("45-55")){
-
-                        if (gender.equals("Male")) {
-                            ml = Float.parseFloat(count);
-                        } else {
-                            if (gender.equals("Female") && count != null || count != "0") {
-                                m2 = Float.parseFloat(count);
-                            } else {
-                                m2 = 0;
-                            }
-                        }
-                    }
-                    else if(ageBound.equals("55-65")){
-
-                        if (gender.equals("Male")) {
-                            ml = Float.parseFloat(count);
-                        } else {
-                            if (gender.equals("Female") && count != null || count != "0") {
-                                m2 = Float.parseFloat(count);
-                            } else {
-                                m2 = 0;
-                            }
-                        }
-                    }
-                    else if(ageBound.equals("65-Above")){
-
-                        if (gender.equals("Male")) {
-                            ml = Float.parseFloat(count);
-                        } else {
-                            if (gender.equals("Female") && count != null || count != "0") {
-                                m2 = Float.parseFloat(count);
-                            } else {
-                                m2 = 0;
-                            }
-                        }*/
+                   yVals1.add(new BarEntry(val, new float[]{val1, val2}));
+                    //yVals1.add(new BarEntry(val1, val2));
+                    ab++;
                 }
             } else {
-                Toast.makeText(getContext(), "", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), "No Values To Display.", Toast.LENGTH_LONG).show();
             }
 
             //    yVals1.add(new BarEntry(, new float[]{ml, m2}, ageBound));
@@ -268,7 +185,7 @@ public class PatientUpdateFragment extends Fragment {
 */
 
         } catch (Exception b) {
-            b.printStackTrace();
+            new AppController().appendLog(new AppController().getDateTime() + " " + "/ " + "Home" + b);
         }
 
         /*for (int i = 0; i < 10 + 1; i++) {
@@ -291,7 +208,8 @@ public class PatientUpdateFragment extends Fragment {
 
         BarData data = new BarData(dataSets);
         data.setValueFormatter(new MyValueFormatter());
-        data.setValueTextColor(Color.GRAY);
+        data.setValueTextColor(Color.BLACK);
+
 
         // mChart.setData(data);
 
@@ -311,16 +229,26 @@ public class PatientUpdateFragment extends Fragment {
             countsNo = sqlController.countPerDay(fromDate, toDate);
             int size = countsNo.size();
             Log.e("nOoFrECORDS", " " + countsNo.size());
-            for (int im = 0; im < size; im++) {
-                String a = countsNo.get(im).getCount();
-                String b = countsNo.get(im).getDate().trim();
-                nocountsperday.add(a);
-                date.add(b);
+            if (size > 0) {
+                for (int im = 0; im < size; im++) {
+                    String a = countsNo.get(im).getCount();
+                    String b = countsNo.get(im).getDate().trim();
+                    nocountsperday.add(a);
+                    date.add(b);
+                }
             }
             int size1 = nocountsperday.size();
-            for (int in = 0; in < size1; in++) {
-                int no = Integer.parseInt(nocountsperday.get(in));
-                values.add(new Entry(in, no));
+
+            if (size1 > 0) {
+                for (int in = 0; in < size1; in++) {
+                    int no = Integer.parseInt(nocountsperday.get(in));
+
+
+                    values.add(new Entry(in, no));
+                    //  values.add(new Entry(no,in));
+                }
+            } else {
+                Toast.makeText(getContext(), "No Data To Display.", Toast.LENGTH_LONG).show();
             }
 
             Log.e("coolby", " " + date.size() + "date is  " + nocountsperday.size());
@@ -365,7 +293,10 @@ public class PatientUpdateFragment extends Fragment {
 
         // set data
         //   holder.chart.setData(data);
-        return data;
+
+            return data;
+
+
     }
 
     private ChartData<?> generateDataBar(int i) {
@@ -406,9 +337,11 @@ public class PatientUpdateFragment extends Fragment {
 
         return data;
     }
+
     public static final int[] MATERIAL_COLORSNEW = {
             rgb("#50BAA0"), rgb("#3F51B5"), rgb("#e74c3c"), rgb("#3498db")
-};
+    };
+
     private int[] getColors() {
 
         int stacksize = 2;

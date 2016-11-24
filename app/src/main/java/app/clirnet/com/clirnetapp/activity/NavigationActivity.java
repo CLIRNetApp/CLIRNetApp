@@ -2,8 +2,10 @@ package app.clirnet.com.clirnetapp.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -51,6 +53,7 @@ public class NavigationActivity extends AppCompatActivity
     private String docName;
     private String emailId;
     private AppController appController;
+    private boolean idle=true;
 
 
     @Override
@@ -117,17 +120,42 @@ public class NavigationActivity extends AppCompatActivity
 
         fragmentManager.beginTransaction().replace(R.id.flContent, new HomeFragment()).commit();*/
 
+         String fromWhere=getIntent().getStringExtra("FROMWHERE");
+         Log.e("fromWhereNavigation",""+fromWhere);
+
         Fragment fragment = getSupportFragmentManager().
                 findFragmentById(R.id.flContent);
-        if (fragment == null) {
-            fragment = new HomeFragment();
-            getSupportFragmentManager()
+        if(fromWhere == null) {
+           // if (fragment == null) {
+                fragment = new HomeFragment();
+                /*getSupportFragmentManager()
+                        .beginTransaction()
+                        .add(R.id.flContent, fragment, "SOME_TAG_IF_YOU_WANT_TO_REFERENCE_YOUR_FRAGMENT_LATER")
+                        .commit();*/
+           // }
+        }else if(fromWhere.equals("2")){
+            fragment = new ConsultationLogFragment();
+           /* getSupportFragmentManager()
                     .beginTransaction()
                     .add(R.id.flContent, fragment, "SOME_TAG_IF_YOU_WANT_TO_REFERENCE_YOUR_FRAGMENT_LATER")
-                    .commit();
-        } else {
-            Log.e("fragment", "Fragment is already open");
+                    .commit();*/
+
+                Log.e("fragment", "Fragment is already open");
+
         }
+        else if(fromWhere.equals("3")){
+            fragment = new PoHistoryFragment();
+
+        }//for any other values
+        else{
+            Log.e("any", "Fragment is already open");
+            fragment = new HomeFragment();
+        }
+        fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+        // Highlight the selected item, update the title, and close the drawer
+
 
         Glide.get(getApplicationContext()).clearMemory();
     }
@@ -239,12 +267,14 @@ public class NavigationActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         Log.d(msg, "The onResume() event");
+
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(msg, "The onPause() event");
+
     }
 
     @Override
@@ -283,5 +313,7 @@ public class NavigationActivity extends AppCompatActivity
         docName = null;
         emailId = null;
     }
-
+    public void setActionBarTitle(String title){
+        getSupportActionBar().setTitle(title);
+    }
 }

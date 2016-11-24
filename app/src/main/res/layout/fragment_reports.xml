@@ -22,9 +22,10 @@
             android:layout_weight="1"
             android:layout_margin="4dp"
             android:background="@drawable/rectangle_corner"
+            android:drawableRight="@android:drawable/ic_menu_my_calendar"
             android:clickable="false"
             android:cursorVisible="false"
-            android:drawableRight="@android:drawable/ic_menu_my_calendar"
+
             android:focusable="false"
             android:focusableInTouchMode="false"
             android:fontFamily="sans-serif"

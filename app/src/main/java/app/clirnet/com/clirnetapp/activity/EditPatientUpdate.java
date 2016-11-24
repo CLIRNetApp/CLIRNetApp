@@ -17,6 +17,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -51,7 +52,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 public class EditPatientUpdate extends AppCompatActivity {
 
-    private final int[] imageArray = {R.drawable.one, R.drawable.two, R.drawable.three, R.drawable.four, R.drawable.five};
+    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom,R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest,R.drawable.revituz,R.drawable.suprizon};
     private ImageView backChangingImages;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
     private static final int DATE_DIALOG_ID = 0;
@@ -183,7 +184,7 @@ public class EditPatientUpdate extends AppCompatActivity {
 
         TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
-//open privacy poilicy page
+           //open privacy poilicy page
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -393,10 +394,12 @@ public class EditPatientUpdate extends AppCompatActivity {
                 i.putExtra("AGE", strAge);
                 i.putExtra("LANGUAGE", strLanguage);
                 i.putExtra("GENDER", strgender);
+                i.putExtra("FROMWHERE", "editpatient");
                 startActivity(i);
                 finish();
             }
         });
+
         cancel.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -1100,4 +1103,5 @@ public class EditPatientUpdate extends AppCompatActivity {
             mAilmemtArrayList = null;
         }
     }
+
 }

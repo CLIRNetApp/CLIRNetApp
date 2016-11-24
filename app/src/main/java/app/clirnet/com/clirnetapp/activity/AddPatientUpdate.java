@@ -52,7 +52,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 @SuppressWarnings("AccessStaticViaInstance")
 public class AddPatientUpdate extends AppCompatActivity {
 
-    private final int[] imageArray = {R.drawable.one, R.drawable.two, R.drawable.three, R.drawable.four, R.drawable.five};
+    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom,R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest,R.drawable.revituz,R.drawable.suprizon};
     private ImageView backChangingImages;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
     private static final int DATE_DIALOG_ID = 0;
@@ -367,6 +367,8 @@ public class AddPatientUpdate extends AppCompatActivity {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
                     cancel.setBackgroundColor(getResources().getColor(R.color.cancelbtn));
+                    goToNavigation();
+
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -376,7 +378,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
 
         });
-        cancel.setOnClickListener(new View.OnClickListener() {
+        /*cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // frameLayout.setVisibility(View.VISIBLE);
@@ -388,7 +390,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
 
 
-        });
+        });*/
 //save the data to db
         addUpdate.setOnTouchListener(new View.OnTouchListener() {
 

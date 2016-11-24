@@ -51,9 +51,11 @@ import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 
 public class EditPersonalInfo extends AppCompatActivity {
 
+    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom,R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest,R.drawable.revituz,R.drawable.suprizon};
+
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
     private static final int DATE_DIALOG_ID = 0;
-    private final int[] imageArray = {R.drawable.one, R.drawable.two, R.drawable.three, R.drawable.four, R.drawable.five};
+
     private String strPatientPhoto;
     private String strLanguage;
     private EditText editfirstname;
@@ -93,6 +95,7 @@ public class EditPersonalInfo extends AppCompatActivity {
     private Spinner language;
     private AppController appController;
     private Button save;
+    private String fromWhere;
 
 
     @Override
@@ -126,6 +129,8 @@ public class EditPersonalInfo extends AppCompatActivity {
 
         strLanguage = getIntent().getStringExtra("LANGUAGE");
         String strgender = getIntent().getStringExtra("GENDER");
+        fromWhere  =getIntent().getStringExtra("FROMWHERE");
+        Log.e("fromWhere","fromWhere "+fromWhere);
 
         patientImage = (ImageView) findViewById(R.id.patientImage);
         editfirstname = (EditText) findViewById(R.id.firstname);
@@ -317,7 +322,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
-                    cancel.setBackgroundColor(getResources().getColor(R.color.white));
+                    cancel.setBackgroundColor(getResources().getColor(R.color.cancelbtn));
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -371,7 +376,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                     return;
                 }
 
-                imageName = "imgs_" + first_name + "_" + last_name +"_"+ docId +"_"+appController.getDateTime()+  ".png";
+                imageName = "imgs_" + first_name + "_" + last_name + "_" + docId + "_" + appController.getDateTime() + ".png";
 
 
                 File image = new File(imagesFolder, imageName);
@@ -448,20 +453,20 @@ public class EditPersonalInfo extends AppCompatActivity {
                 String editAge = editage.getText().toString().trim();
                 String editPno = editmobile_no.getText().toString();
                 strdateob = editdob.getText().toString();
-                   //Removes  leading zeros from age filed  11-11-2016 By.Ashish
-                int length=0;
-                int age=0;
-                if(editAge.length() > 0) {
+                //Removes  leading zeros from age filed  11-11-2016 By.Ashish
+                int length = 0;
+                int age = 0;
+                if (editAge.length() > 0) {
                     try {
                         editAge = AppController.removeLeadingZeroes(editAge);
                         length = editAge.length();
                         age = Integer.parseInt(editAge);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration Page : " + e);
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration Page : " + e);
                     }
                 }
-             //   editAge = AppController.removeLeadingZeroes(editAge);
+                //   editAge = AppController.removeLeadingZeroes(editAge);
 
 
                 Log.e("counter", "   " + length);
@@ -517,7 +522,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                     if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
 
                         dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId);
-                       // Log.e("kt", "1");
+                        // Log.e("kt", "1");
                     } else {
                         dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId);
                         //Log.e("bt", "2");
@@ -527,9 +532,8 @@ public class EditPersonalInfo extends AppCompatActivity {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Personal Info" + e);
-                }
-                finally {
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e);
+                } finally {
                     if (dbController != null) {
                         dbController.close();
                     }
@@ -554,13 +558,17 @@ public class EditPersonalInfo extends AppCompatActivity {
         });
         //This will redirect user to main activity
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+
+
             @Override
             public void onClick(View v) {
                 // back button pressed
-                goToNavigation();
-
+               goToNavigation();
             }
+
+
         });
+
 
         setupAnimation();
     }
@@ -769,9 +777,17 @@ public class EditPersonalInfo extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+
+        goToNavigation();
+
+    }
+
     private void goToNavigation() {
 
         Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
+        i.putExtra("FROMWHERE", fromWhere);
         startActivity(i);
         finish();
     }
@@ -844,5 +860,6 @@ public class EditPersonalInfo extends AppCompatActivity {
                 .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
                 .into(patientImage);
     }
+
 }
 

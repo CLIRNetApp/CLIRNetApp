@@ -27,6 +27,8 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
+    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom,R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest,R.drawable.revituz,R.drawable.suprizon};
+
     private SQLController sqlController;
     private ArrayList<RegistrationModel> patientPersonalData ;
 
@@ -43,7 +45,6 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private String strAge;
     private String strDob;
     private String strLanguage;
-    private final int[] imageArray = {R.drawable.one, R.drawable.two, R.drawable.three, R.drawable.four, R.drawable.five};
     private ImageView backChangingImages;
     private TextView editpatientName;
     private TextView editage;
@@ -51,6 +52,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private TextView editgender;
     private TextView editlang;
     private AppController appController;
+    private String fromWhere;
 
 
     @Override
@@ -91,6 +93,9 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         strDob = getIntent().getStringExtra("DOB");
         strLanguage = getIntent().getStringExtra("LANGUAGE");
         strgender = getIntent().getStringExtra("GENDER");
+        fromWhere=getIntent().getStringExtra("FROMWHERE");
+        Log.e("fromWhere",""+fromWhere);
+
 
         TextView txtSysDate = (TextView) findViewById(R.id.sysdate);
 
@@ -175,6 +180,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // back button pressed
                 Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
+                i.putExtra("FROMWHERE", fromWhere);
                 startActivity(i);
                 finish();
 
@@ -239,6 +245,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         i.putExtra("AGE", strAge);
         i.putExtra("LANGUAGE", strLanguage);
         i.putExtra("GENDER", strgender);
+        i.putExtra("FROMWHERE", fromWhere);
         startActivity(i);
         finish();
     }
@@ -313,6 +320,11 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     //this will prevent user to access back press from tab
     @Override
     public void onBackPressed() {
+
+        Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
+        i.putExtra("FROMWHERE", fromWhere);
+        startActivity(i);
+        finish();
 
     }
 }

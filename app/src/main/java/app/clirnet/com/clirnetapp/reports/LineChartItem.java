@@ -1,4 +1,4 @@
-package app.clirnet.com.clirnetapp.Utility;
+package app.clirnet.com.clirnetapp.reports;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -10,15 +10,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.SeekBar;
 
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.LimitLine;
 import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.components.XAxis.XAxisPosition;
 import com.github.mikephil.charting.components.YAxis;
-import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -36,9 +33,6 @@ import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.Counts;
-import app.clirnet.com.clirnetapp.reports.MyMarkerView;
-
-import static java.security.AccessController.getContext;
 
 
 public class LineChartItem extends ChartItem implements
@@ -50,6 +44,7 @@ public class LineChartItem extends ChartItem implements
     private ArrayList<String> date;
     private ArrayList<String> nocountsperday;
     private String fromDate, toDate;
+
 
 
     public LineChartItem(ChartData<?> cd, Context c,String fromDate,String toDate) {
@@ -112,6 +107,7 @@ public class LineChartItem extends ChartItem implements
         mv.setChartView(holder.chart); // For bounds control
         holder.chart.setMarker(mv); // Set the marker to the chart
 
+
         // x-axis limit line
         LimitLine llXAxis = new LimitLine(10f, "Index 10");
         llXAxis.setLineWidth(4f);
@@ -123,30 +119,34 @@ public class LineChartItem extends ChartItem implements
         xAxis.enableGridDashedLine(10f, 10f, 0f);
         //xAxis.setValueFormatter(new MyCustomXAxisValueFormatter());
         //xAxis.addLimitLine(llXAxis); // add x-axis limit line
-
+        // enable scaling and dragging
+        holder.chart.setDragEnabled(true);
+        holder.chart.setScaleEnabled(true);
 
         Typeface tf = Typeface.createFromAsset(mContext.getAssets(), "OpenSans-Regular.ttf");
 
-        LimitLine ll1 = new LimitLine(150f, "Upper Limit");
+        /*LimitLine ll1 = new LimitLine(150f, "Upper Limit");
         ll1.setLineWidth(4f);
         ll1.enableDashedLine(10f, 10f, 0f);
         ll1.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_TOP);
         ll1.setTextSize(10f);
-        ll1.setTypeface(tf);
+        ll1.setTypeface(tf);*/
 
-        LimitLine ll2 = new LimitLine(-30f, "Lower Limit");
+       /* LimitLine ll2 = new LimitLine(-30f, "Lower Limit");
         ll2.setLineWidth(4f);
         ll2.enableDashedLine(10f, 10f, 0f);
         ll2.setLabelPosition(LimitLine.LimitLabelPosition.RIGHT_BOTTOM);
         ll2.setTextSize(10f);
-        ll2.setTypeface(tf);
+        ll2.setTypeface(tf);*/
 
         YAxis leftAxis = holder.chart.getAxisLeft();
         leftAxis.removeAllLimitLines(); // reset all limit lines to avoid overlapping lines
-        leftAxis.addLimitLine(ll1);
-        leftAxis.addLimitLine(ll2);
-        leftAxis.setAxisMaximum(1000f);
-        leftAxis.setAxisMinimum(-50f);
+       // leftAxis.addLimitLine(ll1);
+       // leftAxis.addLimitLine(ll2);
+        float maxY=mChartData.getYMax();
+        //making upper limit dynamic
+        leftAxis.setAxisMaximum(maxY);
+        leftAxis.setAxisMinimum(0f);
         //leftAxis.setYOffset(20f);
         leftAxis.enableGridDashedLine(10f, 10f, 0f);
         leftAxis.setDrawZeroLine(false);
@@ -155,6 +155,16 @@ public class LineChartItem extends ChartItem implements
         leftAxis.setDrawLimitLinesBehindData(true);
 
         holder.chart.getAxisRight().setEnabled(false);
+
+        XAxis xLabels = holder.chart.getXAxis();
+        xLabels.setPosition(XAxis.XAxisPosition.BOTTOM);
+        //todo umcomment this to test for x axis value
+        xLabels.setTextSize(10f);
+        xLabels.setTextColor(Color.RED);
+        xLabels.setDrawAxisLine(true);
+        xLabels.setDrawGridLines(false);
+// set a custom value formatter
+        xLabels.setValueFormatter(new XaxisValueFormatter());
 
         //holder.chart .getViewPortHandler().setMaximumScaleY(2f);
         //holder.chart .getViewPortHandler().setMaximumScaleX(2f);
@@ -166,7 +176,7 @@ public class LineChartItem extends ChartItem implements
 //        holder.chart .setVisibleYRange(20f, AxisDependency.LEFT);
 //        holder.chart .centerViewTo(20, 50, AxisDependency.LEFT);
 
-        holder.chart.animateX(2500);
+        holder.chart.animateX(1500);
         //mChart.invalidate();
 
         // get the legend (only possible after setting data)
@@ -176,6 +186,7 @@ public class LineChartItem extends ChartItem implements
         l.setForm(Legend.LegendForm.LINE);
 
         // holder.chart.setData((LineData) mChartData);
+
 
 
         // apply styling

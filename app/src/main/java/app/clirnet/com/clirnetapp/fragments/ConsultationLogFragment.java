@@ -33,6 +33,7 @@ import java.util.Objects;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.ItemClickListener;
+import app.clirnet.com.clirnetapp.activity.NavigationActivity;
 import app.clirnet.com.clirnetapp.activity.PrivacyPolicy;
 import app.clirnet.com.clirnetapp.activity.ShowPersonalDetailsActivity;
 import app.clirnet.com.clirnetapp.activity.TermsCondition;
@@ -52,7 +53,7 @@ public class ConsultationLogFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
 
-    private final int[] imageArray = {R.drawable.one, R.drawable.two, R.drawable.three, R.drawable.four, R.drawable.five};
+    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom,R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest,R.drawable.revituz,R.drawable.suprizon};
 
     private OnFragmentInteractionListener mListener;
     private EditText date;
@@ -122,6 +123,7 @@ public class ConsultationLogFragment extends Fragment {
         String dd = sdf.format(todayDate);
         currdate.setText("Today's Date " + dd);
 
+        ((NavigationActivity) getActivity()).setActionBarTitle("Consulation Log");
 
         followUpDateSearchAdapter = new FollowUpDateSearchAdapter(filterfodList);
         rvAdapterforUpdateDate = new RVAdapterforUpdateDate(filterfodList);
@@ -212,6 +214,7 @@ public class ConsultationLogFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
+
                 SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy");
                 SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -362,6 +365,7 @@ public class ConsultationLogFragment extends Fragment {
         i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
         i.putExtra("CLINICALNOTES", book.getClinicalNotes());
         i.putExtra("PRESCRIPTION", book.getPres_img());
+        i.putExtra("FROMWHERE", "2");
         Log.e("img", "" + book.getPres_img());
 
         startActivity(i);
@@ -395,6 +399,7 @@ public class ConsultationLogFragment extends Fragment {
         i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
         i.putExtra("CLINICALNOTES", book.getClinicalNotes());
         i.putExtra("PRESCRIPTION", book.getPres_img());
+        i.putExtra("FROMWHERE", "2");
         Log.e("img", "" + book.getPres_img());
         startActivity(i);
     }
