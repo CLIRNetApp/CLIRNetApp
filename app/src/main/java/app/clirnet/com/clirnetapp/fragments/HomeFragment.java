@@ -782,6 +782,15 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                 try {
 
+                    if(newText.trim().length() > 10 ){
+
+                        Toast toast = Toast.makeText(getContext(),"Phone Number Should Be Only 10 Digits ", Toast.LENGTH_LONG);
+                        toast.setGravity(Gravity.CENTER, 0, 0);
+                        toast.show();
+
+                        return true;
+                    }
+
                     if (newText.trim().length() > 4) {
                         norecordtv.setVisibility(View.GONE);
                         Searchrecycler_view.setVisibility(View.VISIBLE);

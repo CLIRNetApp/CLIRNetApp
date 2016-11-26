@@ -248,7 +248,6 @@ public class LoginActivity extends Activity  {
         Log.e("screen size",""+size);*/
 
 
-
     }
 
 

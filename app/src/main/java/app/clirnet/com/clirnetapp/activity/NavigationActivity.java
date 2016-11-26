@@ -2,10 +2,8 @@ package app.clirnet.com.clirnetapp.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -24,8 +22,8 @@ import com.bumptech.glide.Glide;
 
 import app.clirnet.com.clirnetapp.R;
 
-import app.clirnet.com.clirnetapp.Utility.SyncDataService;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.fragments.AnotherFragment;
 import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
 import app.clirnet.com.clirnetapp.fragments.DemoFragment;
 import app.clirnet.com.clirnetapp.fragments.HomeFragment;
@@ -35,11 +33,14 @@ import app.clirnet.com.clirnetapp.fragments.ReportFragment;
 import app.clirnet.com.clirnetapp.fragments.TopTenAilmentFragment;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
+import app.clirnet.com.clirnetapp.reports.BarChartFragment;
+import app.clirnet.com.clirnetapp.reports.NewHomeFragment;
 
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
-        , ReportFragment.OnFragmentInteractionListener,PatientUpdateFragment.OnFragmentInteractionListener,DemoFragment.OnFragmentInteractionListener,TopTenAilmentFragment.OnFragmentInteractionListener {
+        , ReportFragment.OnFragmentInteractionListener,PatientUpdateFragment.OnFragmentInteractionListener,DemoFragment.OnFragmentInteractionListener,TopTenAilmentFragment.OnFragmentInteractionListener,
+        AnotherFragment.OnFragmentInteractionListener,NewHomeFragment.OnFragmentInteractionListener,BarChartFragment.OnFragmentInteractionListener{
 
 
     private FragmentManager fragmentManager;

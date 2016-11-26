@@ -755,6 +755,16 @@ public class EditPatientUpdate extends AppCompatActivity {
 
         //remove comma occurance from string
         ailments= appController.removeCommaOccurance(ailments);
+        Boolean ailmentValue =false;
+        if (ailments.length() > 0) {
+            ailmentValue = appController.findNumbersAilment(ailments);
+            Log.e("ailmentValue", "" + ailmentValue);
+            if(ailmentValue){
+                ailments1.setError("Please Enter Valid ailment");
+                return;
+            }
+        }
+
 
 
         String followupdateSellected;

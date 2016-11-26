@@ -3,11 +3,11 @@ package app.clirnet.com.clirnetapp.fragments;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,7 +16,6 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
-
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -24,25 +23,21 @@ import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
+import com.numetriclabz.numandroidcharts.LineChart;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.reports.BarChartItem;
-import app.clirnet.com.clirnetapp.reports.ChartItem;
-import app.clirnet.com.clirnetapp.reports.LineChartItem;
 import app.clirnet.com.clirnetapp.adapters.ChartDataAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.Counts;
-import app.clirnet.com.clirnetapp.reports.GenderWiseDataModel;
-import app.clirnet.com.clirnetapp.reports.MyValueFormatter;
+import app.clirnet.com.clirnetapp.reports.BarChartFragment;
+import app.clirnet.com.clirnetapp.reports.ChartItem;
+import app.clirnet.com.clirnetapp.reports.LineChartItem;
 
 import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
 
@@ -65,9 +60,12 @@ public class PatientUpdateFragment extends Fragment {
 
     private AppController appController;
     private String fromDate, toDate;
+    LineChart Chart;
 
-  // private static final List<Float> ageBoundArray = Arrays.asList(00.05f, 05.15f, 15.25f, 25.35f, 35.45f, 45.55f, 55.65f, 75.0f);
-    private static final List<Float> ageBoundArray = Arrays.asList(05.0f, 15f, 25f, 35f, 45f, 55f, 65f, 75.0f);
+
+
+
+
 
     public PatientUpdateFragment() {
         // Required empty public constructor
@@ -90,7 +88,7 @@ public class PatientUpdateFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        // backChangingImages = null; // now cleaning up!
+
         view = null;
     }
 
@@ -101,7 +99,7 @@ public class PatientUpdateFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_patient_update, container, false);
 
-        //new Counts().setSelectedView("one");
+
         appController = new AppController();
         this.setValuesSharedPrefrence("one");
 
@@ -109,22 +107,27 @@ public class PatientUpdateFragment extends Fragment {
 
         ArrayList<ChartItem> list = new ArrayList<ChartItem>();
 
-        //setSackedBarView();
 
-        //list.add(new BarChartItem(generateDataBar(2), getContext()));
-       list.add(new LineChartItem(generateDataLine(1), getContext(), fromDate, toDate));
-       list.add(new BarChartItem(generateDataBarNew(2), getContext()));
+        list.add(new LineChartItem(generateDataLine(1), getContext(), fromDate, toDate, date));
+       // list.add(new BarChartItem(generateDataBar(2), getContext()));
 
         ChartDataAdapter cda = new ChartDataAdapter(getContext(), list);
         lv.setAdapter(cda);
+
+        BarChartFragment fragment1 = new BarChartFragment( fromDate, toDate);
+
+        FragmentManager fragmentManager1 = getChildFragmentManager();
+        fragmentManager1.beginTransaction().replace(R.id.flContent, fragment1).commit();
+
+
+
         return view;
     }
 
-    List<String> supplierNames = Arrays.asList("00.05", "05.15", "15.25", "25.35", "35.45", "45.55", "55.65", "65");
 
-
-    private ChartData<?> generateDataBarNew(int e) {
+   /* private ChartData<?> generateDataBarNew(int e) {
         ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
+        // ArrayList<BarEntry> xVals1 = new ArrayList<BarEntry>();
 
         try {
             SQLController sqlController = new SQLController(getContext());
@@ -134,7 +137,7 @@ public class PatientUpdateFragment extends Fragment {
             gd = sqlController.genderWiseData(fromDate, toDate);
             int size1 = gd.size();
 
-            int ab = 1;
+            //int ab = 1;
             if (size1 > 0) {
                 for (int im = 0; im < size1; im++) {
                     String mcount = gd.get(im).getmCount();
@@ -143,27 +146,31 @@ public class PatientUpdateFragment extends Fragment {
 
                     Float val = ageBoundArray.get(im);
                     // String val=supplierNames.get(im);
-                   // int a = Integer.parseInt(val);
-                   // float f = Float.parseFloat(val);
+                    // int a = Integer.parseInt(val);
+                    // float f = Float.parseFloat(val);
                     //  Log.e("asize", ""+f);
 
                     float val1 = Float.parseFloat(mcount);
                     float val2 = Float.parseFloat(fCount);
 
+                    *//*if(mcount.equals("0")){
+                        mcount=null;
+                    }
+                    if(fCount.equals("0")){
+                        fCount=null;
+                    }*//*
 
-                    Log.e("Records", " " + mcount + "-" + fCount + " - " + ageBound);
-                   yVals1.add(new BarEntry(val, new float[]{val1, val2}));
+
+                    Log.e("Records", " " + val1 + "-" + val2 + " - " + ageBound);
+                    yVals1.add(new BarEntry(val, new float[]{val1, val2}));
+                    //  xVals1.add(new BarEntry(val, new float[]{10,05}));
                     //yVals1.add(new BarEntry(val1, val2));
-                    ab++;
+                    //  ab++;
                 }
             } else {
                 Toast.makeText(getContext(), "No Values To Display.", Toast.LENGTH_LONG).show();
             }
 
-            //    yVals1.add(new BarEntry(, new float[]{ml, m2}, ageBound));
-/*
-                }
-            }*/
 
             ArrayList<Counts> countsNo;
             date = new ArrayList<>();
@@ -171,7 +178,7 @@ public class PatientUpdateFragment extends Fragment {
             countsNo = sqlController.countPerDay(fromDate, toDate);
             int size = countsNo.size();
             Log.e("nOoFrECORDS", " " + countsNo.size());
-           /* for (int im = 0; im < size; im++) {
+           *//* for (int im = 0; im < size; im++) {
                 String a = countsNo.get(im).getCount();
                 float val1= Float.parseFloat(a);
                 float val2= val1+10;
@@ -182,39 +189,41 @@ public class PatientUpdateFragment extends Fragment {
                 //nocountsperday.add(a);
                // date.add(b);
             }
-*/
+*//*
 
         } catch (Exception b) {
             new AppController().appendLog(new AppController().getDateTime() + " " + "/ " + "Home" + b);
         }
 
-        /*for (int i = 0; i < 10 + 1; i++) {
+        *//*for (int i = 0; i < 10 + 1; i++) {
             float mult = (i + 1);
             float val1 = (float) (Math.random() * mult) + mult / 3;
             float val2 = (float) (Math.random() * mult) + mult / 3;
-           *//* float val3 = (float) (Math.random() * mult) + mult / 3;*//*
+           *//**//* float val3 = (float) (Math.random() * mult) + mult / 3;*//**//*
 
             yVals1.add(new BarEntry(i, new float[]{val1, val2}));
-        }*/
+        }*//*
 
-        BarDataSet set1;
+        BarDataSet set1, set2;
 
-        set1 = new BarDataSet(yVals1, "Patients By Gender and Age");
+        set1 = new BarDataSet(yVals1, " ");
         set1.setColors(getColors());
         set1.setStackLabels(new String[]{"Male", "Female"});
+        // set2=new BarDataSet(xVals1,"full");
 
         ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
         dataSets.add(set1);
+        // dataSets.add(set2);
 
         BarData data = new BarData(dataSets);
         data.setValueFormatter(new MyValueFormatter());
-        data.setValueTextColor(Color.BLACK);
+        data.setValueTextColor(Color.WHITE);
 
 
         // mChart.setData(data);
 
         return data;
-    }
+    }*/
 
     private ChartData<?> generateDataLine(int i) {
 
@@ -233,6 +242,7 @@ public class PatientUpdateFragment extends Fragment {
                 for (int im = 0; im < size; im++) {
                     String a = countsNo.get(im).getCount();
                     String b = countsNo.get(im).getDate().trim();
+                    Log.e("DateandCount", " " + a + "date is  " + b);
                     nocountsperday.add(a);
                     date.add(b);
                 }
@@ -244,7 +254,7 @@ public class PatientUpdateFragment extends Fragment {
                     int no = Integer.parseInt(nocountsperday.get(in));
 
 
-                    values.add(new Entry(in, no));
+                    values.add(new Entry(no, in));
                     //  values.add(new Entry(no,in));
                 }
             } else {
@@ -273,9 +283,6 @@ public class PatientUpdateFragment extends Fragment {
         set1.setDrawCircleHole(false);
         set1.setValueTextSize(9f);
         set1.setDrawFilled(true);
-        set1.setFormLineWidth(1f);
-        set1.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
-        set1.setFormSize(15.f);
 
         if (Utils.getSDKInt() >= 18) {
             // fill drawable only supported on api level 18 and above
@@ -289,12 +296,10 @@ public class PatientUpdateFragment extends Fragment {
         dataSets.add(set1); // add the datasets
 
         // create a data object with the datasets
-        LineData data = new LineData(dataSets);
+        LineData data = new LineData(date,dataSets);
 
-        // set data
-        //   holder.chart.setData(data);
 
-            return data;
+        return data;
 
 
     }
@@ -332,7 +337,7 @@ public class PatientUpdateFragment extends Fragment {
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Home" + e);
         }
         BarDataSet bardataset = new BarDataSet(entries, "Cells");
-        BarData data = new BarData(bardataset);
+        BarData data = new BarData(date,bardataset);
         bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
 
         return data;

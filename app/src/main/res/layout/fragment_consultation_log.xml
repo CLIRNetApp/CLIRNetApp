@@ -49,7 +49,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    android:layout_weight="0.6"
+                    android:layout_weight="0.4"
                     android:background="@drawable/rectangle_corner"
                     android:drawableRight="@android:drawable/ic_menu_my_calendar"
                     android:fontFamily="sans-serif"
@@ -66,8 +66,10 @@
 
                 <Button
                     android:id="@+id/search"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:layout_margin="4dp"
                     android:background="@color/btn_back_sbmt"
                     android:text="SUBMIT"
                     android:textColor="@color/white" />

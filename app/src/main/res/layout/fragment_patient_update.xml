@@ -1,16 +1,36 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="app.clirnet.com.clirnetapp.fragments.PatientUpdateFragment">
 
-
-    <!-- TODO: Update blank fragment layout -->
-    <ListView
-        android:id="@+id/listView1"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-       >
-    </ListView>
+        android:layout_height="match_parent">
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-</FrameLayout>
+            <ListView
+                android:id="@+id/listView1"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"></ListView>
+
+            <!--    <com.numetriclabz.numandroidcharts.LineChart
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:id="@+id/chart"
+                   />-->
+
+            <FrameLayout
+                android:id="@+id/flContent"
+                android:layout_width="match_parent"
+                android:layout_height="500dp"
+                android:layout_below="@+id/listView1" />
+
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>

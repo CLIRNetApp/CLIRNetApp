@@ -61,7 +61,7 @@ import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 
 public class RegistrationActivity extends AppCompatActivity {
 
-    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom,R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest,R.drawable.revituz,R.drawable.suprizon};
+    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom, R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest, R.drawable.revituz, R.drawable.suprizon};
 
     private static final int DATE_DIALOG_ID = 0;
     private static final int DATE_DIALOG_ID1 = 1;
@@ -174,8 +174,8 @@ public class RegistrationActivity extends AppCompatActivity {
         Button prescriptionBtn = (Button) findViewById(R.id.prescriptionBtn);
         imageViewprescription = (ImageView) findViewById(R.id.imageViewprescription);
         clinical_Notes = (EditText) findViewById(R.id.cliniclaNotes);
-         add = (Button) findViewById(R.id.add);
-         cancel = (Button) findViewById(R.id.cancel);
+        add = (Button) findViewById(R.id.add);
+        cancel = (Button) findViewById(R.id.cancel);
         radioSexGroup = (RadioGroup) findViewById(R.id.radioGender);
         multiAutoComplete = (MultiAutoCompleteTextView) findViewById(R.id.ailments);
 
@@ -256,7 +256,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
         }
 
 
@@ -273,14 +273,14 @@ public class RegistrationActivity extends AppCompatActivity {
 
             maxLastId = nameId + 1;
             int id = databaseClass.getMaxAimId();
-          //  Log.e("getMaxAimId", "" + id);
+            //  Log.e("getMaxAimId", "" + id);
             maxid = id + 1;
 
             lastNamedb.openDataBase();
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
         }
 
 
@@ -301,7 +301,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
         }
 
         //this code is for setting list to auto complete text view  8/6/16
@@ -320,7 +320,7 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
         }
 
 
@@ -328,7 +328,6 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
         // when the user clicks an item of the drop-down list
-
 
 
 //select the language
@@ -421,7 +420,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 firstName.setError(null);
             }
         });
-       //Remove red error after text changes By.Ashish 15-11-2016
+        //Remove red error after text changes By.Ashish 15-11-2016
         lastName.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
@@ -498,7 +497,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         showfodtext.setText(dateis);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration" + e);
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
 
                     }
                 }
@@ -522,7 +521,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration" + e);
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
                     }
 
                 }
@@ -591,7 +590,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
 
                 }
             }
@@ -626,7 +625,7 @@ public class RegistrationActivity extends AppCompatActivity {
                         follow_up_Months.setError(null);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration" + e);
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
                     }
                 }
             }
@@ -705,19 +704,18 @@ public class RegistrationActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(first_name)) {
                     firstName.setError("Please enter First Name");
                     return;
-                }
-                else{
+                } else {
                     firstName.setError(null);
                 }
 
                 if (TextUtils.isEmpty(last_name)) {
                     lastName.setError("Please enter Last Name");
                     return;
-                }else{
+                } else {
                     lastName.setError(null);
                 }
 
-                imageName = "img_" + first_name + "_" + last_name +"_"+docId+"_"+appController.getDateTime()+ ".png";
+                imageName = "img_" + first_name + "_" + last_name + "_" + docId + "_" + appController.getDateTime() + ".png";
 
 
                 File image = new File(imagesFolder, imageName);
@@ -743,19 +741,19 @@ public class RegistrationActivity extends AppCompatActivity {
                 if (TextUtils.isEmpty(first_name)) {
                     firstName.setError("Please enter First Name");
                     return;
-                } else{
+                } else {
                     firstName.setError(null);
                 }
 
                 if (TextUtils.isEmpty(last_name)) {
                     lastName.setError("Please enter Last Name");
                     return;
-                }else{
+                } else {
                     lastName.setError(null);
                 }
 
 
-                imageName = "prescription_" + first_name +"_"+ docId +"_"+appController.getDateTime()+ ".png";
+                imageName = "prescription_" + first_name + "_" + docId + "_" + appController.getDateTime() + ".png";
 
 
                 File image = new File(imagesFolder, imageName);
@@ -897,7 +895,7 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
         }
 
         try {
@@ -918,7 +916,7 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
         }
     }
     //show captured Prescription image into image view
@@ -941,7 +939,7 @@ public class RegistrationActivity extends AppCompatActivity {
             imageViewprescription.setImageBitmap(bitmap);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
         }
     }
 
@@ -965,7 +963,7 @@ public class RegistrationActivity extends AppCompatActivity {
             //patientimage.setImageBitmap(bitmap);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
         }
     }
 
@@ -994,7 +992,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
 
                                 // we calculate age from dob and set to text view.
-                                pateintage =appController. getAge(year, monthOfYear, dayOfMonth);
+                                pateintage = appController.getAge(year, monthOfYear, dayOfMonth);
                                 String ageid = String.valueOf(pateintage);
                                 age.setText(ageid);
                                 age.setEnabled(false);//this will set edit text editable false iof dob is present
@@ -1058,17 +1056,17 @@ public class RegistrationActivity extends AppCompatActivity {
         String current_age = age.getText().toString().trim();
 
         //Removes  leading zeros from age filed  11-11-2016 By.Ashish
-        if(current_age.length() > 0) {
+        if (current_age.length() > 0) {
             try {
                 current_age = AppController.removeLeadingZeroes(current_age);
             } catch (Exception e) {
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration Page : " + e);
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration Page : " + e);
             }
         }
 
         String ailments = multiAutoComplete.getText().toString().trim();
-        if(ailments.length()>0 && ailments.length()<2  && ailments.contains(",")) {
+        if (ailments.length() > 0 && ailments.length() < 2 && ailments.contains(",")) {
             multiAutoComplete.setError("Please Enter Valid ailment");
             return;
         } /*else {
@@ -1077,12 +1075,23 @@ public class RegistrationActivity extends AppCompatActivity {
                 return;
             }
         }*/
-
         //remove comma occurance from string
-        ailments= appController.removeCommaOccurance(ailments);
+        ailments = appController.removeCommaOccurance(ailments);
+
+        Boolean ailmentValue =false;
+
+        if (ailments.length() > 0) {
+            ailmentValue = appController.findNumbersAilment(ailments);
+            Log.e("ailmentValue", "" + ailmentValue);
+            if(ailmentValue){
+                multiAutoComplete.setError("Please Enter Valid ailment");
+                return;
+            }
+        }
 
 
-        Log.e("ailmentval",""+ailments);
+
+        Log.e("ailmentval", "" + ailments);
         int selectedId = radioSexGroup.getCheckedRadioButtonId();
 
         RadioButton radioSexButton = (RadioButton) findViewById(selectedId);
@@ -1111,12 +1120,12 @@ public class RegistrationActivity extends AppCompatActivity {
                     return;
                 }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Registration" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
         }
 
-        if(TextUtils.isEmpty(first_name) || TextUtils.isEmpty(last_name) || TextUtils.isEmpty(phone_number) || phone_number.length() < 10 || TextUtils.isEmpty(current_age)|| TextUtils.isEmpty(ailments) ) {
+        if (TextUtils.isEmpty(first_name) || TextUtils.isEmpty(last_name) || TextUtils.isEmpty(phone_number) || phone_number.length() < 10 || TextUtils.isEmpty(current_age) || TextUtils.isEmpty(ailments)) {
 
             if (TextUtils.isEmpty(first_name)) {
                 firstName.setError("Please enter First Name");
@@ -1124,12 +1133,11 @@ public class RegistrationActivity extends AppCompatActivity {
             } else if (TextUtils.isEmpty(last_name)) {
                 lastName.setError("Please enter Last Name");
                 return;
-            }
-            else if (TextUtils.isEmpty(current_age)) {
+            } else if (TextUtils.isEmpty(current_age)) {
                 age.setError("Please enter Age");
                 return;
             }
-            if(current_age.length() >0){
+            if (current_age.length() > 0) {
                 age.setError(null);
             }
            /* else  if (current_age == String.valueOf(0)) {
@@ -1144,7 +1152,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 return;
             }
 
-             //mobile no validations
+            //mobile no validations
             if (phone_number.length() < 10) {
                 phone_no.setError("Mobile Number should be 10 digits");
                 Toast.makeText(getApplicationContext(), "Mobile Number should be 10 digits", Toast.LENGTH_LONG).show();
@@ -1152,17 +1160,14 @@ public class RegistrationActivity extends AppCompatActivity {
             }
             //Code to save only unique records
 
-           if  (TextUtils.isEmpty(ailments)) {
+            if (TextUtils.isEmpty(ailments)) {
                 multiAutoComplete.setError("Please enter Ailment");
                 return;
+            } else {
+                multiAutoComplete.setError(null);
             }
-            else{
-               multiAutoComplete.setError(null);
-           }
             lastNameList.add(last_name);
         }
-
-
 
 
         String delimiter = ",";
@@ -1207,7 +1212,7 @@ public class RegistrationActivity extends AppCompatActivity {
             if (days > 366) {
                 follow_up_days.setError("Enter up to 366 Days");
                 return;
-            }else{
+            } else {
                 follow_up_days.setError(null);
             }
             daysSel = String.valueOf(days);
@@ -1231,8 +1236,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 if (fow > 54) {
                     follow_up_weeks.setError("Enter up to 54 Weeks");
                     return;
-                }
-                else{
+                } else {
                     follow_up_weeks.setError(null);
                 }
             }
@@ -1255,8 +1259,7 @@ public class RegistrationActivity extends AppCompatActivity {
             if (monthselected > 12) {
                 follow_up_Months.setError("Enter up to 12 Months");
                 return;
-            }
-            else{
+            } else {
                 follow_up_Months.setError(null);
             }
             monthSel = String.valueOf(monthselected);
@@ -1268,7 +1271,7 @@ public class RegistrationActivity extends AppCompatActivity {
         }
 
 
-      //  String patient_id = String.valueOf(maxPatientIdCount + 1);
+        //  String patient_id = String.valueOf(maxPatientIdCount + 1);
         //String visit_id = String.valueOf(maxVisitId + 1);
         int patient_id = maxPatientIdCount + 1;
 
@@ -1289,13 +1292,13 @@ public class RegistrationActivity extends AppCompatActivity {
 
             dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, ailments, prescriptionImgPath, clinical_note, sysdate.toString(), visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action);
 
-             //patient_id=String.valueOf(patient_id + 1);
-             //visit_id=String.valueOf(visit_id + 1);
-                 // patient_id = patient_id + 1;
-                //  visit_id=visit_id + 1;
+            //patient_id=String.valueOf(patient_id + 1);
+            //visit_id=String.valueOf(visit_id + 1);
+            // patient_id = patient_id + 1;
+            //  visit_id=visit_id + 1;
 
 
-           //  }
+            //  }
             Toast.makeText(getApplicationContext(), "Patient Record Saved", Toast.LENGTH_LONG).show();
 
             goToNavigation();
@@ -1371,7 +1374,7 @@ public class RegistrationActivity extends AppCompatActivity {
             lastNamedb.close();//Close the all database connection opened here 31/10/2008 By. Ashish
             lastNamedb = null;
         }
-        if(appController !=null) {
+        if (appController != null) {
             appController = null;
         }
 
@@ -1444,9 +1447,10 @@ public class RegistrationActivity extends AppCompatActivity {
         finish();
 
     }
+
     //this will prevent user to access back press from tab
     @Override
     public void onBackPressed() {
-                   goToNavigation();
+        goToNavigation();
     }
 }

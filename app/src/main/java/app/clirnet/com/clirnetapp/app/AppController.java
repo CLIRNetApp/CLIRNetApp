@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -32,6 +33,9 @@ public class AppController extends Application {
 	private RequestQueue mRequestQueue;
 
 	private static AppController mInstance;
+
+	private String regex = "[0-9]+";
+
 
 	@Override
 	protected void attachBaseContext(Context base) {
@@ -196,6 +200,13 @@ public class AppController extends Application {
 
 		String dateis = sdf.format(cal.getTime());
 		return dateis;
+	}
+
+//check if the ailment string contains all the nubers or not
+	public boolean findNumbersAilment(String value){
+		String result = value.replaceAll("[,]","");
+		return result.matches(regex);
+
 	}
 
 

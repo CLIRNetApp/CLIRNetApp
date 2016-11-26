@@ -752,6 +752,18 @@ public class AddPatientUpdate extends AppCompatActivity {
         //remove comma occurance from string
         ailments= appController.removeCommaOccurance(ailments);
 
+
+        Boolean ailmentValue =false;
+
+        if (ailments.length() > 0) {
+            ailmentValue = appController.findNumbersAilment(ailments);
+            Log.e("ailmentValue", "" + ailmentValue);
+            if(ailmentValue){
+                ailments1.setError("Please Enter Valid ailment");
+                return;
+            }
+        }
+
         if (follow_up_weeks.getText().toString().length() == 0 & follow_up_Months.getText().toString().length() == 0 & follow_up_days.getText().toString().length() == 0 & follow_up_date.getText().toString().length() > 0) {
             followupdateSellected = follow_up_date.getText().toString();
             try {
