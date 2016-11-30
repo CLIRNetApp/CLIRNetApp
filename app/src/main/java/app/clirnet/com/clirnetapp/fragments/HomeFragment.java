@@ -11,16 +11,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.text.Html;
 import android.text.InputType;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -32,7 +29,6 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.ImageView;
@@ -56,6 +52,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.channels.FileChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -63,7 +60,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -73,7 +69,6 @@ import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.Utility.ItemClickListener;
 import app.clirnet.com.clirnetapp.activity.AddPatientUpdate;
 import app.clirnet.com.clirnetapp.activity.EditPatientUpdate;
-import app.clirnet.com.clirnetapp.activity.LoginActivity;
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
 import app.clirnet.com.clirnetapp.activity.PrivacyPolicy;
 import app.clirnet.com.clirnetapp.activity.RegistrationActivity;
@@ -508,7 +503,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             if (al.size() != 0) {
                 savedUserName = al.get(0).getUserName();
                 savedUserPassword = al.get(0).getPassowrd();
-                //Log.e("asyn_value","asyn_value is " + un + " //////// "+ pwd );
+                Log.e("asyn_value","asyn_value is " + savedUserName + " //////// "+ savedUserPassword );
             }
 
             asyn_value = sqlController.getAsyncvalue();
@@ -1217,6 +1212,12 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             case R.id.refresh:
                 makeToast("Under Construction");
                 break;
+            case R.id.about:
+               /* Intent intent=new Intent(getContext(),AboutAppPage.class);
+                startActivity(intent);*/
+                showCreatePatientAlertDialog();
+                break;
+
 
             case android.R.id.home:
 
@@ -1327,10 +1328,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 params.put("patient_visits", patient_visits);
                 return params;
 
-                //return checkParams(params);
+               // return checkParams(params);
             }
 
-            private Map<String, String> checkParams(Map<String, String> params) {
+            /*private Map<String, String> checkParams(Map<String, String> params) {
                 Iterator<Map.Entry<String, String>> it = params.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry<String, String> pairs = (Map.Entry<String, String>) it.next();
@@ -1340,12 +1341,14 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 }
                 return params;
             }
-
+*/
         };
 
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
+
+
 
     private void showDialog() {
         if (!pDialog.isShowing())
@@ -1385,6 +1388,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, "Sync Response: " + response);
+                Log.e("responseresponse",""+response);
 
                 //   new DownloadMusicfromInternet().execute(response);
                 try {
@@ -1425,6 +1429,19 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 Toast.makeText(getContext(),
                         "Failed To Initalize Data" + error.getMessage(), Toast.LENGTH_LONG).show();
                 hideDialog();
+                String body;
+                //get status code here
+                String statusCode = String.valueOf(error.networkResponse.statusCode);
+                Log.e("statusCode",""+statusCode);
+                //get response body and parse with appropriate encoding
+                if(error.networkResponse.data!=null) {
+                    try {
+                        body = new String(error.networkResponse.data,"UTF-8");
+                        Log.e("statusCodebody"," "+ body);
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }) {
 
@@ -1436,7 +1453,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 params.put("username", savedUserName);
                 params.put("password", savedUserPassword);
                 params.put("apikey", getResources().getString(R.string.apikey));
-
+               // Log.e("apikey",""+savedUserName + "  "+savedUserPassword + " "+ getResources().getString(R.string.apikey));
                 return params;
             }
 
@@ -1726,6 +1743,37 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         Log.e("Flag Status", "" + status);
 
     }
+
+    private void showCreatePatientAlertDialog() {
+        final Dialog dialog = new Dialog(getContext());
+        dialog.setContentView(R.layout.about_app_dialog);
+
+
+        dialog.setTitle("About App V1.2.1");
+        //  dialog.setCancelable(false);
+
+
+        Button dialogButtonCancel = (Button) dialog.findViewById(R.id.customDialogCancel);
+
+        // Click cancel to dismiss android custom dialog box
+        dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //fragmentManager = getActivity().getSupportFragmentManager();
+                //  fragmentManager.beginTransaction().replace(R.id.flContent, new HomeFragment()).commit();
+                dialog.dismiss();
+
+            }
+        });
+
+        // Your android custom dialog ok action
+        // Action for custom dialog ok button click
+
+        dialog.show();
+
+    }
+
 
 }
 

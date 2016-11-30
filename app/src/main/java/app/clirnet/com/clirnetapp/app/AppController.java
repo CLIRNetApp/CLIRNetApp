@@ -2,11 +2,10 @@ package app.clirnet.com.clirnetapp.app;
 
 import android.app.Application;
 import android.content.Context;
-
-import android.content.SharedPreferences;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
-import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -20,8 +19,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import app.clirnet.com.clirnetapp.activity.NavigationActivity;
-import app.clirnet.com.clirnetapp.activity.RegistrationActivity;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 
 public class AppController extends Application {
@@ -204,11 +201,23 @@ public class AppController extends Application {
 
 //check if the ailment string contains all the nubers or not
 	public boolean findNumbersAilment(String value){
-		String result = value.replaceAll("[,]","");
+		String result = value.replaceAll("[,]", "");
 		return result.matches(regex);
 
 	}
 
+	public boolean findColunAilment(String value){
+		String result = value.replaceAll("[:]","");
+		return result.matches(regex);
+
+	}
+
+
+	public boolean onTouch(View v, MotionEvent event) {
+		float x = event.getX();
+		float y = event.getY();
+		return true;
+	}
 
 
 

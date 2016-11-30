@@ -1267,8 +1267,20 @@ public class RegistrationActivity extends AppCompatActivity {
             SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
 
             usersellectedDate = sdf.format(addMonth(new Date(), monthselected));
-
         }
+
+        /*Boolean fnameValue =false;
+        if (first_name.length() > 0) {
+            fnameValue = appController.findNumbersAilment(first_name);
+            Log.e("ailmentValue", "" + fnameValue);
+            if(fnameValue){
+                firstName.setError("Please Enter Valid ailment");
+                return;
+            }
+        }*/
+
+      //  validateNameValuesforColunEntry();
+
 
 
         //  String patient_id = String.valueOf(maxPatientIdCount + 1);
@@ -1302,6 +1314,38 @@ public class RegistrationActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(), "Patient Record Saved", Toast.LENGTH_LONG).show();
 
             goToNavigation();
+        }
+    }
+
+    private void validateNameValuesforColunEntry() {
+        Boolean fnameValue =false;
+        Boolean mnameValue =false;
+        Boolean lnameValue =false;
+
+
+        if (first_name.length() > 0) {
+            fnameValue = appController.findNumbersAilment(first_name);
+            Log.e("ailmentValue", "" + fnameValue);
+            if(fnameValue){
+                firstName.setError("Please Enter Valid ailment");
+                return;
+            }
+        }
+        if (middle_name.length() > 0) {
+            mnameValue = appController.findNumbersAilment(middle_name);
+            Log.e("ailmentValue", "" + mnameValue);
+            if(mnameValue){
+                middleName.setError("Please Enter Valid ailment");
+                return;
+            }
+        }
+        if (last_name.length() > 0) {
+            lnameValue = appController.findNumbersAilment(last_name);
+            Log.e("ailmentValue", "" + lnameValue);
+            if(fnameValue){
+                lastName.setError("Please Enter Valid ailment");
+                return;
+            }
         }
     }
 

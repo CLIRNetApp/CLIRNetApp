@@ -23,4 +23,11 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/refresh"
         tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/about"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/about"
+        tools:ignore="AppCompatResource" />
 </menu>

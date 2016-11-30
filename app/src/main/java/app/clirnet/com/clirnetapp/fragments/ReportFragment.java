@@ -78,7 +78,7 @@ public class ReportFragment extends Fragment {
     private Button lastquarter;
     private android.support.v4.app.FragmentManager mFragmentManager;
     private String startDate, endDate;
-    private DemoFragment fragment;
+    private ReportFragmentViewPagerSetup fragment;
     private View rootview;
     private long diffInHours;
 
@@ -182,7 +182,7 @@ public class ReportFragment extends Fragment {
                 }
 
                 // todo get data from db
-                DemoFragment fragment = new DemoFragment();
+                ReportFragmentViewPagerSetup fragment = new ReportFragmentViewPagerSetup();
                 Bundle b = new Bundle();
                 b.putString("FROMDATE", reformattedStrDate);
                 b.putString("TODATE", endDate);
@@ -199,14 +199,14 @@ public class ReportFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                date = appController.addDay(new Date(), -7);
+                date = AppController.addDay(new Date(), -7);
                 fromdate.setText(date);
 
                 getDateValues();
                 CallLastWeek();
 
-                /*DemoFragment
-                        fragment = new DemoFragment();
+                /*ReportFragmentViewPagerSetup
+                        fragment = new ReportFragmentViewPagerSetup();
                 Bundle b = new Bundle();
                 b.putString("FROMDATE", startDate);
                 b.putString("TODATE", endDate);
@@ -220,12 +220,12 @@ public class ReportFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                date = appController.addDay(new Date(), -30);
+                date = AppController.addDay(new Date(), -30);
                 fromdate.setText(date);
 
                 getDateValues();
 
-                DemoFragment fragment = new DemoFragment();
+                ReportFragmentViewPagerSetup fragment = new ReportFragmentViewPagerSetup();
                 Bundle b = new Bundle();
                 b.putString("FROMDATE", startDate);
                 b.putString("TODATE", endDate);
@@ -239,12 +239,12 @@ public class ReportFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                date = appController.addDay(new Date(), -90);
+                date = AppController.addDay(new Date(), -90);
                 fromdate.setText(date);
 
                 getDateValues();
 
-                DemoFragment fragment = new DemoFragment();
+                ReportFragmentViewPagerSetup fragment = new ReportFragmentViewPagerSetup();
                 Bundle b = new Bundle();
                 b.putString("FROMDATE", startDate);
                 b.putString("TODATE", endDate);
@@ -259,7 +259,7 @@ public class ReportFragment extends Fragment {
 
     private void CallLastWeek() {
 
-        fragment = new DemoFragment();
+        fragment = new ReportFragmentViewPagerSetup();
         Bundle b = new Bundle();
         b.putString("FROMDATE", startDate);
         b.putString("TODATE", endDate);
@@ -286,7 +286,7 @@ public class ReportFragment extends Fragment {
                 .append(year).append("-").append(month + 1).append("-")
                 .append(day).append(" "));
 
-        date = appController.addDay(new Date(), -7);
+        date = AppController.addDay(new Date(), -7);
         fromdate.setText(date);
     }
 

@@ -25,9 +25,10 @@ import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.fragments.AnotherFragment;
 import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
-import app.clirnet.com.clirnetapp.fragments.DemoFragment;
+import app.clirnet.com.clirnetapp.fragments.NewBarChartFragment;
+import app.clirnet.com.clirnetapp.fragments.PatientReportFragment;
+import app.clirnet.com.clirnetapp.fragments.ReportFragmentViewPagerSetup;
 import app.clirnet.com.clirnetapp.fragments.HomeFragment;
-import app.clirnet.com.clirnetapp.fragments.PatientUpdateFragment;
 import app.clirnet.com.clirnetapp.fragments.PoHistoryFragment;
 import app.clirnet.com.clirnetapp.fragments.ReportFragment;
 import app.clirnet.com.clirnetapp.fragments.TopTenAilmentFragment;
@@ -39,8 +40,8 @@ import app.clirnet.com.clirnetapp.reports.NewHomeFragment;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
-        , ReportFragment.OnFragmentInteractionListener,PatientUpdateFragment.OnFragmentInteractionListener,DemoFragment.OnFragmentInteractionListener,TopTenAilmentFragment.OnFragmentInteractionListener,
-        AnotherFragment.OnFragmentInteractionListener,NewHomeFragment.OnFragmentInteractionListener,BarChartFragment.OnFragmentInteractionListener{
+        , ReportFragment.OnFragmentInteractionListener,PatientReportFragment.OnFragmentInteractionListener,ReportFragmentViewPagerSetup.OnFragmentInteractionListener,TopTenAilmentFragment.OnFragmentInteractionListener,
+        AnotherFragment.OnFragmentInteractionListener,NewHomeFragment.OnFragmentInteractionListener,BarChartFragment.OnFragmentInteractionListener,NewBarChartFragment.OnFragmentInteractionListener{
 
 
     private FragmentManager fragmentManager;

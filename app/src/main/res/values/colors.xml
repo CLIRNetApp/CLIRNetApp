@@ -29,4 +29,6 @@
     <color name= "btn_back_sbmt">#50BAA0</color>
     <color name="cancelbtn">#c0c0c0</color>
 
+    <color name="transparent_background">#00FF0000</color>
+
 </resources>

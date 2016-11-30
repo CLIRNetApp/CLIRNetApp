@@ -1,6 +1,7 @@
 package app.clirnet.com.clirnetapp.reports;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +11,7 @@ import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.formatter.LargeValueFormatter;
 
 import java.util.ArrayList;
 
@@ -27,12 +29,12 @@ public class LineChartItem extends ChartItem {
     private String fromDate, toDate;
 
 
-    public LineChartItem(ChartData<?> cd, Context c, String fromDate, String toDate, ArrayList<String> Date) {
+    public LineChartItem(ChartData<?> cd, Context c, String fromDate, String toDate) {
         super(cd);
         this.mContext = c;
         this.fromDate = fromDate;
         this.toDate = toDate;
-        this.mDate = Date;
+
 
         mTf = Typeface.createFromAsset(c.getAssets(), "OpenSans-Regular.ttf");
     }
@@ -68,29 +70,42 @@ public class LineChartItem extends ChartItem {
         xAxis.setTypeface(mTf);
         xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(true);
+        xAxis.setTextSize(13f);
+        xAxis.setTextColor(Color.BLACK);
+        xAxis.setGridColor(R.color.text_background);
+       // xAxis.setAxisMinValue(0f);
 
         YAxis leftAxis = holder.chart.getAxisLeft();
         leftAxis.setTypeface(mTf);
         leftAxis.setLabelCount(5, false);
-        //  leftAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        leftAxis.setTextSize(14f);
+        leftAxis.setTextColor(Color.BLACK);
+     //   leftAxis.setAxisMinValue(0f); // this replaces setStartAtZero(true)
 
         YAxis rightAxis = holder.chart.getAxisRight();
         rightAxis.setTypeface(mTf);
         rightAxis.setLabelCount(5, false);
         rightAxis.setDrawGridLines(false);
-        //rightAxis.setAxisMinimum(0f); // this replaces setStartAtZero(true)
+        xAxis.setTextColor(Color.BLACK);
+        rightAxis.setTextSize(14f);
+       // rightAxis.setEnabled(false);
+      //rightAxis.setAxisMinValue(0f); // this replaces setStartAtZero(true)
 
         // set data
         holder.chart.setData((LineData) mChartData);
+        holder. chart.setDescription(null);//this will not show the chart description
+        mChartData.setValueFormatter(new LargeValueFormatter()); //this will change flost vslue 1.00 to 1
 
         // do not forget to refresh the chart
         // holder.chart.invalidate();
         holder.chart.animateX(750);
 
-        /*MyMarkerView mv = new MyMarkerView(c, R.layout.custom_marker_view);
+        /*LineChartMarkerView mv = new LineChartMarkerView(c, R.layout.linechart_marker_view);
         mv.setEnabled(true);
+        mv.setGravity(position);
 
         holder.chart.setMarkerView(mv); // Set the marker to the chart*/
+
         return convertView;
     }
 

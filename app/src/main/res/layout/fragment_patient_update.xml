@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="app.clirnet.com.clirnetapp.fragments.PatientUpdateFragment">
+    tools:context="app.clirnet.com.clirnetapp.fragments.PatientReportFragment">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -17,19 +17,28 @@
             <ListView
                 android:id="@+id/listView1"
                 android:layout_width="match_parent"
-                android:layout_height="500dp"></ListView>
+                android:layout_height="600dp"></ListView>
 
             <!--    <com.numetriclabz.numandroidcharts.LineChart
                     android:layout_width="match_parent"
                     android:layout_height="400dp"
                     android:id="@+id/chart"
                    />-->
+            <FrameLayout
+                android:id="@+id/flContent1"
+                android:layout_width="match_parent"
+                android:layout_height="600dp"
+                android:layout_below="@+id/listView1" />
 
             <FrameLayout
                 android:id="@+id/flContent"
                 android:layout_width="match_parent"
-                android:layout_height="500dp"
-                android:layout_below="@+id/listView1" />
+                android:layout_height="600dp"
+                android:layout_below="@+id/listView1"
+                android:visibility="gone"/>
+
+
+
 
         </LinearLayout>
     </ScrollView>

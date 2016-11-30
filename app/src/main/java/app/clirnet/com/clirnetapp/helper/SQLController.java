@@ -71,7 +71,7 @@ public class SQLController {
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery = "SELECT name,password  FROM user limit 1  ";
+            String selectQuery = "SELECT name,password  FROM user limit 1   ";
 
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
@@ -985,7 +985,7 @@ public class SQLController {
                     "\tWHEN CAST(dpr.age AS Integer) BETWEEN 35 AND 45 THEN '35-45'\n" +
                     "\tWHEN CAST(dpr.age AS Integer) BETWEEN 45 AND 55 THEN '45-55'\n" +
                     "\tWHEN CAST(dpr.age AS Integer) BETWEEN 55 AND 65 THEN '55-65'\n" +
-                    "\tWHEN CAST(dpr.age AS Integer) BETWEEN 65 AND 300 THEN '65-Above'\n" +
+                    "\tWHEN CAST(dpr.age AS Integer) BETWEEN 65 AND 1000 THEN '65-Above'\n" +
                     "  END AS ageband\n" +
                     "FROM\n" +
                     " patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id  \n" +

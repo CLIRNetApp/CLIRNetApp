@@ -28,31 +28,43 @@ import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
 import com.numetriclabz.numandroidcharts.LineChart;
 
+import java.text.DateFormat;
+import java.text.Format;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.adapters.ChartDataAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.Counts;
-import app.clirnet.com.clirnetapp.reports.BarChartFragment;
 import app.clirnet.com.clirnetapp.reports.ChartItem;
 import app.clirnet.com.clirnetapp.reports.LineChartItem;
 
 import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
 
+
+
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link PatientUpdateFragment.OnFragmentInteractionListener} interface
+ * {@link PatientReportFragment.OnFragmentInteractionListener} interface
  * to handle interaction events.
  * Use the  factory method to
- * create an instance of this fragment.
+ * create an instance of this fragmenlt.
  */
-public class PatientUpdateFragment extends Fragment {
+//we are calling two seprate fragments for each report ie for daily patient count and age wise report from this fragment class
+public class PatientReportFragment extends Fragment {
 
 
-    private ArrayList<String> date;
+    private ArrayList<String> dateList;
     private ArrayList<String> nocountsperday;
 
     private OnFragmentInteractionListener mListener;
@@ -61,13 +73,10 @@ public class PatientUpdateFragment extends Fragment {
     private AppController appController;
     private String fromDate, toDate;
     LineChart Chart;
+    private LinkedList<String> newdate;
 
 
-
-
-
-
-    public PatientUpdateFragment() {
+    public PatientReportFragment() {
         // Required empty public constructor
         this.setHasOptionsMenu(true);
     }
@@ -108,16 +117,24 @@ public class PatientUpdateFragment extends Fragment {
         ArrayList<ChartItem> list = new ArrayList<ChartItem>();
 
 
-        list.add(new LineChartItem(generateDataLine(1), getContext(), fromDate, toDate, date));
-       // list.add(new BarChartItem(generateDataBar(2), getContext()));
+        list.add(new LineChartItem(generateDataLine(1), getContext(), fromDate, toDate));
+       //list.add(new BarChartItem(generateDataBarNew(), getContext()));
+
+
 
         ChartDataAdapter cda = new ChartDataAdapter(getContext(), list);
         lv.setAdapter(cda);
-
-        BarChartFragment fragment1 = new BarChartFragment( fromDate, toDate);
+//This will display multibar chart with achartengine lib,commented on 29/11-2016 By Ashish
+        /*BarChartFragment fragment1 = new BarChartFragment( fromDate, toDate);
 
         FragmentManager fragmentManager1 = getChildFragmentManager();
-        fragmentManager1.beginTransaction().replace(R.id.flContent, fragment1).commit();
+        fragmentManager1.beginTransaction().replace(R.id.flContent, fragment1).commit();*/
+
+     NewBarChartFragment fragment2 = new NewBarChartFragment( fromDate, toDate);
+
+        FragmentManager fragmentManager2 = getChildFragmentManager();
+        fragmentManager2.beginTransaction().replace(R.id.flContent1, fragment2).commit();
+
 
 
 
@@ -125,135 +142,103 @@ public class PatientUpdateFragment extends Fragment {
     }
 
 
-   /* private ChartData<?> generateDataBarNew(int e) {
-        ArrayList<BarEntry> yVals1 = new ArrayList<BarEntry>();
-        // ArrayList<BarEntry> xVals1 = new ArrayList<BarEntry>();
-
-        try {
-            SQLController sqlController = new SQLController(getContext());
-            sqlController.open();
-
-            ArrayList<GenderWiseDataModel> gd = new ArrayList<>();
-            gd = sqlController.genderWiseData(fromDate, toDate);
-            int size1 = gd.size();
-
-            //int ab = 1;
-            if (size1 > 0) {
-                for (int im = 0; im < size1; im++) {
-                    String mcount = gd.get(im).getmCount();
-                    String fCount = gd.get(im).getfCount();
-                    String ageBound = gd.get(im).getAgeBound();
-
-                    Float val = ageBoundArray.get(im);
-                    // String val=supplierNames.get(im);
-                    // int a = Integer.parseInt(val);
-                    // float f = Float.parseFloat(val);
-                    //  Log.e("asize", ""+f);
-
-                    float val1 = Float.parseFloat(mcount);
-                    float val2 = Float.parseFloat(fCount);
-
-                    *//*if(mcount.equals("0")){
-                        mcount=null;
-                    }
-                    if(fCount.equals("0")){
-                        fCount=null;
-                    }*//*
 
 
-                    Log.e("Records", " " + val1 + "-" + val2 + " - " + ageBound);
-                    yVals1.add(new BarEntry(val, new float[]{val1, val2}));
-                    //  xVals1.add(new BarEntry(val, new float[]{10,05}));
-                    //yVals1.add(new BarEntry(val1, val2));
-                    //  ab++;
-                }
-            } else {
-                Toast.makeText(getContext(), "No Values To Display.", Toast.LENGTH_LONG).show();
-            }
 
 
-            ArrayList<Counts> countsNo;
-            date = new ArrayList<>();
-            nocountsperday = new ArrayList<>();
-            countsNo = sqlController.countPerDay(fromDate, toDate);
-            int size = countsNo.size();
-            Log.e("nOoFrECORDS", " " + countsNo.size());
-           *//* for (int im = 0; im < size; im++) {
-                String a = countsNo.get(im).getCount();
-                float val1= Float.parseFloat(a);
-                float val2= val1+10;
-               // float val2= im;
-                String b = countsNo.get(im).getDate().trim();
-                float simpleVal= Float.parseFloat(b);
-             //   yVals1.add(new BarEntry(im, new float[]{val1, val2}));
-                //nocountsperday.add(a);
-               // date.add(b);
-            }
-*//*
-
-        } catch (Exception b) {
-            new AppController().appendLog(new AppController().getDateTime() + " " + "/ " + "Home" + b);
-        }
-
-        *//*for (int i = 0; i < 10 + 1; i++) {
-            float mult = (i + 1);
-            float val1 = (float) (Math.random() * mult) + mult / 3;
-            float val2 = (float) (Math.random() * mult) + mult / 3;
-           *//**//* float val3 = (float) (Math.random() * mult) + mult / 3;*//**//*
-
-            yVals1.add(new BarEntry(i, new float[]{val1, val2}));
-        }*//*
-
-        BarDataSet set1, set2;
-
-        set1 = new BarDataSet(yVals1, " ");
-        set1.setColors(getColors());
-        set1.setStackLabels(new String[]{"Male", "Female"});
-        // set2=new BarDataSet(xVals1,"full");
-
-        ArrayList<IBarDataSet> dataSets = new ArrayList<IBarDataSet>();
-        dataSets.add(set1);
-        // dataSets.add(set2);
-
-        BarData data = new BarData(dataSets);
-        data.setValueFormatter(new MyValueFormatter());
-        data.setValueTextColor(Color.WHITE);
-
-
-        // mChart.setData(data);
-
-        return data;
-    }*/
 
     private ChartData<?> generateDataLine(int i) {
 
-        ArrayList<Entry> values = new ArrayList<Entry>();
+        ArrayList<Entry> values = new ArrayList<>();
         try {
             SQLController sqlController = new SQLController(getContext());
             sqlController.open();
 
             ArrayList<Counts> countsNo;
-            date = new ArrayList<>();
+            dateList = new ArrayList<>();
             nocountsperday = new ArrayList<>();
             countsNo = sqlController.countPerDay(fromDate, toDate);
+
+
             int size = countsNo.size();
             Log.e("nOoFrECORDS", " " + countsNo.size());
             if (size > 0) {
                 for (int im = 0; im < size; im++) {
                     String a = countsNo.get(im).getCount();
                     String b = countsNo.get(im).getDate().trim();
-                    Log.e("DateandCount", " " + a + "date is  " + b);
+                    Log.e("DateandCount", " " + a + "dateList is  " + b);
                     nocountsperday.add(a);
-                    date.add(b);
+                    dateList.add(b);
+
                 }
             }
-            int size1 = nocountsperday.size();
 
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            DateFormat format1 = new SimpleDateFormat("dd-MM-yyyy");
+            newdate = new LinkedList<>();
+            List<String> newcount = new LinkedList<>();
+            try {
+                Date stdate = format.parse(fromDate);
+                Date eddate = format.parse(toDate);
+
+                String newsd=format1.format(stdate);
+                String newed=format1.format(eddate);
+
+                Date d1=format1.parse(newsd);
+                Date d2=format1.parse(newed);
+
+                Log.e("stdate",""+newsd + "  "+newed);
+
+                Calendar start = Calendar.getInstance();
+                start.setTime(d1);
+                Calendar end = Calendar.getInstance();
+                end.setTime(d2);
+                end.add(Calendar.DATE, 1);
+
+//here we arechecking if date is present in dateList or not which came from db if not we r adding customly date and count which is 0. 29/11-2016 By.Ashish
+                for (Date date1 = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date1 = start.getTime()) {
+
+                    Format formatter = new SimpleDateFormat("dd-MM-yyyy");
+                    SimpleDateFormat   sdf = new SimpleDateFormat("dd-MM");
+                    Date date;
+                    String s = formatter.format(date1);
+
+                    if (dateList.contains(s)) {
+                        int getindex = dateList.indexOf(s);
+                        String countval =nocountsperday.get(getindex);
+
+                        date =sdf.parse(s);
+                        System.out.println(date);
+                        System.out.println(sdf.format(date));
+                        Log.e("sdf.format(date)", "" + sdf.format(date));
+                        String convertedDate=sdf.format(date);
+                        newdate.add(convertedDate);
+                        newcount.add(countval);
+
+                    } else {
+                        date =sdf.parse(s);
+                        System.out.println(date);
+                        System.out.println(sdf.format(date));
+                        Log.e("sdf.format(date)", "" + sdf.format(date));
+                        String convertedDate=sdf.format(date);
+                        newdate.add(convertedDate);
+                        newcount.add("0");
+                    }
+                }
+            } catch (ParseException e) {
+
+                e.printStackTrace();
+            }
+
+            for(int i1 = 0 ; i1 < newdate.size() ; i1++) {
+
+                System.out.println(newdate.get(i1) + " " + newcount.get(i1));
+            }
+
+            int size1 = newcount.size();
             if (size1 > 0) {
                 for (int in = 0; in < size1; in++) {
-                    int no = Integer.parseInt(nocountsperday.get(in));
-
-
+                    Float no = Float.valueOf(newcount.get(in));
                     values.add(new Entry(no, in));
                     //  values.add(new Entry(no,in));
                 }
@@ -261,7 +246,7 @@ public class PatientUpdateFragment extends Fragment {
                 Toast.makeText(getContext(), "No Data To Display.", Toast.LENGTH_LONG).show();
             }
 
-            Log.e("coolby", " " + date.size() + "date is  " + nocountsperday.size());
+            Log.e("coolby", " " + dateList.size() + "dateList is  " + nocountsperday.size());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -271,7 +256,7 @@ public class PatientUpdateFragment extends Fragment {
         LineDataSet set1;
 
         // create a dataset and give it a type
-        set1 = new LineDataSet(values, "DataSet 1");
+        set1 = new LineDataSet(values, "Day Wise Count");
 
         // set the line to be drawn like this "- - - - - -"
         set1.enableDashedLine(10f, 5f, 0f);
@@ -295,13 +280,41 @@ public class PatientUpdateFragment extends Fragment {
         ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         dataSets.add(set1); // add the datasets
 
+      //Sort the dateList Array list dateList wise
+        //sortDate(dateList);
+
         // create a data object with the datasets
-        LineData data = new LineData(date,dataSets);
+        LineData data = new LineData(newdate,dataSets);
 
-
+        data.setValueTextColor(Color.BLACK);
+        data.setValueTextSize(16f);
         return data;
 
 
+    }
+
+    private ArrayList<String> getXAxisValues() {
+        ArrayList<String> xAxis = new ArrayList<>();
+        xAxis.add("JAN");
+        xAxis.add("FEB");
+        xAxis.add("MAR");
+        xAxis.add("APR");
+        xAxis.add("MAY");
+        xAxis.add("JUN");
+        return xAxis;
+    }
+    private void sortDate(ArrayList<String> date) {
+        Collections.sort(date, new Comparator<String>() {
+            DateFormat f = new SimpleDateFormat("dd-MM-yyyy");
+            @Override
+            public int compare(String o1, String o2) {
+                try {
+                    return f.parse(o1).compareTo(f.parse(o2));
+                } catch (ParseException e) {
+                    throw new IllegalArgumentException(e);
+                }
+            }
+        });
     }
 
     private ChartData<?> generateDataBar(int i) {
@@ -313,7 +326,7 @@ public class PatientUpdateFragment extends Fragment {
             sqlController.open();
             //dbController = new SQLiteHandler(getContext());
             ArrayList<Counts> countsNo;
-            date = new ArrayList<>();
+            dateList = new ArrayList<>();
             nocountsperday = new ArrayList<>();
             countsNo = sqlController.countPerDay();
             int size = countsNo.size();
@@ -322,7 +335,7 @@ public class PatientUpdateFragment extends Fragment {
                 String a = countsNo.get(im).getCount();
                 String b = countsNo.get(im).getDate();
                 nocountsperday.add(a);
-                date.add(b);
+                dateList.add(b);
             }
             int size1 = nocountsperday.size();
             for (int in = 0; in < size1; in++) {
@@ -330,14 +343,14 @@ public class PatientUpdateFragment extends Fragment {
                 entries.add(new BarEntry(no, in));
             }
 
-            Log.e("coolby", " " + date.size() + "date is  " + nocountsperday.size());
+            Log.e("coolby", " " + dateList.size() + "dateList is  " + nocountsperday.size());
 
         } catch (Exception e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Home" + e);
         }
         BarDataSet bardataset = new BarDataSet(entries, "Cells");
-        BarData data = new BarData(date,bardataset);
+        BarData data = new BarData(dateList,bardataset);
         bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
 
         return data;

@@ -50,5 +50,4 @@ dependencies {
     compile 'com.numetriclabz.numandroidcharts:numandroidcharts:1.0.8'
     compile files('libs/achartengine-1.0.0.jar')
 
-
 }
