@@ -26,6 +26,6 @@ public class MD5 {
     }
 
     public static void main(String[] args) throws NoSuchAlgorithmException {
-        System.out.println(getMD5("Javarmi.com"));
+      
     }
 }

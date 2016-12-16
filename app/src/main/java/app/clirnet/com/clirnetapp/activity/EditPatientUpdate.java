@@ -4,7 +4,8 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
@@ -42,6 +44,7 @@ import java.util.List;
 import java.util.Objects;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.Utility.Validator;
 import app.clirnet.com.clirnetapp.adapters.EditPatientAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
@@ -65,9 +68,6 @@ public class EditPatientUpdate extends AppCompatActivity {
     private String strPatientPhoto;
     private EditText follow_up_date;
     private MultiAutoCompleteTextView ailments1;
-    private EditText follow_up_days;
-    private EditText follow_up_weeks;
-    private EditText follow_up_Months;
     private EditText clinicalNotes;
     private String strFirstName;
     private String strMiddleName;
@@ -103,6 +103,15 @@ public class EditPatientUpdate extends AppCompatActivity {
     private AppController appController;
     private Button editUpdate;
     private Button cancel;
+    private Validator validator;
+    private BootstrapEditText fodtextshow;
+    private Button days;
+    private Button week;
+    private Button month;
+    private BootstrapEditText inputnumber;
+    private String value;
+    private String buttonSelected;
+    private String daysSel;
 
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -120,18 +129,20 @@ public class EditPatientUpdate extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog("Edit Patient" + e);
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Patient" + e);
         }
         if (databaseClass == null && dbController == null) {
             databaseClass = new DatabaseClass(getApplicationContext());
             dbController = new SQLiteHandler(getApplicationContext());
         }
-
+        if(validator!=null){
+            validator=new Validator(getApplicationContext());
+        }
         strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
-        Log.e("photo", "" + strPatientPhoto);
+
         String strName = getIntent().getStringExtra("NAME");
         strId = getIntent().getStringExtra("ID");
-        Log.e("patid", "" + strId);
+
         strFirstName = getIntent().getStringExtra("FIRSTTNAME");
         strMiddleName = getIntent().getStringExtra("MIDDLENAME");
         strLastName = getIntent().getStringExtra("LASTNAME");
@@ -162,16 +173,17 @@ public class EditPatientUpdate extends AppCompatActivity {
         TextView editgender = (TextView) findViewById(R.id.gender);
         TextView editlang = (TextView) findViewById(R.id.lang);
         Button addPatientprescriptionBtn = (Button) findViewById(R.id.addPatientprescriptionBtn);
-
+        fodtextshow = (BootstrapEditText) findViewById(R.id.fodtextshow);
+        inputnumber = (BootstrapEditText) findViewById(R.id.inputnumber);
+        days = (Button) findViewById(R.id.days);
+        week = (Button) findViewById(R.id.week);
+        month = (Button) findViewById(R.id.month);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
         ailments1 = (MultiAutoCompleteTextView) findViewById(R.id.ailments1);
-        follow_up_date = (EditText) findViewById(R.id.follow_up_date);
-        follow_up_days = (EditText) findViewById(R.id.follow_up_days);
-        follow_up_weeks = (EditText) findViewById(R.id.follow_up_weeks);
-        follow_up_Months = (EditText) findViewById(R.id.follow_up_Months);
+
         clinicalNotes = (EditText) findViewById(R.id.clinicalNotes);
-        ImageView imgEdit = (ImageView) findViewById(R.id.edit);
+        ImageView imgEdit = (ImageView) findViewById(R.id.editPersonalInfo);
          cancel = (Button) findViewById(R.id.cancel);
          editUpdate = (Button) findViewById(R.id.editUpdate);
         imageViewprescription = (ImageView) findViewById(R.id.imageViewprescription);
@@ -181,6 +193,8 @@ public class EditPatientUpdate extends AppCompatActivity {
 
         lastUpdateButton=(Button)findViewById(R.id.lastUpdate);
 */
+
+        addFollowupdateButtonListner();
 
         TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
@@ -261,11 +275,24 @@ public class EditPatientUpdate extends AppCompatActivity {
         editgender.setText(strgender);
 
         ailments1.setText(strAilment);
-        follow_up_days.setText(strFollowupDays);
-        follow_up_weeks.setText(strFollowupWeeks);
-        follow_up_Months.setText(strFollowupMonth);
+
         clinicalNotes.setText(strClinicalNotes);
-        txtfollow_up_date.setText(strActualFollowUpDate);//add selected date to date text view
+        fodtextshow.setText(strActualFollowUpDate);//add selected date to date text view
+
+        if(strFollowupDays!=null){
+            inputnumber.setText(strFollowupDays);
+            days.setSelected(true);
+            days.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+
+        }else if(strFollowupWeeks != null){
+            inputnumber.setText(strFollowupWeeks);
+            week.setSelected(true);
+            week.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+        }else if(strFollowupMonth != null){
+            inputnumber.setText(strFollowupMonth);
+            month.setSelected(true);
+            month.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+        }
 
         if (TextUtils.isEmpty(strFollowupDays) && TextUtils.isEmpty(strFollowupWeeks) && TextUtils.isEmpty(strFollowupMonth)) {
             follow_up_date.setText(strFollowUpDate);
@@ -438,6 +465,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
                     editUpdate.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+                    saveData();
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -447,14 +475,6 @@ public class EditPatientUpdate extends AppCompatActivity {
             }
 
         });
-        editUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // frameLayout.setVisibility(View.VISIBLE);
-                saveData();
-
-            }
-        });
 
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -462,7 +482,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             public void onClick(View v) {
                 // back button pressed
                 //redirect to navigation activity
-                goToNavigation();
+                goToNavigation1();
                 //  Toast.makeText(EditPatientUpdate.this,"back is pressed",Toast.LENGTH_SHORT).show();
             }
         });
@@ -478,7 +498,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                 imagesFolder = new File(Environment.getExternalStorageDirectory(), "PatientsImages");
                 imagesFolder.mkdirs();
 
-                imageName = "prescription_" + strFirstName + "_" + strLastName +docId+"_"+appController.getDateTime()+  ".png";
+                imageName = "prescription_" + strFirstName + "_" + strLastName + docId + "_" + appController.getDateTime() + ".png";
 
                 File image = new File(imagesFolder, imageName);
                 uriSavedImage = Uri.fromFile(image);
@@ -506,241 +526,136 @@ public class EditPatientUpdate extends AppCompatActivity {
                 ailments1.setError(null);
             }
         });
+    }
 
-        follow_up_date.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+    private void addFollowupdateButtonListner() {
+        days.setOnTouchListener(new View.OnTouchListener() {
+
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    follow_up_days.getText().clear();
-                    follow_up_weeks.getText().clear();
-                    follow_up_Months.getText().clear();
-                }
-                if (!hasFocus) {
-
-                    txtfollow_up_date.setText(follow_up_date.getText().toString());
-                }
-            }
-
-        });
-
-
-        follow_up_days.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-
-                if (!hasFocus) {
-                    //Toast.makeText(RegistrationActivity.this,"fodays "+follow_up_days.getText().toString(),Toast.LENGTH_SHORT).show();
-                    try {
-
-                        int days = Integer.parseInt(follow_up_days.getText().toString());
-                        String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), days));
-                        txtfollow_up_date.setText(dateis);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Patient" + e);
-
-                    }
-                }
-            }
-        });
-
-        follow_up_weeks.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-
-                if (!hasFocus) {
-
-
-                    try {
-
-
-                        //  Toast.makeText(EditPatientUpdate.this, "fodweeks " + follow_up_weeks.getText().toString(), Toast.LENGTH_SHORT).show();
-
-
-                        int fow = Integer.parseInt(follow_up_weeks.getText().toString());
-                        fowSel = String.valueOf(fow);
-
-                        int daysFromWeeks = fow * 7;
-                        String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), daysFromWeeks));
-                        txtfollow_up_date.setText(dateis);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Patient" + e);
+            public boolean onTouch(View v, MotionEvent event) {
+                // TODO Auto-generated method stub
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    days.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        week.setBackground(getResources().getDrawable(R.drawable.circle));
+                        month.setBackground(getResources().getDrawable(R.drawable.circle));
                     }
 
-                }
-            }
-        });
+                    value = inputnumber.getText().toString().trim();
 
-        follow_up_Months.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-
-                if (!hasFocus) {
-                    try {
-                        //  Toast.makeText(EditPatientUpdate.this, "fodmonth " + follow_up_Months.getText().toString(), Toast.LENGTH_SHORT).show();
-
-                        int monthselected = Integer.parseInt(follow_up_Months.getText().toString());
-                        monthSel = String.valueOf(monthselected);
-
-
-                        String dateis = sdf1.format(RegistrationActivity.addMonth(new Date(), monthselected));
-                        txtfollow_up_date.setText(dateis);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Patient" + e);
+                    if (TextUtils.isEmpty(value)) {
+                        inputnumber.setError("Please Enter Value");
+                        return true;
                     }
+
+
+                    int val = Integer.parseInt(value);
+
+                    int days = Integer.parseInt(value);
+                    //
+                    if (days > 366) {
+                        inputnumber.setError("Enter up to 366 Days");
+                        return true;
+                    } else {
+                        inputnumber.setError(null);
+                    }
+                    buttonSelected = "days";
+                    String dateis = sdf1.format(appController.addDay1(new Date(), val));
+                    fodtextshow.setText(dateis);
+                    daysSel = value;
+                    usersellectedDate = dateis;
+
+                } else if (event.getAction() == KeyEvent.ACTION_UP) {
+                    days.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        week.setBackground(getResources().getDrawable(R.drawable.circle));
+                        month.setBackground(getResources().getDrawable(R.drawable.circle));
+                    }
+
+
                 }
+                return false;
             }
-
-
         });
-        follow_up_date.setOnClickListener(new View.OnClickListener() {
 
+        week.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
-
-                follow_up_days.getText().clear();
-                follow_up_weeks.getText().clear();
-                follow_up_Months.getText().clear();
-                follow_up_weeks.setError(null);
-                follow_up_days.setError(null);
-                follow_up_Months.setError(null);
-
-                shpwDialog();
-
-            }
-        });
-
-        follow_up_date.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-            }
-
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-              /*  follow_up_days.getText().clear();
-                follow_up_weeks.getText().clear();
-                follow_up_Months.getText().clear();*/
-            }
-        });
-
-        follow_up_days.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-
-                try {
-
-
-                    int days = Integer.parseInt(follow_up_days.getText().toString());
-                    String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), days));
-
-                    txtfollow_up_date.setText(dateis);
-                    follow_up_date.getText().clear();
-                    follow_up_weeks.getText().clear();
-                    follow_up_Months.getText().clear();
-                    follow_up_weeks.setError(null);
-                    follow_up_Months.setError(null);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Patient" + e);
-
+                week.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    days.setBackground(getResources().getDrawable(R.drawable.circle));
+                    month.setBackground(getResources().getDrawable(R.drawable.circle));
                 }
-            }
 
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
+                value = inputnumber.getText().toString().trim();
 
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
+                if (TextUtils.isEmpty(value)) {
+                    inputnumber.setError("Please Enter Value");
+                    return;
+                }
+                long val = Long.parseLong(value);
 
+                if (value != null) {
+
+                    if (val > 54) {
+                        inputnumber.setError("Enter up to 54 Weeks");
+                        return;
+                    } else {
+                        inputnumber.setError(null);
+                    }
+                }
+                int fVal= (int) (val*7);
+                buttonSelected = "week";
+                String dateis = sdf1.format(appController.addDay1(new Date(),fVal));
+                usersellectedDate = dateis;
+                fowSel = value;
+                fodtextshow.setText(dateis);
             }
         });
 
-        follow_up_weeks.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-
-                try {
-
-                    int fow = Integer.parseInt(follow_up_weeks.getText().toString());
-                    fowSel = String.valueOf(fow);
-
-                    int daysFromWeeks = fow * 7;
-                    String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), daysFromWeeks));
-                    txtfollow_up_date.setText(dateis);
-                    follow_up_date.getText().clear();
-                    follow_up_days.getText().clear();
-                    follow_up_Months.getText().clear();
-                    follow_up_days.setError(null);
-                    follow_up_Months.setError(null);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    appController.appendLog("Edit Patient" + e);
+        month.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                month.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    days.setBackground(getResources().getDrawable(R.drawable.circle));
+                    week.setBackground(getResources().getDrawable(R.drawable.circle));
                 }
-            }
 
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
+                value = inputnumber.getText().toString().trim();
 
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-
-            }
-        });
-
-        follow_up_Months.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-
-                try {
-                    int monthselected = Integer.parseInt(follow_up_Months.getText().toString());
-                    monthSel = String.valueOf(monthselected);
-
-
-                    String dateis = sdf1.format(RegistrationActivity.addMonth(new Date(), monthselected));
-                    txtfollow_up_date.setText(dateis);
-
-                    follow_up_date.getText().clear();
-                    follow_up_days.getText().clear();
-                    follow_up_weeks.getText().clear();
-                    follow_up_days.setError(null);
-                    follow_up_weeks.setError(null);
-
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Patient" + e);
+                if (TextUtils.isEmpty(value)) {
+                    inputnumber.setError("Please Enter Value");
+                    return;
                 }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-
+                long val = Long.parseLong(value);
+                if (val > 12) {
+                    inputnumber.setError("Enter up to 12 Months");
+                    return;
+                } else {
+                    inputnumber.setError(null);
+                }
+                buttonSelected = "month";
+                String dateis = sdf1.format(appController.addMonth(new Date(), Integer.parseInt(value)));
+                usersellectedDate = dateis;
+                 monthSel = value;
+                fodtextshow.setText(dateis);
             }
         });
     }
 
     //saved the user enetred data to db
     private void saveData() {
-        String daysSel = null;
-        monthSel = null;
-        fowSel = null;
+       //l String daysSel = null;
+      //  monthSel = null;
+        //fowSel = null;
         String strfollow_up_date;
         String ailments = ailments1.getText().toString().trim();
         String clinical_note = clinicalNotes.getText().toString().trim();
         strfollow_up_date = follow_up_date.getText().toString().trim();
+        usersellectedDate=fodtextshow.getText().toString();
+
         if (TextUtils.isEmpty(ailments)) {
             ailments1.setError("Please enter Ailment");
             return;
@@ -755,6 +670,9 @@ public class EditPatientUpdate extends AppCompatActivity {
 
         //remove comma occurance from string
         ailments= appController.removeCommaOccurance(ailments);
+        //Remove spaces between text if more than 2 white spaces found 12-12-2016
+        ailments=ailments.replaceAll("\\s+", " ");
+
         Boolean ailmentValue =false;
         if (ailments.length() > 0) {
             ailmentValue = appController.findNumbersAilment(ailments);
@@ -765,101 +683,13 @@ public class EditPatientUpdate extends AppCompatActivity {
             }
         }
 
-
-
-        String followupdateSellected;
-        if (follow_up_weeks.getText().toString().length() == 0 & follow_up_Months.getText().toString().length() == 0 & follow_up_days.getText().toString().length() == 0 & follow_up_date.getText().toString().length() > 0) {
-            followupdateSellected = follow_up_date.getText().toString();
-            try {
-
-
-                Date date1 = sdf1.parse(followupdateSellected);
-
-                usersellectedDate = sdf1.format(date1);
-            } catch (Exception e) {
-                e.printStackTrace();
-                appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Patient" + e);
-            }
-           /* Toast.makeText(EditPatientUpdate.this, "Date is:!" + followupdateSellected, Toast.LENGTH_LONG).show();*/
-
-        }
-
-        String dateis;
-        if (follow_up_weeks.getText().toString().length() == 0 & follow_up_Months.getText().toString().length() == 0 & follow_up_date.getText().toString().length() == 0 & follow_up_days.getText().toString().length() > 0) {
-            // followupdateSellected = follow_up_days.getText().toString();
-
-            int days = Integer.parseInt(follow_up_days.getText().toString());
-
-            if (days > 366) {
-                follow_up_days.setError("Enter up to 366 Days");
-                return;
-            }
-            // int days = fow + day2;
-
-            daysSel = String.valueOf(days);
-
-            SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
-
-            dateis = sdf1.format(RegistrationActivity.addDay(new Date(), days));
-
-
-            usersellectedDate = dateis;
-
-        }
-
-        if (follow_up_days.getText().toString().length() == 0 & follow_up_Months.getText().toString().length() == 0 & follow_up_date.getText().toString().length() == 0 & follow_up_weeks.getText().toString().length() > 0) {
-
-//          /  followupdateSellected = follow_up_weeks.getText().toString();
-
-            //Used to conert weeks into date
-            int fow = Integer.parseInt(follow_up_weeks.getText().toString());
-
-            if (fow > 54) {
-                follow_up_weeks.setError("Enter up to 54 Weeks");
-                return;
-            }
-
-            fowSel = String.valueOf(fow);
-
-            int daysFromWeeks = fow * 7;
-
-
-            SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
-
-            dateis = sdf1.format(RegistrationActivity.addDay(new Date(), daysFromWeeks));
-            // String dateis= String.valueOf(addDay(new Date(), daysFromWeeks));
-
-
-            usersellectedDate = dateis;
-
-        }
-
-        if (follow_up_days.getText().toString().length() == 0 & follow_up_weeks.getText().toString().length() == 0 & follow_up_date.getText().toString().length() == 0 & follow_up_Months.getText().toString().length() > 0) {
-            //followupdateSellected = follow_up_Months.getText().toString();
-
-            int monthselected = Integer.parseInt(follow_up_Months.getText().toString());
-            if (monthselected > 12) {
-                follow_up_Months.setError("Enter up to 12 Months");
-                return;
-            }
-
-            monthSel = String.valueOf(monthselected);
-
-            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-
-            dateis = sdf.format(RegistrationActivity.addMonth(new Date(), monthselected));
-
-            usersellectedDate = dateis;
-
-
-        }
         String delimiter = ",";
         String[] temp = ailments.split(delimiter);
              /* print substrings */
         for (String aTemp : temp) {
             //System.out.println(temp[i]);
 
-            if (!new RegistrationActivity().isDuplicate(mAilmemtArrayList, aTemp)) {
+            if (!new AppController().isDuplicate(mAilmemtArrayList, aTemp)) {
 
                 // dbController.addAilment(temp[i]);
                 databaseClass.addAilments(aTemp, maxid);
@@ -868,9 +698,6 @@ public class EditPatientUpdate extends AppCompatActivity {
 
             }
         }
-//  System.out.println("Date1 is before or equal to Date2");
-
-        //  dbController.addPatient(first_name, middle_name, last_name, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, usersellectedDate, daysSel, fowSel, monthSel, ailments, prescriptionImgPath, clinical_note, sysdate.toString());
 
         String modified_by = docId;//INSERTING DOC ID IN ADDED BY COLUMN AS PER PUSHPAL SAID
         String flag = "0";
@@ -941,7 +768,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         try {
 
             patientImagePath = uriSavedImage.getPath();
-            Log.e("path", "" + patientImagePath);
+
             if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
                 setUpGlide(patientImagePath, imageViewprescription);
                       /*Glide.with(EditPatientUpdate.this)
@@ -980,11 +807,11 @@ public class EditPatientUpdate extends AppCompatActivity {
 
                 final Calendar c2 = Calendar.getInstance();
                 int mYear2 = c2.get(Calendar.YEAR);
-                Log.e("mYear2", "age is" + mYear2);
+
                 int mMonth2 = c2.get(Calendar.MONTH);
                 int mDay2 = c2.get(Calendar.DAY_OF_MONTH);
 
-                Log.d("mYear1", "" + mYear2);
+
 
                 DatePickerDialog dpd1 = new DatePickerDialog(EditPatientUpdate.this,
                         new DatePickerDialog.OnDateSetListener() {
@@ -1034,7 +861,17 @@ public class EditPatientUpdate extends AppCompatActivity {
         return filteredModelList;
     }
 
+    private void goToNavigation1() {
+        this.onBackPressed();
+         finish();
+        /*Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
+        startActivity(i);
+        finish();*/
+    }
+
     private void goToNavigation() {
+        this.onBackPressed();
+        //finish();
         Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
         startActivity(i);
         finish();
@@ -1085,9 +922,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         strgender = null;
         strPatientPhoto = null;
         txtfollow_up_date = null;
-        follow_up_days = null;
-        follow_up_weeks = null;
-        follow_up_Months = null;
+
         clinicalNotes = null;
         strFirstName = null;
         strMiddleName = null;

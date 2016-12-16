@@ -17,6 +17,8 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 
+import app.clirnet.com.clirnetapp.app.AppController;
+
 //this class is used import lastname.db file from asset folder into database for further use
 @SuppressWarnings("ALL")
 public class LastnameDatabaseClass extends SQLiteOpenHelper {
@@ -31,13 +33,16 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
     private final Context myContext;
     private SQLiteHandler dbHelper;
     private SQLiteDatabase database;
+    private AppController appController;
+
     public LastnameDatabaseClass(Context context) {
 
-        super(context, DB_NAME, null, 1);
+        super(context, DB_NAME, null, SQLiteHandler.DATABASE_VERSION);
         this.myContext = context;
         if (dbHelper == null) {
             dbHelper = new SQLiteHandler(myContext);
             database = dbHelper.getWritableDatabase();
+            appController = new AppController();
         } else {
             Log.e("DB Opended2", "Database is allready opened");
         }
@@ -231,7 +236,9 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             c = db1.query("last_name_master", cols, null,
                     null, null, null, null);
         } catch (Exception e) {
+            appController.appendLog(appController.getDateTime()+"" +"/"+"LastNamedatabase"+e);
             throw new ClirNetAppException("Error getting last name");
+
 
         }
 
@@ -260,6 +267,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
+            appController.appendLog(appController.getDateTime()+"" +"/"+"LastNamedatabase"+e);
             //TODO Create cutom exception and throw from here
             throw new ClirNetAppException("Something went wrong while getting login records");
         } finally {
@@ -288,6 +296,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             id =db.insertWithOnConflict("last_name_master", null, values, SQLiteDatabase.CONFLICT_REPLACE);
             // id = db.insert("last_name_master", null, values);
         }   catch (Exception e) {
+            appController.appendLog(appController.getDateTime()+"" +"/"+"LastNamedatabase"+e);
             e.printStackTrace();
         } finally {
             if (db != null) {

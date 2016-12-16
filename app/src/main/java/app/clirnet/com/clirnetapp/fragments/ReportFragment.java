@@ -1,29 +1,20 @@
 package app.clirnet.com.clirnetapp.fragments;
 
 import android.app.DatePickerDialog;
-
 import android.content.Context;
-
 import android.graphics.drawable.ColorDrawable;
-
 import android.net.Uri;
 import android.os.Bundle;
-
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-
 import android.support.v4.view.ViewPager;
-
-
 import android.support.v7.app.AppCompatActivity;
-
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +24,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -41,9 +31,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-
 import app.clirnet.com.clirnetapp.R;
-
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.SQLController;
@@ -115,7 +103,7 @@ public class ReportFragment extends Fragment {
         viewPager = (ViewPager) rootview.findViewById(R.id.viewpager);
         tabLayout = (TabLayout) rootview.findViewById(R.id.tabLayout);
 
-        setCurrentDateOnView();
+        setCurrentDateOnView("1");//set dates from todays to -7 days to edit text
         addListenerOnButton();
 
         getDateValues();
@@ -124,7 +112,7 @@ public class ReportFragment extends Fragment {
         mFragmentManager = getChildFragmentManager();
         CallLastWeek();
 
-        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        final AppCompatActivity activity = (AppCompatActivity) getActivity();
         assert activity.getSupportActionBar() != null;
         activity.getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.colorPrimary)));
         appController = new AppController();
@@ -135,9 +123,8 @@ public class ReportFragment extends Fragment {
             public void onClick(View v) {
 
 
-                // getDateValues();
-                startDate = fromdate.getText().toString().trim();
-                endDate = todate.getText().toString().trim();
+                getDateValues();
+
 
                 String format = "yyyy-MM-dd";
                 SimpleDateFormat sdf = new SimpleDateFormat(format);
@@ -148,12 +135,11 @@ public class ReportFragment extends Fragment {
 
                     long duration = toDate.getTime() - fromDate.getTime();
 
-                    long diffInSeconds = TimeUnit.MILLISECONDS.toSeconds(duration);
-                    long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(duration);
+
                     diffInHours = TimeUnit.MILLISECONDS.toHours(duration);
 
                     Log.e("diffInHours", "       " + diffInHours);
-                }catch (Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
 
@@ -162,19 +148,21 @@ public class ReportFragment extends Fragment {
 
 
                 String reformattedStrDate = "";
+                String reformatedToDate = "";
                 try {
 
                     reformattedStrDate = myFormat.format(fromUser.parse(startDate));
-                    Log.e("reformattedStr", "" + reformattedStrDate);
+                    reformatedToDate = myFormat.format(fromUser.parse(endDate));
+
 
                 } catch (ParseException e) {
                     e.printStackTrace();
                     appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
                 }
 
-                if( diffInHours <= 0){
+                if (diffInHours <= 0) {
 
-                    Toast   toast = Toast.makeText(getContext().getApplicationContext(), "To-Date Must Be Greater Than From-Date", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(getContext().getApplicationContext(), "To-Date Must Be Greater Than From-Date", Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
 
@@ -185,7 +173,7 @@ public class ReportFragment extends Fragment {
                 ReportFragmentViewPagerSetup fragment = new ReportFragmentViewPagerSetup();
                 Bundle b = new Bundle();
                 b.putString("FROMDATE", reformattedStrDate);
-                b.putString("TODATE", endDate);
+                b.putString("TODATE", reformatedToDate);
                 fragment.setArguments(b);
 
                 mFragmentManager.beginTransaction()
@@ -199,8 +187,11 @@ public class ReportFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                date = AppController.addDay(new Date(), -7);
-                fromdate.setText(date);
+              /*  date = appController.addDay(new Date(), -7);
+                fromdate.setText(date);*/
+
+                setCurrentDateOnView("1"); //set dates from todays to -7 days to edit text
+
 
                 getDateValues();
                 CallLastWeek();
@@ -219,9 +210,10 @@ public class ReportFragment extends Fragment {
         lastmonth.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                date = AppController.addDay(new Date(), -30);
-                fromdate.setText(date);
+/*
+                date = appController.addDay(new Date(), -30);
+                fromdate.setText(date);*/
+                setCurrentDateOnView("2");//set dates from todays to -30 days to edit text
 
                 getDateValues();
 
@@ -239,8 +231,10 @@ public class ReportFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                date = AppController.addDay(new Date(), -90);
-                fromdate.setText(date);
+                /*date = appController.addDay(new Date(), -90);
+                fromdate.setText(date);*/
+
+                setCurrentDateOnView("3"); //set dates from todays to -90 days to edit text
 
                 getDateValues();
 
@@ -270,11 +264,29 @@ public class ReportFragment extends Fragment {
 
 
     private void getDateValues() {
+
         startDate = fromdate.getText().toString().trim();
         endDate = todate.getText().toString().trim();
+
+        SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+
+        String reformattedStrDate = "";
+        String reformatedToDate = "";
+        try {
+
+            startDate = myFormat.format(fromUser.parse(startDate));
+            endDate = myFormat.format(fromUser.parse(endDate));
+            Log.e("reformattedStr123", "" + startDate + "  ??/  " + endDate);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
+        }
     }
 
-    private void setCurrentDateOnView() {
+    private void setCurrentDateOnView(String val) {
         final Calendar c = Calendar.getInstance();
         year = c.get(Calendar.YEAR);
         month = c.get(Calendar.MONTH);
@@ -285,10 +297,20 @@ public class ReportFragment extends Fragment {
                 // Month is 0 based, just add 1
                 .append(year).append("-").append(month + 1).append("-")
                 .append(day).append(" "));
+        //came form last week
+        if (val.equals("1")) {
+            date = AppController.addDay(new Date(), -7);
+            fromdate.setText(date);
+        } else if (val.equals("2")) {  //came form last month
+            date = appController.addDay(new Date(), -30);
+            fromdate.setText(date);
 
-        date = AppController.addDay(new Date(), -7);
-        fromdate.setText(date);
+        } else if (val.equals("3")) {      //came form last quarter
+            date = appController.addDay(new Date(), -90);
+            fromdate.setText(date);
+        }
     }
+
 
     private void addListenerOnButton() {
 

@@ -3,9 +3,7 @@ package app.clirnet.com.clirnetapp.fragments;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
@@ -28,8 +26,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
-import java.util.Objects;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.ItemClickListener;
@@ -247,7 +243,7 @@ public class ConsultationLogFragment extends Fragment {
                         if (filterVistDateList != null) {
 
                             filterVistDateList.clear();
-                            Log.e("clear", "clear after date records");
+
                         }
 
                         filterfodList = new ArrayList<>();
@@ -287,7 +283,6 @@ public class ConsultationLogFragment extends Fragment {
 
                             filterfodList.clear();
 
-                            Log.e("clear", "clear before date records");
                         }
 
                         filterVistDateList = new ArrayList<>();
@@ -346,7 +341,6 @@ public class ConsultationLogFragment extends Fragment {
 
         i.putExtra("PATIENTPHOTO", book.getPhoto());
         i.putExtra("ID", book.getPat_id());
-        Log.e("book.getPat_id()", "" + book.getPat_id());
         i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
         i.putExtra("FIRSTTNAME", book.getFirstName());
         i.putExtra("MIDDLENAME", book.getMiddleName());
@@ -366,7 +360,6 @@ public class ConsultationLogFragment extends Fragment {
         i.putExtra("CLINICALNOTES", book.getClinicalNotes());
         i.putExtra("PRESCRIPTION", book.getPres_img());
         i.putExtra("FROMWHERE", "2");
-        Log.e("img", "" + book.getPres_img());
 
         startActivity(i);
     }
@@ -400,7 +393,6 @@ public class ConsultationLogFragment extends Fragment {
         i.putExtra("CLINICALNOTES", book.getClinicalNotes());
         i.putExtra("PRESCRIPTION", book.getPres_img());
         i.putExtra("FROMWHERE", "2");
-        Log.e("img", "" + book.getPres_img());
         startActivity(i);
     }
 

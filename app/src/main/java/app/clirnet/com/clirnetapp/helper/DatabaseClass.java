@@ -6,7 +6,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
@@ -38,7 +37,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
     private AppController appController;
     public DatabaseClass(Context context) {
 
-        super(context, DB_NAME, null, 1);
+        super(context, DB_NAME, null,SQLiteHandler.DATABASE_VERSION);
         this.myContext = context;
         if (dbHelper == null) {
             dbHelper = new SQLiteHandler(myContext);
@@ -47,6 +46,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
         } else {
             Log.e("DB Opended1", "Database is allready opened");
         }
+
     }
 
 
@@ -69,7 +69,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
                 copyDataBase();
 
             } catch (IOException e) {
-                appController.appendLog("Database"+e);
+                appController.appendLog(appController.getDateTime()+"" +"/"+"Database"+e);
 
                 throw new Error("Error copying database");
 
@@ -146,7 +146,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
         Cursor cursor=null;
         int returnValue = 0;
         try {
-            db1 = this.getReadableDatabase();
+            db1 = dbHelper.getReadableDatabase();
             // stmt = db1.compileStatement("select max(id) from temp_ailment_table");
             String query="select max(id) from ailments";
             cursor=db1.rawQuery(query,null);
@@ -155,7 +155,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
             }
         }catch (Exception e){
 
-            appController.appendLog("Database"+e);
+            appController.appendLog(appController.getDateTime()+"" +"/"+"Database"+e);
             throw new ClirNetAppException("Error while getting max id");
         }
         finally {
@@ -193,7 +193,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            appController.appendLog("Database"+e);
+            appController.appendLog(appController.getDateTime()+"" +"/"+"Database"+e);
             //TODO Create cutom exception and throw from here
             throw new ClirNetAppException("Something went wrong while getting login records");
         } finally {

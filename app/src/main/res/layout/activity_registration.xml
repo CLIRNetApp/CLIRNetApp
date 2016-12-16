@@ -224,7 +224,7 @@
                     android:padding="2dp">
 
                     <RadioButton
-                        android:id="@+id/rdo_user"
+                        android:id="@+id/radioMale"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
@@ -236,7 +236,7 @@
                         tools:targetApi="jelly_bean" />
 
                     <RadioButton
-                        android:id="@+id/rdo_engineer"
+                        android:id="@+id/radioFemale"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"

@@ -60,6 +60,9 @@
                     android:focusableInTouchMode="false"
                     android:editable="false"
                     android:padding="10dp"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="5dp"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     tools:targetApi="jelly_bean"
                     android:maxLines="1" />
@@ -88,8 +91,7 @@
             </LinearLayout>-->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
+                android:layout_height="45dp"
                 android:background="#50BAA0"
                 android:gravity="center"
                 android:orientation="horizontal">
@@ -98,8 +100,8 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:layout_weight="0.5"
-                    android:gravity="center"
+                    android:layout_weight="0.3"
+                    android:gravity="start"
                     android:padding="2dp"
                     android:text="#"
                     android:textColor="@color/white" />
@@ -108,7 +110,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:layout_weight="1.5"
+                    android:layout_weight="1.1"
                     android:gravity="center"
                     android:padding="2dp"
                     android:text="Name"
@@ -118,21 +120,40 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:layout_weight="1"
+                    android:layout_weight="1.2"
                     android:gravity="center"
                     android:padding="2dp"
                     android:text="Gender"
+                    android:textColor="@color/white" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0.1"
+                    android:gravity="center"
+                    android:padding="2dp" />
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="0.6"
+                    android:gravity="center"
+                    android:padding="2dp"
+                    android:text="Age"
                     android:textColor="@color/white" />
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:layout_weight="0.5"
+                    android:layout_weight="0.1"
                     android:gravity="center"
                     android:padding="2dp"
-                    android:text="Age"
-                    android:textColor="@color/white" />
+                    android:visibility="gone"/>
+
+
 
                 <TextView
                     android:layout_width="0dp"

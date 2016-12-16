@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
@@ -58,13 +57,14 @@ public class MultipleFilterPatientAdapter extends RecyclerView.Adapter<MultipleF
         String fod = model.getActualFollowupDate();
 
 
+        if(fod != null) {
+            if (fod.equals("30-11-0002")) {
 
-        if (fod.equals("30-11-0002")) {
+                holder.follow_up_date.setText("--");
 
-            holder.follow_up_date.setText("--");
-
-        } else {
-            holder.follow_up_date.setText(fod);
+            } else {
+                holder.follow_up_date.setText(fod);
+            }
         }
 
 

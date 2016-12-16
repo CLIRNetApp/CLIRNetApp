@@ -12,6 +12,7 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
+import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
 
@@ -34,7 +35,8 @@ public class LineChartItem extends ChartItem {
         this.mContext = c;
         this.fromDate = fromDate;
         this.toDate = toDate;
-
+        Utils.init(mContext.getResources());
+        Utils.init(mContext);
 
         mTf = Typeface.createFromAsset(c.getAssets(), "OpenSans-Regular.ttf");
     }
@@ -62,9 +64,12 @@ public class LineChartItem extends ChartItem {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
+
+
         //  holder.chart.getDescription().setEnabled(false);
         holder.chart.setDrawGridBackground(false);
-
+        Utils.init(mContext.getResources());
+        Utils.init(mContext);
         XAxis xAxis = holder.chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
         xAxis.setTypeface(mTf);
@@ -80,6 +85,7 @@ public class LineChartItem extends ChartItem {
         leftAxis.setLabelCount(5, false);
         leftAxis.setTextSize(14f);
         leftAxis.setTextColor(Color.BLACK);
+        leftAxis.setGridColor(mContext.getResources().getColor(R.color.light_grey));
      //   leftAxis.setAxisMinValue(0f); // this replaces setStartAtZero(true)
 
         YAxis rightAxis = holder.chart.getAxisRight();
@@ -99,7 +105,7 @@ public class LineChartItem extends ChartItem {
         // do not forget to refresh the chart
         // holder.chart.invalidate();
         holder.chart.animateX(750);
-
+       // holder.chart.invalidate();
         /*LineChartMarkerView mv = new LineChartMarkerView(c, R.layout.linechart_marker_view);
         mv.setEnabled(true);
         mv.setGravity(position);

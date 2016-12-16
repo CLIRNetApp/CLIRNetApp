@@ -89,7 +89,7 @@ public class SyncDataService extends Service {
 		handler.removeCallbacks(sendUpdatesToUI);
 
 		handler.postDelayed(sendUpdatesToUI, 1000); // 1 second
-		Log.e("imsending", "I am sending the data after 1 sec");
+		//Log.e("imsending", "I am sending the data after 1 sec");
 
 	}
 
@@ -112,8 +112,8 @@ public class SyncDataService extends Service {
 		patientIds_List=  sqlController.getPatientIdsFalg0();
 		getPatientVisitIdsList=sqlController.getPatientVisitIdsFalg0();
 
-		Log.e("nodata12","no data to send"+patientIds_List.size());
-		Log.e("nodata12","no data to send"+getPatientVisitIdsList.size());
+		/*Log.e("nodata12","no data to send"+patientIds_List.size());
+		Log.e("nodata12","no data to send"+getPatientVisitIdsList.size());*/
 
 
 		boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
@@ -181,7 +181,7 @@ public class SyncDataService extends Service {
 							for(int i=0;i<size;i++){
 								String patientId=patientIds_List.get(i).getPat_id();
 								String  flag="1";
-								Log.e("TAG"+i," "+patientId);
+								//Log.e("TAG"+i," "+patientId);
 								//update flag after success
 								dbController.FlagupdatePatientPersonal(patientId,flag);
 							}

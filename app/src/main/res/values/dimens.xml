@@ -10,6 +10,10 @@
     <dimen name="tiny_margin">4dp</dimen>
     <dimen name="small_margin">8dp</dimen>
 
+    <dimen name="default_padding">16dp</dimen>
+    <dimen name="micro_padding">5dp</dimen>
+    <dimen name="default_circle_size">250dp</dimen>
+
     <!-- Per the design guidelines, navigation drawers should be between 240dp and 320dp:
          https://developer.android.com/design/patterns/navigation-drawer.html -->
     <dimen name="navigation_drawer_width">240dp</dimen>

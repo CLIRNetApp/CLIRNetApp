@@ -4,27 +4,21 @@ package app.clirnet.com.clirnetapp.activity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
-
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
@@ -39,7 +33,6 @@ import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
-import app.clirnet.com.clirnetapp.models.Counts;
 
 public class LoginActivity extends Activity  {
     private static final String TAG = "Login";
@@ -65,6 +58,7 @@ public class LoginActivity extends Activity  {
     private SQLController sqlController;
     private AppController appController;
     private Button btnLogin;
+    private String phoneNumber;
 
 
     @Override
@@ -84,7 +78,9 @@ public class LoginActivity extends Activity  {
         DatabaseClass databaseClass = new DatabaseClass(getApplicationContext());
         LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
         appController=new AppController();
-        //redirect to PrivacyPolicy Page
+
+        convertDate();
+
 
         Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
         startService(serviceIntent);
@@ -97,7 +93,7 @@ public class LoginActivity extends Activity  {
 
             }
         });
-        Log.e("timeis",""+appController.getDateTime());
+
 
         //redirect to TermsCondition Page
         termsandCondition.setOnClickListener(new View.OnClickListener() {
@@ -136,6 +132,7 @@ public class LoginActivity extends Activity  {
             sqlController.open();
             dbController = new SQLiteHandler(getApplicationContext());
 
+
         } catch (Exception e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime()+" " +"/ "+"Home" + e);
@@ -144,6 +141,7 @@ public class LoginActivity extends Activity  {
         try {
 
             databaseClass.createDataBase();
+            phoneNumber = sqlController.getPhoneNumber();
 
         } catch (Exception ioe) {
             appController.appendLog(appController.getDateTime()+"" +"/"+"Home" + ioe);
@@ -244,13 +242,29 @@ public class LoginActivity extends Activity  {
 
         );
 
-       /* String size=getScreenResolution(this);
-        Log.e("screen size",""+size);*/
+
 
 
     }
 
+    private void convertDate() {
+        SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
 
+       String searchdate = "2016-12-02";
+        String reformattedStr = "";
+        try {
+
+            reformattedStr = myFormat.format(fromUser.parse(searchdate));
+            Log.e("reformattedStrqq", "" + reformattedStr);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
+        }
+
+
+    }
 
 
 // --Commented out by Inspection START (07-11-2016 16:43):
@@ -292,19 +306,6 @@ public class LoginActivity extends Activity  {
     private void LoginAuthentication() {
 
         md5EncyptedDataPassword = MD5.getMD5(strPassword);
-/*String uname=null;
-        try {
-            uname=sqlController.getUserMailId();
-            Log.e("uname",""+uname);
-            if(uname.equals( null)){
-                Toast.makeText(getApplicationContext(),
-                        "Initialize Application.", Toast.LENGTH_LONG)
-                        .show();
-            }
-        } catch (ClirNetAppException e) {
-            e.printStackTrace();
-        }*/
-
 
 
         // Check for empty data in the form
@@ -316,9 +317,13 @@ public class LoginActivity extends Activity  {
             if (isInternetPresent) {
                 //Toast.makeText(this, " Connected ", Toast.LENGTH_LONG).show();
                 //  checkLogin(name, md5EncyptedDataPassword);
-                new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword);
 
                 new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword);
+                new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword,phoneNumber);
+
+
+
+
                 // hideDialog();
 
             } else {
@@ -326,7 +331,7 @@ public class LoginActivity extends Activity  {
                 boolean isLogin;
                 try {
 
-                    isLogin = sqlController.validateUser(name, md5EncyptedDataPassword);
+                    isLogin = sqlController.validateUser(name, md5EncyptedDataPassword,phoneNumber);
 
                     if (isLogin) {
                         Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_LONG).show();
@@ -338,8 +343,8 @@ public class LoginActivity extends Activity  {
                        // Toast.makeText(getApplicationContext(), " You are not connected to Internet!! ", Toast.LENGTH_LONG).show();
                     }
                 } catch (ClirNetAppException e) {
-                    e.printStackTrace();
-                    appController.appendLog("Home" + e);
+                   //e.printStackTrace();
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e);
                 } finally {
                     if (sqlController != null) {
                         sqlController.close();

@@ -34,12 +34,14 @@ import com.bumptech.glide.signature.StringSignature;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.Utility.Validator;
 import app.clirnet.com.clirnetapp.adapters.AddPatientUpdateAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
@@ -52,7 +54,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 @SuppressWarnings("AccessStaticViaInstance")
 public class AddPatientUpdate extends AppCompatActivity {
 
-    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom,R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest,R.drawable.revituz,R.drawable.suprizon};
+    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom, R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest, R.drawable.revituz, R.drawable.suprizon};
     private ImageView backChangingImages;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
     private static final int DATE_DIALOG_ID = 0;
@@ -99,8 +101,9 @@ public class AddPatientUpdate extends AppCompatActivity {
     private AppController appController;
     private Button addUpdate;
     private Button cancel;
+    private Validator validator;
 
-    @SuppressLint({"SimpleDateFormat", "SetTextI18n"})
+    @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,14 +111,14 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-         appController=new AppController();
+        appController = new AppController();
 
         try {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+"" +"/"+"Add Patient"+e);
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e);
         }
 
         if (databaseClass == null) {
@@ -149,9 +152,9 @@ public class AddPatientUpdate extends AppCompatActivity {
         TextView editgender = (TextView) findViewById(R.id.gender);
         TextView editlang = (TextView) findViewById(R.id.lang);
         Button addPatientprescriptionBtn = (Button) findViewById(R.id.addPatientprescriptionBtn);
-        ImageView imgEdit = (ImageView) findViewById(R.id.edit);
-         cancel = (Button) findViewById(R.id.cancel);
-         addUpdate = (Button) findViewById(R.id.addUpdate);
+        ImageView imgEdit = (ImageView) findViewById(R.id.editPersonalInfo);
+        cancel = (Button) findViewById(R.id.cancel);
+        addUpdate = (Button) findViewById(R.id.addUpdate);
 
         TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
@@ -186,6 +189,10 @@ public class AddPatientUpdate extends AppCompatActivity {
 
             }
         });
+
+        if (validator != null) {
+            validator = new Validator(getApplicationContext());
+        }
 
         sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 
@@ -253,10 +260,9 @@ public class AddPatientUpdate extends AppCompatActivity {
         try {
 
             databaseClass.openDataBase();
-            mAilmemtArrayList=databaseClass.getAilmentsListNew();
-            int id = databaseClass.getMaxAimId();
-            maxid = id + 1;
-            if(mAilmemtArrayList.size()>0){
+            mAilmemtArrayList = databaseClass.getAilmentsListNew();
+
+            if (mAilmemtArrayList.size() > 0) {
 
                 //this code is for setting list to auto complete text view  8/6/16
 
@@ -269,10 +275,11 @@ public class AddPatientUpdate extends AppCompatActivity {
                 ailments1.setAdapter(adp);
                 ailments1.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
             }
-
+            int id = databaseClass.getMaxAimId();
+            maxid = id + 1;
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+"" +"/"+"Add Patient" + e);
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e);
         } finally {
 
             if (cursor != null) {
@@ -282,7 +289,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                 databaseClass.close();
             }
         }
-
 
 
         new Thread(new Runnable() {
@@ -329,7 +335,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 imagesFolder = new File(Environment.getExternalStorageDirectory(), "PatientsImages");
                 imagesFolder.mkdirs();
 
-                PrescriptionimageName = "prescription_" +docId+"_"+appController.getDateTime()+  ".jpg";
+                PrescriptionimageName = "prescription_" + docId + "_" + appController.getDateTime() + ".jpg";
 
                 File image = new File(imagesFolder, PrescriptionimageName);
                 uriSavedImage = Uri.fromFile(image);
@@ -461,14 +467,16 @@ public class AddPatientUpdate extends AppCompatActivity {
                 if (!hasFocus) {
                     //Toast.makeText(RegistrationActivity.this,"fodays "+follow_up_days.getText().toString(),Toast.LENGTH_SHORT).show();
                     try {
-
-                        int days = Integer.parseInt(follow_up_days.getText().toString());
-                        String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), days));
-                       // Log.e("cdate", "" + dateis);
-                        txtfollow_up_date.setText(dateis);
+                        if (!"".equals(follow_up_days.getText().toString())) // where text is the text that you get from an EditText or wherever you get it
+                        {    // give message to enter valid text;    }
+                            int days = Integer.parseInt(follow_up_days.getText().toString());
+                            String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), days));
+                            // Log.e("cdate", "" + dateis);
+                            txtfollow_up_date.setText(dateis);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        appController.appendLog(appController.getDateTime()+"" +"/"+"Add Patient" + e);
+                        appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e);
 
 
                     }
@@ -483,16 +491,17 @@ public class AddPatientUpdate extends AppCompatActivity {
                 if (!hasFocus) {
                     try {
 
-
-                        int fow = Integer.parseInt(follow_up_weeks.getText().toString());
-                        fowSel = String.valueOf(fow);
-                       // Log.e("fowSel", "" + fowSel);
-                        int daysFromWeeks = fow * 7;
-                        String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), daysFromWeeks));
-                        txtfollow_up_date.setText(dateis);
+                        if (!"".equals(follow_up_weeks.getText().toString())) {
+                            int fow = Integer.parseInt(follow_up_weeks.getText().toString());
+                            fowSel = String.valueOf(fow);
+                            // Log.e("fowSel", "" + fowSel);
+                            int daysFromWeeks = fow * 7;
+                            String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), daysFromWeeks));
+                            txtfollow_up_date.setText(dateis);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        appController.appendLog(appController.getDateTime()+"" +"/"+"Add Patient" + e);
+                        appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e);
                     }
 
                 }
@@ -505,22 +514,24 @@ public class AddPatientUpdate extends AppCompatActivity {
 
                 if (!hasFocus) {
                     try {
+                        if (!"".equals(follow_up_Months.getText().toString())) {
+                            int monthselected = Integer.parseInt(follow_up_Months.getText().toString());
+                            monthSel = String.valueOf(monthselected);
 
-                        int monthselected = Integer.parseInt(follow_up_Months.getText().toString());
-                        monthSel = String.valueOf(monthselected);
 
-
-                        String dateis = sdf1.format(RegistrationActivity.addMonth(new Date(), monthselected));
-                        txtfollow_up_date.setText(dateis);
+                            String dateis = sdf1.format(RegistrationActivity.addMonth(new Date(), monthselected));
+                            txtfollow_up_date.setText(dateis);
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        appController.appendLog(appController.getDateTime()+"" +"/"+"Add Patient" + e);
+                        appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e);
                     }
                 }
             }
 
 
         });
+        //clear all error from edit text
         follow_up_date.setOnClickListener(new View.OnClickListener() {
 
 
@@ -543,14 +554,14 @@ public class AddPatientUpdate extends AppCompatActivity {
         follow_up_days.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
-                String mFod = follow_up_days.getText().toString();
+                String mFod = follow_up_days.getText().toString().trim();
 
                 try {
                     if (mFod != null) {
                         int days = 0;
                         days = Integer.parseInt(mFod);
                         String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), days));
-                       // Log.e("cdate", "" + dateis);
+                        // Log.e("cdate", "" + dateis);
                         txtfollow_up_date.setText(dateis);
                         follow_up_date.getText().clear();
                         follow_up_weeks.getText().clear();
@@ -558,10 +569,9 @@ public class AddPatientUpdate extends AppCompatActivity {
                         follow_up_weeks.setError(null);
                         follow_up_Months.setError(null);
                     }
-                } catch (Exception e)
-                {
+                } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
                 }
             }
 
@@ -578,14 +588,14 @@ public class AddPatientUpdate extends AppCompatActivity {
         follow_up_weeks.addTextChangedListener(new TextWatcher() {
 
             public void afterTextChanged(Editable s) {
-                String strFow = follow_up_weeks.getText().toString();
+                String strFow = follow_up_weeks.getText().toString().trim();
 
                 try {
                     if (strFow != null) {
                         int fow = 0;
                         fow = Integer.parseInt(strFow);
                         fowSel = String.valueOf(fow);
-                      //  Log.e("fowSel", "" + fowSel);
+                        //  Log.e("fowSel", "" + fowSel);
                         int daysFromWeeks = fow * 7;
                         String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), daysFromWeeks));
                         txtfollow_up_date.setText(dateis);
@@ -597,7 +607,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
                 }
             }
 
@@ -615,7 +625,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
             public void afterTextChanged(Editable s) {
 
-                String mFom = follow_up_Months.getText().toString();
+                String mFom = follow_up_Months.getText().toString().trim();
                 try {
                     if (mFom != null) {
                         int monthselected = 0;
@@ -634,7 +644,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
                 }
             }
 
@@ -686,8 +696,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         i.putExtra("PATIENTPHOTO", patientHistoryData.get(0).getPhoto());
         i.putExtra("ID", patientHistoryData.get(0).getPat_id());
-        Log.e("Patientkaid", "" + patientHistoryData.get(0).getPat_id());
-        Log.e("Patientkaid", "" + patientHistoryData.get(0).getVisit_date());
+
 
         i.putExtra("NAME", patientHistoryData.get(0).getFirstName() + " " + patientHistoryData.get(0).getLastName());
         i.putExtra("FIRSTTNAME", patientHistoryData.get(0).getFirstName());
@@ -741,24 +750,26 @@ public class AddPatientUpdate extends AppCompatActivity {
         if (TextUtils.isEmpty(ailments)) {
             ailments1.setError("Please enter Ailment");
             return;
-        }else {
+        } else {
             ailments1.setError(null);
         }
-        if(ailments.length()>0 && ailments.length()<2  && ailments.contains(",")) {
+        if (ailments.length() > 0 && ailments.length() < 2 && ailments.contains(",")) {
             ailments1.setError("Please Enter Valid ailment");
             return;
         }
 
         //remove comma occurance from string
-        ailments= appController.removeCommaOccurance(ailments);
+        ailments = appController.removeCommaOccurance(ailments);
+        //Remove spaces between text if more than 2 white spaces found 12-12-2016
+        ailments = ailments.replaceAll("\\s+", " ");
 
 
-        Boolean ailmentValue =false;
+        Boolean ailmentValue = false;
 
         if (ailments.length() > 0) {
             ailmentValue = appController.findNumbersAilment(ailments);
             Log.e("ailmentValue", "" + ailmentValue);
-            if(ailmentValue){
+            if (ailmentValue) {
                 ailments1.setError("Please Enter Valid ailment");
                 return;
             }
@@ -774,7 +785,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 usersellectedDate = sdf1.format(date1);
             } catch (Exception e) {
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
             }
 
 
@@ -795,10 +806,10 @@ public class AddPatientUpdate extends AppCompatActivity {
             SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 
             String dateis = sdf1.format(RegistrationActivity.addDay(new Date(), days));
-          //  Log.e("cdate", "" + dateis);
+            //  Log.e("cdate", "" + dateis);
 
             usersellectedDate = dateis;
-           // Log.e("usersellectedDays", "" + usersellectedDate);
+            // Log.e("usersellectedDays", "" + usersellectedDate);
 
         }
 
@@ -855,13 +866,13 @@ public class AddPatientUpdate extends AppCompatActivity {
              /* print substrings */
         for (String aTemp : temp) {
             //System.out.println(temp[i]);
-          //  Log.e("log", aTemp);
-            if (!new RegistrationActivity().isDuplicate(mAilmemtArrayList, aTemp)) {
+            //  Log.e("log", aTemp);
+            if (!new AppController().isDuplicate(mAilmemtArrayList, aTemp)) {
 
                 // dbController.addAilment(temp[i]);
                 databaseClass.addAilments(aTemp, maxid);
                 maxid = maxid + 1;
-              //  Log.e("ailment", "" + aTemp);
+                //  Log.e("ailment", "" + aTemp);
 
             }
         }
@@ -870,7 +881,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         //  dbController.addPatient(first_name, middle_name, last_name, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, usersellectedDate, daysSel, fowSel, monthSel, ailments, prescriptionImgPath, clinical_note, sysdate.toString());
         String visit_id = String.valueOf(maxVisitId + 1);
         String visit_date = addedOnDate;
-      //  Log.e("visit_date", "" + visit_date);
+        //  Log.e("visit_date", "" + visit_date);
 
 
         //here we need to convert date it to 1-09-2016 date format to get records in sys date filter list
@@ -881,7 +892,22 @@ public class AddPatientUpdate extends AppCompatActivity {
         int day1 = c.get(Calendar.DAY_OF_MONTH);
 
         StringBuilder modified_on = new StringBuilder().append(day1).append("-").append(month1 + 1).append("-").append(year1).append("");
-        //Log.d("sysdate", "" + modified_on);
+
+        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+        String visit_date1 = addedOnDate.toString();
+        String added_on = addedOnDate.toString();
+
+        try {
+            //convert visit date from 2016-11-1 to 2016-11-01
+            visit_date = myFormat.format(fromUser.parse(addedOnDate));
+            added_on = myFormat.format(fromUser.parse(addedOnDate));
+            Log.e("reformattedStrqq", "" + visit_date);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
+        }
 
 
         String flag = "0";
@@ -890,7 +916,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         String action = "added";
 
         //  dbController.updatePatientPersonalforNewVisit(strPatientId, "2", modified_on.toString());//thiis will update pateint data for new visit
-        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, PrescriptionimageName, ailments, visit_date, docId, doctor_membership_number, addedOnDate, addedTime, flag, added_by, action, patientInfoType);
+        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, PrescriptionimageName, ailments, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType);
 
         Toast.makeText(getApplicationContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
         //Redirect to navigation Activity
@@ -939,7 +965,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
         }
     }
 
@@ -963,7 +989,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient"+e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
         }
 
     }
@@ -976,11 +1002,10 @@ public class AddPatientUpdate extends AppCompatActivity {
 
                 final Calendar c2 = Calendar.getInstance();
                 int mYear2 = c2.get(Calendar.YEAR);
-                Log.e("mYear2", "age is" + mYear2);
+
                 int mMonth2 = c2.get(Calendar.MONTH);
                 int mDay2 = c2.get(Calendar.DAY_OF_MONTH);
 
-                Log.d("mYear1", "" + mYear2);
 
                 DatePickerDialog dpd1 = new DatePickerDialog(AddPatientUpdate.this,
                         new DatePickerDialog.OnDateSetListener() {
@@ -1044,7 +1069,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             patientHistoryData = null;
         }
 
-        if(appController !=null) {
+        if (appController != null) {
             appController = null;
         }
 

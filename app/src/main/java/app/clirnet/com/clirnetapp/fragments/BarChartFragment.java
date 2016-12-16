@@ -21,22 +21,23 @@ import com.github.mikephil.charting.formatter.LargeValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.reports.GenderWiseDataModel;
 
-public class NewBarChartFragment extends android.support.v4.app.Fragment {
+public class BarChartFragment extends android.support.v4.app.Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+
     private String mFromDate;
     private String mToDate;
 
@@ -51,29 +52,23 @@ public class NewBarChartFragment extends android.support.v4.app.Fragment {
     private ArrayList<String> date;
     private ArrayList<String> listSetAgeBound;
     private List<Integer> male;
+    private AppController appController;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment NewBarChartFragment.
-     */
+
     // TODO: Rename and change types and number of parameters
-    public static NewBarChartFragment newInstance(String param1, String param2) {
-        NewBarChartFragment fragment = new NewBarChartFragment();
+    public static BarChartFragment newInstance(String param1, String param2) {
+        BarChartFragment fragment = new BarChartFragment();
         Bundle args = new Bundle();
 
         fragment.setArguments(args);
         return fragment;
     }
 
-    public NewBarChartFragment() {
+    public BarChartFragment() {
         // Required empty public constructor
     }
 
-    public NewBarChartFragment(String fromDate, String toDate) {
+    public BarChartFragment(String fromDate, String toDate) {
         this.mFromDate = fromDate;
         this.mToDate = toDate;
     }
@@ -81,7 +76,6 @@ public class NewBarChartFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         mTfRegular = Typeface.createFromAsset(getContext().getAssets(), "OpenSans-Regular.ttf");
     }
 
@@ -94,7 +88,11 @@ public class NewBarChartFragment extends android.support.v4.app.Fragment {
 
         //set the data to chart
         getDataSet();
+
         //////////////////////
+        if (appController == null) {
+            appController = new AppController();
+        }
 
         //Marker is working bt hide it,we dont want this functionality right now Dt-30-11-2016 By.Ashish
        /* MyMarkerView mv = new MyMarkerView(getContext(), R.layout.custom_marker_view);
@@ -102,9 +100,12 @@ public class NewBarChartFragment extends android.support.v4.app.Fragment {
         // Set the marker to the chart
         chart.setMarkerView(mv);*/
 
+        Utils.init(getResources());
+        Utils.init(getContext());
 
         chart.setDrawGridBackground(false);
         chart.setDrawBarShadow(false);
+
         //allow to set value of bar to top
         chart.setDrawValueAboveBar(true);
 
@@ -137,7 +138,7 @@ public class NewBarChartFragment extends android.support.v4.app.Fragment {
         ArrayList<IBarDataSet> dataSets = null;
         ArrayList<BarEntry> male = new ArrayList<>();
         ArrayList<BarEntry> female = new ArrayList<>();
-        listSetAgeBound = new ArrayList<String>();
+        listSetAgeBound = new ArrayList<>();
 
         try {
             SQLController sqlController = new SQLController(getContext());
@@ -172,59 +173,67 @@ public class NewBarChartFragment extends android.support.v4.app.Fragment {
                 }
                 //setDataToLayout();
             }
+            Utils.init(getResources());
+            Utils.init(getContext());
+            Typeface mTf = Typeface.createFromAsset(getContext().getAssets(), "OpenSans-Regular.ttf");
+
+            BarDataSet barDataSet1 = new BarDataSet(male, "Male");
+            barDataSet1.setColor(getResources().getColor(R.color.colorPrimary));
+            BarDataSet barDataSet2 = new BarDataSet(female, "Female");
+            barDataSet2.setColor(getResources().getColor(R.color.bg_login));
+            barDataSet1.setAxisDependency(YAxis.AxisDependency.LEFT);
+
+            dataSets = new ArrayList<>();
+            dataSets.add(barDataSet1);
+            dataSets.add(barDataSet2);
+
+
+            XAxis xAxis = chart.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            xAxis.setTypeface(mTf);
+            xAxis.setDrawGridLines(true);
+            xAxis.setGridColor(getResources().getColor(R.color.light_grey));
+            xAxis.setDrawAxisLine(true);//if true this will draw line after setting data to x axis ie after 0
+            xAxis.setTextSize(13f);
+            xAxis.setTextColor(Color.BLACK);
+            xAxis.setAxisMaxValue(8);
+
+            YAxis leftAxis = chart.getAxisLeft();
+            leftAxis.setTypeface(mTf);
+            leftAxis.setLabelCount(5, false);
+            leftAxis.setTextSize(14f);
+            leftAxis.setGridColor(getResources().getColor(R.color.light_grey));
+            leftAxis.setTextColor(Color.BLACK);
+
+
+            YAxis rightAxis = chart.getAxisRight();
+            rightAxis.setTypeface(mTf);
+            rightAxis.setLabelCount(5, false);
+            rightAxis.setDrawGridLines(false);
+            rightAxis.setTextSize(14f);
+            rightAxis.setTextColor(Color.BLACK);
+            rightAxis.setEnabled(false);
+
+
+            //  BarData data = new BarData(getXAxisValues(), dataSets);
+            BarData data = new BarData(listSetAgeBound, dataSets);
+            data.setValueFormatter(new LargeValueFormatter());
+            data.setValueTextColor(Color.BLACK);
+            chart.setDrawValueAboveBar(true);
+             chart.setPinchZoom(false);
+            chart.setTouchEnabled(false);//disable touch gesture on chart view 10-112-2016
+
+            chart.setData(data);
+            chart.setDescription(null);//this will not show the chart description
+
+          //  chart.invalidate();
 
 
         } catch (Exception e) {
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "BarChartFragment" + e);
             e.printStackTrace();
         }
 
-        Typeface mTf = Typeface.createFromAsset(getContext().getAssets(), "OpenSans-Regular.ttf");
-
-        BarDataSet barDataSet1 = new BarDataSet(male, "Male");
-        barDataSet1.setColor(getResources().getColor(R.color.colorPrimary));
-        BarDataSet barDataSet2 = new BarDataSet(female, "Female");
-        barDataSet2.setColor(getResources().getColor(R.color.bg_login));
-        barDataSet1.setAxisDependency(YAxis.AxisDependency.LEFT);
-
-        dataSets = new ArrayList<>();
-        dataSets.add(barDataSet1);
-        dataSets.add(barDataSet2);
-
-
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setTypeface(mTf);
-        xAxis.setDrawGridLines(true);
-        xAxis.setDrawAxisLine(true);//if true this will draw line after setting data to x axis ie after 0
-        xAxis.setTextSize(13f);
-        xAxis.setTextColor(Color.BLACK);
-        xAxis.setAxisMaxValue(8);
-
-        YAxis leftAxis = chart.getAxisLeft();
-        leftAxis.setTypeface(mTf);
-        leftAxis.setLabelCount(5, false);
-        leftAxis.setTextSize(14f);
-        leftAxis.setTextColor(Color.BLACK);
-
-
-        YAxis rightAxis = chart.getAxisRight();
-        rightAxis.setTypeface(mTf);
-        rightAxis.setLabelCount(5, false);
-        rightAxis.setDrawGridLines(false);
-        rightAxis.setTextSize(14f);
-        rightAxis.setTextColor(Color.BLACK);
-        rightAxis.setEnabled(false);
-
-
-        //  BarData data = new BarData(getXAxisValues(), dataSets);
-        BarData data = new BarData(listSetAgeBound, dataSets);
-        data.setValueFormatter(new LargeValueFormatter());
-        data.setValueTextColor(Color.BLACK);
-        chart.setDrawValueAboveBar(true);
-
-
-        chart.setData(data);
-        chart.setDescription(null);//this will not show the chart description
 
         chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
             @Override
@@ -272,6 +281,9 @@ public class NewBarChartFragment extends android.support.v4.app.Fragment {
         if (view != null) {
             view = null;
         }
+        if(appController !=null){
+            appController=null;
+        }
         mListener = null;
         mFromDate = null;
         mToDate = null;
@@ -281,11 +293,11 @@ public class NewBarChartFragment extends android.support.v4.app.Fragment {
         if (v2e1 != null) {
             v2e1 = null;
         }
-        if(chart !=null){
-            chart=null;
+        if (chart != null) {
+            chart = null;
         }
-        if(ageBoundlis!=null){
-            ageBoundlis=null;
+        if (ageBoundlis != null) {
+            ageBoundlis = null;
         }
 
     }
@@ -295,7 +307,7 @@ public class NewBarChartFragment extends android.support.v4.app.Fragment {
      * fragment to allow an interaction in this fragment to be communicated
      * to the activity and potentially other fragments contained in that
      * activity.
-     * <p/>
+     * <p>
      * See the Android Training lesson <a href=
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.

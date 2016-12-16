@@ -72,14 +72,9 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Show personal Detail" + e);
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Show patient Detail" + e);
         }
-       /* Bundle bundle = getIntent().getExtras();
 
-              //Extract the data…
-
-        String venName = bundle.getString("VENUE_NAME");
-        Log.e("ashish"," "+venName);*/
 
         strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
 
@@ -94,7 +89,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         strLanguage = getIntent().getStringExtra("LANGUAGE");
         strgender = getIntent().getStringExtra("GENDER");
         fromWhere=getIntent().getStringExtra("FROMWHERE");
-        Log.e("fromWhere",""+fromWhere);
+
 
 
         TextView txtSysDate = (TextView) findViewById(R.id.sysdate);
@@ -159,7 +154,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Show personal Details" + e);
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Show patient Details" + e);
         }
         //To changes backgound images on time slot
 

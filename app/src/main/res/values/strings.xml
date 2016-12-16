@@ -57,6 +57,54 @@
         <item>Bengali </item>
 
     </string-array>
+
+    <string-array name="phType_group">
+        <item>Mobile</item>
+        <item>Landline</item>
+        <item>Personal </item>
+        <item>Office</item>
+        <item>Home</item>
+        <item>NA</item>
+    </string-array>
+
+    <string-array name="states">
+        <item>Select State</item>
+        <item>Andhra Pradesh</item>
+        <item>Arunachal Pradesh</item>
+        <item>Assam </item>
+        <item>Bihar</item>
+        <item>Chhattisgarh</item>
+        <item>Goa</item>
+
+        <item>Gujarat</item>
+        <item>Haryana</item>
+        <item>Himachal Pradesh </item>
+        <item>Jammu and Kashmir</item>
+        <item>Jharkhand</item>
+        <item>Karnataka</item>
+
+        <item>Kerala</item>
+        <item>Madhya Pradesh</item>
+        <item>Maharashtra </item>
+        <item>Manipur</item>
+        <item>Meghalaya</item>
+        <item>Mizoram</item>
+
+        <item>Nagaland</item>
+        <item>Odisha</item>
+        <item>Punjab </item>
+        <item>Rajasthan</item>
+        <item>Sikkim</item>
+        <item>Tamil Nadu</item>
+
+        <item>Telangana</item>
+        <item>Tripura</item>
+        <item>Uttar Pradesh </item>
+        <item>Uttarakhand</item>
+        <item>West Bengal</item>
+
+    </string-array>
+
     <string name="title_activity_patient_update">Edit Patient Update</string>
     <string name="title_activity_edit_personal_info">Edit Personal Info</string>
     <string name="title_activity_add_patient_update">Add Patient Update</string>
@@ -78,10 +126,11 @@
     <string name="message">Message :</string>
     <string name="send">Send</string>
     <string name="apikey">PFFt0436yjfn0945DevOp0958732Cons3214556</string>
-    <string name="digits">android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="digits">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
 
-    <string name="digitsnumber">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789,</string>
+    <string name="digitsnumber">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789," "</string>
     <string name="accept">Accept</string>
+    <string name="spinner_prompt">Select Category</string>
 
     <string name="agree">Yes, I accept the terms and condition</string>
     <string name="lastweek">Last Week</string>
@@ -89,6 +138,35 @@
     <string name="lastquarter">Last Quarter</string>
     <string name="quickview">Quick View</string>
     <string name="about">About</string>
+    <string name="personadetails">Personal Details</string>
+    <string name="version">Release Version 1.2.2 </string>
+    <string name="aboutApp">About App V 1.2.2 </string>
+    <string name="language">Language</string>
+    <string name="eng">Eng</string>
+    <string name="hin">Hin</string>
+    <string name="ben">Ben</string>
+    <string name="addPhoto">Add Photo</string>
+    <string name="number">Number</string>
+    <string name="mobstart">+91</string>
+    <string name="recorddetails">Record Details</string>
+    <string name="height">Height</string>
+    <string name="pulse">Pulse</string>
+    <string name="bp">B.P</string>
+    <string name="symptomsanddignosis">Symptoms and Dignosis</string>
+    <string name="prescription">Prescription</string>
+    <string name="addimage">Add Image</string>
+    <string name="sendreeminder">Send Reminder ?</string>
+    <string name="day">Day</string>
+    <string name="week">Week</string>
+    <string name="month">Mon</string>
+    <string name="ailmen">Ailment</string>
+    <string name="clinicalnotes">Clinical Notes</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+    <string name="m">M</string>
+    <string name="female">F</string>
+    <string name="other">OTHR</string>
+    <string name="na">NA</string>
 
 
 </resources>

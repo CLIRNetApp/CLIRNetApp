@@ -31,7 +31,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    private static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
 
     // Database Name
     public static final String DATABASE_NAME = "clirnetApp.db";
@@ -67,8 +67,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String PATIENT_INFO_TYPE_FORM = "patient_info_type";
     private static final String PATIENT_ADDRESS = "patient_address";
     private static final String PATIENT_CIT_CITY_TOWN = "patient_city_town";
+    private static final String PATIENT_STATE = "patient_state";
     private static final String PIN_CODE = "pin_code";
     private static final String DISTRICT = "district";
+
     private static final String CONSENT = "consent";
     private static final String SPECIAL_INSTRUCTION = "special_instruction";
     private static final String ADDED_BY = "added_by";
@@ -96,7 +98,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
     private static final String AGE = "age";
-    private static final String PHONE_NUMBER = "phonenumber";
+    public static final String PHONE_NUMBER = "phonenumber";
     private static final String LANGUAGE = "language";
     private static final String PHOTO = "photo";
     private static final String FOLLOW_UP_DATE = "follow_up_date";
@@ -111,6 +113,17 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String CLINICAL_NOTES = "clinical_notes";
     private static final String ACTION = "action";
 
+    private static final String WEIGHT = "weight";
+    private static final String PULSE = "pulse";
+    private static final String BP = "bp_high";
+    private static final String MMHG = "mmhg";
+    private static final String TEMP = "temperature";
+    private static final String SUGAR = "sugar";
+    private static final String SYMPTOMS = "symptoms";
+    private static final String DIGNOSIS = "dignosis";
+    private static final String TESTS = "tests";
+    private static final String DRUGS = "drugs";
+
     //table definations
 
     private final String CREATE_LOGIN_TABLE = "CREATE TABLE " + TABLE_USER + "("
@@ -122,126 +135,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             + KEY_CREATED_AT + " TEXT" + ")";
 
     private static final String TABLE_ASYNC = "async";
-    //table to call async task only once i life time of app
-    private final String CREATE_ASYNC = "CREATE TABLE " + TABLE_ASYNC + "("
-            + KEY_ID + " INTEGER PRIMARY KEY,"
-            + KEY_VALUE + " TEXT" + ")";
 
 
-    private final String CREATE_DOCTORPERINFO_TABLE = "CREATE TABLE " + TABLE_DOCTORINFO + "("
-            + KEY_ID + " INTEGER PRIMARY KEY,"
-            + DOCTOR_ID + " TEXT,"
-            + DOCTOR_LOGIN_ID + " TEXT,"
-            + DOCTOR_MEMBERSHIP_ID + " text , "
-            + FIRST_NAME + " text , "
-            + MIDDLE_NAME + " text, "
-            + LAST_NAME + " text, "
-            + PHONE_NUMBER + " text, "
-            + KEY_EMAIL + " TEXT ,"
 
-            + KEY_CREATED_AT + " TEXT" + ")";
-
-
-    private static final String CREATE_TABLE_PATIENT = "create table "
-            + TABLE_PATIENT + "(" + KEY_ID + " integer primary key autoincrement, "
-            + KEY_PATIENT_ID + " integer unique  , "
-            + DOCTOR_ID + " text, "
-            + DOCTOR_MEMBERSHIP_ID + " text , "
-            + PATIENT_INFO_TYPE_FORM + " text , "
-            + FIRST_NAME + " text , "
-            + MIDDLE_NAME + " text, "
-            + LAST_NAME + " text, "
-            + GENDER + " text, "
-            + DOB + " text, "
-            + AGE + " text, "
-            + PHONE_NUMBER + " text, "
-            + PATIENT_ADDRESS + " text, "
-            + PATIENT_CIT_CITY_TOWN + " text , "
-            + PIN_CODE + " text , "
-            + DISTRICT + " text , "
-            + LANGUAGE + " text, "
-            + PHOTO + " text, "
-            + CONSENT + " text , "
-            + SPECIAL_INSTRUCTION + " text , "
-            + ADDED_BY + " text, "
-            + ADDED_ON + " text, "
-            + MODIFIED_BY + " text, "
-            + MODIFIED_ON + " text, "
-            + IS_DISABLED + " text, "
-            + DISABLED_BY + " text, "
-            + DISABLED_ON + " text, "
-            + IS_DELETED + " text, "
-            + DELETED_BY + " text, "
-            + DELETED_ON + " text, "
-            + ADDED_TIME + " text, "
-            + MODIFIED_TIME + " text, "
-            + SYCHRONIZED + " text , "
-            + ACTION + " text ) ";
-
-
-    private final String CREATE_PATIENT_HISTORY = "CREATE TABLE " + TABLE_PATIENT_HISTORY + "("
-            + KEY_ID + " integer primary key autoincrement, "
-            + KEY_VISIT_ID + " integer unique  ,"
-            + KEY_PATIENT_ID + " integer ,"
-            + AILMENT + " text, "
-            + VISIT_DATE + " TEXT, "
-            + FOLLOW_UP_DATE + " text, "
-            + DAYS + " text, "
-            + WEEKS + " text, "
-            + MONTHS + " text, "
-            + ACTUAL_FOLLOW_UP_DATE + " TEXT,"
-            + KEY_NAME + " TEXT,"
-            + KEY_PASSWORD + " TEXT,"
-            + KEY_EMAIL + " TEXT ,"
-            + KEY_UID + " TEXT,"
-            + CLINICAL_NOTES + " text ,"
-            + PRESCRIPTION + " text, "
-            + ADDED_BY + " text, "
-            + ADDED_ON + " text, "
-            + MODIFIED_BY + " text, "
-            + MODIFIED_ON + " text, "
-            + IS_DISABLED + " text, "
-            + DISABLED_BY + " text, "
-            + DISABLED_ON + " text, "
-            + IS_DELETED + " text, "
-            + DELETED_BY + " text, "
-            + DELETED_ON + " text, "
-            + DOCTOR_ID + " text, "
-            + DOCTOR_MEMBERSHIP_ID + " text, "
-            + ADDED_TIME + " text , "
-            + MODIFIED_TIME + " text ,"
-            + SYCHRONIZED + " text ,"
-            + PATIENT_INFO_TYPE_FORM + " text , "
-            + ACTION + " text ) ";
-
-
-    private static final String CREATE_TABLE_AILMENT = "create table "
-            + MASTER_AILMENT + "(" + KEY_ID + " integer primary key autoincrement, "
-            + AILMENT + " text unique)";
-
-    private static final String CREATE_TABLE_LASTNAME = "create table "
-            + LAST_NAMETBL + "(" + KEY_ID + " integer primary key autoincrement, "
-            + LAST_NAME + " text unique )";
-
-    private static final String CREATE_TABLE_PATIENT_INFO_HIOTORY = "create table "
-            + TABLE_PATIENTPERSONALINFO_HIOTORY + "(" + KEY_ID + " integer primary key autoincrement, "
-            + FIRST_NAME + " text not null, "
-            + MIDDLE_NAME + " text, "
-            + LAST_NAME + " text, "
-            + GENDER + " text, "
-            + DOB + " text, "
-            + AGE + " text, "
-            + PHONE_NUMBER + " text, "
-            + LANGUAGE + " text, "
-            + PHOTO + " text, "
-            + FOLLOW_UP_DATE + " text, "
-            + DAYS + " text, "
-            + WEEKS + " text, "
-            + MONTHS + " text, "
-            + AILMENT + " text, "
-            + PRESCRIPTION + " text, "
-            + KEY_CREATED_AT + " text ,"
-            + CLINICAL_NOTES + " text )";
 
 
     public SQLiteHandler(Context context) {
@@ -277,24 +173,58 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d(TAG, "Database tables created");*/
 
     }
+   /* private static final String DATABASE_ALTER_TEAM_1 = "ALTER TABLE "
+            + + " ADD COLUMN " + COLUMN_COACH + " string;";*/
+
+    private static final String DATABASE_ALTER_TABLE_USER = "ALTER TABLE user"
+            + " ADD COLUMN phonenumber text;";
+
+    private static final String DATABASE_ALTER_TABLE_PATIENT = "ALTER TABLE patient"
+            + " ADD COLUMN patient_state text;";
+
+    private static final String  DATABASE_ALTER_TABLE_PATIENT_HISTORY_WEIGHT = " ALTER TABLE patient_history" +" ADD COLUMN weight text;";
+
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_PULSE = " ALTER TABLE patient_history" +" ADD COLUMN pulse text;";
+
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_BP = " ALTER TABLE patient_history" +" ADD COLUMN bp_high text;";
+
+    private static final String  DATABASE_ALTER_TABLE_PATIENT_HISTORY_MMHG = " ALTER TABLE patient_history" +" ADD COLUMN mmhg text;";
+
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_TEMP = " ALTER TABLE patient_history" +" ADD COLUMN temperature text;";
+
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_SUGAR = " ALTER TABLE patient_history" +" ADD COLUMN sugar text;";
+
+    private static final String  DATABASE_ALTER_TABLE_PATIENT_HISTORY_SYMPTOMS = " ALTER TABLE patient_history" +" ADD COLUMN symptoms text;";
+
+    private static final String  DATABASE_ALTER_TABLE_PATIENT_HISTORY_DIGNOSIS =" ALTER TABLE patient_history" +" ADD COLUMN dignosis text;";
+
+    private static final String  DATABASE_ALTER_TABLE_PATIENT_HISTORY_TESTS = " ALTER TABLE patient_history" +" ADD COLUMN tests text;";
+
+    private static final String  DATABASE_ALTER_TABLE_PATIENT_HISTORY_DRUGS = " ALTER TABLE patient_history" +" ADD COLUMN drugs text;";
 
     // Upgrading database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
-       /* db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_PATIENT);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_LOGIN_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_AILMENT);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_LASTNAME);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_PATIENT_HISTORY);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_TABLE_PATIENT_INFO_HIOTORY);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_DOCTORPERINFO_TABLE);
-        db.execSQL("DROP TABLE IF EXISTS " + CREATE_ASYNC);*/
+        /*if (oldVersion < 2) {
+         //   db.execSQL(DATABASE_ALTER_TEAM_2);
+        }*/
+        if (oldVersion < 3) {
+            db.execSQL(DATABASE_ALTER_TABLE_USER);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT);
 
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_WEIGHT);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_PULSE);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_BP);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_MMHG);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_TEMP);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_SUGAR);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_SYMPTOMS);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_DIGNOSIS);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_TESTS);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_DRUGS);
 
-        // Create tables again
-       // onCreate(db);
+        }
     }
 
     /**
@@ -357,7 +287,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
     //add user login credentails into db
-    public void addLoginRecord(String username, String password) throws ClirNetAppException {
+    public void addLoginRecord(String username, String password,String phoneNumber) throws ClirNetAppException {
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
         try {
@@ -365,6 +295,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
             contentValue.put(KEY_NAME, username);
             contentValue.put(KEY_PASSWORD, password);
+            contentValue.put(PHONE_NUMBER,phoneNumber);
 
             // Inserting Row
             db.delete(TABLE_USER, KEY_NAME + " = ?", new String[]{username});
@@ -549,7 +480,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     //This will add records from registration page into patient table  28/8/2016 ashish u
-    public void addPatientPersonalfromLocal(int patient_id, String doctor_id, String first_name, String middle_name, String last_name, String sex, String strdate_of_birth, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String create_date, String doctor_membership_number, String flag, String patientInfoType, String addedTime, String added_by, String action) {
+    public void addPatientPersonalfromLocal(int patient_id, String doctor_id, String first_name, String middle_name, String last_name, String sex, String strdate_of_birth, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String create_date, String doctor_membership_number, String flag, String patientInfoType, String addedTime, String added_by, String action,
+                                            String address,String city,String district,String pinno,String state  ) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -577,6 +509,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(ADDED_TIME, addedTime);
             values.put(ADDED_BY, added_by);
             values.put(ACTION, action);
+            values.put(PATIENT_ADDRESS,address);
+            values.put(PATIENT_CIT_CITY_TOWN,city);
+            values.put(DISTRICT,district);
+            values.put(PIN_CODE,pinno);
+            values.put(PATIENT_STATE,state);
 
 
             // Inserting Row
@@ -596,7 +533,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     //add  new patient records into db from registration page
-    public void addHistoryPatientRecords(int visit_id, int patient_id, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String ailments, String prescriptionImgPath, String clinical_note, String added_on_date, String visit_date, String doc_id, String doc_mem_id, String flag, String addedTime, String patientInfoType, String added_by, String action) {
+    public void addHistoryPatientRecords(int visit_id, int patient_id, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String ailments, String prescriptionImgPath, String clinical_note, String added_on_date, String visit_date, String doc_id, String doc_mem_id, String flag, String addedTime, String patientInfoType, String added_by, String action,
+         String weight,String pulse,String bp,String mmhg,String temparature,String sugar,String symptoms,String dignosis,String tests,String drugs) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -622,6 +560,16 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(PATIENT_INFO_TYPE_FORM, patientInfoType);
             values.put(ACTION, action);
             values.put(ADDED_BY, added_by);
+            values.put(WEIGHT,weight);
+            values.put(PULSE,pulse);
+            values.put(BP,bp);
+            values.put(MMHG,mmhg);
+            values.put(TEMP,temparature);
+            values.put(SUGAR,sugar);
+            values.put(SYMPTOMS,symptoms);
+            values.put(DIGNOSIS,dignosis);
+            values.put(TESTS,tests);
+            values.put(DRUGS,drugs);
 
             id = db.insert(TABLE_PATIENT_HISTORY, null, values);
         } catch (Exception e) {
@@ -787,6 +735,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
             // Inserting Row
             id = db.update(TABLE_PATIENT, values, KEY_PATIENT_ID + "=" + strPatientId, null);
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -839,10 +788,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(KEY_EMAIL, email_id);
             values.put(PHONE_NUMBER, phone_no);
 
-            db.delete(TABLE_DOCTORINFO, DOCTOR_ID + " = ?" + " AND " + DOCTOR_LOGIN_ID + " = ? " + " AND " + DOCTOR_MEMBERSHIP_ID + " = ? ", new String[]{doc_id, doctor_login_id, DOCTOR_MEMBERSHIP_ID});
+            //delete all previous records if there any in doctor info table.
+          //  db.delete(TABLE_DOCTORINFO, DOCTOR_ID + " = ? " + " AND " + DOCTOR_LOGIN_ID + " = ? ", new String[]{doc_id, doctor_login_id, DOCTOR_MEMBERSHIP_ID});
+            db.delete(TABLE_DOCTORINFO, DOCTOR_LOGIN_ID + " = ? ", new String[]{doctor_login_id});
 
-            // Inserting Row
+            /// Inserting Row
             id = db.insert(TABLE_DOCTORINFO, null, values);
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -906,26 +858,5 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
     }
-
-
-    public void addMe() {
-
-        try {
-            SQLiteDatabase db = this.getWritableDatabase();
-
-            // SQLiteDatabase  db = this.getWritableDatabase();
-            db.execSQL("INSERT INTO table_MasterAilment(ailment) values('Acidity');");
-            db.execSQL("INSERT INTO table_MasterAilment(ailment) values('Abdominal Colic');");
-            db.execSQL("INSERT INTO table_MasterAilment(ailment) values('Abdominal Cramps');");
-            db.setTransactionSuccessful();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (db != null) {
-                db.close();
-            }
-        }
-    }
-
 
 }

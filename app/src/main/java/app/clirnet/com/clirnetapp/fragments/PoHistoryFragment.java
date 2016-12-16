@@ -26,6 +26,7 @@ import android.widget.TextView;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.ItemClickListener;
@@ -39,14 +40,12 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
-
 public class PoHistoryFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
-    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom,R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest,R.drawable.revituz,R.drawable.suprizon};
+
+    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom, R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest, R.drawable.revituz, R.drawable.suprizon};
     private OnFragmentInteractionListener mListener;
     private EditText firstName;
     private EditText lastName;
@@ -65,7 +64,8 @@ public class PoHistoryFragment extends Fragment {
     private MultipleFilterPatientAdapter adapter;
     private RecyclerView recyclerView;
     private ImageView backChangingImages;
-    private ArrayList<RegistrationModel> patientData=new ArrayList<>();
+    private ArrayList<RegistrationModel> patientData = new ArrayList<>();
+    //private ArrayList<RegistrationModel> patientData1 = new ArrayList<>();
     private LinearLayout norecordtv;
     private View rootview;
     private AppController appController;
@@ -76,13 +76,13 @@ public class PoHistoryFragment extends Fragment {
         this.setHasOptionsMenu(true);
 
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
 
-        rootview=null;
+        rootview = null;
     }
-
 
 
     @Override
@@ -115,12 +115,12 @@ public class PoHistoryFragment extends Fragment {
         phone_no = (EditText) rootview.findViewById(R.id.mobile_no);
         age = (TextView) rootview.findViewById(R.id.age);
         radioSexGroup = (RadioGroup) rootview.findViewById(R.id.radioGender);
-        SimpleDateFormat sdf=new SimpleDateFormat("dd MMMM,yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy");
         Date todayDate = new Date();
         String dd = sdf.format(todayDate);
-        Log.e("date", "" + todayDate);
 
-        currdate.setText("Today's Date "+dd);
+
+        currdate.setText("Today's Date " + dd);
 
         TextView privacyPolicy = (TextView) rootview.findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) rootview.findViewById(R.id.termsandCondition);
@@ -144,7 +144,7 @@ public class PoHistoryFragment extends Fragment {
 
             }
         });
-         appController=new AppController();
+        appController = new AppController();
 
         //appController. setValuesSharedPrefrence("VALUE", "one");
 
@@ -157,16 +157,14 @@ public class PoHistoryFragment extends Fragment {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Po History Frgament" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Frgament" + e);
         }
 
-
-        Log.e("psize"," "+patientData.size());
 
         patientData.clear(); //This method will clear all previous data from  Array list  24-8-2016
 
 
-         submit = (Button) rootview.findViewById(R.id.submit);
+        submit = (Button) rootview.findViewById(R.id.submit);
 
         submit.setOnTouchListener(new View.OnTouchListener() {
 
@@ -201,44 +199,57 @@ public class PoHistoryFragment extends Fragment {
 
                 //Toast.makeText(getContext(), " Gender" + radioSexButton.getText().toString(), Toast.LENGTH_SHORT).show();
                 sex = radioSexButton.getText().toString();
-                 //This method will clear all previous data from  Array list  24-8-2016
+                //This method will clear all previous data from  Array list  24-8-2016
+
                 try {
                     patientData = (sqlController.getFilterDatanew(strfname, strlname, sex, strpno, strage));
+
+
+                    if (patientData.size() > 0) {
+                        removeDuplicate(patientData);
+                        /*for (int i = 0; i < patientData.size(); i++) {
+                            String mn = patientData.get(i).getFirstName();
+                            String ln = patientData.get(i).getLastName();
+                            String mobNo = patientData.get(i).getMobileNumber();
+                            String age = patientData.get(i).getAge();
+
+
+                            patientData1 = filter(patientData, mn, ln, mobNo, age);
+
+                        }*/
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Po History Fragment" + e);
-                }
-                finally {
-                    if(sqlController !=null){
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Fragment" + e);
+                } finally {
+                    if (sqlController != null) {
                         sqlController.close();
                     }
                 }
 
 
                 int count = patientData.size();
-                Log.e("count", "" + count);
                 try {
                     if (count > 0) {
                         /*final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
                         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                         recyclerView.setLayoutManager(layoutManager);*/
 
-                      //  recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+                        //  recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                         recyclerView.setVisibility(View.VISIBLE);
                         norecordtv.setVisibility(View.GONE);
                         adapter = new MultipleFilterPatientAdapter(patientData);
                         recyclerView.setAdapter(adapter);
 
-                    }
-                    else{
+                    } else {
 
                         recyclerView.setVisibility(View.INVISIBLE);
                         norecordtv.setVisibility(View.VISIBLE);
                     }
 
-                }catch(Exception e){
+                } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Po History Fragment" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Fragment" + e);
                 }
 
             }
@@ -272,7 +283,7 @@ public class PoHistoryFragment extends Fragment {
         i.putExtras(bundle);
         i.putExtra("PATIENTPHOTO", book.getPhoto());
         i.putExtra("ID", book.getPat_id());
-        Log.e("book.getPat_id()", "" + book.getPat_id());
+
         i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
         i.putExtra("FIRSTTNAME", book.getFirstName());
         i.putExtra("MIDDLENAME", book.getMiddleName());
@@ -292,7 +303,7 @@ public class PoHistoryFragment extends Fragment {
         i.putExtra("CLINICALNOTES", book.getClinicalNotes());
         i.putExtra("PRESCRIPTION", book.getPres_img());
         i.putExtra("FROMWHERE", "3"); //thi will identify from which fragment we are navigating
-        Log.e("img", "" + book.getPres_img());
+
         startActivity(i);
 
 
@@ -332,8 +343,6 @@ public class PoHistoryFragment extends Fragment {
     }
 
 
-
-
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
@@ -356,10 +365,11 @@ public class PoHistoryFragment extends Fragment {
         };
         backChangingImages.postDelayed(runnable, 100); //for initial delay..
     }
+
     @Override
     public void onPause() {
-        Log.e("DEBUG", "OnPause of HomeFragment");
-        InputMethodManager inputMethodManager = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         inputMethodManager.hideSoftInputFromWindow(firstName.getWindowToken(), 0);
         super.onPause();
@@ -369,37 +379,86 @@ public class PoHistoryFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-        rootview = null; // now cleaning up!
+        rootview = null; // view cleaning up!
 
-        if(sqlController != null){
+        if (sqlController != null) {
             sqlController.close();
-            sqlController= null;
+            sqlController = null;
         }
-        if(adapter != null){
-            adapter=null;
+        if (adapter != null) {
+            adapter = null;
         }
 
-        if(appController !=null) {
+        if (appController != null) {
             appController = null;
         }
 
 
         patientData.clear();
-        patientData=null;
+        patientData = null;
 
         recyclerView.setOnClickListener(null);
         //  searchView.setOnClickListener(null);
 
         norecordtv = null;
 
-        recyclerView=null;
-        sex= null;
+        recyclerView = null;
+        sex = null;
         strfname = null;
         strlname = null;
-        strpno= null;
-        strage= null;
+        strpno = null;
+        strage = null;
+        radioSexGroup = null;
+        radioSexButton = null;
+        submit = null;
+        Log.e("onDetach", "onDetach Home Fragment");
+    }
 
-        Log.e("onDetach","onDetach Home Fragment");
+    /*//This method will filter data from our database generated list according to user query by Phone Number 6/8/i Ashish
+    private ArrayList<RegistrationModel> filter(List<RegistrationModel> models, String fn, String ln, String mobileno, String agestr) {
+
+        fn = fn.toLowerCase();
+        ln = ln.toLowerCase();
+        mobileno = mobileno.toLowerCase();
+        agestr = agestr.toLowerCase();
+
+        final ArrayList<RegistrationModel> filteredModelList = new ArrayList<>();
+        //final ArrayList<RegistrationModel> filteredModelList1 = new ArrayList<>();
+        for (RegistrationModel model : models) {
+            final String fname = model.getFirstName().toLowerCase();
+            final String mname = model.getLastName().toLowerCase();
+            final String mobno = model.getMobileNumber().toLowerCase();
+            final String age = model.getAge().toLowerCase();
+
+            if (fname.contains(fn) && mname.contains(ln) && mobno.contains(mobileno) && age.contains(agestr)) {
+
+                filteredModelList.remove(model);
+                Log.e("result", "" + fname);
+            } else {
+                filteredModelList.add(model);
+                Log.e("Allready", "Record is allready there");
+            }
+        }
+        return filteredModelList;
+    }*/
+
+    private static void removeDuplicate(final List<RegistrationModel> al) {
+        for (int i = 0; i < al.size() - 1; i++) {
+
+            String element = al.get(i).getPat_id();
+            // Log.e("element", "" + element);
+            for (int j = i + 1; j < al.size(); j++) {
+                if (element.equals(al.get(j).getPat_id())) {
+                    // Log.e("element1", "" + al.get(j).getPat_id());
+                    al.remove(j);
+                    j--;
+
+                }
+            }
+        }
+
+        System.out.println(al);
+
     }
 }
 

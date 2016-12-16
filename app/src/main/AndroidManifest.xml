@@ -72,6 +72,8 @@
         <activity android:name=".activity.TermsCondition" />
         <activity android:name=".activity.AboutAppPage" >
         </activity>
+        <activity android:name=".activity.RegistrationActivityNew" >
+        </activity>
     </application>
 
 </manifest>

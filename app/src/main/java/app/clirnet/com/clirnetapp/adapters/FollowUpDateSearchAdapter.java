@@ -22,6 +22,9 @@ public class FollowUpDateSearchAdapter extends RecyclerView.Adapter<FollowUpDate
     private List<RegistrationModel> patientList;
     private  AppController appController=new AppController();
 
+
+
+
     public FollowUpDateSearchAdapter(List<RegistrationModel> patientList) {
         this.patientList = patientList;
 

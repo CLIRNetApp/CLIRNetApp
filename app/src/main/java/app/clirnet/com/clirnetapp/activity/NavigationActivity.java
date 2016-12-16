@@ -23,9 +23,8 @@ import com.bumptech.glide.Glide;
 import app.clirnet.com.clirnetapp.R;
 
 import app.clirnet.com.clirnetapp.app.AppController;
-import app.clirnet.com.clirnetapp.fragments.AnotherFragment;
 import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
-import app.clirnet.com.clirnetapp.fragments.NewBarChartFragment;
+import app.clirnet.com.clirnetapp.fragments.BarChartFragment;
 import app.clirnet.com.clirnetapp.fragments.PatientReportFragment;
 import app.clirnet.com.clirnetapp.fragments.ReportFragmentViewPagerSetup;
 import app.clirnet.com.clirnetapp.fragments.HomeFragment;
@@ -34,14 +33,12 @@ import app.clirnet.com.clirnetapp.fragments.ReportFragment;
 import app.clirnet.com.clirnetapp.fragments.TopTenAilmentFragment;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
-import app.clirnet.com.clirnetapp.reports.BarChartFragment;
-import app.clirnet.com.clirnetapp.reports.NewHomeFragment;
 
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
-        , ReportFragment.OnFragmentInteractionListener,PatientReportFragment.OnFragmentInteractionListener,ReportFragmentViewPagerSetup.OnFragmentInteractionListener,TopTenAilmentFragment.OnFragmentInteractionListener,
-        AnotherFragment.OnFragmentInteractionListener,NewHomeFragment.OnFragmentInteractionListener,BarChartFragment.OnFragmentInteractionListener,NewBarChartFragment.OnFragmentInteractionListener{
+        , ReportFragment.OnFragmentInteractionListener, PatientReportFragment.OnFragmentInteractionListener, ReportFragmentViewPagerSetup.OnFragmentInteractionListener, TopTenAilmentFragment.OnFragmentInteractionListener,
+        BarChartFragment.OnFragmentInteractionListener {
 
 
     private FragmentManager fragmentManager;
@@ -55,7 +52,7 @@ public class NavigationActivity extends AppCompatActivity
     private String docName;
     private String emailId;
     private AppController appController;
-    private boolean idle=true;
+    private boolean idle = true;
 
 
     @Override
@@ -66,7 +63,7 @@ public class NavigationActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        appController=new AppController();
+        appController = new AppController();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -77,7 +74,7 @@ public class NavigationActivity extends AppCompatActivity
 
         //  SharedPreferences pref = getApplicationContext().getSharedPreferences(MyPREFERENCES, MODE_PRIVATE);
 
-
+        //set username and mail id to header view of navigation drawer
         View hView = navigationView.getHeaderView(0);
         ImageView imgvw = (ImageView) hView.findViewById(R.id.imageView);
         TextView u_name = (TextView) hView.findViewById(R.id.user_name);
@@ -110,7 +107,7 @@ public class NavigationActivity extends AppCompatActivity
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+"" +"/"+"Navigation" + e);
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation" + e);
         } finally {
             if (sqlController != null) {
                 sqlController.close();
@@ -122,39 +119,31 @@ public class NavigationActivity extends AppCompatActivity
 
         fragmentManager.beginTransaction().replace(R.id.flContent, new HomeFragment()).commit();*/
 
-         String fromWhere=getIntent().getStringExtra("FROMWHERE");
-         Log.e("fromWhereNavigation",""+fromWhere);
+        String fromWhere = getIntent().getStringExtra("FROMWHERE");//check from which fragment call came and redirect to that fragment
+        // Log.e("fromWhereNavigation", "" + fromWhere);
 
         Fragment fragment = getSupportFragmentManager().
                 findFragmentById(R.id.flContent);
-        if(fromWhere == null) {
-           // if (fragment == null) {
-                fragment = new HomeFragment();
-                /*getSupportFragmentManager()
-                        .beginTransaction()
-                        .add(R.id.flContent, fragment, "SOME_TAG_IF_YOU_WANT_TO_REFERENCE_YOUR_FRAGMENT_LATER")
-                        .commit();*/
-           // }
-        }else if(fromWhere.equals("2")){
+        if (fromWhere == null) {
+
+            fragment = new HomeFragment();
+
+        } else if (fromWhere.equals("2")) {
             fragment = new ConsultationLogFragment();
-           /* getSupportFragmentManager()
-                    .beginTransaction()
-                    .add(R.id.flContent, fragment, "SOME_TAG_IF_YOU_WANT_TO_REFERENCE_YOUR_FRAGMENT_LATER")
-                    .commit();*/
 
-                Log.e("fragment", "Fragment is already open");
+            //  Log.e("fragment", "Fragment is already open");
 
-        }
-        else if(fromWhere.equals("3")){
+        } else if (fromWhere.equals("3")) {
             fragment = new PoHistoryFragment();
 
-        }//for any other values
-        else{
-            Log.e("any", "Fragment is already open");
+        }
+        //for any other values
+        else {
+            // Log.e("any", "Fragment is already open");
             fragment = new HomeFragment();
         }
         fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
 
         // Highlight the selected item, update the title, and close the drawer
 
@@ -172,7 +161,7 @@ public class NavigationActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-        System.exit(0);*/
+  */
     }
 
 
@@ -218,7 +207,7 @@ public class NavigationActivity extends AppCompatActivity
 
             case R.id.nav_report:
 
-                fragment= new ReportFragment();
+                fragment = new ReportFragment();
                 break;
 
             case R.id.nav_logout:
@@ -302,7 +291,7 @@ public class NavigationActivity extends AppCompatActivity
         if (fragmentManager != null) {
             fragmentManager = null;
         }
-        if(appController !=null) {
+        if (appController != null) {
             appController = null;
         }
 
@@ -315,7 +304,8 @@ public class NavigationActivity extends AppCompatActivity
         docName = null;
         emailId = null;
     }
-    public void setActionBarTitle(String title){
+
+    public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
     }
 }

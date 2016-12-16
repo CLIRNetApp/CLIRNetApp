@@ -7,11 +7,13 @@ import android.util.Log;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import app.clirnet.com.clirnetapp.models.Counts;
-import app.clirnet.com.clirnetapp.reports.GenderWiseDataModel;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
+import app.clirnet.com.clirnetapp.reports.GenderWiseDataModel;
 
 //this class is most imp class which used to query the database
 public class SQLController {
@@ -78,7 +80,7 @@ public class SQLController {
 
             if (cursor.moveToFirst()) {
                 do {
-                    LoginModel user = new LoginModel(cursor.getString(0), cursor.getString(1) );
+                    LoginModel user = new LoginModel(cursor.getString(0), cursor.getString(1));
 
                     loginList.add(user);
 
@@ -96,8 +98,8 @@ public class SQLController {
                 database1.close();
             }
         }
-         return  loginList;
-        }
+        return loginList;
+    }
 
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments
     public ArrayList<RegistrationModel> getPatientList() throws ClirNetAppException {
@@ -228,8 +230,8 @@ public class SQLController {
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
-          //  String selectQuery ="SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date like '"+ "%" + date +"'order by ph.key_visit_id  desc limit 25";
-            String selectQuery ="SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' order by ph.key_visit_id  desc";
+            //  String selectQuery ="SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date like '"+ "%" + date +"'order by ph.key_visit_id  desc limit 25";
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' order by ph.key_visit_id  desc";
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
 
@@ -262,7 +264,6 @@ public class SQLController {
     }
 
 
-
     //get max count of patient id
     public int getPatientIdCount() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
@@ -272,25 +273,22 @@ public class SQLController {
         try {
             db1 = dbHelper.getReadableDatabase();
             //stmt = db1.compileStatement("select max(patient_id) from patient");
-            cursor=db1.rawQuery("select max(patient_id) from patient",null);
-            if(cursor.moveToFirst()){
-                returnValue=cursor.getInt(0);
+            cursor = db1.rawQuery("select max(patient_id) from patient", null);
+            if (cursor.moveToFirst()) {
+                returnValue = cursor.getInt(0);
             }
         } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong");
         } finally {
-            if (cursor != null){
-              cursor.close();
+            if (cursor != null) {
+                cursor.close();
             }
-            if(db1 != null) {
+            if (db1 != null) {
                 db1.close();
             }
         }
         return returnValue;
     }
-
-
-
 
 
     //get max visit count  from patient_history table
@@ -302,17 +300,17 @@ public class SQLController {
         try {
             db1 = dbHelper.getReadableDatabase();
             //stmt = db1.compileStatement("select max(patient_id) from patient");
-            cursor=db1.rawQuery("select max(key_visit_id) from patient_history",null);
-            if(cursor.moveToFirst()){
-                returnValue=cursor.getInt(0);
+            cursor = db1.rawQuery("select max(key_visit_id) from patient_history", null);
+            if (cursor.moveToFirst()) {
+                returnValue = cursor.getInt(0);
             }
         } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong while getting max visit id from patient_history");
         } finally {
-            if (cursor != null){
+            if (cursor != null) {
                 cursor.close();
             }
-            if(db1 != null) {
+            if (db1 != null) {
                 db1.close();
             }
         }
@@ -323,16 +321,35 @@ public class SQLController {
     public ArrayList<RegistrationModel> getFilterDatanew(String fname, String lname, String gender, String phoneno, String age) throws ClirNetAppException {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
+        Cursor cursor1 = null;
         ArrayList<RegistrationModel> pList = new ArrayList<>();
+        Set<RegistrationModel> pList1 = new LinkedHashSet<>();
         try {
             open();
-            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%' and p.gender like '" + gender + "' and p.phonenumber like '%" + phoneno + "%' and p.age like '%" + age + "%'  and ph.actual_follow_up_date = (select actual_follow_up_date from patient_history ph2 where ph2.patient_id = p.patient_id order by ph2.actual_follow_up_date desc) order by ph.key_visit_id desc limit 30";
+            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%' and p.gender like '" + gender + "' and p.phonenumber like '%" + phoneno + "%' and p.age like '%" + age + "%'  order by ph.key_visit_id desc limit 30";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-            Log.d("cursor", "" + cursor.getCount());
 
             int count = cursor.getCount();
             Log.d("count", "" + count);
+
+          /*  for(int i=1;i<count;i++){
+                String selectQuerynew = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and p.patient_id=" + cursor.getString(0) + " order  by follow_up_date desc limit 30";
+                cursor1 = db1.rawQuery(selectQuerynew, null);
+
+                    RegistrationModel user = new RegistrationModel(cursor1.getString(0), cursor1.getString(1), cursor1.getString(2), cursor1.getString(3), cursor1.getString(4), cursor1.getString(5), cursor1.getString(6),
+                            cursor1.getString(7), cursor1.getString(8),
+                            cursor1.getString(9), cursor1.getString(10), cursor1.getString(11), cursor1.getString(12), cursor1.getString(13), cursor1.getString(14), cursor1.getString(15),
+                            cursor1.getString(16), cursor1.getString(17), cursor1.getString(18), cursor1.getString(19), cursor1.getString(20));
+
+                    pList.add(user);
+
+            }*/
+
+           /* String selectQuerynew = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and p.patient_id=" + cursor.getString(0) + " order  by follow_up_date desc limit 30";
+                    cursor1 = db1.rawQuery(selectQuerynew, null);
+
+            Log.d("countcursor1", "" + cursor1.getCount());*/
 
             if (cursor.moveToFirst()) {
                 do {
@@ -341,7 +358,7 @@ public class SQLController {
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20));
 
-                    pList.add(user);
+                   pList1.add(user);
 
                 } while (cursor.moveToNext());
             }
@@ -355,9 +372,10 @@ public class SQLController {
                 db1.close();
             }
         }
-
-        return pList;
+       ArrayList<RegistrationModel> list = new ArrayList<>(pList1);
+        return  list;
     }
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //this will search for user entered phone number from Patient Central Page
@@ -411,8 +429,8 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {                                                                                                                                                                                                                                                                                                                                                                                          //p.first_name like '%" + fname + "%'
-           // String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like  '% " + number + " %'  group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc " ;
-                String selectQuery="select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like '%" + number + "%' group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc ";
+            // String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like  '% " + number + " %'  group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc " ;
+            String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like '%" + number + "%' group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc ";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
             Log.d("cursor", "" + cursor.getCount());
@@ -590,6 +608,7 @@ public class SQLController {
         }
         return returnString;
     }
+
     public String getUserMailId() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
@@ -629,7 +648,7 @@ public class SQLController {
         String returnString = ""; // Your default if none is found
         try {
             db1 = dbHelper.getReadableDatabase();
-         //   stmt = db1.compileStatement("select doctor_id from doctor_perInfo order by doctor_id desc limit 1");
+            //   stmt = db1.compileStatement("select doctor_id from doctor_perInfo order by doctor_id desc limit 1");
 
             String query = "select doctor_id from doctor_perInfo order by doctor_id desc limit 1";
 
@@ -657,11 +676,11 @@ public class SQLController {
 
     //doctor first and last name to set to navigation bar
     public String getDocdoctorName() throws ClirNetAppException {
-       // SQLiteStatement stmt = null;
-       // SQLiteStatement stmt2 = null;
+        // SQLiteStatement stmt = null;
+        // SQLiteStatement stmt2 = null;
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
-        String firstNaame = null;
+        String firstName = null;
         String lastName = null;
         try {
             db1 = dbHelper.getReadableDatabase();
@@ -672,8 +691,8 @@ public class SQLController {
 
 
             if (cursor.moveToFirst()) {
-                firstNaame = cursor.getString(cursor.getColumnIndex("first_name"));
-                lastName=cursor.getString(cursor.getColumnIndex("last_name"));
+                firstName = cursor.getString(cursor.getColumnIndex("first_name"));
+                lastName = cursor.getString(cursor.getColumnIndex("last_name"));
             }
 
         } catch (NullPointerException e) {
@@ -688,8 +707,8 @@ public class SQLController {
                 db1.close();
             }
         }
-      //  Log.e("ashishu"," "+firstNaame + ""+lastName);
-        return firstNaame + " " + lastName;
+        //  Log.e("ashishu"," "+firstNaame + ""+lastName);
+        return firstName + " " + lastName;
 
 
     }
@@ -701,7 +720,7 @@ public class SQLController {
 
         try {
 
-           // stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
+            // stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
             String query = "select phonenumber from doctor_perInfo order by phonenumber desc limit 1";
 
 
@@ -714,14 +733,13 @@ public class SQLController {
 
         } catch (Exception e) {
             throw new ClirNetAppException("something went wrong");
-        }
-        finally {
+        } finally {
 
-            if(cursor !=null){
+            if (cursor != null) {
                 //close statment
                 cursor.close();
             }
-            if(database !=null){
+            if (database != null) {
                 database.close();
             }
 
@@ -756,11 +774,11 @@ public class SQLController {
         } catch (Exception e) {
             throw new ClirNetAppException("something went wrong");
         } finally {
-            if(cursor !=null){
+            if (cursor != null) {
                 //close statment
                 cursor.close();
             }
-            if(db1 !=null){
+            if (db1 != null) {
                 db1.close();
             }
         }
@@ -771,10 +789,10 @@ public class SQLController {
     public String getAsyncvalue() throws ClirNetAppException {
         Cursor cursor = null;
         String returnString = null; // Your default if none is found
-        SQLiteDatabase db1=null;
+        SQLiteDatabase db1 = null;
         try {
             db1 = dbHelper.getReadableDatabase();
-           // stmt = db1.compileStatement("select value from async order by id desc limit 1");
+            // stmt = db1.compileStatement("select value from async order by id desc limit 1");
 
             String query = "select value from async order by id desc limit 1";
 
@@ -790,11 +808,11 @@ public class SQLController {
         } catch (Exception e) {
             throw new ClirNetAppException("no values found");
         } finally {
-            if(cursor !=null){
+            if (cursor != null) {
                 //close statment
                 cursor.close();
             }
-            if(db1 !=null){
+            if (db1 != null) {
                 db1.close();
             }
         }
@@ -812,20 +830,19 @@ public class SQLController {
     }
 
     //To validate user from sqlite stored values
-    public boolean validateUser(String username, String password) throws ClirNetAppException {
+    public boolean validateUser(String username, String password, String phoneNumber) throws ClirNetAppException {
 
         database = dbHelper.getReadableDatabase();
         int count;
-        Cursor c=null;
+        Cursor c = null;
         try {
-             c = database.rawQuery(
+            c = database.rawQuery(
                     "SELECT * FROM " + SQLiteHandler.TABLE_USER + " WHERE "
-                            + SQLiteHandler.KEY_NAME + "='" + username + "'AND " + SQLiteHandler.KEY_PASSWORD + "='" + password + "'", null);
+                            + SQLiteHandler.KEY_NAME + "='" + username + "'OR " + SQLiteHandler.PHONE_NUMBER + "='" + phoneNumber + "'AND " + SQLiteHandler.KEY_PASSWORD + "='" + password + "'", null);
             count = c.getCount();
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new ClirNetAppException("Not able to search records");
-        }
-        finally {
+        } finally {
             if (c != null) {
                 c.close();
             }
@@ -834,7 +851,7 @@ public class SQLController {
             }
             // todo close db here
         }
-        if (count>0)
+        if (count > 0)
             return true;
         return false;
 
@@ -842,12 +859,12 @@ public class SQLController {
 
     public Cursor getAilmentsListSql() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
-        String[] cols = {"id","ailment"};
-        Cursor cursor=null;
+        String[] cols = {"id", "ailment"};
+        Cursor cursor = null;
         try {
 
             db1 = dbHelper.getReadableDatabase();
-            cursor=db1.query("table_MasterAilment", cols, null,
+            cursor = db1.query("table_MasterAilment", cols, null,
                     null, null, null, null);
         } catch (Exception e) {
             throw new ClirNetAppException("Error while getting records");
@@ -893,14 +910,14 @@ public class SQLController {
 
     }
 
-    public ArrayList<Counts> countPerDay (String fromdate, String todate) throws ClirNetAppException {
+    public ArrayList<Counts> countPerDay(String fromdate, String todate) throws ClirNetAppException {
 
         ArrayList<Counts> VisitidList = new ArrayList<>();
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {
             String selectQuery = "SELECT pvd.visit_date , count( * ) AS tot FROM patient dpr, patient_history pvd WHERE dpr.patient_id = pvd.patient_id AND" +
-                    " date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date";
+                    " date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) Between Date('" + fromdate + "') AND Date('" + todate + "') GROUP BY pvd.visit_date";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
 
@@ -929,18 +946,19 @@ public class SQLController {
         return VisitidList;
 
     }
-    public ArrayList<String> getCountTopTenAilment (String fromdate, String todate) throws ClirNetAppException {
+
+    public ArrayList<String> getCountTopTenAilment(String fromdate, String todate) throws ClirNetAppException {
 
         ArrayList<String> ailmnetList = new ArrayList<>();
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {
-           // String selectQuery = "SELECT pvd.ailment as ailment FROM patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0 AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2))  Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date LIMIT 0 , 30";
-            String selectQuery="SELECT pvd.ailment as ailment FROM \n" +
+            // String selectQuery = "SELECT pvd.ailment as ailment FROM patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0 AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2))  Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date LIMIT 0 , 30";
+            String selectQuery = "SELECT pvd.ailment as ailment FROM \n" +
                     "patient dpr , patient_history pvd \n" +
                     "WHERE dpr.patient_id = pvd.patient_id \n" +
                     "AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) \n" +
-                    "Between Date('"+fromdate+"') AND Date('"+todate+"')\n";
+                    "Between Date('" + fromdate + "') AND Date('" + todate + "')\n";
 
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
@@ -950,7 +968,7 @@ public class SQLController {
             if (cursor.moveToFirst()) {
                 do {
 
-                  String  value = cursor.getString(cursor.getColumnIndex("ailment"));
+                    String value = cursor.getString(cursor.getColumnIndex("ailment"));
                     ailmnetList.add(value);
 
                 } while (cursor.moveToNext());
@@ -969,7 +987,8 @@ public class SQLController {
         return ailmnetList;
 
     }
-    public ArrayList<GenderWiseDataModel> genderWiseData (String fromdate, String todate) throws ClirNetAppException {
+
+    public ArrayList<GenderWiseDataModel> genderWiseData(String fromdate, String todate) throws ClirNetAppException {
 
         ArrayList<GenderWiseDataModel> genderList = new ArrayList<>();
         SQLiteDatabase db1 = null;
@@ -990,7 +1009,7 @@ public class SQLController {
                     "FROM\n" +
                     " patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id  \n" +
                     " AND  date(substr(pvd.visit_date,7,4)||'-'||substr(pvd.visit_date,4,2)||'-'||substr(pvd.visit_date,1,2)) \n" +
-                    "Between Date('"+fromdate+"') AND Date('"+todate+"')\n" +
+                    "Between Date('" + fromdate + "') AND Date('" + todate + "')\n" +
                     "GROUP BY ageband ORDER by ageband";
 
             db1 = dbHelper.getReadableDatabase();
@@ -1001,10 +1020,10 @@ public class SQLController {
             if (cursor.moveToFirst()) {
                 do {
 
-                  String    maleCount = cursor.getString(cursor.getColumnIndex("Male"));
-                  String femaleCount=cursor.getString(cursor.getColumnIndex("Female"));
-                    String ageBound=cursor.getString(cursor.getColumnIndex("ageband"));
-                    GenderWiseDataModel ids = new GenderWiseDataModel(maleCount,femaleCount,ageBound);
+                    String maleCount = cursor.getString(cursor.getColumnIndex("Male"));
+                    String femaleCount = cursor.getString(cursor.getColumnIndex("Female"));
+                    String ageBound = cursor.getString(cursor.getColumnIndex("ageband"));
+                    GenderWiseDataModel ids = new GenderWiseDataModel(maleCount, femaleCount, ageBound);
                     genderList.add(ids);
 
                 } while (cursor.moveToNext());

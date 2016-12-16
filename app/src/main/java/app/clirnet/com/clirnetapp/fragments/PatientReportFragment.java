@@ -16,17 +16,12 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.github.mikephil.charting.data.BarData;
-import com.github.mikephil.charting.data.BarDataSet;
-import com.github.mikephil.charting.data.BarEntry;
 import com.github.mikephil.charting.data.ChartData;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
-import com.github.mikephil.charting.utils.ColorTemplate;
 import com.github.mikephil.charting.utils.Utils;
-import com.numetriclabz.numandroidcharts.LineChart;
 
 import java.text.DateFormat;
 import java.text.Format;
@@ -47,8 +42,6 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.Counts;
 import app.clirnet.com.clirnetapp.reports.ChartItem;
 import app.clirnet.com.clirnetapp.reports.LineChartItem;
-
-import static com.github.mikephil.charting.utils.ColorTemplate.rgb;
 
 
 
@@ -72,7 +65,7 @@ public class PatientReportFragment extends Fragment {
 
     private AppController appController;
     private String fromDate, toDate;
-    LineChart Chart;
+
     private LinkedList<String> newdate;
 
 
@@ -114,7 +107,7 @@ public class PatientReportFragment extends Fragment {
 
         ListView lv = (ListView) view.findViewById(R.id.listView1);
 
-        ArrayList<ChartItem> list = new ArrayList<ChartItem>();
+        ArrayList<ChartItem> list = new ArrayList<>();
 
 
         list.add(new LineChartItem(generateDataLine(1), getContext(), fromDate, toDate));
@@ -124,13 +117,10 @@ public class PatientReportFragment extends Fragment {
 
         ChartDataAdapter cda = new ChartDataAdapter(getContext(), list);
         lv.setAdapter(cda);
-//This will display multibar chart with achartengine lib,commented on 29/11-2016 By Ashish
-        /*BarChartFragment fragment1 = new BarChartFragment( fromDate, toDate);
 
-        FragmentManager fragmentManager1 = getChildFragmentManager();
-        fragmentManager1.beginTransaction().replace(R.id.flContent, fragment1).commit();*/
 
-     NewBarChartFragment fragment2 = new NewBarChartFragment( fromDate, toDate);
+
+        BarChartFragment fragment2 = new BarChartFragment( fromDate, toDate);
 
         FragmentManager fragmentManager2 = getChildFragmentManager();
         fragmentManager2.beginTransaction().replace(R.id.flContent1, fragment2).commit();
@@ -142,12 +132,11 @@ public class PatientReportFragment extends Fragment {
     }
 
 
-
-
-
-
-
     private ChartData<?> generateDataLine(int i) {
+
+        if (appController == null) {
+            appController = new AppController();
+        }
 
         ArrayList<Entry> values = new ArrayList<>();
         try {
@@ -161,12 +150,12 @@ public class PatientReportFragment extends Fragment {
 
 
             int size = countsNo.size();
-            Log.e("nOoFrECORDS", " " + countsNo.size());
+
             if (size > 0) {
                 for (int im = 0; im < size; im++) {
                     String a = countsNo.get(im).getCount();
                     String b = countsNo.get(im).getDate().trim();
-                    Log.e("DateandCount", " " + a + "dateList is  " + b);
+                    Log.e("DateandCount", " " + a + " - dateList is  " + b);
                     nocountsperday.add(a);
                     dateList.add(b);
 
@@ -195,7 +184,7 @@ public class PatientReportFragment extends Fragment {
                 end.setTime(d2);
                 end.add(Calendar.DATE, 1);
 
-//here we arechecking if date is present in dateList or not which came from db if not we r adding customly date and count which is 0. 29/11-2016 By.Ashish
+//here we are checking if date is present in dateList or not which came from db if not we r adding customly date and count which is 0. 29/11-2016 By.Ashish
                 for (Date date1 = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date1 = start.getTime()) {
 
                     Format formatter = new SimpleDateFormat("dd-MM-yyyy");
@@ -228,6 +217,7 @@ public class PatientReportFragment extends Fragment {
             } catch (ParseException e) {
 
                 e.printStackTrace();
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "PatientReportFragment" + e);
             }
 
             for(int i1 = 0 ; i1 < newdate.size() ; i1++) {
@@ -246,11 +236,10 @@ public class PatientReportFragment extends Fragment {
                 Toast.makeText(getContext(), "No Data To Display.", Toast.LENGTH_LONG).show();
             }
 
-            Log.e("coolby", " " + dateList.size() + "dateList is  " + nocountsperday.size());
 
         } catch (Exception e) {
             e.printStackTrace();
-            new AppController().appendLog(new AppController().getDateTime() + " " + "/ " + "Home" + e);
+            new AppController().appendLog(new AppController().getDateTime() + " " + "/ " + "PatientReportFragment" + e);
         }
 
         LineDataSet set1;
@@ -277,7 +266,7 @@ public class PatientReportFragment extends Fragment {
             set1.setFillColor(Color.BLACK);
         }
 
-        ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
+        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1); // add the datasets
 
       //Sort the dateList Array list dateList wise
@@ -293,16 +282,7 @@ public class PatientReportFragment extends Fragment {
 
     }
 
-    private ArrayList<String> getXAxisValues() {
-        ArrayList<String> xAxis = new ArrayList<>();
-        xAxis.add("JAN");
-        xAxis.add("FEB");
-        xAxis.add("MAR");
-        xAxis.add("APR");
-        xAxis.add("MAY");
-        xAxis.add("JUN");
-        return xAxis;
-    }
+
     private void sortDate(ArrayList<String> date) {
         Collections.sort(date, new Comparator<String>() {
             DateFormat f = new SimpleDateFormat("dd-MM-yyyy");
@@ -316,64 +296,6 @@ public class PatientReportFragment extends Fragment {
             }
         });
     }
-
-    private ChartData<?> generateDataBar(int i) {
-
-
-        ArrayList<BarEntry> entries = new ArrayList<>();
-        try {
-            SQLController sqlController = new SQLController(getContext());
-            sqlController.open();
-            //dbController = new SQLiteHandler(getContext());
-            ArrayList<Counts> countsNo;
-            dateList = new ArrayList<>();
-            nocountsperday = new ArrayList<>();
-            countsNo = sqlController.countPerDay();
-            int size = countsNo.size();
-            Log.e("nOoFrECORDS", " " + countsNo.size());
-            for (int im = 0; im < size; im++) {
-                String a = countsNo.get(im).getCount();
-                String b = countsNo.get(im).getDate();
-                nocountsperday.add(a);
-                dateList.add(b);
-            }
-            int size1 = nocountsperday.size();
-            for (int in = 0; in < size1; in++) {
-                int no = Integer.parseInt(nocountsperday.get(in));
-                entries.add(new BarEntry(no, in));
-            }
-
-            Log.e("coolby", " " + dateList.size() + "dateList is  " + nocountsperday.size());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home" + e);
-        }
-        BarDataSet bardataset = new BarDataSet(entries, "Cells");
-        BarData data = new BarData(dateList,bardataset);
-        bardataset.setColors(ColorTemplate.COLORFUL_COLORS);
-
-        return data;
-    }
-
-    public static final int[] MATERIAL_COLORSNEW = {
-            rgb("#50BAA0"), rgb("#3F51B5"), rgb("#e74c3c"), rgb("#3498db")
-    };
-
-    private int[] getColors() {
-
-        int stacksize = 2;
-
-        // have as many colors as stack-values per entry
-        int[] colors = new int[stacksize];
-
-        for (int i = 0; i < colors.length; i++) {
-            colors[i] = this.MATERIAL_COLORSNEW[i];
-        }
-
-        return colors;
-    }
-
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -391,6 +313,17 @@ public class PatientReportFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        if(view != null){
+            view=null;
+        }
+        if(appController !=null){
+            appController=null;
+        }
+        fromDate=null;
+        toDate=null;
+        dateList=null;
+        newdate=null;
+        nocountsperday=null;
     }
 
     /**
@@ -415,7 +348,6 @@ public class PatientReportFragment extends Fragment {
         editor.commit();
 
 
-        //  Log.e("password", "" + username + "" + password)
 
     }
 

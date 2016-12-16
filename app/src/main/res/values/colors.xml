@@ -6,7 +6,7 @@
     <color name="hint_color">#2CA3E9</color>
     <color name="black">#000000</color>
     <color name="red">#FF0000</color>
-
+      <color name="light_grey">#DCDCDC</color>
     <color name="bg_login">#26ae90</color>
     <color name="bg_register">#2e3237</color>
     <color name="bg_main">#428bca</color>
@@ -30,5 +30,6 @@
     <color name="cancelbtn">#c0c0c0</color>
 
     <color name="transparent_background">#00FF0000</color>
+    <color name="grey">#808080</color>
 
 </resources>
