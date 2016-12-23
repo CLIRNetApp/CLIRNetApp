@@ -33,6 +33,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
@@ -98,6 +99,11 @@ public class EditPersonalInfo extends AppCompatActivity {
     private String fromWhere;
     private Button addPatientImgBtn;
     private String selectedPhoneType;
+    private String selectedState;
+    private BootstrapEditText edtAddress;
+    private BootstrapEditText edtCity;
+    private BootstrapEditText edtDistrict;
+    private BootstrapEditText edtPin;
 
 
     @Override
@@ -113,7 +119,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Edit Personal Info" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e);
         }
 
         getSupportActionBar().setTitle(Html.fromHtml("<font color='white'>Edit Personal Information</font>"));
@@ -131,6 +137,14 @@ public class EditPersonalInfo extends AppCompatActivity {
 
         strLanguage = getIntent().getStringExtra("LANGUAGE");
         String strgender = getIntent().getStringExtra("GENDER");
+
+        String strVisitId = getIntent().getStringExtra("VISITID");
+        String strAddress = getIntent().getStringExtra("ADDRESS");
+
+        String strCityorTown = getIntent().getStringExtra("CITYORTOWN");
+        String strDistrict = getIntent().getStringExtra("DISTRICT");
+        String strPinNo = getIntent().getStringExtra("PIN");
+        String strState = getIntent().getStringExtra("STATE");
         fromWhere = getIntent().getStringExtra("FROMWHERE");
 
 
@@ -146,6 +160,13 @@ public class EditPersonalInfo extends AppCompatActivity {
         RadioGroup radioLanguage = (RadioGroup) findViewById(R.id.radioLanguage);
         phType = (Spinner) findViewById(R.id.phType);
 
+        Spinner stateSpinner = (Spinner) findViewById(R.id.stateSpinner);
+
+        edtAddress = (BootstrapEditText) findViewById(R.id.address);
+        edtCity = (BootstrapEditText) findViewById(R.id.city);
+        edtDistrict = (BootstrapEditText) findViewById(R.id.district);
+        edtPin = (BootstrapEditText) findViewById(R.id.pin);
+
         save = (Button) findViewById(R.id.save);
         backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
         TextView date = (TextView) findViewById(R.id.sysdate);
@@ -155,6 +176,10 @@ public class EditPersonalInfo extends AppCompatActivity {
         editlasttname.setText(strLastName);
         // editdob.setText(strDob);
         editage.setText(strAge);
+        edtAddress.setText(strAddress);
+        edtCity.setText(strCityorTown);
+        edtDistrict.setText(strDistrict);
+        edtPin.setText(strPinNo);
 
         editmobile_no.setInputType(InputType.TYPE_CLASS_NUMBER);//this will do not let user to enter any other text than digit 0-9 only
         editmobile_no.setText(strPhone);
@@ -330,7 +355,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         }
 
 
-        setLastnameSpinner();
+        setUpSpinner();
 
 
         final Button cancel = (Button) findViewById(R.id.cancel);
@@ -526,6 +551,11 @@ public class EditPersonalInfo extends AppCompatActivity {
                 String editAge = editage.getText().toString().trim();
                 String editPno = editmobile_no.getText().toString();
                 strdateob = editdob.getText().toString();
+
+                String strAddress = edtAddress.getText().toString().trim();
+                String strCity = edtCity.getText().toString().trim();
+                String strDistrict = edtDistrict.getText().toString().trim();
+                String strPin = edtPin.getText().toString().trim();
                 //Removes  leading zeros from age filed  11-11-2016 By.Ashish
                 int length = 0;
                 int age = 0;
@@ -541,6 +571,9 @@ public class EditPersonalInfo extends AppCompatActivity {
                 }
                 //   editAge = AppController.removeLeadingZeroes(editAge);
 
+                if (selectedState.equals("Select State")) {
+                    selectedState = null;
+                }
 
                 if (length >= 4) {
                     editage.setError("Invalid Age Entered");
@@ -593,10 +626,10 @@ public class EditPersonalInfo extends AppCompatActivity {
                 try {
                     if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
 
-                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId);
+                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState,selectedPhoneType);
                         // Log.e("kt", "1");
                     } else {
-                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId);
+                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState,selectedPhoneType);
                         //Log.e("bt", "2");
                     }
                     Toast.makeText(getApplicationContext(), "Record Updated", Toast.LENGTH_LONG).show();
@@ -633,7 +666,7 @@ public class EditPersonalInfo extends AppCompatActivity {
     }
 
 
-    private void setLastnameSpinner() {
+    private void setUpSpinner() {
 
         ArrayAdapter<String> lastnamespin = new ArrayAdapter<>(EditPersonalInfo.this,
                 android.R.layout.simple_dropdown_item_1line, mLastNameList);
@@ -642,6 +675,45 @@ public class EditPersonalInfo extends AppCompatActivity {
         lastnamespin.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
         editlasttname.setThreshold(1);
         editlasttname.setAdapter(lastnamespin);
+        ///////////////////////////////////////////////
+        Spinner stateSpinner = (Spinner) findViewById(R.id.stateSpinner);
+        //stateSpinner.setOnItemSelectedListener(EditPatientUpdate.this);
+       // stateSpinner.setPrompt("Select State");
+
+        // Creating adapter for spinner
+        ArrayAdapter<CharSequence> stateAdapter = ArrayAdapter
+                .createFromResource(EditPersonalInfo.this, R.array.states,
+                        android.R.layout.simple_spinner_item);
+
+        // Drop down layout style - list view with radio button
+        stateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        stateSpinner.setAdapter(stateAdapter);
+        stateSpinner.setSelection(position);
+
+        stateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                Log.v("item", (String) parent.getItemAtPosition(position));
+
+                selectedState = (String) parent.getItemAtPosition(position);
+               // Toast.makeText(getApplicationContext(), "selected language is:" + (String) parent.getItemAtPosition(position), Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // TODO Auto-generated method stub
+            }
+        });
+    }
+
+
+    private void setLastnameSpinner() {
+
+
     }
 
 
@@ -867,7 +939,13 @@ public class EditPersonalInfo extends AppCompatActivity {
         docId = null;
         modifiedTime = null;
         middle_name = null;
-        phType=null ;
+        phType = null;
+
+        selectedState = null;
+        edtAddress = null;
+        edtCity = null;
+        edtDistrict = null;
+        edtPin = null;
     }
 
 
@@ -899,7 +977,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 Log.v("item", (String) parent.getItemAtPosition(position));
 
                 selectedPhoneType = (String) parent.getItemAtPosition(position);
-              /*  Toast.makeText(EditPersonalInfo.this, "selected language is:" + (String) parent.getItemAtPosition(position), Toast.LENGTH_LONG).show();*/
+                Toast.makeText(EditPersonalInfo.this, "selected language is:" + (String) parent.getItemAtPosition(position), Toast.LENGTH_LONG).show();
             }
 
             @Override

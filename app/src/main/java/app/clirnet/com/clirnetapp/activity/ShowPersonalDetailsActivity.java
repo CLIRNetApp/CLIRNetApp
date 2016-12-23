@@ -146,7 +146,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             int size = patientPersonalData.size();
             if (size > 0) {
 
-                ShowPersonalDetailsAdapter showPersonalDetailsAdapter = new ShowPersonalDetailsAdapter(patientPersonalData);
+                ShowPersonalDetailsAdapter showPersonalDetailsAdapter = new ShowPersonalDetailsAdapter(ShowPersonalDetailsActivity.this,patientPersonalData);
                 recyclerView.setAdapter(showPersonalDetailsAdapter);
 
             }

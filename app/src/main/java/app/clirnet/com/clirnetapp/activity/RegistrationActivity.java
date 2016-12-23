@@ -59,6 +59,7 @@ import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
+            //create new page so this activity is of no use\\
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -1023,6 +1024,7 @@ public class RegistrationActivity extends AppCompatActivity {
                             @Override
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
+
                                 SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
 
 

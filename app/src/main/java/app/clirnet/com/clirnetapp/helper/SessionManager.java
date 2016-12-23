@@ -24,7 +24,6 @@ public class SessionManager {
 		int PRIVATE_MODE = 0;
 		pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
 		editor = pref.edit();
-		editor.commit();
 		editor.apply();
 	}
 

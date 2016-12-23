@@ -54,6 +54,7 @@
                     android:drawableRight="@android:drawable/ic_menu_my_calendar"
                     android:fontFamily="sans-serif"
                     android:hint="FOD"
+                    android:inputType="date"
                     android:clickable="false"
                     android:cursorVisible="false"
                     android:focusable="false"

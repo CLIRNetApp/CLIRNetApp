@@ -126,7 +126,7 @@ public class ConsultationLogFragment extends Fragment {
 
         TextView privacyPolicy = (TextView) view.findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) view.findViewById(R.id.termsandCondition);
-//open privacy poilicy page
+        //open privacy poilicy page
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,7 +219,7 @@ public class ConsultationLogFragment extends Fragment {
                 try {
 
                     reformattedStr = myFormat.format(fromUser.parse(searchdate));
-                    Log.e("reformattedStr", "" + reformattedStr);
+                   // Log.e("reformattedStr", "" + reformattedStr);
 
                 } catch (ParseException e) {
                     e.printStackTrace();

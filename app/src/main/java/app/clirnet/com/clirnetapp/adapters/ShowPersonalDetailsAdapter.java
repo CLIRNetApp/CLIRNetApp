@@ -1,10 +1,13 @@
 package app.clirnet.com.clirnetapp.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -16,11 +19,13 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersonalDetailsAdapter.HistoryViewHolder> {
 
     private final List<RegistrationModel> patientList;
+    private final Context mContext;
     private AppController appController;
 
 
-    public ShowPersonalDetailsAdapter(List<RegistrationModel> patientList) {
+    public ShowPersonalDetailsAdapter(Context context,List<RegistrationModel> patientList) {
         this.patientList = patientList;
+        this.mContext=context;
 
     }
 
@@ -30,7 +35,7 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
                 .inflate(R.layout.patient_seach_list, parent, false);*/
 
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.patient_history_list, parent, false);
+                .inflate(R.layout.patient_history_listenew2, parent, false);
 
 
         return new HistoryViewHolder(itemView);
@@ -52,7 +57,7 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Srach View Adapter" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Show personalo details Adapter" + e);
         }
 
 
@@ -83,6 +88,24 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
         } else {
             holder.tv_clinical_notes.setText("No Aailable Notes");
         }
+        try {
+            final String imgPath = patientList.get(position).getPres_img();
+            if (!TextUtils.isEmpty(imgPath) && imgPath != null) {
+
+                holder.imgText.setText("View Prescription");
+                holder.imgText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(mContext, "PATH IS: " + imgPath.trim(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            }else{
+                holder.imgText.setText("No Prescription Attached");
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -98,14 +121,14 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
         public final TextView tv_fod;
         private final TextView tv_visit_date;
         public final TextView tv_clinical_notes;
-
+        private final TextView imgText;
 
         public HistoryViewHolder(View view) {
             super(view);
             tv_visit_date = (TextView) view.findViewById(R.id.tv_visit_date);
             tv_ailment = (TextView) view.findViewById(R.id.tv_ailment);
             tv_fod = (TextView) view.findViewById(R.id.tv_fod);
-
+            imgText=(TextView)view.findViewById(R.id.imgText);
             tv_clinical_notes = (TextView) view.findViewById(R.id.tv_clinical_notes);
 
 

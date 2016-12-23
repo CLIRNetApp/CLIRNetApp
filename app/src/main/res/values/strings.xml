@@ -23,12 +23,12 @@
     <string name="action_settings">Settings</string>
     <string name="hint_email">Email</string>
     <string name="hint_username">User Name</string>
-    <string name="hint_password">Password</string>
+    <string name="hint_password">New Password</string>
     <string name="hint_confirm_password"> Confirm Password</string>
     <string name="hint_name">Fullname</string>
     <string name="btn_login">LOG IN</string>
     <string name="btn_register">REGISTER</string>
-    <string name="btn_link_to_register">Forgot Password?</string>
+    <string name="btn_link_to_register">Change Password?</string>
     <string name="btn_link_to_login">Already registred! Login Me.</string>
     <string name="welcome">Welcome</string>
     <string name="btn_logout">LOGOUT</string>
@@ -139,8 +139,8 @@
     <string name="quickview">Quick View</string>
     <string name="about">About</string>
     <string name="personadetails">Personal Details</string>
-    <string name="version">Release Version 1.2.2 </string>
-    <string name="aboutApp">About App V 1.2.2 </string>
+    <string name="version">Release Version 1.2.3 </string>
+    <string name="aboutApp">About App V 1.2.3 </string>
     <string name="language">Language</string>
     <string name="eng">Eng</string>
     <string name="hin">Hin</string>
@@ -148,14 +148,14 @@
     <string name="addPhoto">Add Photo</string>
     <string name="number">Number</string>
     <string name="mobstart">+91</string>
-    <string name="recorddetails">Record Details</string>
+    <string name="recorddetails">Vitals</string>
     <string name="height">Height</string>
     <string name="pulse">Pulse</string>
     <string name="bp">B.P</string>
     <string name="symptomsanddignosis">Symptoms and Dignosis</string>
     <string name="prescription">Prescription</string>
     <string name="addimage">Add Image</string>
-    <string name="sendreeminder">Send Reminder ?</string>
+    <string name="visitDate">Visit Date</string>
     <string name="day">Day</string>
     <string name="week">Week</string>
     <string name="month">Mon</string>
@@ -167,6 +167,11 @@
     <string name="female">F</string>
     <string name="other">OTHR</string>
     <string name="na">NA</string>
+    <string name="knowledge">Knowledge</string>
+    <string name="old_password">Current Paasword</string>
+    <string name="hint_confirmpassword">Confirm New Password</string>
+    <string name="settings_pwd_equal">Password Match</string>
+    <string name="settings_pwd_not_equal">Password did not match</string>
 
 
 </resources>

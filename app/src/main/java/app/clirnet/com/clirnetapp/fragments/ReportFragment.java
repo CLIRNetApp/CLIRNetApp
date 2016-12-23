@@ -9,7 +9,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -138,7 +137,7 @@ public class ReportFragment extends Fragment {
 
                     diffInHours = TimeUnit.MILLISECONDS.toHours(duration);
 
-                    Log.e("diffInHours", "       " + diffInHours);
+                  //  Log.e("diffInHours", "       " + diffInHours);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -278,7 +277,7 @@ public class ReportFragment extends Fragment {
 
             startDate = myFormat.format(fromUser.parse(startDate));
             endDate = myFormat.format(fromUser.parse(endDate));
-            Log.e("reformattedStr123", "" + startDate + "  ??/  " + endDate);
+           // Log.e("reformattedStr123", "" + startDate + "  ??/  " + endDate);
 
         } catch (ParseException e) {
             e.printStackTrace();

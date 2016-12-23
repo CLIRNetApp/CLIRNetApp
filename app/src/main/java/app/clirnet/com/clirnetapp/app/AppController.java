@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 
@@ -146,6 +147,12 @@ public class AppController extends Application {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss");
         return (sdf.format(cal.getTime()));
+    }
+    public String getDateTimenew() {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        return (sdf.format(cal.getTime()));
+        //return "22-12-2016 04:05:07"; //for test
     }
 
     //This will remove commas from string
@@ -323,5 +330,40 @@ public class AppController extends Application {
         }
         return result;
     }
+
+    private long getFileSize(String strfile){
+        long length = 0;
+
+        try {
+
+            File file = new File(strfile);
+            length = file.length();
+            length = length / 1024;
+
+        } catch (Exception e) {
+
+            e.printStackTrace();
+        }
+
+        return length;
+    }
+    public static int hoursAgo(String datetime) {
+        Date date = null; // Parse into Date object
+        long differenceInHours = 0;
+        try {
+            if(datetime != null){
+                date = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH).parse(datetime);
+                Date now = Calendar.getInstance().getTime(); // Get time now
+                long differenceInMillis = now.getTime() - date.getTime();
+                differenceInHours = (differenceInMillis) / 1000L / 60L / 60L; // Divide by millis/sec, secs/min, mins/hr
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return (int) differenceInHours;
+    }
+
+
 }
 

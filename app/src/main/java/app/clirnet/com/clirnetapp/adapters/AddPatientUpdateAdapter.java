@@ -1,10 +1,13 @@
 package app.clirnet.com.clirnetapp.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.List;
 
@@ -18,9 +21,11 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
 
     private final List<RegistrationModel> patientList;
     private final AppController appController=new AppController();
+    private Context mContext;
 
-    public AddPatientUpdateAdapter(List<RegistrationModel> patientList) {
+    public AddPatientUpdateAdapter(Context context,List<RegistrationModel> patientList) {
         this.patientList = patientList;
+        this.mContext=context;
 
     }
 
@@ -28,8 +33,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
     public HistoryViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.patient_history_list, parent, false);
-
+                .inflate(R.layout.patient_history_listenew2, parent, false);
 
         return new HistoryViewHolder(itemView);
     }
@@ -80,6 +84,24 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
         else{
             holder.tv_clinical_notes.setText("No Aailable Notes");
         }
+        try {
+            final String imgPath = patientList.get(position).getPres_img();
+            if (!TextUtils.isEmpty(imgPath) && imgPath != null) {
+
+                holder.imgText.setText("View Prescription");
+                holder.imgText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(mContext, "PATH IS: " + imgPath.trim(), Toast.LENGTH_LONG).show();
+                    }
+                });
+
+            }else{
+                holder.imgText.setText("No Prescription Attached");
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -95,14 +117,16 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
         public final TextView tv_fod;
         private final TextView tv_visit_date;
         public final TextView tv_clinical_notes;
+        private final TextView imgText;
 
         public HistoryViewHolder(View view) {
             super(view);
             tv_visit_date = (TextView) view.findViewById(R.id.tv_visit_date);
             tv_ailment = (TextView) view.findViewById(R.id.tv_ailment);
             tv_fod = (TextView) view.findViewById(R.id.tv_fod);
-
+            imgText=(TextView)view.findViewById(R.id.imgText);
             tv_clinical_notes = (TextView) view.findViewById(R.id.tv_clinical_notes);
+
 
 
         }

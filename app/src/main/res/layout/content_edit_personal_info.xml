@@ -65,8 +65,7 @@
                     android:layout_height="120dp"
                     android:layout_gravity="start"
                     android:contentDescription="@string/desc"
-                    android:orientation="vertical"
-                    android:src="@drawable/two" />
+                    android:orientation="vertical" />
 
                 <TextView
                     android:id="@+id/sample"
@@ -465,7 +464,132 @@
 
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/txtaddress"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_below="@+id/layoutMobileNo"
+                    android:layout_marginTop="30dp"
+                    android:background="@color/btn_back_sbmt"
+                    android:drawableRight="@drawable/down_arrow"
+                    android:gravity="start"
+                    android:paddingLeft="5dp"
+                    android:paddingTop="5dp"
+                    android:paddingRight="5dp"
+                    android:text="Address"
+                    android:textColor="@color/white"
+                    android:textSize="18sp" />
 
+
+                <LinearLayout
+                    android:id="@+id/addresslayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtaddress"
+                    android:layout_marginTop="0dp"
+                    android:background="@drawable/rectangle_corner"
+                    android:orientation="vertical"
+                    android:padding="5dp">
+
+                    <com.beardedhen.androidbootstrap.BootstrapEditText
+                        android:id="@+id/address"
+                        android:layout_width="match_parent"
+                        android:layout_height="45dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginRight="0dp"
+                        android:layout_weight="1"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
+                        android:fontFamily="sans-serif"
+                        android:hint="Address"
+                        android:inputType="text"
+                        android:maxLines="1"
+                        android:textSize="12sp"
+                        app:bootstrapBrand="success"
+                        app:bootstrapSize="lg"
+                        app:roundedCorners="false" />
+
+                    <LinearLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/txtaddress"
+                        android:layout_marginTop="5dp"
+                        android:orientation="horizontal">
+
+                        <com.beardedhen.androidbootstrap.BootstrapEditText
+
+                            android:id="@+id/city"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:paddingBottom="5dp"
+                            android:layout_weight="1"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:fontFamily="sans-serif"
+                            android:hint="City/Town"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:textSize="12sp"
+                            app:bootstrapBrand="success"
+                            android:layout_marginRight="5dp"
+                            app:bootstrapSize="lg"
+                            app:roundedCorners="false"
+                            android:layout_margin="1dp"/>
+
+                        <com.beardedhen.androidbootstrap.BootstrapEditText
+
+                            android:id="@+id/district"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:layout_below="@+id/txtsymptomsanddignost"
+                            android:layout_weight="1"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:fontFamily="sans-serif"
+                            android:layout_marginRight="5dp"
+                            android:hint="District"
+                            android:inputType="text"
+                            android:maxLines="1"
+                            android:textSize="12sp"
+                            app:bootstrapBrand="success"
+                            app:bootstrapSize="lg"
+                            app:roundedCorners="false"
+                            android:layout_margin="1dp"/>
+
+                        <com.beardedhen.androidbootstrap.BootstrapEditText
+
+                            android:id="@+id/pin"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:layout_below="@+id/txtsymptomsanddignost"
+                            android:layout_weight="1"
+                            android:layout_marginRight="7dp"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:fontFamily="sans-serif"
+                            android:hint="Pin"
+                            android:inputType="number"
+                            android:maxLines="1"
+                            android:textSize="12sp"
+                            app:bootstrapBrand="success"
+                            app:bootstrapSize="lg"
+                            android:layout_margin="2dp"
+                            app:roundedCorners="false" />
+
+                        <Spinner
+                            android:id="@+id/stateSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="45dp"
+                            android:layout_weight="1"
+                            android:focusable="true"
+                            android:textDirection="locale"
+                            android:background="@drawable/gradient_spineer"
+                            android:spinnerMode="dialog"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
             </RelativeLayout>
             <TextView
                 android:layout_width="match_parent"

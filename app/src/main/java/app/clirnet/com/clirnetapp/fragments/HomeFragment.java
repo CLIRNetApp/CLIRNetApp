@@ -1,6 +1,5 @@
 package app.clirnet.com.clirnetapp.fragments;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -68,6 +67,7 @@ import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.Utility.ItemClickListener;
 import app.clirnet.com.clirnetapp.activity.AddPatientUpdate;
 import app.clirnet.com.clirnetapp.activity.EditPatientUpdate;
+import app.clirnet.com.clirnetapp.activity.LoginActivity;
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
 import app.clirnet.com.clirnetapp.activity.PrivacyPolicy;
 import app.clirnet.com.clirnetapp.activity.RegistrationActivityNew;
@@ -165,17 +165,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        // backChangingImages = null; // now cleaning up!
-        view = null;
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-
 
         view = inflater.inflate(R.layout.fragment_home, container, false);
         ((NavigationActivity) getActivity()).setActionBarTitle("Patient Central");
@@ -197,6 +189,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         }
 
         getFlagStatus();
+        checkLastLoginTime();
 
         appController = new AppController();
 
@@ -246,8 +239,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             Date formatDate = dobsdf.parse(added_on);
 
             SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy");
-            convertedDate = sd1.format(formatDate);
-            // Log.e("convertedDate", "" + convertedDate);
         } catch (ParseException e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e);
@@ -379,7 +370,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         sysdate = new StringBuilder().append(day1).append("-").append(month1 + 1).append("-").append(year1).append("");
 
 
-        ArrayList<RegistrationModel> patientData = null;
         SQLController sqlController1 = null;
         try {
             sqlController1 = new SQLController(getActivity());
@@ -389,7 +379,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             filteredModelList = sqlController1.getPatientList(formatedDate);
 
             if (filteredModelList.size() <= 0) {
-
+              //do nothing
             } else {
 
                 norecordtv.setVisibility(View.GONE);
@@ -459,7 +449,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         setupAnimation();
 
 
-
         return view;
     }
 
@@ -481,7 +470,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             sqlController1.open();
 
 
-            ArrayList<LoginModel> al = new ArrayList<>();
+            ArrayList<LoginModel> al;
             al = sqlController1.getUserLoginRecrodsNew();
             if (al.size() != 0) {
                 savedUserName = al.get(0).getUserName();
@@ -528,69 +517,88 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                     }
                 }
-            } else {
-               // Log.e("nonet", "No Internet");
             }
-        } else {
-            //Log.e("repeat", "Server data already downloaded");
         }
 
     }
 
     private void beforeDateAddPatientUpdate(int position) {
 
-        RegistrationModel book = filteredModelList.get(position);
+        RegistrationModel registrationModel = filteredModelList.get(position);
 
 
         //  System.out.println("Date1 is before or equal to Date2");
         Intent i = new Intent(getContext().getApplicationContext(), AddPatientUpdate.class);
-        i.putExtra("PATIENTPHOTO", book.getPhoto());
-        i.putExtra("PatientID", book.getPat_id());
-        i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
-        i.putExtra("FIRSTTNAME", book.getFirstName());
-        i.putExtra("MIDDLENAME", book.getMiddleName());
-        i.putExtra("LASTNAME", book.getLastName());
-        i.putExtra("DOB", book.getDob());
-        i.putExtra("PHONE", book.getMobileNumber());
-        i.putExtra("AGE", book.getAge());
-        i.putExtra("LANGUAGE", book.getLanguage());
-        i.putExtra("GENDER", book.getGender());
-        i.putExtra("FOD", book.getFollowUpDate());
-        i.putExtra("AILMENT", book.getAilments());
-        i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", book.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", book.getPres_img());
+        i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
+        i.putExtra("PatientID", registrationModel.getPat_id());
+        i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
+        i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
+        i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
+        i.putExtra("LASTNAME", registrationModel.getLastName());
+        i.putExtra("DOB", registrationModel.getDob());
+        i.putExtra("PHONE", registrationModel.getMobileNumber());
+        i.putExtra("AGE", registrationModel.getAge());
+        i.putExtra("LANGUAGE", registrationModel.getLanguage());
+        i.putExtra("GENDER", registrationModel.getGender());
+        i.putExtra("FOD", registrationModel.getFollowUpDate());
+        i.putExtra("AILMENT", registrationModel.getAilments());
+        i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
+        i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
+        i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
+        i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
+        i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
+
+        i.putExtra("ADDRESS", registrationModel.getAddress());
+        i.putExtra("CITYORTOWN", registrationModel.getCityortown());
+        i.putExtra("DISTRICT", registrationModel.getDistrict());
+        i.putExtra("PIN", registrationModel.getPin_code());
+        i.putExtra("STATE", registrationModel.getState());
 
         startActivity(i);
 //                        Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
     }
 
     private void afterDateEditPatientUpdate(int position) {
-        RegistrationModel book = filteredModelList.get(position);
+        RegistrationModel registrationModel = filteredModelList.get(position);
         Intent i = new Intent(getContext().getApplicationContext(), EditPatientUpdate.class);
 
-        i.putExtra("PATIENTPHOTO", book.getPhoto());
-        i.putExtra("ID", book.getPat_id());
-        i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
-        i.putExtra("FIRSTTNAME", book.getFirstName());
-        i.putExtra("MIDDLENAME", book.getMiddleName());
-        i.putExtra("LASTNAME", book.getLastName());
-        i.putExtra("DOB", book.getDob());
-        i.putExtra("PHONE", book.getMobileNumber());
-        i.putExtra("AGE", book.getAge());
-        i.putExtra("LANGUAGE", book.getLanguage());
-        i.putExtra("GENDER", book.getGender());
-        i.putExtra("ACTUALFOD", book.getActualFollowupDate());
-        i.putExtra("FOD", book.getFollowUpDate());
-        i.putExtra("AILMENT", book.getAilments());
-        i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", book.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", book.getPres_img());
-        i.putExtra("VISITID", book.getKey_visit_id());
+        i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
+        i.putExtra("ID", registrationModel.getPat_id());
+        i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
+        i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
+        i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
+        i.putExtra("LASTNAME", registrationModel.getLastName());
+        i.putExtra("DOB", registrationModel.getDob());
+        i.putExtra("PHONE", registrationModel.getMobileNumber());
+        i.putExtra("AGE", registrationModel.getAge());
+        i.putExtra("LANGUAGE", registrationModel.getLanguage());
+        i.putExtra("GENDER", registrationModel.getGender());
+        i.putExtra("ACTUALFOD", registrationModel.getActualFollowupDate());
+        i.putExtra("FOD", registrationModel.getFollowUpDate());
+        i.putExtra("AILMENT", registrationModel.getAilments());
+        i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
+        i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
+        i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
+        i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
+        i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
+        i.putExtra("VISITID", registrationModel.getKey_visit_id());
+
+        i.putExtra("ADDRESS", registrationModel.getAddress());
+        i.putExtra("CITYORTOWN", registrationModel.getCityortown());
+        i.putExtra("DISTRICT", registrationModel.getDistrict());
+        i.putExtra("PIN", registrationModel.getPin_code());
+        i.putExtra("STATE", registrationModel.getState());
+        i.putExtra("WEIGHT", registrationModel.getWeight());
+        i.putExtra("PULSE", registrationModel.getPulse());
+        i.putExtra("BP", registrationModel.getBp());
+        i.putExtra("LOWBP", registrationModel.getlowBp());
+        i.putExtra("TEMPRATURE", registrationModel.getTemprature());
+        i.putExtra("SUGAR", registrationModel.getSugar());
+        i.putExtra("SYMPTOMS", registrationModel.getSymptoms());
+        i.putExtra("DIGNOSIS", registrationModel.getDignosis());
+        i.putExtra("TESTS", registrationModel.getTests());
+        i.putExtra("DRUGS", registrationModel.getDrugs());
+
 
         startActivity(i);
     }
@@ -627,7 +635,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         if (isInternetPresent) {
 
             if (patientIds_List != null && !patientIds_List.isEmpty() || getPatientVisitIdsList != null || !getPatientVisitIdsList.isEmpty()) {
-               // Log.e("senddata", "data is sending");
+                // Log.e("senddata", "data is sending");
                 sendDataToServer(patientInfoArayString, patientVisitHistorArayString);
 
             } else {
@@ -640,33 +648,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             showAnotherAlert("No Internet", "                        No Internet Connectivity. ");
         }
 
-    }
-
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // Log.d("cap_img", "" + CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
-        try {
-//        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-
-                if (resultCode == Activity.RESULT_OK) {
-                    // successfully captured the image
-                    // display it in image view
-
-                } else if (resultCode == Activity.RESULT_CANCELED) {
-                    // user cancelled Image capture
-                   /* Toast.makeText(getContext(), "User cancelled image capture", Toast.LENGTH_SHORT).show();*/
-                } else {
-                    // failed to capture image
-                 /*   Toast.makeText(getContext(), "Sorry! Failed to capture image", Toast.LENGTH_SHORT).show();*/
-
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e);
-        }
     }
 
 
@@ -848,62 +829,84 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     }
 
     private void dateisCurrent(int position) {
-        RegistrationModel book = filteredModelList.get(position);
+        RegistrationModel registrationModel = filteredModelList.get(position);
         Intent i = new Intent(getActivity().getApplicationContext(), EditPatientUpdate.class);
 
-        i.putExtra("PATIENTPHOTO", book.getPhoto());
-        i.putExtra("ID", book.getPat_id());
+        i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
+        i.putExtra("ID", registrationModel.getPat_id());
 
-        i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
-        i.putExtra("FIRSTTNAME", book.getFirstName());
-        i.putExtra("MIDDLENAME", book.getMiddleName());
-        i.putExtra("LASTNAME", book.getLastName());
-        i.putExtra("DOB", book.getDob());
+        i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
+        i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
+        i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
+        i.putExtra("LASTNAME", registrationModel.getLastName());
+        i.putExtra("DOB", registrationModel.getDob());
 
-        i.putExtra("PHONE", book.getMobileNumber());
+        i.putExtra("PHONE", registrationModel.getMobileNumber());
 
-        i.putExtra("AGE", book.getAge());
-        i.putExtra("LANGUAGE", book.getLanguage());
-        i.putExtra("GENDER", book.getGender());
-        i.putExtra("FOD", book.getFollowUpDate());
+        i.putExtra("AGE", registrationModel.getAge());
+        i.putExtra("LANGUAGE", registrationModel.getLanguage());
+        i.putExtra("GENDER", registrationModel.getGender());
+        i.putExtra("FOD", registrationModel.getFollowUpDate());
 
-        i.putExtra("ACTUALFOD", book.getActualFollowupDate());
+        i.putExtra("ACTUALFOD", registrationModel.getActualFollowupDate());
 
-        i.putExtra("AILMENT", book.getAilments());
-        i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", book.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", book.getPres_img());
-        i.putExtra("VISITID", book.getKey_visit_id());
+        i.putExtra("AILMENT", registrationModel.getAilments());
+        i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
+        i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
+        i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
+        i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
+        i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
+        i.putExtra("VISITID", registrationModel.getKey_visit_id());
+
+        i.putExtra("ADDRESS", registrationModel.getAddress());
+        i.putExtra("CITYORTOWN", registrationModel.getCityortown());
+        i.putExtra("DISTRICT", registrationModel.getDistrict());
+        i.putExtra("PIN", registrationModel.getPin_code());
+        i.putExtra("STATE", registrationModel.getState());
+        i.putExtra("WEIGHT", registrationModel.getWeight());
+        i.putExtra("PULSE", registrationModel.getPulse());
+        i.putExtra("BP", registrationModel.getBp());
+        i.putExtra("LOWBP", registrationModel.getlowBp());
+        i.putExtra("TEMPRATURE", registrationModel.getTemprature());
+        i.putExtra("SUGAR", registrationModel.getSugar());
+        i.putExtra("SYMPTOMS", registrationModel.getSymptoms());
+        i.putExtra("DIGNOSIS", registrationModel.getDignosis());
+        i.putExtra("TESTS", registrationModel.getTests());
+        i.putExtra("DRUGS", registrationModel.getDrugs());
 
         startActivity(i);
     }
 
     private void dateisBefore(int position) {
-        RegistrationModel book = filteredModelList.get(position);
+        RegistrationModel registrationModel = filteredModelList.get(position);
         Intent i = new Intent(getContext(), AddPatientUpdate.class);
-        i.putExtra("PATIENTPHOTO", book.getPhoto());
-        i.putExtra("PatientID", book.getPat_id());
+        i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
+        i.putExtra("PatientID", registrationModel.getPat_id());
 
-        i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
-        i.putExtra("FIRSTTNAME", book.getFirstName());
-        i.putExtra("MIDDLENAME", book.getMiddleName());
-        i.putExtra("LASTNAME", book.getLastName());
-        i.putExtra("DOB", book.getDob());
+        i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
+        i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
+        i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
+        i.putExtra("LASTNAME", registrationModel.getLastName());
+        i.putExtra("DOB", registrationModel.getDob());
 
-        i.putExtra("PHONE", book.getMobileNumber());
+        i.putExtra("PHONE", registrationModel.getMobileNumber());
 
-        i.putExtra("AGE", book.getAge());
-        i.putExtra("LANGUAGE", book.getLanguage());
-        i.putExtra("GENDER", book.getGender());
-        i.putExtra("FOD", book.getFollowUpDate());
-        i.putExtra("AILMENT", book.getAilments());
-        i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", book.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", book.getPres_img());
+        i.putExtra("AGE", registrationModel.getAge());
+        i.putExtra("LANGUAGE", registrationModel.getLanguage());
+        i.putExtra("GENDER", registrationModel.getGender());
+        i.putExtra("FOD", registrationModel.getFollowUpDate());
+        i.putExtra("AILMENT", registrationModel.getAilments());
+        i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
+        i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
+        i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
+        i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
+        i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
+
+        i.putExtra("ADDRESS", registrationModel.getAddress());
+        i.putExtra("CITYORTOWN", registrationModel.getCityortown());
+        i.putExtra("DISTRICT", registrationModel.getDistrict());
+        i.putExtra("PIN", registrationModel.getPin_code());
+        i.putExtra("STATE", registrationModel.getState());
 
         startActivity(i);
     }
@@ -1180,13 +1183,16 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                         int listsize = getPatientVisitIdsList.size();
                         for (int i = 0; i < listsize; i++) {
-                            String patientId = getPatientVisitIdsList.get(i).getPat_id();
+                            // String patientId = getPatientVisitIdsList.get(i).getPat_id();
                             String patientVisitId = getPatientVisitIdsList.get(i).getKey_visit_id();
                             String flag = "1";
 
                             dbController.FlagupdatePatientVisit(patientVisitId, flag);
                         }
                         Log.e("senddata", "data is sent");
+                        String time = appController.getDateTimenew();
+                        Log.e("senddata", "data is sent"+time);
+                        lastSyncTime(time);
                         toast = Toast.makeText(getContext().getApplicationContext(), "Data Send Successfully to Server", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();
@@ -1262,6 +1268,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
 
     //this will get Patient Records from server
+
     private void getPatientRecords(final String savedUserName, final String savedUserPassword) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
@@ -1273,6 +1280,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_PATIENT_RECORDS, new Response.Listener<String>() {
 
+
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, "Sync Response: " + response);
@@ -1281,6 +1289,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 //   new DownloadMusicfromInternet().execute(response);
                 try {
                     JSONObject jObj = new JSONObject(response);
+
 
                     // Check for error node in json
 
@@ -1293,10 +1302,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                     JSONArray jsonArray = user.getJSONArray("doctor_patient_relation");
                     //  Log.e("jsonArray", "" + jsonArray);
-                    JSONArray patientHistoryList = user.getJSONArray("patient_visit_details");
+                    JSONArray patientHistoryList = user.getJSONArray("patient_visit_details");//for live api
+                   // JSONArray patientHistoryList = user.getJSONArray("patinet_visit_details"); //for local addrres
                     // Log.e("jsonArray", "" + patientHistoryList);
-                    int lenghtOfFile = jObj.length();
-                    //  Log.e("lenghtOfFile", "" + lenghtOfFile);
                     setPatientPersonalList(jsonArray);
                     setPatientHistoryList(patientHistoryList);
                     hideDialog();
@@ -1466,6 +1474,17 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String act_follow_up_date = jsonPatientHistoryObject.getString("act_follow_up_date");
 
             String notes = jsonPatientHistoryObject.getString("notes");
+            String weight=jsonPatientHistoryObject.getString("weight");
+            String   pulse=  jsonPatientHistoryObject.getString( "pulse");
+            String  bp_high= jsonPatientHistoryObject.getString   ("bp_high");
+            String    bp_low= jsonPatientHistoryObject.getString ("bp_low");
+            String    temp= jsonPatientHistoryObject.getString ("temperature");
+            String     sugar= jsonPatientHistoryObject.getString("sugar");
+            String   drugs= jsonPatientHistoryObject.getString  ("drugs");
+            String    tests=  jsonPatientHistoryObject.getString("tests");
+            String  dihnosis= jsonPatientHistoryObject.getString  ( "diagnosis");
+            String    symptoms=  jsonPatientHistoryObject.getString("symptoms");
+            String  prescription=  jsonPatientHistoryObject.getString ( "prescription");
             String added_by = jsonPatientHistoryObject.getString("added_by");
             String added_on = jsonPatientHistoryObject.getString("added_on");
 
@@ -1534,7 +1553,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             dbController.addPatientHistoryRecords(visit_id, pat_id, ailment, convertedVisitDate, follow_up_date, follow_up_days,
                     follow_up_weeks, follow_up_months, convertedActualfodDate, notes, added_by, convertedAddedonDate, convertedAddedonTime, modified_by, modified_on, is_disabled, disabled_by, disabled_on,
-                    is_deleted, deleted_by, deleted_on, flag, patient_info_type_form);
+                    is_deleted, deleted_by, deleted_on, flag, patient_info_type_form,prescription,weight,pulse,bp_high,bp_low,temp,sugar,symptoms,dihnosis,tests,drugs);
 
 
         }
@@ -1679,7 +1698,44 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     }
 
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        view = null;
+    }
 
+    private void checkLastLoginTime() {
+
+        SharedPreferences pref = getContext().getSharedPreferences("savedCredit", getContext().MODE_PRIVATE);
+
+        String loginTime = pref.getString("loginTime", null);
+
+        int hrs = appController.hoursAgo(loginTime);
+        Log.e("loginTime", "" + loginTime + " hours " + hrs);
+        if (hrs > 8) {
+            Intent i = new Intent(getContext(), LoginActivity.class);
+            startActivity(i);
+            System.gc();
+        }
+        SharedPreferences pref1 = getContext().getSharedPreferences("SyncFlag", getContext().MODE_PRIVATE);
+        String lastSyncTime = pref1.getString("loginTime", null);
+        int hrslastSync = appController.hoursAgo(lastSyncTime);
+        Log.e("loginTime12", "" + lastSyncTime + " hours " + hrslastSync);
+
+        if (hrslastSync > 72) {
+            Intent i = new Intent(getContext(), LoginActivity.class);
+            startActivity(i);
+            System.gc();
+        }
+    }
+    public void lastSyncTime(String lastSyncTime ) {
+
+        getContext().getSharedPreferences("SyncFlag",getContext().MODE_PRIVATE)
+                .edit()
+                .putString("lastSyncTime", lastSyncTime)
+                .apply();
+
+    }
 }
 
 

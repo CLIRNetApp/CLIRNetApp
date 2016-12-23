@@ -26,11 +26,6 @@
                 android:orientation="vertical"
                 android:padding="5dp">
 
-                <FrameLayout
-                    android:id="@+id/framecontainer"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:visibility="gone"></FrameLayout>
 
 
                 <LinearLayout
@@ -46,16 +41,10 @@
                         android:layout_height="120dp"
                         android:layout_gravity="end"
                         android:orientation="vertical"
-                        android:contentDescription="@string/desc"></ImageView>
+                        android:contentDescription="@string/desc"/>
 
 
-                    <TextView
-                        android:id="@+id/date"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="end"
-                        android:padding="5dp"
-                        android:textSize="16sp" />
+
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -63,19 +52,29 @@
                         android:orientation="horizontal"
                         android:padding="2dp">
 
+                        <TextView
+                            android:id="@+id/date"
+                            android:layout_width="wrap_content"
+                            android:layout_height="60dp"
+                            android:layout_weight="0.2"
+                            android:gravity="start"
+                            android:padding="3dp"
+                            android:textSize="16sp" />
 
                         <Button
                             android:id="@+id/addanewPatient"
                             android:layout_width="wrap_content"
                             android:layout_height="55dp"
+                            android:layout_marginStart="0dp"
+                            android:layout_weight="0.4"
                             android:background="@drawable/rounded_corner_color"
                             android:fontFamily="sans-serif-medium"
                             android:gravity="center"
                             android:paddingBottom="2dp"
-                            android:text="Patient Not Found!! Add"
+                            android:text="Patient Not Found? Add New"
+                            android:textAllCaps="false"
                             android:textColor="@color/white"
                             android:textSize="14sp"
-                            android:layout_marginLeft="184dp"
                             android:visibility="invisible"
                             tools:targetApi="jelly_bean" />
 
@@ -103,7 +102,7 @@
                                 android:layout_height="60dp"
                                 android:layout_gravity="right"
                                 android:background="@drawable/sync1"
-                                android:gravity="right" />
+                                android:gravity="end" />
                         </LinearLayout>
 
                     </LinearLayout>
@@ -132,63 +131,6 @@
                       android:layout_below="@+id/datelayout"/>-->
 
                 <LinearLayout
-                    android:id="@+id/linearl"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:orientation="horizontal"
-                    android:visibility="gone">
-
-                    <TextView
-                        android:id="@+id/txtdate"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp"
-                        android:layout_weight="0.5"
-                        android:gravity="center"
-                        android:paddingLeft="10dp"
-                        android:text="#"
-                        android:textColor="#ff0000" />
-
-
-                    <TextView
-                        android:id="@+id/txtparticular"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp"
-                        android:layout_weight="1.5"
-                        android:text="Name"
-                        android:textColor="#ff0000" />
-
-
-                    <TextView
-                        android:id="@+id/txtcredit"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="10dp"
-                        android:layout_weight="1"
-                        android:text="Gender"
-                        android:textColor="#ff0000" />
-
-                    <TextView
-                        android:id="@+id/txtdebit"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.5"
-                        android:text="Age"
-                        android:textColor="#ff0000" />
-
-                    <TextView
-                        android:id="@+id/txtbal"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1.5"
-                        android:text="Phone Number"
-                        android:textColor="#ff0000" />
-
-
-                </LinearLayout>
-                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
                     android:background="#50BAA0"
@@ -206,17 +148,18 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="40dp"
+                    android:background="@drawable/rectangle_corner"
                     android:gravity="center"
                     android:orientation="horizontal"
-                    android:background="@drawable/rectangle_corner">
+                    android:padding="5dp">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
-                        android:layout_weight="0.5"
-                        android:gravity="center"
+                        android:layout_weight="0.2"
+                        android:gravity="start"
                         android:padding="2dp"
                         android:text="#"
                         android:textColor="@color/black" />
@@ -225,7 +168,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
-                        android:layout_weight="1.5"
+                        android:layout_weight="1.2"
                         android:gravity="center"
                         android:padding="2dp"
                         android:text="Name"
@@ -235,7 +178,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
-                        android:layout_weight="1.1"
+                        android:layout_weight="0.9"
                         android:gravity="center"
                         android:padding="2dp"
                         android:text="Gender"
@@ -245,7 +188,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
-                        android:layout_weight="0.5"
+                        android:layout_weight="1.1"
                         android:gravity="center"
                         android:padding="2dp"
                         android:text="Age"
@@ -255,7 +198,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
-                        android:layout_weight="1.6"
+                        android:layout_weight="1.1"
                         android:gravity="center"
                         android:padding="2dp"
                         android:text="Phone Number"

@@ -27,6 +27,7 @@ import app.clirnet.com.clirnetapp.Utility.SyncDataService;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.app.DoctorDeatilsAsynTask;
 import app.clirnet.com.clirnetapp.app.LoginAsyncTask;
+import app.clirnet.com.clirnetapp.app.UpdatePassworsAsynTask;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
@@ -34,11 +35,12 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
 
-public class LoginActivity extends Activity  {
+public class LoginActivity extends Activity implements View.OnTouchListener {
     private static final String TAG = "Login";
     private static final String PREFS_NAME = "savedCredit";
     private static final String PREF_USERNAME = "username";
     private static final String PREF_PASSWORD = "password";
+    private static final String LOGIN_TIME = "loginTime";
 
     private EditText inputEmail;
     private EditText inputPassword;
@@ -59,6 +61,13 @@ public class LoginActivity extends Activity  {
     private AppController appController;
     private Button btnLogin;
     private String phoneNumber;
+    private EditText oldPassword;
+    private EditText newPassword;
+    private EditText confirmPassword;
+    private String username;
+    private String doctor_membership_number;
+    private String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
+
 
 
     @Override
@@ -77,13 +86,14 @@ public class LoginActivity extends Activity  {
 
         DatabaseClass databaseClass = new DatabaseClass(getApplicationContext());
         LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
-        appController=new AppController();
+        appController = new AppController();
 
         convertDate();
 
 
-        Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
-        startService(serviceIntent);
+        /*Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
+        serviceIntent. putExtra("UserID", "123456");
+        startService(serviceIntent);*/
 
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +129,7 @@ public class LoginActivity extends Activity  {
         pDialog.setCancelable(false);
 
         // SQLite database handler
-       // showDialog12();
+        // showDialog12();
 
         connectionDetector = new ConnectionDetector(getApplicationContext());
 
@@ -131,11 +141,12 @@ public class LoginActivity extends Activity  {
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
             dbController = new SQLiteHandler(getApplicationContext());
+            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Home" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home" + e);
         }
 
         try {
@@ -144,7 +155,7 @@ public class LoginActivity extends Activity  {
             phoneNumber = sqlController.getPhoneNumber();
 
         } catch (Exception ioe) {
-            appController.appendLog(appController.getDateTime()+"" +"/"+"Home" + ioe);
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Home" + ioe);
 
             throw new Error("Unable to create database");
 
@@ -158,7 +169,7 @@ public class LoginActivity extends Activity  {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+"" +"/"+"Home" + e);
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Home" + e);
         } finally {
             if (databaseClass != null) {
                 databaseClass.close();
@@ -171,7 +182,7 @@ public class LoginActivity extends Activity  {
             lastnameDatabaseClass.createDataBase();
 
         } catch (IOException ioe) {
-            appController.appendLog(appController.getDateTime()+"" +"/"+"Home" + ioe);
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Home" + ioe);
 
             throw new Error("Unable to create database");
 
@@ -184,7 +195,7 @@ public class LoginActivity extends Activity  {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+"" +"/"+"Home" + e);
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Home" + e);
         } finally {
             if (lastnameDatabaseClass != null) {
                 lastnameDatabaseClass.close();
@@ -215,13 +226,21 @@ public class LoginActivity extends Activity  {
                                             name = inputEmail.getText().toString().trim();
                                             strPassword = inputPassword.getText().toString().trim();
 
-
+                                            String time=appController.getDateTimenew();
+                                            Log.e("current Time",""+time);
                                             //This code used for Remember Me(ie. save login id and password for future ref.)
-                                            rememberMe(name); //save username only
+                                            rememberMe(name, strPassword, time); //save username only
 
                                             //rememberMeCheckbox();//Removed remeber me check box for safety concern 04-11-16
                                             //to authenticate user credentials
                                             LoginAuthentication();
+
+                                            //Starting service to send data to server in background after 30 minute  interval
+                                           /* Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
+                                            serviceIntent.putExtra("name", name);
+                                            serviceIntent.putExtra("password", md5EncyptedDataPassword);
+                                            serviceIntent.putExtra("apikey", "PFFt0436yjfn0945DevOp0958732Cons3214556");
+                                            startService(serviceIntent);*/
 
                                         }
 
@@ -231,18 +250,14 @@ public class LoginActivity extends Activity  {
         // Link to Register Screen
         btnLinkToForgetScreen.setOnClickListener(new View.OnClickListener()
 
-                                                 {
+        {
 
-                                                     public void onClick(View view) {
+            public void onClick(View view) {
 
-                                                         //   showChangePassDialog();
+                showChangePassDialog();
 
-                                                     }
-                                                 }
-
-        );
-
-
+            }
+        });
 
 
     }
@@ -251,7 +266,7 @@ public class LoginActivity extends Activity  {
         SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-       String searchdate = "2016-12-02";
+        String searchdate = "2016-12-02";
         String reformattedStr = "";
         try {
 
@@ -260,9 +275,8 @@ public class LoginActivity extends Activity  {
 
         } catch (ParseException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
         }
-
 
     }
 
@@ -319,11 +333,8 @@ public class LoginActivity extends Activity  {
                 //  checkLogin(name, md5EncyptedDataPassword);
 
                 new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword);
-                new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword,phoneNumber);
-
-
-
-
+                new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber);
+                startService();
                 // hideDialog();
 
             } else {
@@ -331,19 +342,21 @@ public class LoginActivity extends Activity  {
                 boolean isLogin;
                 try {
 
-                    isLogin = sqlController.validateUser(name, md5EncyptedDataPassword,phoneNumber);
+                    isLogin = sqlController.validateUser(name, md5EncyptedDataPassword, phoneNumber);
 
                     if (isLogin) {
                         Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_LONG).show();
                         goToNavigation();
 
+                       startService();
+
                     } else {
                         Toast.makeText(getApplicationContext(), "Username/Password Mismatch", Toast.LENGTH_LONG).show();
 
-                       // Toast.makeText(getApplicationContext(), " You are not connected to Internet!! ", Toast.LENGTH_LONG).show();
+                        // Toast.makeText(getApplicationContext(), " You are not connected to Internet!! ", Toast.LENGTH_LONG).show();
                     }
                 } catch (ClirNetAppException e) {
-                   //e.printStackTrace();
+                    //e.printStackTrace();
                     appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e);
                 } finally {
                     if (sqlController != null) {
@@ -360,6 +373,14 @@ public class LoginActivity extends Activity  {
                     .show();
         }
 
+    }
+
+    private void startService() {
+        Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
+        serviceIntent.putExtra("name", name);
+        serviceIntent.putExtra("password", md5EncyptedDataPassword);
+        serviceIntent.putExtra("apikey", "PFFt0436yjfn0945DevOp0958732Cons3214556");
+        startService(serviceIntent);
     }
 
 // --Commented out by Inspection START (07-11-2016 16:43):
@@ -383,7 +404,9 @@ public class LoginActivity extends Activity  {
 
         final Dialog dialog = new Dialog(LoginActivity.this);
         dialog.setContentView(R.layout.change_password_dialog);
-        dialog.setTitle("Forgot Password");
+        dialog.setTitle("Change Password");
+        dialog.setCancelable(false);
+        dialog.setCanceledOnTouchOutside(false);
 
         // set the custom dialog components - text, image and button
 
@@ -391,29 +414,46 @@ public class LoginActivity extends Activity  {
         TextView btnSubmitPass = (TextView) dialog.findViewById(R.id.submit);
 
 
-        email_forget = (EditText) dialog.findViewById(R.id.email);
-        password = (EditText) dialog.findViewById(R.id.password);
+        oldPassword = (EditText) dialog.findViewById(R.id.oldPassword);
+         newPassword = (EditText) dialog.findViewById(R.id.password);
+        confirmPassword = (EditText) dialog.findViewById(R.id.confirmPassword);
         //  TextView gotosetting = (TextView) dialog.findViewById(R.id.gotosetting);
         //text.setText("Android custom dialog example!");
+
 
         //  image.setImageResource(R.drawable.ic_launcher);
         btnSubmitPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                String pass = password.getText().toString();
-                String email_forgot = email_forget.getText().toString();
+                String oldPass = oldPassword.getText().toString().trim();
+                String newPass =newPassword.getText().toString().trim();
+                String confirmPass=confirmPassword.getText().toString().trim();
 
-                if (TextUtils.isEmpty(pass)) {
-                    password.setError("Please Enter Username");
+
+                if (TextUtils.isEmpty(oldPass)) {
+                    oldPassword.setError("Please enter Password !");
+                  return;
+                }
+                if (TextUtils.isEmpty(newPass)) {
+                    newPassword.setError("Please enter Password !");
                     return;
                 }
-                //To be fixed. User enters registered phone number and email id.
-                if (TextUtils.isEmpty(email_forgot)) {
-                    confirmPassord.setError("Please enter Conform Password !");
+                if (TextUtils.isEmpty(confirmPass)) {
+                    confirmPassword.setError("Please enter Password !");
+                    return;
                 }
-                //call asynchronous task for forget password
+                if(!newPass.equals(confirmPass)){
+                    Toast.makeText(getApplicationContext(),"Old and new Password did not match ",Toast.LENGTH_LONG).show();
+                    confirmPassword.setError("Old and new Password did not match  !");
+                    return;
+                }
 
+                String md5oldPassword = MD5.getMD5(oldPass);
+                String md5newPassword = MD5.getMD5(newPass);
+                Log.e("oldand new",""+md5oldPassword +" new "+md5newPassword);
+                new UpdatePassworsAsynTask(LoginActivity.this,username,doctor_membership_number,md5oldPassword,md5newPassword);
+                dialog.dismiss();
             }
         });
 
@@ -491,20 +531,19 @@ public class LoginActivity extends Activity  {
     }
 
 
-
-
     @Override
     public void onBackPressed() {
         moveTaskToBack(true);
     }
 
     //save username and password in SharedPreferences
-    private void rememberMe(String user) {
+    private void rememberMe(String user,String password,String dateTime ) {
 
         getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
                 .edit()
                 .putString(PREF_USERNAME, user)
-                .putString(PREF_PASSWORD, "")
+                .putString(PREF_PASSWORD, password)
+                .putString(LOGIN_TIME,dateTime)
                 .apply();
 
     }
@@ -520,15 +559,15 @@ public class LoginActivity extends Activity  {
     //this method will set username and password to edit text if remember me chkbox is checked previously
     private void getUser() {
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        String username = pref.getString(PREF_USERNAME, null);
+        username = pref.getString(PREF_USERNAME, null);
         String password = pref.getString(PREF_PASSWORD, null);
-        //  Log.e("password", "" + username + "" + password);
+        Log.e("password", "" + username + "" + password);
 
         if (username != null || password != null) {
             //directly show logout form
             //  showLogout(username);
             inputEmail.setText(username);
-            inputPassword.setText(password);
+           // inputPassword.setText(password);
         }
     }
 
@@ -549,7 +588,7 @@ public class LoginActivity extends Activity  {
         if (connectionDetector != null) {
             connectionDetector = null;
         }
-        if(appController !=null) {
+        if (appController != null) {
             appController = null;
         }
         //  pDialog=null;
@@ -570,4 +609,36 @@ public class LoginActivity extends Activity  {
 
         return "{" + width + "," + height + "}";
     }*/
+
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        int count = 0;
+        long startMillis=0;
+        int eventaction = event.getAction();
+        if (eventaction == MotionEvent.ACTION_UP) {
+
+            //get system current milliseconds
+            long time= System.currentTimeMillis();
+
+
+            //if it is the first time, or if it has been more than 3 seconds since the first tap ( so it is like a new try), we reset everything
+            if (startMillis==0 || (time-startMillis> 3000) ) {
+                startMillis=time;
+                count=1;
+            }
+            //it is not the first, and it has been  less than 3 seconds since the first
+            else{ //  time-startMillis< 3000
+                count++;
+                Log.e("count",""+count);
+            }
+
+            if (count>1) {
+                //do whatever you need
+                Toast.makeText(LoginActivity.this,"Count is more than 10",Toast.LENGTH_LONG).show();
+            }
+            return true;
+        }
+        return false;
+    }
 }

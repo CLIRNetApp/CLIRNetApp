@@ -493,6 +493,321 @@
             </LinearLayout>
 
 
+            <TextView
+                android:id="@+id/txtRecord"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_below="@+id/addresslayout"
+                android:layout_marginTop="30dp"
+                android:background="@color/btn_back_sbmt"
+                android:drawableRight="@drawable/down_arrow"
+                android:gravity="start"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:text="@string/recorddetails"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:id="@+id/vitalsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtRecord"
+                android:layout_marginTop="0dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@drawable/rectangle_corner"
+                android:orientation="vertical"
+                android:padding="5dp">
+
+                <LinearLayout
+                    android:id="@+id/actVitalsLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <EditText
+                        android:id="@+id/input_weight"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_weight="0.4"
+                        android:background="@drawable/rectangle_corner"
+                        android:drawableRight="@drawable/kgs"
+                        android:fontFamily="sans-serif"
+                        android:hint="Weight"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="1dp"
+                        android:paddingTop="5dp"
+                        android:singleLine="true"
+                        android:textColor="@color/black"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="14sp"/>
+
+
+                    <EditText
+                        android:id="@+id/input_pulse"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_marginRight="3dp"
+                        android:layout_weight="0.4"
+                        android:background="@drawable/rectangle_corner"
+                        android:drawableRight="@drawable/beats_min"
+                        android:hint="pulse"
+                        android:inputType="number"
+                        android:maxLength="2"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="1dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="14sp"
+                        android:textColor="@color/black" />
+
+
+                    <EditText
+                        android:id="@+id/input_bp"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.4"
+                        android:background="@drawable/rectangle_corner"
+                        android:drawableRight="@drawable/slas"
+                        android:hint="High B.P"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="1dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="14sp"
+                        android:textColor="@color/black" />
+
+
+                    <EditText
+                        android:id="@+id/lowBp"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.4"
+                        android:background="@drawable/rectangle_corner"
+                        android:drawableRight="@drawable/mmhg"
+                        android:hint="Low B.P"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="1dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="14sp"
+                        android:textColor="@color/black" />
+
+                </LinearLayout>
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/txtecord"
+                    android:layout_marginTop="10dp"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <EditText
+                        android:id="@+id/input_temp"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="0.4"
+                        android:background="@drawable/rectangle_corner"
+                        android:drawableRight="@drawable/zerooc"
+                        android:hint="Temp"
+                        android:maxLength="3"
+                        android:inputType="number"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="1dp"
+                        android:paddingTop="5dp"
+                        android:singleLine="true"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="14sp"
+                        android:textColor="@color/black" />
+
+
+                    <EditText
+                        android:id="@+id/input_sugar"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.4"
+                        android:background="@drawable/rectangle_corner"
+                        android:drawableRight="@drawable/mg_dl"
+                        android:hint="Sugar"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="1dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="14sp"
+                        android:textColor="@color/black" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+
+            <TextView
+                android:id="@+id/txtsymptomsanddignost"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_below="@+id/vitalsLayout"
+                android:layout_marginTop="30dp"
+                android:background="@color/btn_back_sbmt"
+                android:drawableRight="@drawable/down_arrow"
+                android:gravity="start"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:paddingBottom="5dp"
+                android:text="@string/symptomsanddignosis"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <LinearLayout
+
+                android:id="@+id/symptomsdigosislayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/txtsymptomsanddignost"
+                android:background="@drawable/rectangle_corner"
+                android:orientation="horizontal"
+                android:layout_marginTop="0dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:padding="5dp">
+
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+
+                    android:id="@+id/symptoms"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="sans-serif"
+                    android:hint="Symptoms"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textSize="12sp"
+                    app:bootstrapBrand="success"
+                    app:bootstrapSize="md"
+                    app:roundedCorners="false" />
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+
+                    android:id="@+id/dignosis"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_below="@+id/txtsymptomsanddignost"
+                    android:layout_weight="1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="sans-serif"
+                    android:hint="Dignosis"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textSize="12sp"
+                    app:bootstrapBrand="success"
+                    app:bootstrapSize="md"
+                    app:roundedCorners="false" />
+            </LinearLayout>
+
+            <TextView
+
+                android:id="@+id/presciptiontext"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:layout_below="@+id/symptomsdigosislayout"
+                android:drawableRight="@drawable/down_arrow"
+                android:layout_marginTop="30dp"
+                android:background="@color/btn_back_sbmt"
+                android:gravity="start"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingTop="5dp"
+                android:text="@string/prescription"
+                android:textColor="@color/white"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:id="@+id/presciptionlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/presciptiontext"
+                android:background="@drawable/rectangle_corner"
+                android:orientation="horizontal"
+                android:layout_marginTop="0dp"
+                android:padding="5dp"
+                android:paddingTop="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+
+                    android:id="@+id/test"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="sans-serif"
+                    android:hint="Tests"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textSize="12sp"
+                    app:bootstrapBrand="success"
+                    app:bootstrapSize="md"
+                    app:roundedCorners="false" />
+
+                <View
+                    android:id="@+id/view2"
+                    android:layout_width="2dp"
+                    android:layout_height="35dp"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_toRightOf="@+id/txt"
+                    android:background="@color/grey"
+                    android:visibility="gone" />
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+
+                    android:id="@+id/drugs"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_below="@+id/txtsymptomsanddignost"
+                    android:layout_weight="1"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="sans-serif"
+                    android:hint="Drugs"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:textSize="12sp"
+                    app:bootstrapBrand="success"
+                    app:bootstrapSize="md"
+                    app:roundedCorners="false" />
+
+            </LinearLayout>
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -501,8 +816,8 @@
                     android:background="@drawable/rectangle_corner"
                     android:orientation="horizontal"
                     android:padding="5dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="0dp"
                     android:layout_marginTop="30dp">
 
                     <Button
@@ -557,7 +872,9 @@
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:padding="3dp"
-                        android:paddingTop="2dp">
+                        android:paddingTop="2dp"
+                        android:layout_marginLeft="0dp"
+                        android:layout_marginRight="0dp">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -566,7 +883,7 @@
                             android:textColor="@color/input_register"
                             android:textSize="18sp"
                             android:textStyle="bold"
-                            android:layout_marginLeft="5dp"/>
+                            android:layout_marginLeft="0dp"/>
 
                         <EditText
                             android:id="@+id/clinicalNotes"
@@ -594,8 +911,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginRight="8dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginRight="5dp"
                         android:orientation="horizontal"
                         android:padding="1dp"
                         android:layout_marginTop="15dp">
@@ -700,6 +1017,7 @@
                 </LinearLayout>
 
 
+
             </LinearLayout>
 
             <android.support.v7.widget.RecyclerView
@@ -709,12 +1027,22 @@
                 android:layout_weight="0.9"
                 android:scrollbars="vertical"
                 app:layoutManager="GridLayoutManager"
-                app:spanCount="1" />
+                app:spanCount="1"
+                />
+
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical">
+
+                <ExpandableListView
+                    android:id="@+id/lvExp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    />
 
                 <include
                     layout="@layout/footer"

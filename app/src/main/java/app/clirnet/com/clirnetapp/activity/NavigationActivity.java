@@ -21,15 +21,15 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 
 import app.clirnet.com.clirnetapp.R;
-
 import app.clirnet.com.clirnetapp.app.AppController;
-import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
 import app.clirnet.com.clirnetapp.fragments.BarChartFragment;
-import app.clirnet.com.clirnetapp.fragments.PatientReportFragment;
-import app.clirnet.com.clirnetapp.fragments.ReportFragmentViewPagerSetup;
+import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
 import app.clirnet.com.clirnetapp.fragments.HomeFragment;
+import app.clirnet.com.clirnetapp.fragments.KnowledgeFragment;
+import app.clirnet.com.clirnetapp.fragments.PatientReportFragment;
 import app.clirnet.com.clirnetapp.fragments.PoHistoryFragment;
 import app.clirnet.com.clirnetapp.fragments.ReportFragment;
+import app.clirnet.com.clirnetapp.fragments.ReportFragmentViewPagerSetup;
 import app.clirnet.com.clirnetapp.fragments.TopTenAilmentFragment;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
@@ -38,7 +38,7 @@ import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
         , ReportFragment.OnFragmentInteractionListener, PatientReportFragment.OnFragmentInteractionListener, ReportFragmentViewPagerSetup.OnFragmentInteractionListener, TopTenAilmentFragment.OnFragmentInteractionListener,
-        BarChartFragment.OnFragmentInteractionListener {
+        BarChartFragment.OnFragmentInteractionListener,KnowledgeFragment.OnFragmentInteractionListener{
 
 
     private FragmentManager fragmentManager;
@@ -88,10 +88,8 @@ public class NavigationActivity extends AppCompatActivity
         /* Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
         startService(serviceIntent);*/
 
-
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
-
 
         try {
 
@@ -209,6 +207,10 @@ public class NavigationActivity extends AppCompatActivity
 
                 fragment = new ReportFragment();
                 break;
+            case R.id.nav_knowldge:
+
+                fragment = new KnowledgeFragment();
+                break;
 
             case R.id.nav_logout:
 
@@ -308,4 +310,6 @@ public class NavigationActivity extends AppCompatActivity
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
     }
+
+
 }

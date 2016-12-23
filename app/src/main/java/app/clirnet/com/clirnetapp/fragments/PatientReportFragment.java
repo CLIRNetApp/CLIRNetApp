@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -83,7 +82,7 @@ public class PatientReportFragment extends Fragment {
 
             fromDate = bundle.getString("FROMDATE");
             toDate = bundle.getString("TODATE");
-            Log.e("dateis", "" + fromDate + "" + toDate);
+           // Log.e("dateis", "" + fromDate + "" + toDate);
         }
     }
 
@@ -155,7 +154,7 @@ public class PatientReportFragment extends Fragment {
                 for (int im = 0; im < size; im++) {
                     String a = countsNo.get(im).getCount();
                     String b = countsNo.get(im).getDate().trim();
-                    Log.e("DateandCount", " " + a + " - dateList is  " + b);
+                   // Log.e("DateandCount", " " + a + " - dateList is  " + b);
                     nocountsperday.add(a);
                     dateList.add(b);
 
@@ -176,7 +175,7 @@ public class PatientReportFragment extends Fragment {
                 Date d1=format1.parse(newsd);
                 Date d2=format1.parse(newed);
 
-                Log.e("stdate",""+newsd + "  "+newed);
+               // Log.e("stdate",""+newsd + "  "+newed);
 
                 Calendar start = Calendar.getInstance();
                 start.setTime(d1);
@@ -199,7 +198,7 @@ public class PatientReportFragment extends Fragment {
                         date =sdf.parse(s);
                         System.out.println(date);
                         System.out.println(sdf.format(date));
-                        Log.e("sdf.format(date)", "" + sdf.format(date));
+                       // Log.e("sdf.format(date)", "" + sdf.format(date));
                         String convertedDate=sdf.format(date);
                         newdate.add(convertedDate);
                         newcount.add(countval);
@@ -208,7 +207,7 @@ public class PatientReportFragment extends Fragment {
                         date =sdf.parse(s);
                         System.out.println(date);
                         System.out.println(sdf.format(date));
-                        Log.e("sdf.format(date)", "" + sdf.format(date));
+                       // Log.e("sdf.format(date)", "" + sdf.format(date));
                         String convertedDate=sdf.format(date);
                         newdate.add(convertedDate);
                         newcount.add("0");
@@ -220,11 +219,11 @@ public class PatientReportFragment extends Fragment {
                 appController.appendLog(appController.getDateTime() + " " + "/ " + "PatientReportFragment" + e);
             }
 
-            for(int i1 = 0 ; i1 < newdate.size() ; i1++) {
+          /*  for(int i1 = 0 ; i1 < newdate.size() ; i1++) {
 
-                System.out.println(newdate.get(i1) + " " + newcount.get(i1));
+               // System.out.println(newdate.get(i1) + " " + newcount.get(i1));
             }
-
+*/
             int size1 = newcount.size();
             if (size1 > 0) {
                 for (int in = 0; in < size1; in++) {
@@ -345,7 +344,7 @@ public class PatientReportFragment extends Fragment {
         SharedPreferences.Editor editor = getActivity().getSharedPreferences(new AppController().PREFS_NAME, getContext().MODE_PRIVATE).edit();
         editor.putString("value", key);
         // editor.putInt("idName", 12);
-        editor.commit();
+        editor.apply();
 
 
 

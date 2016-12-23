@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -168,7 +167,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
                     listSetAgeBound.add(ageBound);
 
 
-                    Log.e("Records789", " " + mcount + "-" + fCount + " - " + ageBound);
+                   // Log.e("Records789", " " + mcount + "-" + fCount + " - " + ageBound);
 
                 }
                 //setDataToLayout();

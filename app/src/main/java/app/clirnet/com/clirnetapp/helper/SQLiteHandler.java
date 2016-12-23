@@ -31,7 +31,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     // All Static variables
     // Database Version
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
 
     // Database Name
     public static final String DATABASE_NAME = "clirnetApp.db";
@@ -116,28 +116,18 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String WEIGHT = "weight";
     private static final String PULSE = "pulse";
     private static final String BP = "bp_high";
-    private static final String MMHG = "mmhg";
+    private static final String BP_LOW = "bp_low";
     private static final String TEMP = "temperature";
     private static final String SUGAR = "sugar";
     private static final String SYMPTOMS = "symptoms";
-    private static final String DIGNOSIS = "dignosis";
+    private static final String DIGNOSIS = "diagnosis";
     private static final String TESTS = "tests";
     private static final String DRUGS = "drugs";
+    private static final String PHONE_TYPE = "phone_type";
+    private static final String ISD_CODE= "isd_code";
 
-    //table definations
-
-    private final String CREATE_LOGIN_TABLE = "CREATE TABLE " + TABLE_USER + "("
-            + KEY_ID + " INTEGER PRIMARY KEY,"
-            + KEY_NAME + " TEXT,"
-            + KEY_PASSWORD + " TEXT,"
-            + KEY_EMAIL + " TEXT UNIQUE,"
-            + KEY_UID + " TEXT,"
-            + KEY_CREATED_AT + " TEXT" + ")";
 
     private static final String TABLE_ASYNC = "async";
-
-
-
 
 
     public SQLiteHandler(Context context) {
@@ -182,35 +172,40 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String DATABASE_ALTER_TABLE_PATIENT = "ALTER TABLE patient"
             + " ADD COLUMN patient_state text;";
 
-    private static final String  DATABASE_ALTER_TABLE_PATIENT_HISTORY_WEIGHT = " ALTER TABLE patient_history" +" ADD COLUMN weight text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_PHONE_TYPE = "ALTER TABLE patient"
+            + " ADD COLUMN phone_type text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_ISD_CODE = "ALTER TABLE patient"
+            + " ADD COLUMN isd_code text;";
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_PULSE = " ALTER TABLE patient_history" +" ADD COLUMN pulse text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_WEIGHT = " ALTER TABLE patient_history" + " ADD COLUMN weight text;";
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_BP = " ALTER TABLE patient_history" +" ADD COLUMN bp_high text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_PULSE = " ALTER TABLE patient_history" + " ADD COLUMN pulse text;";
 
-    private static final String  DATABASE_ALTER_TABLE_PATIENT_HISTORY_MMHG = " ALTER TABLE patient_history" +" ADD COLUMN mmhg text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_BP = " ALTER TABLE patient_history" + " ADD COLUMN bp_high text;";
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_TEMP = " ALTER TABLE patient_history" +" ADD COLUMN temperature text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_MMHG = " ALTER TABLE patient_history" + " ADD COLUMN bp_low text;";
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_SUGAR = " ALTER TABLE patient_history" +" ADD COLUMN sugar text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_TEMP = " ALTER TABLE patient_history" + " ADD COLUMN temperature text;";
 
-    private static final String  DATABASE_ALTER_TABLE_PATIENT_HISTORY_SYMPTOMS = " ALTER TABLE patient_history" +" ADD COLUMN symptoms text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_SUGAR = " ALTER TABLE patient_history" + " ADD COLUMN sugar text;";
 
-    private static final String  DATABASE_ALTER_TABLE_PATIENT_HISTORY_DIGNOSIS =" ALTER TABLE patient_history" +" ADD COLUMN dignosis text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_SYMPTOMS = " ALTER TABLE patient_history" + " ADD COLUMN symptoms text;";
 
-    private static final String  DATABASE_ALTER_TABLE_PATIENT_HISTORY_TESTS = " ALTER TABLE patient_history" +" ADD COLUMN tests text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_DIGNOSIS = " ALTER TABLE patient_history" + " ADD COLUMN diagnosis text;";
 
-    private static final String  DATABASE_ALTER_TABLE_PATIENT_HISTORY_DRUGS = " ALTER TABLE patient_history" +" ADD COLUMN drugs text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_TESTS = " ALTER TABLE patient_history" + " ADD COLUMN tests text;";
+
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_DRUGS = " ALTER TABLE patient_history" + " ADD COLUMN drugs text;";
 
     // Upgrading database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
-        /*if (oldVersion < 2) {
-         //   db.execSQL(DATABASE_ALTER_TEAM_2);
-        }*/
-        if (oldVersion < 3) {
+        if (oldVersion < 2) {
             db.execSQL(DATABASE_ALTER_TABLE_USER);
+        }
+        if (oldVersion < 3) {
+
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT);
 
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_WEIGHT);
@@ -223,6 +218,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_DIGNOSIS);
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_TESTS);
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_DRUGS);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_PHONE_TYPE);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_ISD_CODE);
 
         }
     }
@@ -230,8 +227,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     /**
      * Updating Patient Personal details in database
      */
-    public void updatePatientPersonalInfo(String keyid, String firstname, String middlename, String lastname, String gender, String dateofbirth, String age, String phNo, String language, String imgPath, String modified_on_date, String modified_by, String modifiedTime, String action, String flag, String docId) throws ClirNetAppException {
+    public void updatePatientPersonalInfo(String keyid, String firstname, String middlename, String lastname, String gender, String dateofbirth, String age, String phNo, String language, String imgPath, String modified_on_date, String modified_by, String modifiedTime, String action, String flag, String docId,
+                                          String address, String cityortown, String district, String pin, String state,String phoneType) throws ClirNetAppException {
+
         SQLiteDatabase db = this.getWritableDatabase();
+
         long id = 0;
         try {
 
@@ -251,6 +251,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(ACTION, action);
             values.put(SYCHRONIZED, flag);
             values.put(DOCTOR_ID, docId);
+            values.put(PATIENT_ADDRESS, address);
+            values.put(PATIENT_CIT_CITY_TOWN, cityortown);
+            values.put(DISTRICT, district);
+            values.put(PIN_CODE, pin);
+            values.put(PATIENT_STATE, state);
+            values.put(PHONE_TYPE,phoneType);
+
 
             // Inserting Row
             id = db.update(TABLE_PATIENT, values, KEY_PATIENT_ID + "=" + keyid, null);
@@ -287,7 +294,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
     //add user login credentails into db
-    public void addLoginRecord(String username, String password,String phoneNumber) throws ClirNetAppException {
+    public void addLoginRecord(String username, String password, String phoneNumber) throws ClirNetAppException {
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
         try {
@@ -295,7 +302,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
             contentValue.put(KEY_NAME, username);
             contentValue.put(KEY_PASSWORD, password);
-            contentValue.put(PHONE_NUMBER,phoneNumber);
+            contentValue.put(PHONE_NUMBER, phoneNumber);
 
             // Inserting Row
             db.delete(TABLE_USER, KEY_NAME + " = ?", new String[]{username});
@@ -316,7 +323,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
     //update the patient visit records into db
-    public void updatePatientOtherInfo(String strId, String visitId, String usersellectedDate, String strfollow_up_date, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String modified_dateon, String modified_time, String modified_by, String action, String patInfoType, String flag) throws ClirNetAppException {
+    public void updatePatientOtherInfo(String strId, String visitId, String usersellectedDate, String strfollow_up_date, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String modified_dateon, String modified_time, String modified_by, String action, String patInfoType, String flag,
+                                       String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs) throws ClirNetAppException {
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
         try {
@@ -335,6 +343,16 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(ACTION, action);
             values.put(PATIENT_INFO_TYPE_FORM, patInfoType);
             values.put(SYCHRONIZED, flag);
+            values.put(WEIGHT, weight);
+            values.put(PULSE, pulse);
+            values.put(BP, bphigh);
+            values.put(BP_LOW, bplow);
+            values.put(TEMP, temparature);
+            values.put(SUGAR, sugar);
+            values.put(SYMPTOMS, symptoms);
+            values.put(DIGNOSIS, dignosis);
+            values.put(TESTS, tests);
+            values.put(DRUGS, drugs);
 
             // Inserting Row
             id = db.update(TABLE_PATIENT_HISTORY, values, KEY_PATIENT_ID + "=" + strId + " AND " + KEY_VISIT_ID + "=" + visitId, null);
@@ -427,7 +445,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                          String follow_up_days, String follow_up_weeks, String follow_up_months,
                                          String act_follow_up_date, String notes, String added_by, String added_on, String addedTime,
                                          String modified_by, String modified_on, String is_disabled, String disabled_by,
-                                         String disabled_on, String is_deleted, String deleted_by, String deleted_on, String flag, String patient_info_type_form) {
+                                         String disabled_on, String is_deleted, String deleted_by, String deleted_on, String flag, String patient_info_type_form,
+                                         String precription,String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -461,6 +480,18 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             contentValue.put(DELETED_ON, deleted_on);
             contentValue.put(SYCHRONIZED, flag);
             contentValue.put(PATIENT_INFO_TYPE_FORM, patient_info_type_form);
+            contentValue.put(WEIGHT, weight);
+            contentValue.put(PRESCRIPTION,precription);
+            contentValue.put(PULSE, pulse);
+            contentValue.put(BP, bphigh);
+            contentValue.put(BP_LOW, bplow);
+            contentValue.put(TEMP, temparature);
+            contentValue.put(SUGAR, sugar);
+            contentValue.put(SYMPTOMS, symptoms);
+            contentValue.put(DIGNOSIS, dignosis);
+            contentValue.put(TESTS, tests);
+            contentValue.put(DRUGS, drugs);
+
 
             db.delete(TABLE_PATIENT_HISTORY, KEY_PATIENT_ID + " = ?" + " AND " + KEY_VISIT_ID + " = ? ", new String[]{pat_id, visit_id});
             // Inserting Row
@@ -481,7 +512,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     //This will add records from registration page into patient table  28/8/2016 ashish u
     public void addPatientPersonalfromLocal(int patient_id, String doctor_id, String first_name, String middle_name, String last_name, String sex, String strdate_of_birth, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String create_date, String doctor_membership_number, String flag, String patientInfoType, String addedTime, String added_by, String action,
-                                            String address,String city,String district,String pinno,String state  ) {
+                                            String address, String city, String district, String pinno, String state,String phoneType) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -509,11 +540,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(ADDED_TIME, addedTime);
             values.put(ADDED_BY, added_by);
             values.put(ACTION, action);
-            values.put(PATIENT_ADDRESS,address);
-            values.put(PATIENT_CIT_CITY_TOWN,city);
-            values.put(DISTRICT,district);
-            values.put(PIN_CODE,pinno);
-            values.put(PATIENT_STATE,state);
+            values.put(PATIENT_ADDRESS, address);
+            values.put(PATIENT_CIT_CITY_TOWN, city);
+            values.put(DISTRICT, district);
+            values.put(PIN_CODE, pinno);
+            values.put(PATIENT_STATE, state);
+            values.put(PHONE_TYPE,phoneType);
 
 
             // Inserting Row
@@ -534,7 +566,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     //add  new patient records into db from registration page
     public void addHistoryPatientRecords(int visit_id, int patient_id, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String ailments, String prescriptionImgPath, String clinical_note, String added_on_date, String visit_date, String doc_id, String doc_mem_id, String flag, String addedTime, String patientInfoType, String added_by, String action,
-         String weight,String pulse,String bp,String mmhg,String temparature,String sugar,String symptoms,String dignosis,String tests,String drugs) {
+                                         String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -560,16 +592,16 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(PATIENT_INFO_TYPE_FORM, patientInfoType);
             values.put(ACTION, action);
             values.put(ADDED_BY, added_by);
-            values.put(WEIGHT,weight);
-            values.put(PULSE,pulse);
-            values.put(BP,bp);
-            values.put(MMHG,mmhg);
-            values.put(TEMP,temparature);
-            values.put(SUGAR,sugar);
-            values.put(SYMPTOMS,symptoms);
-            values.put(DIGNOSIS,dignosis);
-            values.put(TESTS,tests);
-            values.put(DRUGS,drugs);
+            values.put(WEIGHT, weight);
+            values.put(PULSE, pulse);
+            values.put(BP, bphigh);
+            values.put(BP_LOW, bplow);
+            values.put(TEMP, temparature);
+            values.put(SUGAR, sugar);
+            values.put(SYMPTOMS, symptoms);
+            values.put(DIGNOSIS, dignosis);
+            values.put(TESTS, tests);
+            values.put(DRUGS, drugs);
 
             id = db.insert(TABLE_PATIENT_HISTORY, null, values);
         } catch (Exception e) {
@@ -585,7 +617,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     //add patient records from add pateint update page
-    public void addPatientNextVisitRecord(String visit_id, String strPatientId, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String visit_date, String doc_id, String doc_mem_id, String addedOnDate, String addedTime, String flag, String added_by, String action, String patInfoType) {
+    public void addPatientNextVisitRecord(String visit_id, String strPatientId, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String visit_date, String doc_id, String doc_mem_id, String addedOnDate, String addedTime, String flag, String added_by, String action, String patInfoType,
+                                          String weight, String pulse, String bp, String mmhg, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -612,6 +645,16 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(ADDED_BY, added_by);
             values.put(ACTION, action);
             values.put(PATIENT_INFO_TYPE_FORM, patInfoType);
+            values.put(WEIGHT, weight);
+            values.put(PULSE, pulse);
+            values.put(BP, bp);
+            values.put(BP_LOW, mmhg);
+            values.put(TEMP, temparature);
+            values.put(SUGAR, sugar);
+            values.put(SYMPTOMS, symptoms);
+            values.put(DIGNOSIS, dignosis);
+            values.put(TESTS, tests);
+            values.put(DRUGS, drugs);
 
             // Inserting Row
             id = db.insert(TABLE_PATIENT_HISTORY, null, values);
@@ -631,93 +674,109 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     //this will give u a json array of patient records where flag =o
     public JSONArray getResultsForPatientInformation() {
 
+        JSONArray resultSet;
         //or you can use `context.getDatabasePath("my_db_test.db")`
+        Cursor cursor = null;
 
         SQLiteDatabase db1 = getReadableDatabase();
         //Cursor cursor = db1.rawQuery(selectQuery, null);
 
-        //SQLiteDatabase myDataBase = SQLiteDatabase.openDatabase(DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY);
+        //SQLiteDatabase myDataBase = SQLiteDatabase.openDatabase(DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY);'
+        try {
+            resultSet = new JSONArray();
+            String searchQuery = "SELECT  * FROM patient where flag = 0 ";
 
-        String searchQuery = "SELECT  * FROM patient where flag = 0 ";
-        Cursor cursor = db1.rawQuery(searchQuery, null);
+            cursor = db1.rawQuery(searchQuery, null);
 
-        JSONArray resultSet = new JSONArray();
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
 
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
+                int totalColumn = cursor.getColumnCount();
+                JSONObject rowObject = new JSONObject();
 
-            int totalColumn = cursor.getColumnCount();
-            JSONObject rowObject = new JSONObject();
-
-            for (int i = 0; i < totalColumn; i++) {
-                if (cursor.getColumnName(i) != null) {
-                    try {
-                        if (cursor.getString(i) != null) {
-                            Log.d("TAG_NAME", cursor.getString(i));
-                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
-                        } else {
-                            rowObject.put(cursor.getColumnName(i), "");
+                for (int i = 0; i < totalColumn; i++) {
+                    if (cursor.getColumnName(i) != null) {
+                        try {
+                            if (cursor.getString(i) != null) {
+                                Log.d("TAG_NAME", cursor.getString(i));
+                                rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                            } else {
+                                rowObject.put(cursor.getColumnName(i), "");
+                            }
+                        } catch (Exception e) {
+                            Log.d("TAG_NAME", e.getMessage());
                         }
-                    } catch (Exception e) {
-                        Log.d("TAG_NAME", e.getMessage());
+
                     }
-
-
                 }
+                resultSet.put(rowObject);
+                cursor.moveToNext();
             }
-            resultSet.put(rowObject);
-            cursor.moveToNext();
-        }
 
-        cursor.close();
-        db1.close();
-        Log.d("TAG_NAME", resultSet.toString());
-        return resultSet;
+
+            Log.d("TAG_NAME", resultSet.toString());
+
+            return resultSet;
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
     }
 
-    //this will give u a json array of patient records where flag =o
+    //this will give u a json array of patient records where flag =0
     public JSONArray getResultsForPatientHistory() {
 
-//or you can use `context.getDatabasePath("my_db_test.db")`
 
         SQLiteDatabase db1 = getReadableDatabase();
-        //Cursor cursor = db1.rawQuery(selectQuery, null);
+        Cursor cursor = null;
 
-        //SQLiteDatabase myDataBase = SQLiteDatabase.openDatabase(DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY);
+        try {
+            String searchQuery = "SELECT  * FROM patient_history where flag=0 ";
+            cursor = db1.rawQuery(searchQuery, null);
 
-        String searchQuery = "SELECT  * FROM patient_history where flag=0 ";
-        Cursor cursor = db1.rawQuery(searchQuery, null);
+            JSONArray resultSet = new JSONArray();
 
-        JSONArray resultSet = new JSONArray();
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
 
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
+                int totalColumn = cursor.getColumnCount();
+                JSONObject rowObject = new JSONObject();
 
-            int totalColumn = cursor.getColumnCount();
-            JSONObject rowObject = new JSONObject();
-
-            for (int i = 0; i < totalColumn; i++) {
-                if (cursor.getColumnName(i) != null) {
-                    try {
-                        if (cursor.getString(i) != null) {
-                            Log.d("TAG_NAME", cursor.getString(i));
-                            rowObject.put(cursor.getColumnName(i), cursor.getString(i));
-                        } else {
-                            rowObject.put(cursor.getColumnName(i), "");
+                for (int i = 0; i < totalColumn; i++) {
+                    if (cursor.getColumnName(i) != null) {
+                        try {
+                            if (cursor.getString(i) != null) {
+                                Log.d("TAG_NAME", cursor.getString(i));
+                                rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                            } else {
+                                rowObject.put(cursor.getColumnName(i), "");
+                            }
+                        } catch (Exception e) {
+                            Log.d("TAG_NAME", e.getMessage());
                         }
-                    } catch (Exception e) {
-                        Log.d("TAG_NAME", e.getMessage());
-                    }
 
+                    }
                 }
+                resultSet.put(rowObject);
+                cursor.moveToNext();
             }
-            resultSet.put(rowObject);
-            cursor.moveToNext();
+            cursor.close();
+            db1.close();
+            Log.d("TAG_NAME", resultSet.toString());
+            return resultSet;
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
         }
-        cursor.close();
-        db1.close();
-        Log.d("TAG_NAME", resultSet.toString());
-        return resultSet;
     }
 
 
@@ -789,7 +848,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(PHONE_NUMBER, phone_no);
 
             //delete all previous records if there any in doctor info table.
-          //  db.delete(TABLE_DOCTORINFO, DOCTOR_ID + " = ? " + " AND " + DOCTOR_LOGIN_ID + " = ? ", new String[]{doc_id, doctor_login_id, DOCTOR_MEMBERSHIP_ID});
+            //  db.delete(TABLE_DOCTORINFO, DOCTOR_ID + " = ? " + " AND " + DOCTOR_LOGIN_ID + " = ? ", new String[]{doc_id, doctor_login_id, DOCTOR_MEMBERSHIP_ID});
             db.delete(TABLE_DOCTORINFO, DOCTOR_LOGIN_ID + " = ? ", new String[]{doctor_login_id});
 
             /// Inserting Row
@@ -857,6 +916,30 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d("addedailemnt", "New ailment inserted into sqlite: " + id);
 
 
+    }
+
+    //update the flag once data send to server successfully
+    public void FlagupdatePassword(String password) {
+        long id = 0;
+        SQLiteDatabase db = null;
+        try {
+            db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+
+            values.put(KEY_PASSWORD, password); // Name
+
+            // Inserting Row
+            id = db.update(TABLE_USER, values,null, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close(); // Closing database connection
+            }
+        }
+
+        Log.d("update", "user password changed: " + id);
     }
 
 }
