@@ -74,6 +74,8 @@
         </activity>
         <activity android:name=".activity.RegistrationActivityNew" >
         </activity>
+        <activity android:name=".activity.ShowPrescriptionImageActivity" >
+        </activity>
     </application>
 
 </manifest>

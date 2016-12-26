@@ -532,10 +532,8 @@
                         android:id="@+id/input_weight"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
-                        android:layout_marginRight="3dp"
                         android:layout_weight="0.4"
                         android:background="@drawable/rectangle_corner"
-                        android:drawableRight="@drawable/kgs"
                         android:fontFamily="sans-serif"
                         android:hint="Weight"
                         android:inputType="number"
@@ -548,16 +546,28 @@
                         android:textColor="@color/black"
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textSize="14sp"/>
-
+                    <EditText
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:background="@color/light_grey"
+                        android:hint="Kgs"
+                        android:gravity="center"
+                        android:focusableInTouchMode="false"
+                        android:paddingBottom="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:layout_marginRight="3dp"/>
 
                     <EditText
                         android:id="@+id/input_pulse"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
-                        android:layout_marginRight="3dp"
                         android:layout_weight="0.4"
                         android:background="@drawable/rectangle_corner"
-                        android:drawableRight="@drawable/beats_min"
                         android:hint="pulse"
                         android:inputType="number"
                         android:maxLength="2"
@@ -568,6 +578,20 @@
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textSize="14sp"
                         android:textColor="@color/black" />
+                    <EditText
+                        android:layout_width="70dp"
+                        android:layout_height="50dp"
+                        android:background="@color/light_grey"
+                        android:hint="Beats/Min"
+                        android:focusableInTouchMode="false"
+                        android:paddingBottom="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:layout_marginRight="3dp"/>
 
 
                     <EditText
@@ -576,7 +600,6 @@
                         android:layout_height="50dp"
                         android:layout_weight="0.4"
                         android:background="@drawable/rectangle_corner"
-                        android:drawableRight="@drawable/slas"
                         android:hint="High B.P"
                         android:inputType="number"
                         android:maxLength="3"
@@ -587,7 +610,21 @@
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textSize="14sp"
                         android:textColor="@color/black" />
-
+                    <EditText
+                        android:layout_width="40dp"
+                        android:layout_height="50dp"
+                        android:background="@color/light_grey"
+                        android:hint="/"
+                        android:gravity="center"
+                        android:focusableInTouchMode="false"
+                        android:paddingBottom="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="15sp"
+                        android:textColor="@color/black"
+                        android:layout_marginRight="3dp"/>
 
                     <EditText
                         android:id="@+id/lowBp"
@@ -595,7 +632,6 @@
                         android:layout_height="50dp"
                         android:layout_weight="0.4"
                         android:background="@drawable/rectangle_corner"
-                        android:drawableRight="@drawable/mmhg"
                         android:hint="Low B.P"
                         android:inputType="number"
                         android:maxLength="3"
@@ -606,7 +642,20 @@
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textSize="14sp"
                         android:textColor="@color/black" />
-
+                    <EditText
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:background="@color/light_grey"
+                        android:hint="MmHg"
+                        android:focusableInTouchMode="false"
+                        android:paddingBottom="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="15sp"
+                        android:textColor="@color/black"
+                        android:layout_marginRight="3dp"/>
                 </LinearLayout>
 
 
@@ -622,10 +671,8 @@
                         android:id="@+id/input_temp"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
-                        android:layout_marginRight="5dp"
                         android:layout_weight="0.4"
                         android:background="@drawable/rectangle_corner"
-                        android:drawableRight="@drawable/zerooc"
                         android:hint="Temp"
                         android:maxLength="3"
                         android:inputType="number"
@@ -637,7 +684,22 @@
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textSize="14sp"
                         android:textColor="@color/black" />
-
+                    <EditText
+                        android:layout_width="40dp"
+                        android:layout_height="50dp"
+                        android:background="@color/light_grey"
+                        android:hint="&#xb0;F"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:focusableInTouchMode="false"
+                        android:paddingBottom="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="15sp"
+                        android:textColor="@color/black"
+                        android:layout_marginRight="3dp"/>
 
                     <EditText
                         android:id="@+id/input_sugar"
@@ -645,7 +707,6 @@
                         android:layout_height="50dp"
                         android:layout_weight="0.4"
                         android:background="@drawable/rectangle_corner"
-                        android:drawableRight="@drawable/mg_dl"
                         android:hint="Sugar"
                         android:inputType="number"
                         android:maxLength="3"
@@ -656,7 +717,21 @@
                         android:textAppearance="?android:attr/textAppearanceLarge"
                         android:textSize="14sp"
                         android:textColor="@color/black" />
-
+                    <EditText
+                        android:layout_width="60dp"
+                        android:layout_height="50dp"
+                        android:background="@color/light_grey"
+                        android:hint="Mg/dl"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:focusableInTouchMode="false"
+                        android:paddingBottom="5dp"
+                        android:paddingRight="1dp"
+                        android:paddingLeft="3dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textSize="14sp"
+                        android:textColor="@color/black" />
                 </LinearLayout>
 
             </LinearLayout>

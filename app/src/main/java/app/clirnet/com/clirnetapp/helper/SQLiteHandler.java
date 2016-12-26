@@ -169,7 +169,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String DATABASE_ALTER_TABLE_USER = "ALTER TABLE user"
             + " ADD COLUMN phonenumber text;";
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT = "ALTER TABLE patient"
+    private static final String DATABASE_ALTER_TABLE_PATIENT_ADDSTATE = "ALTER TABLE patient"
             + " ADD COLUMN patient_state text;";
 
     private static final String DATABASE_ALTER_TABLE_PATIENT_PHONE_TYPE = "ALTER TABLE patient"
@@ -201,12 +201,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
+        //addDummyColumn();
         if (oldVersion < 2) {
             db.execSQL(DATABASE_ALTER_TABLE_USER);
         }
         if (oldVersion < 3) {
 
-            db.execSQL(DATABASE_ALTER_TABLE_PATIENT);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_ADDSTATE);
 
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_WEIGHT);
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_PULSE);
@@ -221,6 +222,17 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_PHONE_TYPE);
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_ISD_CODE);
 
+        }
+    }
+
+    private void addDummyColumn() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor=db.rawQuery("SELECT * FROM user",null);
+        int deleteStateColumnIndex=cursor.getColumnIndex("test");
+        Log.e("deleteStateColumnIndex"," "+deleteStateColumnIndex);
+        if(deleteStateColumnIndex <0){
+            db.execSQL("ALTER TABLE user ADD COLUMN test text;");
+            Log.e("deleteStateColumnIndex", "column cretaed " );
         }
     }
 

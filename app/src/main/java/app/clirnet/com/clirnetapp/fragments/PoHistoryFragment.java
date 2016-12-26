@@ -15,10 +15,13 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -30,17 +33,20 @@ import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.ItemClickListener;
+import app.clirnet.com.clirnetapp.Utility.MultiSpinner;
+import app.clirnet.com.clirnetapp.Utility.MultiSpinner2;
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
 import app.clirnet.com.clirnetapp.activity.PrivacyPolicy;
 import app.clirnet.com.clirnetapp.activity.ShowPersonalDetailsActivity;
 import app.clirnet.com.clirnetapp.activity.TermsCondition;
 import app.clirnet.com.clirnetapp.adapters.MultipleFilterPatientAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
-public class PoHistoryFragment extends Fragment {
+public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpinnerListener, MultiSpinner2.MultiSpinnerListener {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
@@ -70,7 +76,23 @@ public class PoHistoryFragment extends Fragment {
     private View rootview;
     private AppController appController;
     private Button submit;
+    private MultiSpinner genderSpinner;
 
+    private int[] selectedItems = {0, 0, 0, 0};
+    private int[] selectedItems2 = {0, 0, 0, 0, 0, 0, 0, 0};
+    private ArrayList genderList;
+    private String strMale;
+    private String strFemale;
+    private String strOther;
+    private String strNa;
+    private ArrayList selectedListGender;
+    private ArrayList selectedAgeList;
+    private MultiSpinner2 ageGapSpinner;
+    private ArrayList ageList;
+    private MultiAutoCompleteTextView ailments;
+    private DatabaseClass databaseClass;
+    private ArrayList<String> mAilmemtArrayList;
+    private ArrayList selectedAilmentList;
 
     public PoHistoryFragment() {
         this.setHasOptionsMenu(true);
@@ -106,11 +128,13 @@ public class PoHistoryFragment extends Fragment {
         lastName = (EditText) rootview.findViewById(R.id.lastname);
         recyclerView = (RecyclerView) rootview.findViewById(R.id.recycler_view);
 
-
+        ailments = (MultiAutoCompleteTextView) rootview.findViewById(R.id.ailments);
         TextView currdate = (TextView) rootview.findViewById(R.id.sysdate);
         backChangingImages = (ImageView) rootview.findViewById(R.id.backChangingImages);
         norecordtv = (LinearLayout) rootview.findViewById(R.id.norecordtv);
 
+        genderSpinner = (MultiSpinner) rootview.findViewById(R.id.gender);
+        ageGapSpinner = (MultiSpinner2) rootview.findViewById(R.id.ageGap);
 
         phone_no = (EditText) rootview.findViewById(R.id.mobile_no);
         age = (TextView) rootview.findViewById(R.id.age);
@@ -150,10 +174,14 @@ public class PoHistoryFragment extends Fragment {
 
 
         setupAnimation();
+
         try {
 
             sqlController = new SQLController(getContext().getApplicationContext());
             sqlController.open();
+            if (databaseClass == null) {
+                databaseClass = new DatabaseClass(getContext());
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -162,7 +190,7 @@ public class PoHistoryFragment extends Fragment {
 
 
         patientData.clear(); //This method will clear all previous data from  Array list  24-8-2016
-
+        setAilmentData();
 
         submit = (Button) rootview.findViewById(R.id.submit);
 
@@ -196,27 +224,40 @@ public class PoHistoryFragment extends Fragment {
                 strage = age.getText().toString().trim();
                 int selectedId = radioSexGroup.getCheckedRadioButtonId();
                 radioSexButton = (RadioButton) rootview.findViewById(selectedId);
+                String strAilment = ailments.getText().toString().trim();
+                //String strM,strF,strOthr,strNa;
+
+                //remove comma occurance from string
+                strAilment = appController.removeCommaOccurance(strAilment);
+                //Remove spaces between text if more than 2 white spaces found 12-12-2016
+                strAilment = strAilment.replaceAll("\\s+", " ");
 
                 //Toast.makeText(getContext(), " Gender" + radioSexButton.getText().toString(), Toast.LENGTH_SHORT).show();
                 sex = radioSexButton.getText().toString();
                 //This method will clear all previous data from  Array list  24-8-2016
 
+                String delimiter = ",";
+                String[] temp = strAilment.split(delimiter);
+                selectedAilmentList= new ArrayList();
+             /* print substrings */
+                for (String aTemp : temp) {
+                    //System.out.println(temp[i]);
+                    //  Log.e("log", aTemp);
+                    selectedAilmentList.add(aTemp);
+                }
+                int sizegender = selectedListGender.size();
+                int sizeage = selectedAgeList.size();
+                int sizeailment = selectedAilmentList.size();
+                Log.e("sizegender", "" + sizegender + " " + sizeage +" =="+sizeailment);
                 try {
-                    patientData = (sqlController.getFilterDatanew(strfname, strlname, sex, strpno, strage));
+
+                    patientData = (sqlController.getFilterDatanew(strfname, strlname, sex, strpno, strage, selectedListGender, selectedAgeList,selectedAilmentList));
+                    //    patientData = sqlController.getFilterDatanew(strfname, strlname, selectedListGender.get(i).toString(), strpno, strage);
 
 
+                    // selectedListGender.clear();
                     if (patientData.size() > 0) {
                         removeDuplicate(patientData);
-                        /*for (int i = 0; i < patientData.size(); i++) {
-                            String mn = patientData.get(i).getFirstName();
-                            String ln = patientData.get(i).getLastName();
-                            String mobNo = patientData.get(i).getMobileNumber();
-                            String age = patientData.get(i).getAge();
-
-
-                            patientData1 = filter(patientData, mn, ln, mobNo, age);
-
-                        }*/
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -268,7 +309,96 @@ public class PoHistoryFragment extends Fragment {
             }
 
         }));
+
+
+        setUpSpinner();
         return rootview;
+    }
+
+    private void setAilmentData() {
+        try {
+
+            databaseClass.openDataBase();
+            mAilmemtArrayList = databaseClass.getAilmentsListNew();
+
+            if (mAilmemtArrayList.size() > 0) {
+
+                //this code is for setting list to auto complete text view  8/6/16
+
+                ArrayAdapter<String> adp = new ArrayAdapter<>(getContext(),
+                        android.R.layout.simple_dropdown_item_1line, mAilmemtArrayList);
+
+                adp.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                ailments.setThreshold(1);
+
+                ailments.setAdapter(adp);
+                ailments.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e);
+        } finally {
+            if (databaseClass != null) {
+                databaseClass.close();
+                databaseClass = null;
+            }
+        }
+    }
+
+    private void setUpSpinner() {
+
+        selectedListGender = new ArrayList();
+        selectedAgeList = new ArrayList();
+
+        genderList = new ArrayList();
+        genderList.add("Male");
+        genderList.add("Female");
+        genderList.add("Other");
+        genderList.add("NA");
+        genderSpinner.setItems(genderList, "Select Gender", this);
+
+        genderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int position, long arg3) {
+                // TODO Auto-generated method stub
+                //  selectColoursButton.setText(al.get(position).toString());
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+        ageList = new ArrayList();
+        ageList.add("0-5");
+        ageList.add("5-15");
+        ageList.add("15-25");
+        ageList.add("25-35");
+        ageList.add("35-45");
+        ageList.add("45-55");
+        ageList.add("55-65");
+        ageList.add("65-Above");
+        ageGapSpinner.setItems(ageList, "Select", this);
+
+        ageGapSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> arg0, View arg1,
+                                       int position, long arg3) {
+                // TODO Auto-generated method stub
+                Log.e("", "" + (ageList.get(position).toString()));
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+                // TODO Auto-generated method stub
+
+            }
+        });
     }
 
     private void recyclerViewOnClick(int position) {
@@ -342,6 +472,47 @@ public class PoHistoryFragment extends Fragment {
         super.onAttach(context);
     }
 
+    @Override
+    public void onItemsSelected(boolean[] selected) {
+        selectedListGender.clear();
+
+        for (int i = 0; i < selected.length; i++) {
+            if (selected[i]) {
+                selectedItems[i] = 1;
+                System.out.println("______________________" + genderList.get(i));
+                String selGender = genderList.get(i).toString();
+
+                selectedListGender.add(selGender);
+
+            } else selectedItems[i] = 0;
+        }
+        for (int i = 0; i < selectedItems.length; i++) {
+            // if(selectedItems[i]==1)
+            // System.out.println(al.get(i));
+            //  selectedListGender.add(genderList.get(i).toString());
+        }
+    }
+
+    @Override
+    public void onItemsSelected1(boolean[] selected) {
+        selectedAgeList.clear();
+        for (int i = 0; i < selected.length; i++) {
+            if (selected[i]) {
+                selectedItems2[i] = 1;
+                System.out.println("______________________2" + ageList.get(i));
+
+                String ageString = ageList.get(i).toString();
+                selectedAgeList.add(ageString);
+
+            } else selectedItems2[i] = 0;
+        }
+        for (int i = 0; i < selectedItems2.length; i++) {
+            // if(selectedItems[i]==1)
+            // System.out.println(al.get(i));
+            //  selectedListGender.add(genderList.get(i).toString());
+        }
+    }
+
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
@@ -392,6 +563,9 @@ public class PoHistoryFragment extends Fragment {
         if (appController != null) {
             appController = null;
         }
+        if (databaseClass != null) {
+            databaseClass = null;
+        }
 
 
         patientData.clear();
@@ -411,6 +585,12 @@ public class PoHistoryFragment extends Fragment {
         radioSexGroup = null;
         radioSexButton = null;
         submit = null;
+        selectedListGender = null;
+        selectedAgeList = null;
+        ageGapSpinner = null;
+        ageList = null;
+        ailments = null;
+        mAilmemtArrayList = null;
         Log.e("onDetach", "onDetach Home Fragment");
     }
 

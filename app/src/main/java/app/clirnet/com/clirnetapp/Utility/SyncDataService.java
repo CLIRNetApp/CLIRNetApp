@@ -36,7 +36,6 @@ import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
-import app.clirnet.com.clirnetapp.logfilesending.LogFileAsyncTask;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
@@ -159,7 +158,7 @@ public class SyncDataService extends Service {
 
                 sendDataToServer(patientInfoArayString, patientVisitHistorArayString);
 
-                new LogFileAsyncTask(mUserName, mPassword); //send log file to server
+               // new LogFileAsyncTask(mUserName, mPassword); //send log file to server
 
 
             } else {

@@ -3,6 +3,7 @@ package app.clirnet.com.clirnetapp.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
@@ -19,6 +20,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.activity.ShowPrescriptionImageActivity;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
@@ -100,8 +102,11 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
                 holder.imgText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(mContext,"PATH IS: "+imgPath.trim(),Toast.LENGTH_LONG).show();
-                        showDialog(imgPath.trim());
+                      //  Toast.makeText(mContext,"PATH IS: "+imgPath.trim(),Toast.LENGTH_LONG).show();
+                      //  showDialog(imgPath.trim());
+                        Intent i = new Intent(mContext, ShowPrescriptionImageActivity.class);
+                        i.putExtra("PRESCRIPTIONIMAGE", imgPath);
+                        mContext.startActivity(i);
                     }
                 });
 

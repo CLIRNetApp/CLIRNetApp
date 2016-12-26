@@ -1,17 +1,18 @@
 package app.clirnet.com.clirnetapp.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.activity.ShowPrescriptionImageActivity;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
@@ -96,9 +97,13 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
                 holder.imgText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Toast.makeText(mContext, "PATH IS: " + imgPath.trim(), Toast.LENGTH_LONG).show();
+                       // Toast.makeText(mContext, "PATH IS: " + imgPath.trim(), Toast.LENGTH_LONG).show();
+                        Intent i = new Intent(mContext, ShowPrescriptionImageActivity.class);
+                        i.putExtra("PRESCRIPTIONIMAGE", imgPath);
+                        mContext.startActivity(i);
                     }
                 });
+
 
             }else{
                 holder.imgText.setText("No Prescription Attached");

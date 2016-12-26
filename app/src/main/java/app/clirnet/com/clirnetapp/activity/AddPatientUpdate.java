@@ -375,22 +375,22 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         }
 
-        if (strPrescriptionImage != null && !TextUtils.isEmpty(strPrescriptionImage)) {
+       /* if (strPrescriptionImage != null && !TextUtils.isEmpty(strPrescriptionImage)) {
             if (strPrescriptionImage.length() > 0) {
                 // Bitmap bitmap = BitmapFactory.decodeFile(strPatientPhoto);
 
                 setUpGlide(strPrescriptionImage, imageViewprescription);
-               /* Glide.with(AddPatientUpdate.this)
+               *//* Glide.with(AddPatientUpdate.this)
                         .load(strPrescriptionImage)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .skipMemoryCache(true)
                         .error(R.drawable.main_profile)
-                        .into(imageViewprescription);*/
+                        .into(imageViewprescription);*//*
 
                 //  patientImage.setImageBitmap(bitmap);
             }
-        }
+        }*/
 
         addPatientprescriptionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -889,7 +889,11 @@ public class AddPatientUpdate extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     // successfully captured the image
                     // display it in image view
-                    previewCapturedImage();
+
+                    //to_do check this for null poinetr exception
+
+                    previewCapturedImage(); //
+
                 } else if (resultCode == Activity.RESULT_CANCELED) {
                     // user cancelled Image capture
                    /* new RegistrationActivity().customToast("User cancelled image capture");*/

@@ -8,7 +8,7 @@ public class AppConfig {
 
 
 	//Patient all records
-	// public static final String URL_PATIENT_RECORDS = "http://doctor.clirnet.com/doctor/webapi/initialpatientdata";
+	 //public static final String URL_PATIENT_RECORDS = "http://doctor.clirnet.com/doctor/webapi/initialpatientdata";
 	public static final String URL_PATIENT_RECORDS = "http://192.168.1.53/clirnetapplication/public/doctor/webapi/initialpatientdata";
 
 	//public static final String URL_SYCHRONISED_TOSERVER = "http://doctor.clirnet.com/doctor/webapi/syncpatientdata";

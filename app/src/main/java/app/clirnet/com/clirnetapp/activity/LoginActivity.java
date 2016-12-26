@@ -451,7 +451,7 @@ public class LoginActivity extends Activity implements View.OnTouchListener {
 
                 String md5oldPassword = MD5.getMD5(oldPass);
                 String md5newPassword = MD5.getMD5(newPass);
-                Log.e("oldand new",""+md5oldPassword +" new "+md5newPassword);
+              //  Log.e("oldand new",""+md5oldPassword +" new "+md5newPassword);
                 new UpdatePassworsAsynTask(LoginActivity.this,username,doctor_membership_number,md5oldPassword,md5newPassword);
                 dialog.dismiss();
             }
@@ -561,7 +561,7 @@ public class LoginActivity extends Activity implements View.OnTouchListener {
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         username = pref.getString(PREF_USERNAME, null);
         String password = pref.getString(PREF_PASSWORD, null);
-        Log.e("password", "" + username + "" + password);
+       // Log.e("password", "" + username + "" + password);
 
         if (username != null || password != null) {
             //directly show logout form
