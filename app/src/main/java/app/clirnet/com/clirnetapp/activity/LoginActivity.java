@@ -4,6 +4,7 @@ package app.clirnet.com.clirnetapp.activity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -11,6 +12,7 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -185,7 +187,6 @@ public class LoginActivity extends Activity implements View.OnTouchListener {
             appController.appendLog(appController.getDateTime() + "" + "/" + "Home" + ioe);
 
             throw new Error("Unable to create database");
-
         }
 
         try {
@@ -207,6 +208,7 @@ public class LoginActivity extends Activity implements View.OnTouchListener {
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
+                    hideKeyBoard();
                     btnLogin.setBackgroundColor(getResources().getColor(R.color.white));
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -235,12 +237,7 @@ public class LoginActivity extends Activity implements View.OnTouchListener {
                                             //to authenticate user credentials
                                             LoginAuthentication();
 
-                                            //Starting service to send data to server in background after 30 minute  interval
-                                           /* Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
-                                            serviceIntent.putExtra("name", name);
-                                            serviceIntent.putExtra("password", md5EncyptedDataPassword);
-                                            serviceIntent.putExtra("apikey", "PFFt0436yjfn0945DevOp0958732Cons3214556");
-                                            startService(serviceIntent);*/
+
 
                                         }
 
@@ -260,6 +257,15 @@ public class LoginActivity extends Activity implements View.OnTouchListener {
         });
 
 
+    }
+//it will hide the keyboard on button pressed
+    private void hideKeyBoard() {
+
+        InputMethodManager inputManager = (InputMethodManager)
+                getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     private void convertDate() {

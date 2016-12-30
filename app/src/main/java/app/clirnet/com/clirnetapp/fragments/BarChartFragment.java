@@ -67,10 +67,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
         // Required empty public constructor
     }
 
-    public BarChartFragment(String fromDate, String toDate) {
-        this.mFromDate = fromDate;
-        this.mToDate = toDate;
-    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -84,6 +81,9 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_new_bar_chart, container, false);
         chart = (BarChart) view.findViewById(R.id.chart);
+
+          mFromDate = getArguments().getString("FROMDATE");
+          mToDate = getArguments().getString("TODATE");
 
         //set the data to chart
         getDataSet();

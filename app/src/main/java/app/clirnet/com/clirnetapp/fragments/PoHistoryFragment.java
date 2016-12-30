@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,7 +42,9 @@ import app.clirnet.com.clirnetapp.activity.PrivacyPolicy;
 import app.clirnet.com.clirnetapp.activity.ShowPersonalDetailsActivity;
 import app.clirnet.com.clirnetapp.activity.TermsCondition;
 import app.clirnet.com.clirnetapp.adapters.MultipleFilterPatientAdapter;
+import app.clirnet.com.clirnetapp.adapters.PoHistoryAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
@@ -68,6 +72,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private SQLController sqlController;
 
     private MultipleFilterPatientAdapter adapter;
+    private PoHistoryAdapter poHistoryAdapter;
     private RecyclerView recyclerView;
     private ImageView backChangingImages;
     private ArrayList<RegistrationModel> patientData = new ArrayList<>();
@@ -78,13 +83,13 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private Button submit;
     private MultiSpinner genderSpinner;
 
+    private int ival = 1;
+    private int loadLimit = 25;
+
     private int[] selectedItems = {0, 0, 0, 0};
     private int[] selectedItems2 = {0, 0, 0, 0, 0, 0, 0, 0};
     private ArrayList genderList;
-    private String strMale;
-    private String strFemale;
-    private String strOther;
-    private String strNa;
+
     private ArrayList selectedListGender;
     private ArrayList selectedAgeList;
     private MultiSpinner2 ageGapSpinner;
@@ -93,10 +98,18 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private DatabaseClass databaseClass;
     private ArrayList<String> mAilmemtArrayList;
     private ArrayList selectedAilmentList;
+    private LinearLayoutManager mLayoutManager;
+
+    private int PAGE_SIZE = 10;
+
+    private boolean isLastPage = false;
+    private boolean isLoading = false;
+
+    private int queryCount;
+
 
     public PoHistoryFragment() {
         this.setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -128,6 +141,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         lastName = (EditText) rootview.findViewById(R.id.lastname);
         recyclerView = (RecyclerView) rootview.findViewById(R.id.recycler_view);
 
+        mLayoutManager = new LinearLayoutManager(getContext().getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+
         ailments = (MultiAutoCompleteTextView) rootview.findViewById(R.id.ailments);
         TextView currdate = (TextView) rootview.findViewById(R.id.sysdate);
         backChangingImages = (ImageView) rootview.findViewById(R.id.backChangingImages);
@@ -136,9 +152,10 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         genderSpinner = (MultiSpinner) rootview.findViewById(R.id.gender);
         ageGapSpinner = (MultiSpinner2) rootview.findViewById(R.id.ageGap);
 
+
+
         phone_no = (EditText) rootview.findViewById(R.id.mobile_no);
-        age = (TextView) rootview.findViewById(R.id.age);
-        radioSexGroup = (RadioGroup) rootview.findViewById(R.id.radioGender);
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy");
         Date todayDate = new Date();
         String dd = sdf.format(todayDate);
@@ -146,10 +163,10 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         currdate.setText("Today's Date " + dd);
 
-        TextView privacyPolicy = (TextView) rootview.findViewById(R.id.privacyPolicy);
+        final TextView privacyPolicy = (TextView) rootview.findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) rootview.findViewById(R.id.termsandCondition);
 
-//open privacy poilicy page
+                  //open privacy poilicy page
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -168,9 +185,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             }
         });
-        appController = new AppController();
 
-        //appController. setValuesSharedPrefrence("VALUE", "one");
+
+        appController = new AppController();
 
 
         setupAnimation();
@@ -191,6 +208,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         patientData.clear(); //This method will clear all previous data from  Array list  24-8-2016
         setAilmentData();
+
 
         submit = (Button) rootview.findViewById(R.id.submit);
 
@@ -221,10 +239,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 strfname = firstName.getText().toString().trim();
                 strlname = lastName.getText().toString().trim();
                 strpno = phone_no.getText().toString().trim();
-                strage = age.getText().toString().trim();
-                int selectedId = radioSexGroup.getCheckedRadioButtonId();
-                radioSexButton = (RadioButton) rootview.findViewById(selectedId);
                 String strAilment = ailments.getText().toString().trim();
+
                 //String strM,strF,strOthr,strNa;
 
                 //remove comma occurance from string
@@ -232,33 +248,42 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 //Remove spaces between text if more than 2 white spaces found 12-12-2016
                 strAilment = strAilment.replaceAll("\\s+", " ");
 
-                //Toast.makeText(getContext(), " Gender" + radioSexButton.getText().toString(), Toast.LENGTH_SHORT).show();
-                sex = radioSexButton.getText().toString();
+
                 //This method will clear all previous data from  Array list  24-8-2016
 
                 String delimiter = ",";
                 String[] temp = strAilment.split(delimiter);
-                selectedAilmentList= new ArrayList();
+                selectedAilmentList = new ArrayList();
              /* print substrings */
                 for (String aTemp : temp) {
-                    //System.out.println(temp[i]);
-                    //  Log.e("log", aTemp);
+                  
                     selectedAilmentList.add(aTemp);
                 }
                 int sizegender = selectedListGender.size();
                 int sizeage = selectedAgeList.size();
                 int sizeailment = selectedAilmentList.size();
-                Log.e("sizegender", "" + sizegender + " " + sizeage +" =="+sizeailment);
+                Log.e("sizegender", "" + sizegender + " " + sizeage + " ==" + sizeailment);
                 try {
 
-                    patientData = (sqlController.getFilterDatanew(strfname, strlname, sex, strpno, strage, selectedListGender, selectedAgeList,selectedAilmentList));
+                    ival = 1;
+                    loadLimit=25;
+                    patientData = (sqlController.getFilterDatanew(strfname, strlname, sex, strpno, strage, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit));
                     //    patientData = sqlController.getFilterDatanew(strfname, strlname, selectedListGender.get(i).toString(), strpno, strage);
+                    queryCount=sqlController.getCountResult();
 
 
-                    // selectedListGender.clear();
+                    int beforeFilterCount=patientData.size();
+
                     if (patientData.size() > 0) {
                         removeDuplicate(patientData);
                     }
+
+                    int afterFilterCount=patientData.size();
+
+                    int totalFilterDataCount=beforeFilterCount-afterFilterCount;
+
+                    queryCount=queryCount - totalFilterDataCount;
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Fragment" + e);
@@ -279,11 +304,17 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                         //  recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                         recyclerView.setVisibility(View.VISIBLE);
                         norecordtv.setVisibility(View.GONE);
-                        adapter = new MultipleFilterPatientAdapter(patientData);
-                        recyclerView.setAdapter(adapter);
+
+                        poHistoryAdapter=new PoHistoryAdapter(patientData,queryCount);
+                       // poHistoryAdapter.addAll(patientData);
+                       // adapter = new MultipleFilterPatientAdapter(patientData);
+                        //initListener();
+                        recyclerView.setHasFixedSize(true);
+                        recyclerView.setAdapter(poHistoryAdapter);
+                        recyclerView.addOnScrollListener(recyclerViewOnScrollListener);
+
 
                     } else {
-
                         recyclerView.setVisibility(View.INVISIBLE);
                         norecordtv.setVisibility(View.VISIBLE);
                     }
@@ -295,6 +326,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             }
         });
+
+
         recyclerView.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext(), recyclerView, new ItemClickListener() {
 
             @Override
@@ -310,10 +343,10 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         }));
 
-
         setUpSpinner();
         return rootview;
     }
+
 
     private void setAilmentData() {
         try {
@@ -381,7 +414,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         ageList.add("45-55");
         ageList.add("55-65");
         ageList.add("65-Above");
-        ageGapSpinner.setItems(ageList, "Select", this);
+        ageGapSpinner.setItems(ageList, "Select Age gap", this);
 
         ageGapSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
@@ -407,9 +440,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
         Bundle bundle = new Bundle();
-//Add your data from getFactualResults method to bundle
-        bundle.putString("VENUE_NAME", "Umredkar");
-//Add the bundle to the intent
+        //Add your data from getFactualResults method to bundle
+
+        //Add the bundle to the intent
         i.putExtras(bundle);
         i.putExtra("PATIENTPHOTO", book.getPhoto());
         i.putExtra("ID", book.getPat_id());
@@ -479,7 +512,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         for (int i = 0; i < selected.length; i++) {
             if (selected[i]) {
                 selectedItems[i] = 1;
-                System.out.println("______________________" + genderList.get(i));
+                // System.out.println("______________________" + genderList.get(i));
                 String selGender = genderList.get(i).toString();
 
                 selectedListGender.add(selGender);
@@ -594,6 +627,93 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         Log.e("onDetach", "onDetach Home Fragment");
     }
 
+
+    private static void removeDuplicate(final List<RegistrationModel> al) {
+
+        for (int i = 0; i < al.size() - 1; i++) {
+
+            String element = al.get(i).getPat_id();
+            // Log.e("element", "" + element);
+            for (int j = i + 1; j < al.size(); j++) {
+                if (element.equals(al.get(j).getPat_id())) {
+                    // Log.e("element1", "" + al.get(j).getPat_id());
+                    al.remove(j);
+                    j--;
+
+                }
+            }
+        }
+
+        System.out.println(al);
+
+    }
+
+
+    private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mLayoutManager.getChildCount();
+            int totalItemCount = mLayoutManager.getItemCount();
+            int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
+            Log.e("visibleItemCount", "" + visibleItemCount + " totalItemCount  " + totalItemCount + " firstVisibleItemPosition " + firstVisibleItemPosition);
+
+            if (!isLoading && !isLastPage) {
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                        && firstVisibleItemPosition >= 0
+                        && totalItemCount >= PAGE_SIZE) {
+                    isLoading = true;
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadDataForAdapter();
+                        }
+                    }, 1000);
+                }
+            }
+        }
+    };
+
+
+    private void loadDataForAdapter(){
+
+        isLoading = false;
+        ival=ival+25;
+
+        List<RegistrationModel> memberList = new ArrayList<>();
+
+
+        int index = poHistoryAdapter.getItemCount() - 1;
+        int end = index + PAGE_SIZE;
+        Log.e("index", "" + index + " " + end + " size is " + queryCount);
+
+        if (end <= queryCount) {
+            try {
+                memberList= sqlController.getFilterDatanew(strfname, strlname, sex, strpno, strage, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit);
+            } catch (ClirNetAppException e) {
+
+                e.printStackTrace();
+            }
+
+          //  patientData.addAll(memberList);
+           // adapter.notifyDataSetChanged();
+             poHistoryAdapter.addAll(memberList);
+
+            if(end >= queryCount){
+                poHistoryAdapter.setLoading(false);
+
+            }
+        }
+
+    }
+
+
     /*//This method will filter data from our database generated list according to user query by Phone Number 6/8/i Ashish
     private ArrayList<RegistrationModel> filter(List<RegistrationModel> models, String fn, String ln, String mobileno, String agestr) {
 
@@ -622,24 +742,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         return filteredModelList;
     }*/
 
-    private static void removeDuplicate(final List<RegistrationModel> al) {
-        for (int i = 0; i < al.size() - 1; i++) {
-
-            String element = al.get(i).getPat_id();
-            // Log.e("element", "" + element);
-            for (int j = i + 1; j < al.size(); j++) {
-                if (element.equals(al.get(j).getPat_id())) {
-                    // Log.e("element1", "" + al.get(j).getPat_id());
-                    al.remove(j);
-                    j--;
-
-                }
-            }
-        }
-
-        System.out.println(al);
-
-    }
 }
 
 

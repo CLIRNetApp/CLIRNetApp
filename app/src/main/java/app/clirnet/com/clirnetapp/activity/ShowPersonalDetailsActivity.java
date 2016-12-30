@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -170,7 +172,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
         });
 
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+       /* toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // back button pressed
@@ -180,7 +182,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
                 finish();
 
             }
-        });
+        });*/
         if (strPatientPhoto != null && !TextUtils.isEmpty(strPatientPhoto)) {
             if (strPatientPhoto.length() > 0) {
                 setUpGlide(patientImage);
@@ -242,7 +244,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         i.putExtra("GENDER", strgender);
         i.putExtra("FROMWHERE", fromWhere);
         startActivity(i);
-        finish();
+       // finish();
     }
 
     private void setDatatoText() {
@@ -313,7 +315,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     }
 
     //this will prevent user to access back press from tab
-    @Override
+   /* @Override
     public void onBackPressed() {
 
         Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
@@ -321,5 +323,23 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         startActivity(i);
         finish();
 
+    }*/
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if ((keyCode == KeyEvent.KEYCODE_BACK))
+        {
+            finish();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            finish();
+            return true;
+        }
+        return false;
     }
 }

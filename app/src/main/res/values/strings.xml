@@ -152,13 +152,13 @@
     <string name="height">Height</string>
     <string name="pulse">Pulse</string>
     <string name="bp">B.P</string>
-    <string name="symptomsanddignosis">Symptoms and Dignosis</string>
+    <string name="symptomsanddignosis">Symptoms and Diagnosis</string>
     <string name="prescription">Prescription</string>
     <string name="addimage">Add Image</string>
     <string name="visitDate">Visit Date</string>
-    <string name="day">Day</string>
-    <string name="week">Week</string>
-    <string name="month">Mon</string>
+    <string name="day">Day(s)</string>
+    <string name="week">Week(s)</string>
+    <string name="month">Month(s)</string>
     <string name="ailmen">Ailment</string>
     <string name="clinicalnotes">Clinical Notes</string>
     <string name="cancel">Cancel</string>
@@ -172,6 +172,7 @@
     <string name="hint_confirmpassword">Confirm New Password</string>
     <string name="settings_pwd_equal">Password Match</string>
     <string name="settings_pwd_not_equal">Password did not match</string>
+    <string name="type">Type</string>
 
 
 </resources>

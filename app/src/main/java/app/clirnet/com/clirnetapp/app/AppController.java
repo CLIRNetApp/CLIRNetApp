@@ -31,6 +31,7 @@ public class AppController extends Application {
     public static final String PREFS_NAME = "savedViewValue";
 
     private RequestQueue mRequestQueue;
+    Request.Priority priority = Request.Priority.HIGH;
 
 
     private static AppController mInstance;
@@ -78,6 +79,15 @@ public class AppController extends Application {
         if (mRequestQueue != null) {
             mRequestQueue.cancelAll(tag);
         }
+    }
+
+
+    public Request.Priority getPriority() {
+        return priority;
+    }
+
+    public void setPriority(Request.Priority p){
+        priority = p;
     }
 
     public void appendLog(String text) {

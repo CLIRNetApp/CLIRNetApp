@@ -862,7 +862,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             //delete all previous records if there any in doctor info table.
             //  db.delete(TABLE_DOCTORINFO, DOCTOR_ID + " = ? " + " AND " + DOCTOR_LOGIN_ID + " = ? ", new String[]{doc_id, doctor_login_id, DOCTOR_MEMBERSHIP_ID});
             db.delete(TABLE_DOCTORINFO, DOCTOR_LOGIN_ID + " = ? ", new String[]{doctor_login_id});
-
+            db.execSQL("delete from " + TABLE_DOCTORINFO);
             /// Inserting Row
             id = db.insert(TABLE_DOCTORINFO, null, values);
 

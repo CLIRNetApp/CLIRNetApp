@@ -282,7 +282,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
         return  ailmentList;
     }
 
-    public void addLastName(String lastName, int nameid) {
+    public void addLastName1(String lastName, int nameid) {
         SQLiteDatabase db = null;
         long id = 0;
         try {
@@ -323,6 +323,35 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
         int count = cursor.getInt(0);
         cursor.close();
         return count > 0;
+    }
+
+    public void addLastName(String lastName, int nameid) throws ClirNetAppException {
+        SQLiteDatabase db = null;
+        long id = 0;
+        try {
+            db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("last_name", lastName);
+            // values.put("id", nameid);
+
+            // int rows = db.update("last_name_master", values, "last_name" + "= ?", new String[]{lastName});
+            //id =db.insertWithOnConflict("table_LastNames", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            id = db.insert("last_name_master", null, values);
+
+
+        }   catch (Exception e) {
+            e.printStackTrace();
+            throw new ClirNetAppException("Something went wrong while storing last name id db");
+
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+       // Log.d("addedailemnt", "New last_names inserted into sqlite: " + id);
+
     }
 }
 

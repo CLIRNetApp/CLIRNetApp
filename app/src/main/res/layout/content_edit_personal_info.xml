@@ -397,6 +397,17 @@
                     android:paddingBottom="3dp"
                     android:paddingTop="3dp">
 
+                    <TextView
+                        android:layout_width="70dp"
+                        android:layout_height="45dp"
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="5dp"
+                        android:gravity="center"
+                        android:text="@string/type"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/grey"
+                        android:textSize="14sp" />
+
                     <Spinner
                         android:id="@+id/phType"
                         android:layout_width="0dp"
@@ -427,7 +438,7 @@
                         android:gravity="center"
                         android:text="@string/number"
                         android:textColor="@color/grey"
-                        android:textSize="18sp" />
+                        android:textSize="14sp" />
 
                     <TextView
                         android:layout_width="50dp"

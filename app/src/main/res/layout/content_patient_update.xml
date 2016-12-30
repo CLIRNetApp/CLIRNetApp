@@ -93,7 +93,7 @@
                     card_view:cardCornerRadius="4dp">
 
 
-                    <LinearLayout
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
@@ -133,7 +133,7 @@
                                 android:layout_weight="0.6"
                                 android:gravity="center"
                                 android:orientation="horizontal"
-                                android:paddingTop="50dp">
+                                android:paddingTop="20dp">
 
                                 <TextView
                                     android:layout_width="0dp"
@@ -157,26 +157,37 @@
                                     android:textSize="20sp"
                                     android:textStyle="normal|bold" />
 
+                                <ImageView
+
+                                    android:id="@+id/editPersonalInfo"
+                                    android:layout_width="0dp"
+                                    android:layout_height="wrap_content"
+                                    android:layout_weight="0.1"
+                                    android:contentDescription="@string/desc"
+                                    android:src="@drawable/editprofile" />
+
+
                             </LinearLayout>
 
-                            <ImageView
-
-                                android:id="@+id/editPersonalInfo"
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:layout_weight="0.1"
-                                android:contentDescription="@string/desc"
-                                android:src="@drawable/editprofile" />
 
 
                         </LinearLayout>
 
+
+
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight=".1"
+                            android:visibility="invisible" />
+
                         <LinearLayout
 
+                            android:paddingTop="90dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_below="@+id/nameLayout"
-                            android:layout_marginLeft="130dp"
+                            android:layout_marginLeft="150dp"
                             android:baselineAligned="false"
                             android:orientation="horizontal"
                             android:weightSum="4">
@@ -300,16 +311,7 @@
                             </LinearLayout>
 
                         </LinearLayout>
-
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".1"
-                            android:visibility="invisible" />
-
-
-                    </LinearLayout>
+                    </RelativeLayout>
                 </android.support.v7.widget.CardView>
                 <TextView
                     android:layout_width="match_parent"
@@ -387,14 +389,6 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.2"
-                    android:paddingLeft="10dp"
-                    android:text="Date :"
-                    android:textSize="14dp" />
-
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
 
@@ -408,7 +402,7 @@
                     android:focusableInTouchMode="true"
                     android:fontFamily="sans-serif"
                     android:gravity="center"
-                    android:hint="Date"
+                    android:hint="Select Date"
                     android:inputType="text"
                     android:maxLines="1"
                     android:padding="3dp"
@@ -428,7 +422,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:fontFamily="sans-serif"
-                    android:hint="#"
+                    android:hint="Enter number of"
                     android:inputType="number"
                     android:maxLength="19"
                     android:maxLines="1"
@@ -441,21 +435,20 @@
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="10dp"
-
+                    android:layout_marginLeft="5dp"
                     android:layout_weight="1"
                     android:orientation="horizontal"
                     android:paddingLeft="5dp">
 
                     <Button
                         android:id="@+id/days"
-                        android:layout_width="50dp"
+                        android:layout_width="70dp"
                         android:layout_height="40dp"
-                        android:layout_marginRight="35dp"
+                        android:layout_marginRight="20dp"
                         android:background="@drawable/circle"
                         android:fontFamily="sans-serif-medium"
                         android:gravity="center"
-                        android:paddingRight="15dp"
+                        android:paddingRight="5dp"
                         android:saveEnabled="true"
                         android:text="@string/day"
                         android:textAllCaps="false"
@@ -464,9 +457,9 @@
 
                     <Button
                         android:id="@+id/week"
-                        android:layout_width="50dp"
+                        android:layout_width="70dp"
                         android:layout_height="40dp"
-                        android:layout_marginRight="35dp"
+                        android:layout_marginRight="20dp"
                         android:background="@drawable/circle"
                         android:fontFamily="sans-serif-medium"
                         android:gravity="center"
@@ -478,7 +471,7 @@
 
                     <Button
                         android:id="@+id/month"
-                        android:layout_width="50dp"
+                        android:layout_width="70dp"
                         android:layout_height="40dp"
                         android:background="@drawable/circle"
                         android:fontFamily="sans-serif-medium"
@@ -487,8 +480,7 @@
                         android:text="@string/month"
                         android:textAllCaps="false"
                         android:textColor="#000"
-                        android:textSize="14sp"
-                        />
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -515,8 +507,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/txtRecord"
                 android:layout_marginTop="0dp"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
                 android:background="@drawable/rectangle_corner"
                 android:orientation="vertical"
                 android:padding="5dp">
@@ -540,27 +530,29 @@
                         android:maxLength="3"
                         android:paddingBottom="5dp"
                         android:paddingLeft="5dp"
-                        android:paddingRight="1dp"
+                        android:paddingRight="0dp"
                         android:paddingTop="5dp"
                         android:singleLine="true"
-                        android:textColor="@color/black"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="14sp"/>
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
                     <EditText
-                        android:layout_width="60dp"
+                        android:layout_width="40dp"
                         android:layout_height="50dp"
+                        android:layout_marginRight="5dp"
                         android:background="@color/light_grey"
-                        android:hint="Kgs"
-                        android:gravity="center"
                         android:focusableInTouchMode="false"
+                        android:gravity="center"
+                        android:hint="Kgs"
                         android:paddingBottom="5dp"
-                        android:paddingRight="5dp"
                         android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
                         android:paddingTop="5dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="14sp"
                         android:textColor="@color/black"
-                        android:layout_marginRight="3dp"/>
+                        android:textSize="12sp" />
+
 
                     <EditText
                         android:id="@+id/input_pulse"
@@ -568,7 +560,7 @@
                         android:layout_height="50dp"
                         android:layout_weight="0.4"
                         android:background="@drawable/rectangle_corner"
-                        android:hint="pulse"
+                        android:hint="Pulse"
                         android:inputType="number"
                         android:maxLength="2"
                         android:paddingBottom="5dp"
@@ -576,22 +568,24 @@
                         android:paddingRight="1dp"
                         android:paddingTop="5dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
                     <EditText
-                        android:layout_width="70dp"
+                        android:layout_width="40dp"
                         android:layout_height="50dp"
+                        android:layout_marginRight="5dp"
                         android:background="@color/light_grey"
-                        android:hint="Beats/Min"
                         android:focusableInTouchMode="false"
+                        android:gravity="center"
+                        android:hint="bpm"
                         android:paddingBottom="5dp"
-                        android:paddingRight="5dp"
                         android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
                         android:paddingTop="5dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="14sp"
                         android:textColor="@color/black"
-                        android:layout_marginRight="3dp"/>
+                        android:textSize="12sp" />
 
 
                     <EditText
@@ -600,7 +594,7 @@
                         android:layout_height="50dp"
                         android:layout_weight="0.4"
                         android:background="@drawable/rectangle_corner"
-                        android:hint="High B.P"
+                        android:hint="Systole"
                         android:inputType="number"
                         android:maxLength="3"
                         android:paddingBottom="5dp"
@@ -608,23 +602,24 @@
                         android:paddingRight="1dp"
                         android:paddingTop="5dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
                     <EditText
-                        android:layout_width="40dp"
+                        android:layout_width="25dp"
                         android:layout_height="50dp"
                         android:background="@color/light_grey"
-                        android:hint="/"
-                        android:gravity="center"
                         android:focusableInTouchMode="false"
+                        android:gravity="center"
+                        android:hint="/"
                         android:paddingBottom="5dp"
-                        android:paddingRight="5dp"
                         android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
                         android:paddingTop="5dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="15sp"
                         android:textColor="@color/black"
-                        android:layout_marginRight="3dp"/>
+                        android:textSize="12sp" />
+
 
                     <EditText
                         android:id="@+id/lowBp"
@@ -632,7 +627,7 @@
                         android:layout_height="50dp"
                         android:layout_weight="0.4"
                         android:background="@drawable/rectangle_corner"
-                        android:hint="Low B.P"
+                        android:hint="Dystole"
                         android:inputType="number"
                         android:maxLength="3"
                         android:paddingBottom="5dp"
@@ -640,32 +635,24 @@
                         android:paddingRight="1dp"
                         android:paddingTop="5dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
                     <EditText
-                        android:layout_width="60dp"
+                        android:layout_width="40dp"
                         android:layout_height="50dp"
+                        android:layout_marginRight="5dp"
                         android:background="@color/light_grey"
-                        android:hint="MmHg"
                         android:focusableInTouchMode="false"
+                        android:hint="mmhg"
                         android:paddingBottom="5dp"
-                        android:paddingRight="5dp"
-                        android:paddingLeft="5dp"
+                        android:paddingLeft="2dp"
+                        android:paddingRight="2dp"
                         android:paddingTop="5dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="15sp"
                         android:textColor="@color/black"
-                        android:layout_marginRight="3dp"/>
-                </LinearLayout>
+                        android:textSize="12sp" />
 
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/txtecord"
-                    android:layout_marginTop="10dp"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
 
                     <EditText
                         android:id="@+id/input_temp"
@@ -674,64 +661,68 @@
                         android:layout_weight="0.4"
                         android:background="@drawable/rectangle_corner"
                         android:hint="Temp"
-                        android:maxLength="3"
                         android:inputType="number"
+                        android:maxLength="3"
                         android:paddingBottom="5dp"
                         android:paddingLeft="5dp"
                         android:paddingRight="1dp"
                         android:paddingTop="5dp"
                         android:singleLine="true"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
                     <EditText
                         android:layout_width="40dp"
                         android:layout_height="50dp"
+                        android:layout_marginRight="5dp"
                         android:background="@color/light_grey"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center"
                         android:hint="&#xb0;F"
                         android:inputType="number"
                         android:maxLength="3"
-                        android:focusableInTouchMode="false"
                         android:paddingBottom="5dp"
-                        android:paddingRight="5dp"
                         android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
                         android:paddingTop="5dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="15sp"
                         android:textColor="@color/black"
-                        android:layout_marginRight="3dp"/>
+                        android:textSize="12sp" />
+
 
                     <EditText
                         android:id="@+id/input_sugar"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
-                        android:layout_weight="0.4"
+                        android:layout_weight="0.3"
                         android:background="@drawable/rectangle_corner"
                         android:hint="Sugar"
                         android:inputType="number"
                         android:maxLength="3"
                         android:paddingBottom="5dp"
                         android:paddingLeft="5dp"
-                        android:paddingRight="1dp"
                         android:paddingTop="5dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
                     <EditText
-                        android:layout_width="60dp"
+                        android:layout_width="40dp"
                         android:layout_height="50dp"
                         android:background="@color/light_grey"
-                        android:hint="Mg/dl"
+                        android:focusableInTouchMode="false"
+                        android:hint="mg/dl"
                         android:inputType="number"
                         android:maxLength="3"
-                        android:focusableInTouchMode="false"
                         android:paddingBottom="5dp"
-                        android:paddingRight="1dp"
                         android:paddingLeft="3dp"
+                        android:paddingRight="1dp"
                         android:paddingTop="5dp"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
                 </LinearLayout>
 
             </LinearLayout>

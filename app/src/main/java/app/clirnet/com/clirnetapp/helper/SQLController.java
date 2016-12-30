@@ -2,6 +2,7 @@ package app.clirnet.com.clirnetapp.helper;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -22,6 +23,7 @@ public class SQLController {
     private final Context ourcontext;
     private SQLiteHandler dbHelper;
     private SQLiteDatabase database;
+
 
 
     public SQLController(Context c) {
@@ -320,7 +322,7 @@ public class SQLController {
     }
 
     //used to fileter data from Patient history module
-    public ArrayList<RegistrationModel> getFilterDatanew(String fname, String lname, String gender, String phoneno, String age, ArrayList sex,ArrayList ageGap,ArrayList ailment) throws ClirNetAppException {
+    public ArrayList<RegistrationModel> getFilterDatanew(String fname, String lname, String gender, String phoneno, String age, ArrayList sex,ArrayList ageGap,ArrayList ailment,int page,int limit) throws ClirNetAppException {
 
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
@@ -330,32 +332,48 @@ public class SQLController {
         try {
             open();
             String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
+            String countQuery="select  COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
+
           //  String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%' and ( p.gender like '%" + male + "%' or p.gender like '%" + female + "%' and p.gender like '%" + other + "%' or p.gender like '%" + na + "%' )and p.phonenumber like '%" + phoneno + "%' and p.age like '%" + age + "%'  order by ph.key_visit_id desc limit 30;";
          if(sex.size() > 0) {
              for (int i = 0; i < sex.size(); i++) {
                  if (i != 0) {
                      selectQuery = selectQuery.concat(" OR p.gender = '" + sex.get(i) + "'");
+                     countQuery= countQuery.concat(" OR p.gender = '" + sex.get(i) + "'");
 
                  } else {
                      selectQuery = selectQuery.concat("  AND ( p.gender = '" + sex.get(i) + "'");
+                     countQuery= countQuery.concat("  AND ( p.gender = '" + sex.get(i) + "'");
                  }
              }
              selectQuery=selectQuery.concat(" ) ");
+             countQuery= countQuery.concat(" ) ");
          }
 
             if(ageGap.size() > 0) {
                 for (int i = 0; i < ageGap.size(); i++) {
                     String[] parts = ageGap.get(i).toString().split("-"); //split the string 0-5 to 0 and 5 resp
-                    String part1 = parts[0];
-                    String part2 = parts[1]; // 034556
+                    String part1 = parts[0];  //0
+                    String part2 = parts[1]; // 5
+                    if(part2.equals("Above")){
+                        part2="300";
+                    }
+                   // int val= Integer.parseInt(part1);
+                   // int val2= Integer.parseInt(part2);
                     if (i != 0) {
-                        selectQuery = selectQuery.concat(" OR  p.age BETWEEN '"+ part1 + "' and '"+ part2 +"' ");
+
+                        selectQuery = selectQuery.concat(" OR cast(p.age as INTEGER) BETWEEN "+ part1 + " and "+ part2 +" ");
+                        countQuery=countQuery.concat(" OR cast(p.age as INTEGER) BETWEEN "+ part1 + " and "+ part2 +" ");
 
                     } else {
-                        selectQuery = selectQuery.concat(" AND ( p.age BETWEEN '"+ part1 + "' and '"+ part2 +"' ");
+
+                        selectQuery = selectQuery.concat(" AND ( cast( p.age as INTEGER ) BETWEEN "+ part1 + " and "+ part2 +" ");
+                        countQuery=countQuery.concat(" AND ( cast( p.age as INTEGER ) BETWEEN "+ part1 + " and "+ part2 +" ");
+
                     }
                 }
                 selectQuery=selectQuery.concat(" ) ");
+                countQuery=countQuery.concat(" ) ");
             }
 
             if(ailment.size() > 0)
@@ -366,26 +384,30 @@ public class SQLController {
                     if(i != 0)
                     {
                         selectQuery = selectQuery.concat(" OR  ph.ailment like '%"+ value+"%'");
+                        countQuery=countQuery.concat(" OR  ph.ailment like '%"+ value+"%'");
                     }
                     else
                     {
                         selectQuery = selectQuery.concat(" AND ( ph.ailment like '%"+ value+"%'");
+                        countQuery=countQuery.concat(" AND ( ph.ailment like '%"+ value+"%'");
 
                     }
-
-
                 }
 
                 selectQuery=selectQuery.concat(" ) ");
+                countQuery=countQuery.concat(" ) ");
             }
+             //count query here to get no of records fetch by query for pagination in page.
+             countQuery=countQuery.concat("  and p.phonenumber like '%" + phoneno + "%' order by ph.key_visit_id desc ");
+         //   String queryforCount=selectQuery.concat("  and p.phonenumber like '%" + phoneno + "%' order by ph.key_visit_id desc ");
 
-             selectQuery=selectQuery.concat("  and p.phonenumber like '%" + phoneno + "%' order by ph.key_visit_id desc limit 30;");
+             selectQuery=selectQuery.concat("  and p.phonenumber like '%" + phoneno + "%' order by ph.key_visit_id desc limit "+ page + "," + limit +";");
+
+            new Counts().setCountQuery(countQuery);
+
             Log.e("selectQuery",""+selectQuery);
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-
-            int count = cursor.getCount();
-            // Log.d("count", "" + count);
 
 
             if (cursor.moveToFirst()) {
@@ -400,7 +422,7 @@ public class SQLController {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            throw new ClirNetAppException("Something went wrong");
+            throw new ClirNetAppException("Something went wrong while getting recrds from getFilterDatanew method");
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -412,6 +434,19 @@ public class SQLController {
         ArrayList<RegistrationModel> list = new ArrayList<>(pList1);
         return list;
     }
+    public  int getCountResult(){
+        SQLiteDatabase  db1 = dbHelper.getReadableDatabase();
+        String countQuery= new Counts().getCountQuery();
+        Log.d("count", ""+countQuery );
+        int numRows=0;
+        if(countQuery.length()>10){
+
+        numRows = (int) DatabaseUtils.longForQuery(db1, countQuery, null);
+        Log.d("count", ""+countQuery +"  " + numRows);
+         }
+        return numRows;
+    }
+
 
    //used to fileter data from Patient history module
     public ArrayList<RegistrationModel> getFilterDatanew(String fname, String lname, String gender, String phoneno, String age) throws ClirNetAppException {
@@ -1128,6 +1163,57 @@ public class SQLController {
 
     }
 
+   /* public void addLastName(String lastName, int nameid) throws ClirNetAppException {
+        SQLiteDatabase db = null;
+        long id = 0;
+        try {
+            db = dbHelper.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("last_name", lastName);
+             values.put("id", nameid);
+
+           // int rows = db.update("last_name_master", values, "last_name" + "= ?", new String[]{lastName});
+            //id =db.insertWithOnConflict("table_LastNames", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+             id = db.insert("last_name_master", null, values);
+        }   catch (Exception e) {
+            e.printStackTrace();
+            throw new ClirNetAppException("Something went wrong while storng last name id db");
+
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        Log.d("addedailemnt", "New last_names inserted into sqlite: " + id);
+
+    }*//* public void addLastName(String lastName, int nameid) throws ClirNetAppException {
+        SQLiteDatabase db = null;
+        long id = 0;
+        try {
+            db = dbHelper.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("last_name", lastName);
+             values.put("id", nameid);
+
+           // int rows = db.update("last_name_master", values, "last_name" + "= ?", new String[]{lastName});
+            //id =db.insertWithOnConflict("table_LastNames", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+             id = db.insert("last_name_master", null, values);
+        }   catch (Exception e) {
+            e.printStackTrace();
+            throw new ClirNetAppException("Something went wrong while storng last name id db");
+
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        Log.d("addedailemnt", "New last_names inserted into sqlite: " + id);
+
+    }*/
 }
 
 

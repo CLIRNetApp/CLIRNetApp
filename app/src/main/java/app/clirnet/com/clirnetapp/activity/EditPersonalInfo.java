@@ -18,6 +18,8 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
@@ -647,7 +649,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         });
 
 
-        //This will redirect user to main activity
+        /*//This will redirect user to main activity
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
 
 
@@ -660,7 +662,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
 
         });
-
+*/
 
         setupAnimation();
     }
@@ -866,13 +868,13 @@ public class EditPersonalInfo extends AppCompatActivity {
 
     }
 
-    @Override
+   /* @Override
     public void onBackPressed() {
-        /*this.onBackPressed();
-        finish();*/
+        *//*this.onBackPressed();
+        finish();*//*
         goToNavigation();
 
-    }
+    }*/
 
 
     private void goToNavigation() {
@@ -987,6 +989,25 @@ public class EditPersonalInfo extends AppCompatActivity {
         });
 
 
+    }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if ((keyCode == KeyEvent.KEYCODE_BACK))
+        {
+           finish();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+    //work like default android back button
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+             finish();
+            return true;
+        }
+        return false;
     }
 }
 

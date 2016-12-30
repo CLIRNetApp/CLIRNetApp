@@ -2,9 +2,9 @@ package app.clirnet.com.clirnetapp.activity;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Build;
@@ -24,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -62,6 +63,8 @@ public class AddPatientUpdate extends AppCompatActivity {
     private ImageView backChangingImages;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
     private static final int DATE_DIALOG_ID = 0;
+    private static final int DATE_DIALOG_ID1 = 1;
+    private static final int DATE_DIALOG_ID2 = 2;
     private String strPhone;
     private String strAge;
     private String strLanguage;
@@ -78,7 +81,7 @@ public class AddPatientUpdate extends AppCompatActivity {
     private String strPatientId;
     private TextView txtfollow_up_date;
     private String fowSel = null;
-    private String usersellectedDate = null;
+    private String usersellectedDate ;
     private String monthSel = null;
     private SQLController sqlController;
     private SQLiteHandler dbController;
@@ -285,7 +288,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         int day1 = c.get(Calendar.DAY_OF_MONTH);
 
          addedOnDate = String.valueOf(new StringBuilder().append(day1).append("-").append(month1 + 1).append("-").append(year1).append(""));
-         visitDate.setText(addedOnDate);
+        // visitDate.setText(addedOnDate);
 
         editpatientName.setText(strName);
         editmobileno.setText(strPhone);
@@ -433,7 +436,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 i.putExtra("PIN", strPinNo);
                 i.putExtra("STATE", strState);
                 startActivity(i);
-                finish();
+               // finish();
             }
         });
         cancel.setOnTouchListener(new View.OnTouchListener() {
@@ -463,7 +466,8 @@ public class AddPatientUpdate extends AppCompatActivity {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
                     addUpdate.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
-                    saveData();
+                   
+                    saveData();//saved data int db
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -574,6 +578,9 @@ public class AddPatientUpdate extends AppCompatActivity {
                 // TODO Auto-generated method stub
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     days.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+                    week.setTextColor(getResources().getColor(R.color.black));
+                    month.setTextColor(getResources().getColor(R.color.black));
+                    days.setTextColor(getResources().getColor(R.color.white));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         week.setBackground(getResources().getDrawable(R.drawable.circle));
                         month.setBackground(getResources().getDrawable(R.drawable.circle));
@@ -621,6 +628,9 @@ public class AddPatientUpdate extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 week.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+                week.setTextColor(getResources().getColor(R.color.white));
+                month.setTextColor(getResources().getColor(R.color.black));
+                days.setTextColor(getResources().getColor(R.color.black));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     days.setBackground(getResources().getDrawable(R.drawable.circle));
                     month.setBackground(getResources().getDrawable(R.drawable.circle));
@@ -655,7 +665,10 @@ public class AddPatientUpdate extends AppCompatActivity {
         month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                month.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
+                month.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+                week.setTextColor(getResources().getColor(R.color.black));
+                month.setTextColor(getResources().getColor(R.color.white));
+                days.setTextColor(getResources().getColor(R.color.black));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     days.setBackground(getResources().getDrawable(R.drawable.circle));
                     week.setBackground(getResources().getDrawable(R.drawable.circle));
@@ -679,6 +692,29 @@ public class AddPatientUpdate extends AppCompatActivity {
                 usersellectedDate = dateis;
                 monthSel = value;
                 fodtextshow.setText(dateis);
+            }
+        });
+
+        visitDate.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View v) {
+
+                shpwDialog(DATE_DIALOG_ID1);
+
+            }
+        });
+        fodtextshow.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View v) {
+
+
+
+                shpwDialog(DATE_DIALOG_ID2);
+
             }
         });
     }
@@ -764,7 +800,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         String strDrugs = edtDrugs.getText().toString().trim();
 
 
-        String followupdateSellected;
+        usersellectedDate=fodtextshow.getText().toString();
 
         if (TextUtils.isEmpty(ailments)) {
             ailments1.setError("Please enter Ailment");
@@ -949,6 +985,77 @@ public class AddPatientUpdate extends AppCompatActivity {
         }
         System.gc();
 
+    }
+    private void shpwDialog(int id) {
+        switch (id) {
+
+
+            case DATE_DIALOG_ID1:
+
+                final Calendar c1 = Calendar.getInstance();
+                int mYear1 = c1.get(Calendar.YEAR);
+                int mMonth1 = c1.get(Calendar.MONTH);
+                int mDay1 = c1.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dpd2 = new DatePickerDialog(AddPatientUpdate.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+
+
+                                visitDate.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);
+                               /* showfodtext.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);*/
+
+
+                            }
+                        }, mYear1, mMonth1, mDay1);
+                c1.add(Calendar.DATE, 1);
+
+                Date newDate = c1.getTime();
+                dpd2.getDatePicker().setMaxDate(newDate.getTime());
+
+                dpd2.show();
+
+                break;
+
+            case DATE_DIALOG_ID2:
+
+                final Calendar c3 = Calendar.getInstance();
+                int mYear3 = c3.get(Calendar.YEAR);
+                int mMonth3 = c3.get(Calendar.MONTH);
+                int mDay3 = c3.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dpd3 = new DatePickerDialog(AddPatientUpdate.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+
+
+                                fodtextshow.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);
+                               /* showfodtext.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);*/
+
+
+                            }
+                        }, mYear3, mMonth3, mDay3);
+                c3.add(Calendar.DATE, 1);
+
+                Date newDate3 = c3.getTime();
+                dpd3.getDatePicker().setMinDate(newDate3.getTime());
+
+                dpd3.show();
+
+                break;
+        }
     }
 
     @Override

@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -76,6 +77,7 @@ import app.clirnet.com.clirnetapp.adapters.RVAdapter;
 import app.clirnet.com.clirnetapp.adapters.SearchViewdapter;
 import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.app.LastNameAsynTask;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
@@ -88,7 +90,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 @SuppressWarnings("ConstantConditions")
 public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchListener {
     // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
 
     private OnFragmentInteractionListener mListener;
     private TextView date;
@@ -98,12 +100,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private static final String PREFS_NAME = "SyncFlag";
     private static final String PREF_VALUE = "status";
 
-
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
-
     private SearchView searchView;
 
-    private android.support.v4.app.FragmentManager fragmentManager;
     private SQLController sqlController;
 
     private RecyclerView recyclerView;
@@ -115,7 +113,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private StringBuilder sysdate;
 
     private List<RegistrationModel> filteredModelList;
-    // private List<RegistrationModel> filteredModelList1 = new ArrayList<>();
+
 
     private SearchViewdapter sva;
     private SQLiteHandler dbController;
@@ -126,8 +124,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private ProgressDialog pDialog;
     private String patientInfoArayString;
     private String patientVisitHistorArayString;
-    // private ArrayList<RegistrationModel> patientDataforPhoneFilter;
-    //  private ArrayList<RegistrationModel> patientDataforPhoneFilternew;
+
     private ArrayList<RegistrationModel> patientIds_List;
     private ArrayList<RegistrationModel> getPatientVisitIdsList;
 
@@ -157,8 +154,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
 
         if (getArguments() != null) {
-            //getSupportActionBar().setTitle(Html.fromHtml("<font color='#877AFF'>Edit Personal Informationt</font>"));
-            // this will handle screen rotation
+
             setRetainInstance(true);
 
         }
@@ -514,6 +510,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         cao.setValue("2");
 
                         getPatientRecords(savedUserName, savedUserPassword);
+                        new LastNameAsynTask(getContext(),savedUserName, savedUserPassword);
+                        /*LongOperation longOperation=new LongOperation();
+                        longOperation.execute(savedUserName,savedUserPassword);*/
 
                     }
                 }
@@ -705,7 +704,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             public boolean onSuggestionSelect(int position) {/* Log.e("querty",""+ searchView.getQuery().toString());*/
 
                 System.out.println("on clicked: " + position);
-                // lv.setVisibility(View.GONE);
+
                 return true;
             }
 
@@ -763,7 +762,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment Search View " + e);
                 }
 
 
@@ -812,8 +811,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     e.printStackTrace();
                     appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e);
                 }
-
-
             }
 
 
@@ -1281,6 +1278,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 AppConfig.URL_PATIENT_RECORDS, new Response.Listener<String>() {
 
 
+
             @Override
             public void onResponse(String response) {
                 Log.d(TAG, "Sync Response: " + response);
@@ -1360,8 +1358,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         int retryforTimes = 2;
         RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, retryforTimes, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         strReq.setRetryPolicy(policy);
+        AppController.getInstance().setPriority(Request.Priority.IMMEDIATE);
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
     }
 //This method will get patient personal details from server and stores into db
 
@@ -1513,7 +1513,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             } catch (ParseException e) {
                 e.printStackTrace();
-                appController.appendLog("Home Fragment" + e);
+                appController.appendLog(appController.getDateTime() + " " + "/ " + " Home Fragment " + e);
             }
 
             String convertedAddedonDate = null;
@@ -1557,6 +1557,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
 
         }
+
         dbController.addAsync();
         // hideDialog();
         /*FragmentTransaction ft = getFragmentManager().beginTransaction();
@@ -1567,6 +1568,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         startActivity(i);
 
         makeToast("Application Initialization Successful");
+
     }
 
     //custom dialog  for the sync button result
@@ -1710,7 +1712,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         String loginTime = pref.getString("loginTime", null);
 
-        int hrs = appController.hoursAgo(loginTime);
+        int hrs = AppController.hoursAgo(loginTime);
         Log.e("loginTime", "" + loginTime + " hours " + hrs);
         if (hrs > 8) {
             Intent i = new Intent(getContext(), LoginActivity.class);
@@ -1719,7 +1721,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         }
         SharedPreferences pref1 = getContext().getSharedPreferences("SyncFlag", getContext().MODE_PRIVATE);
         String lastSyncTime = pref1.getString("loginTime", null);
-        int hrslastSync = appController.hoursAgo(lastSyncTime);
+        int hrslastSync = AppController.hoursAgo(lastSyncTime);
         Log.e("loginTime12", "" + lastSyncTime + " hours " + hrslastSync);
 
         if (hrslastSync > 72) {
@@ -1735,6 +1737,33 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 .putString("lastSyncTime", lastSyncTime)
                 .apply();
 
+    }
+    private class LongOperation extends AsyncTask<String, Void, String> {
+        ProgressDialog pd;
+        @Override
+        protected String doInBackground(String... params) {
+
+            new LastNameAsynTask(getContext(),savedUserName, savedUserPassword);
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.e("onPostExecute","onPostExecute");
+            pd.dismiss();
+        }
+
+        @Override
+        protected void onPreExecute() {
+            Log.e("onPreExecute","onPreExecute");
+             pd = new ProgressDialog(getContext());
+            pd.setMessage("loading");
+            pd.show();
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
     }
 }
 

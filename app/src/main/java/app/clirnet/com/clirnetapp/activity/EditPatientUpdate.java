@@ -496,7 +496,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                 i.putExtra("STATE", strState);
                 i.putExtra("FROMWHERE", "editpatient");
                 startActivity(i);
-                finish();
+               // finish();
             }
         });
 

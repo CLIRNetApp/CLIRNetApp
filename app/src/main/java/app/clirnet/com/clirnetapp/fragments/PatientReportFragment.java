@@ -119,7 +119,12 @@ public class PatientReportFragment extends Fragment {
 
 
 
-        BarChartFragment fragment2 = new BarChartFragment( fromDate, toDate);
+        BarChartFragment fragment2 = new BarChartFragment();
+
+        Bundle bundle = new Bundle();
+        bundle.putString("FROMDATE", fromDate);
+        bundle.putString("TODATE", toDate);
+        fragment2.setArguments(bundle);
 
         FragmentManager fragmentManager2 = getChildFragmentManager();
         fragmentManager2.beginTransaction().replace(R.id.flContent1, fragment2).commit();
