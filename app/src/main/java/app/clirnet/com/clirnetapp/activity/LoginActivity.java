@@ -37,7 +37,7 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
 
-public class LoginActivity extends Activity implements View.OnTouchListener {
+public class LoginActivity extends Activity  {
     private static final String TAG = "Login";
     private static final String PREFS_NAME = "savedCredit";
     private static final String PREF_USERNAME = "username";
@@ -47,10 +47,6 @@ public class LoginActivity extends Activity implements View.OnTouchListener {
     private EditText inputEmail;
     private EditText inputPassword;
     private ProgressDialog pDialog;
-
-
-    private EditText confirmPassord, password;
-    private EditText email_forget;
     private String name;
     private MD5 md5;
     private ConnectionDetector connectionDetector;
@@ -225,6 +221,7 @@ public class LoginActivity extends Activity implements View.OnTouchListener {
 
 
                                         public void onClick(View view) {
+
                                             name = inputEmail.getText().toString().trim();
                                             strPassword = inputPassword.getText().toString().trim();
 
@@ -236,8 +233,6 @@ public class LoginActivity extends Activity implements View.OnTouchListener {
                                             //rememberMeCheckbox();//Removed remeber me check box for safety concern 04-11-16
                                             //to authenticate user credentials
                                             LoginAuthentication();
-
-
 
                                         }
 
@@ -341,25 +336,39 @@ public class LoginActivity extends Activity implements View.OnTouchListener {
                 new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword);
                 new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber);
                 startService();
+                //update last sync time if sync from server
+                String time = appController.getDateTimenew();
+                Log.e("current Time", "" + time);
+                //update last login time
+                lastSyncTime(time);
                 // hideDialog();
 
             } else {
 
                 boolean isLogin;
                 try {
+                    //check last sync time to check if last sync from server is more than 72 hours or not
+                    int lasttimeSync= getLastSyncTime();
 
-                    isLogin = sqlController.validateUser(name, md5EncyptedDataPassword, phoneNumber);
+                    if(lasttimeSync > 72){
+                        showCreatePatientAlertDialog();
+                        Toast.makeText(getApplicationContext(),"Please login via internet and sync data to server",Toast.LENGTH_LONG).show();
+                    }else {
 
-                    if (isLogin) {
-                        Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_LONG).show();
-                        goToNavigation();
+                        isLogin = sqlController.validateUser(name, md5EncyptedDataPassword, phoneNumber);
 
-                       startService();
+                        if (isLogin) {
 
-                    } else {
-                        Toast.makeText(getApplicationContext(), "Username/Password Mismatch", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_LONG).show();
+                            goToNavigation();
 
-                        // Toast.makeText(getApplicationContext(), " You are not connected to Internet!! ", Toast.LENGTH_LONG).show();
+                            startService();
+
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Username/Password Mismatch", Toast.LENGTH_LONG).show();
+
+                            // Toast.makeText(getApplicationContext(), " You are not connected to Internet!! ", Toast.LENGTH_LONG).show();
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     //e.printStackTrace();
@@ -379,6 +388,16 @@ public class LoginActivity extends Activity implements View.OnTouchListener {
                     .show();
         }
 
+    }
+
+    private int getLastSyncTime() {
+
+        SharedPreferences pref1 = getSharedPreferences("SyncFlag", MODE_PRIVATE);
+        String lastSyncTime = pref1.getString("lastSyncTime", null);
+        int hrslastSync = AppController.hoursAgo(lastSyncTime);
+        Log.e("loginTime12", "" + lastSyncTime+"  "+hrslastSync);
+
+        return  hrslastSync;
     }
 
     private void startService() {
@@ -568,6 +587,9 @@ public class LoginActivity extends Activity implements View.OnTouchListener {
         username = pref.getString(PREF_USERNAME, null);
         String password = pref.getString(PREF_PASSWORD, null);
        // Log.e("password", "" + username + "" + password);
+        SharedPreferences pref1 = getSharedPreferences("SyncFlag", MODE_PRIVATE);
+        String lastSync=pref1.getString("lastSyncTime",null);
+        Log.e("lastSync", "" + lastSync);
 
         if (username != null || password != null) {
             //directly show logout form
@@ -615,36 +637,56 @@ public class LoginActivity extends Activity implements View.OnTouchListener {
 
         return "{" + width + "," + height + "}";
     }*/
+    //store last sync time in prefrence
+    public void lastSyncTime(String lastSyncTime ) {
+
+        getSharedPreferences("SyncFlag", MODE_PRIVATE)
+                .edit()
+                .putString("lastSyncTime", lastSyncTime)
+                .apply();
+
+    }
+
+    private void showCreatePatientAlertDialog() {
+        final Dialog dialog = new Dialog(this);
+        dialog.setContentView(R.layout.no_inetrnet_login_dialog);
 
 
-    @Override
-    public boolean onTouch(View v, MotionEvent event) {
-        int count = 0;
-        long startMillis=0;
-        int eventaction = event.getAction();
-        if (eventaction == MotionEvent.ACTION_UP) {
-
-            //get system current milliseconds
-            long time= System.currentTimeMillis();
+        dialog.setTitle("Please Login Via Internet");
+        //  dialog.setCancelable(false);
 
 
-            //if it is the first time, or if it has been more than 3 seconds since the first tap ( so it is like a new try), we reset everything
-            if (startMillis==0 || (time-startMillis> 3000) ) {
-                startMillis=time;
-                count=1;
+        Button dialogButtonCancel = (Button) dialog.findViewById(R.id.customDialogCancel);
+        Button dialogButtonOk = (Button) dialog.findViewById(R.id.customDialogOk);
+        // Click cancel to dismiss android custom dialog box
+        dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
             }
-            //it is not the first, and it has been  less than 3 seconds since the first
-            else{ //  time-startMillis< 3000
-                count++;
-                Log.e("count",""+count);
-            }
+        });
 
-            if (count>1) {
-                //do whatever you need
-                Toast.makeText(LoginActivity.this,"Count is more than 10",Toast.LENGTH_LONG).show();
+        // Your android custom dialog ok action
+        // Action for custom dialog ok button click
+        dialogButtonOk.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+               Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                /*Intent intent = new Intent(Intent.ACTION_MAIN);
+                intent.setClassName("com.android.phone", "com.android.phone.NetworkSetting");
+                startActivity(intent);*/
+
+                dialog.dismiss();
+
             }
-            return true;
-        }
-        return false;
+        });
+
+        dialog.show();
+
     }
 }

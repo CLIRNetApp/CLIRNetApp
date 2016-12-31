@@ -4,8 +4,8 @@ public class AppConfig {
     // Server user login url
 
 
-   // public static final String URL_LOGIN = "http://doctor.clirnet.com/doctor/webapi/checkdoctorvalidity";
-    public static final String URL_LOGIN = "http://192.168.1.53/clirnetapplication/public/doctor/webapi/checkdoctorvalidity";
+   public static final String URL_LOGIN = "http://doctor.clirnet.com/doctor/webapi/checkdoctorvalidity";
+  //  public static final String URL_LOGIN = "http://192.168.1.53/clirnetapplication/public/doctor/webapi/checkdoctorvalidity";
 
 
     //Patient all records

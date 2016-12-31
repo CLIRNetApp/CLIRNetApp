@@ -41,7 +41,6 @@ import app.clirnet.com.clirnetapp.activity.NavigationActivity;
 import app.clirnet.com.clirnetapp.activity.PrivacyPolicy;
 import app.clirnet.com.clirnetapp.activity.ShowPersonalDetailsActivity;
 import app.clirnet.com.clirnetapp.activity.TermsCondition;
-import app.clirnet.com.clirnetapp.adapters.MultipleFilterPatientAdapter;
 import app.clirnet.com.clirnetapp.adapters.PoHistoryAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
@@ -71,7 +70,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
     private SQLController sqlController;
 
-    private MultipleFilterPatientAdapter adapter;
     private PoHistoryAdapter poHistoryAdapter;
     private RecyclerView recyclerView;
     private ImageView backChangingImages;
@@ -83,7 +81,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private Button submit;
     private MultiSpinner genderSpinner;
 
-    private int ival = 1;
+    private int ival = 0;
     private int loadLimit = 25;
 
     private int[] selectedItems = {0, 0, 0, 0};
@@ -265,7 +263,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 Log.e("sizegender", "" + sizegender + " " + sizeage + " ==" + sizeailment);
                 try {
 
-                    ival = 1;
+                    ival = 0;
                     loadLimit=25;
                     patientData = (sqlController.getFilterDatanew(strfname, strlname, sex, strpno, strage, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit));
                     //    patientData = sqlController.getFilterDatanew(strfname, strlname, selectedListGender.get(i).toString(), strpno, strage);
@@ -589,8 +587,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             sqlController.close();
             sqlController = null;
         }
-        if (adapter != null) {
-            adapter = null;
+        if (poHistoryAdapter != null) {
+            poHistoryAdapter = null;
         }
 
         if (appController != null) {
@@ -667,6 +665,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                         && firstVisibleItemPosition >= 0
                         && totalItemCount >= PAGE_SIZE) {
+
                     isLoading = true;
 
                     new Handler().postDelayed(new Runnable() {
@@ -674,7 +673,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                         public void run() {
                             loadDataForAdapter();
                         }
-                    }, 1000);
+                    }, 2000);
                 }
             }
         }
@@ -684,12 +683,12 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private void loadDataForAdapter(){
 
         isLoading = false;
-        ival=ival+25;
+        ival = ival+25;
 
         List<RegistrationModel> memberList = new ArrayList<>();
 
 
-        int index = poHistoryAdapter.getItemCount() - 1;
+        int index = poHistoryAdapter.getItemCount()-1;
         int end = index + PAGE_SIZE;
         Log.e("index", "" + index + " " + end + " size is " + queryCount);
 
@@ -701,7 +700,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 e.printStackTrace();
             }
 
-          //  patientData.addAll(memberList);
+            //  patientData.addAll(memberList);
            // adapter.notifyDataSetChanged();
              poHistoryAdapter.addAll(memberList);
 
@@ -712,7 +711,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         }
 
     }
-
 
     /*//This method will filter data from our database generated list according to user query by Phone Number 6/8/i Ashish
     private ArrayList<RegistrationModel> filter(List<RegistrationModel> models, String fn, String ln, String mobileno, String agestr) {

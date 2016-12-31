@@ -45,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
@@ -844,9 +845,15 @@ public class EditPersonalInfo extends AppCompatActivity {
         }
     }
 
-    private void setupAnimation() {
+    private void setupAnimation() {  Random r = new Random();
+        int n=r.nextInt(10);
+        String imgstring= String.valueOf(imageArray[n]);
+        Log.e("imgstring","   "+ n + "   "+imgstring);
+        backChangingImages.setImageResource(imageArray[n]);
 
-        Runnable runnable = new Runnable() {
+
+
+       /* Runnable runnable = new Runnable() {
             int i = 0;
 
             public void run() {
@@ -858,7 +865,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 backChangingImages.postDelayed(this, 10000);  //for interval...
             }
         };
-        backChangingImages.postDelayed(runnable, 200); //for initial delay..
+        backChangingImages.postDelayed(runnable, 200); //for initial delay..*/
     }
 
     @Override

@@ -13,7 +13,7 @@ import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
-
+//No  need to add pagination here bcs we did not set any limit to view current date insetred data.
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder> {
 
     private List<RegistrationModel> patientList;
@@ -98,11 +98,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder>
         }
     }
 
-//    public void setFilter(List<RegistrationModel> hotelModels) {
-//        patientList = new ArrayList<>();
-//        patientList.addAll(hotelModels);
-//        notifyDataSetChanged();
-//    }
+
 
 
 }

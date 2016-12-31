@@ -44,6 +44,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.Validator;
@@ -864,7 +865,12 @@ public class EditPatientUpdate extends AppCompatActivity {
 
     private void setupAnimation() {
 
-        Runnable runnable = new Runnable() {
+        Random r = new Random();
+        int n=r.nextInt(10);
+        String imgstring= String.valueOf(imageArray[n]);
+        Log.e("imgstring","   "+ n + "   "+imgstring);
+        backChangingImages.setImageResource(imageArray[n]);
+        /*Runnable runnable = new Runnable() {
             int i = 0;
 
             public void run() {
@@ -878,7 +884,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                 backChangingImages.postDelayed(this, 10000);  //for interval...
             }
         };
-        backChangingImages.postDelayed(runnable, 100); //for initial delay..
+        backChangingImages.postDelayed(runnable, 100); //for initial delay..*/
     }
 
     @Override

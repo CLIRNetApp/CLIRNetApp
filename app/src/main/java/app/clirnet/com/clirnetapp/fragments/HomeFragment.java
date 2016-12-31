@@ -13,8 +13,10 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.InputType;
@@ -62,6 +64,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
@@ -134,6 +137,15 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private Button addaNewPatient;
     private String searchNumber = null;
 
+    private int ival = 0;
+    private int loadLimit = 15;
+
+    private int PAGE_SIZE = 10;
+
+    private boolean isLastPage = false;
+    private boolean isLoading = false;
+
+
 
     private TextView todays_patient_updatetxt;
     private View view;
@@ -142,6 +154,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private String asyn_value;
     private AppController appController;
     private Button sync;
+    private LinearLayoutManager mLayoutManager;
+    private int queryCount;
+    private int queryCountforTotalPatient;
 
     public HomeFragment() {
         this.setHasOptionsMenu(true);
@@ -173,6 +188,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         Searchrecycler_view = (RecyclerView) view.findViewById(R.id.Searchrecycler_view);
 
+        mLayoutManager = new LinearLayoutManager(getContext().getApplicationContext());
+        Searchrecycler_view.setLayoutManager(mLayoutManager);
 
         sync = (Button) view.findViewById(R.id.sync);
         Button export = (Button) view.findViewById(R.id.exp);
@@ -228,16 +245,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         SimpleDateFormat dobsdf = new SimpleDateFormat("yyyy-MM-dd");
         if (added_on.equals(0000 - 00 - 00)) {
             added_on = null;
-        }
-
-
-        try {
-            Date formatDate = dobsdf.parse(added_on);
-
-            SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy");
-        } catch (ParseException e) {
-            e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e);
         }
 
         //open database for further interaction with database
@@ -397,7 +404,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         //setting list to adapter class
         // sva = new SearchViewdapter(filteredModelList);
         //To check if there is data or not in arraylist in case of no internet connectivity or no data downloads
-
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getContext().getApplicationContext(), recyclerView, new ItemClickListener() {
 
             @Override
@@ -684,7 +690,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         try {
             if (searchView == null)
                 //no inspection Constant Conditions
-                searchView = new SearchView(((NavigationActivity) getActivity()).getSupportActionBar().getThemedContext());
+            searchView = new SearchView(((NavigationActivity) getActivity()).getSupportActionBar().getThemedContext());
             searchView.setIconifiedByDefault(false);
             searchView.setInputType(InputType.TYPE_CLASS_NUMBER);//this will do not let user to enter any other text than digit 0-9 only
             searchView.setQueryHint(getResources().getString(R.string.hint_search));
@@ -723,7 +729,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                 try {
 
-                    if (newText.trim().length() > 10) {
+                    if (searchNumber.trim().length() > 10) {
 
                         Toast toast = Toast.makeText(getContext(), "Phone Number Should Be Only 10 Digits ", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
@@ -732,7 +738,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         return true;
                     }
 
-                    if (newText.trim().length() > 4) {
+                    if (searchNumber.trim().length() > 4) {
+
                         norecordtv.setVisibility(View.GONE);
                         Searchrecycler_view.setVisibility(View.VISIBLE);
                         recyclerView.setVisibility(View.GONE);
@@ -740,19 +747,28 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         addaNewPatient.setVisibility(View.VISIBLE);
                         todays_patient_updatetxt.setVisibility(View.GONE);
 
+                        ival = 0;
+                        loadLimit=15;
 
-                        filteredModelList = sqlController.getPatientListForPhoneNumberFilter(newText);
+                        filteredModelList = sqlController.getPatientListForPhoneNumberFilter(searchNumber,ival,loadLimit);
+                     //   filteredModelList = sqlController.getPatientListForPhoneNumberFilter(searchNumber);
 
+                         queryCountforTotalPatient=sqlController.getCountResultforgetPatientListForPhoneNumberFilter();
+
+                         Log.e("queryCount1","  "+queryCountforTotalPatient+"  filteredModelList  "+filteredModelList.size());
 
                         if (filteredModelList.size() <= 0) {
 
                             showCreatePatientAlertDialog(newText);
 
                         } else {
-                            sva = new SearchViewdapter(filteredModelList);
+
+                            sva = new SearchViewdapter(filteredModelList,queryCountforTotalPatient);
 
                             sva.setFilter(filteredModelList);
                             Searchrecycler_view.setAdapter(sva);
+                            Searchrecycler_view.setHasFixedSize(true);
+                            Searchrecycler_view.addOnScrollListener(recyclerViewOnScrollListener);
 
                         }
 
@@ -984,7 +1000,14 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     //this will used to change banner image after some time interval
     private void setupAnimation() {
 
-        Runnable runnable = new Runnable() {
+        Random r = new Random();
+        int n=r.nextInt(10);
+        String imgstring= String.valueOf(imageArray[n]);
+        Log.e("imgstring","   "+ n + "   "+imgstring);
+        backChangingImages.setImageResource(imageArray[n]);
+        //backChangingImages.setBackgroundResource(imageArray[n]);
+
+        /*Runnable runnable = new Runnable() {
             int i = 0;
 
             public void run() {
@@ -996,7 +1019,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 backChangingImages.postDelayed(this, 10000);  //for interval...
             }
         };
-        backChangingImages.postDelayed(runnable, 100); //for initial delay..
+        backChangingImages.postDelayed(runnable, 100); //for initial delay..*/
     }
 
     //class to implement OnClick Listner
@@ -1305,7 +1328,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     // Log.e("jsonArray", "" + patientHistoryList);
                     setPatientPersonalList(jsonArray);
                     setPatientHistoryList(patientHistoryList);
-                    hideDialog();
+
 
 
                 } catch (JSONException e) {
@@ -1314,6 +1337,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e);
                     Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
+                hideDialog();
             }
         }, new Response.ErrorListener() {
 
@@ -1323,19 +1347,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 Toast.makeText(getContext(),
                         "Failed To Initalize Data" + error.getMessage(), Toast.LENGTH_LONG).show();
                 hideDialog();
-                String body;
-                //get status code here
-                //  String statusCode = String.valueOf(error.networkResponse.statusCode);
-                //  Log.e("statusCode", "" + statusCode);
-                //get response body and parse with appropriate encoding
-               /* if (error.networkResponse.data != null) {
-                    try {
-                        body = new String(error.networkResponse.data, "UTF-8");
-                        Log.e("statusCodebody", " " + body);
-                    } catch (UnsupportedEncodingException e) {
-                        e.printStackTrace();
-                    }
-                }*/
+
             }
         }) {
 
@@ -1358,7 +1370,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         int retryforTimes = 2;
         RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, retryforTimes, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         strReq.setRetryPolicy(policy);
-        AppController.getInstance().setPriority(Request.Priority.IMMEDIATE);
+        AppController.getInstance().setPriority(Request.Priority.HIGH);
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
@@ -1593,8 +1605,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
 
                         //.withButtonDrawable(Integer.parseInt("#FFFFFF"))
-
-
                 .setCustomView(R.layout.custom_dialog_view, getContext())         //.setCustomView(View or ResId,context)
                 .setButton1Click(new View.OnClickListener() {
                     @Override
@@ -1708,27 +1718,35 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     private void checkLastLoginTime() {
 
+      /*  getContext(). getSharedPreferences("SyncFlag", getContext().MODE_PRIVATE)
+            .edit()
+            .putString("lastSyncTime", "31-12-2016 2:04:21")
+                .apply();*/
+
+
         SharedPreferences pref = getContext().getSharedPreferences("savedCredit", getContext().MODE_PRIVATE);
 
         String loginTime = pref.getString("loginTime", null);
 
         int hrs = AppController.hoursAgo(loginTime);
         Log.e("loginTime", "" + loginTime + " hours " + hrs);
+
         if (hrs > 8) {
             Intent i = new Intent(getContext(), LoginActivity.class);
             startActivity(i);
             System.gc();
         }
-        SharedPreferences pref1 = getContext().getSharedPreferences("SyncFlag", getContext().MODE_PRIVATE);
-        String lastSyncTime = pref1.getString("loginTime", null);
+
+        /*SharedPreferences pref1 = getContext().getSharedPreferences("SyncFlag", getContext().MODE_PRIVATE);
+        String lastSyncTime = pref1.getString("lastSyncTime", null);
         int hrslastSync = AppController.hoursAgo(lastSyncTime);
         Log.e("loginTime12", "" + lastSyncTime + " hours " + hrslastSync);
 
-        if (hrslastSync > 72) {
+       *//* if (hrslastSync > 72) {
             Intent i = new Intent(getContext(), LoginActivity.class);
             startActivity(i);
             System.gc();
-        }
+        }*/
     }
     public void lastSyncTime(String lastSyncTime ) {
 
@@ -1764,6 +1782,69 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         @Override
         protected void onProgressUpdate(Void... values) {
         }
+    }
+
+    private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+            super.onScrollStateChanged(recyclerView, newState);
+        }
+
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            super.onScrolled(recyclerView, dx, dy);
+            int visibleItemCount = mLayoutManager.getChildCount();
+            int totalItemCount = mLayoutManager.getItemCount();
+            int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
+            Log.e("visibleItemCount", "" + visibleItemCount + " totalItemCount  " + totalItemCount + " firstVisibleItemPosition " + firstVisibleItemPosition);
+
+            if (!isLoading && !isLastPage) {
+                if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                        && firstVisibleItemPosition >= 0
+                        && totalItemCount >= PAGE_SIZE) {
+
+                    isLoading = true;
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            loadDataForAdapter();
+                        }
+                    }, 2000);
+                }
+            }
+        }
+    };
+    private void loadDataForAdapter(){
+
+        isLoading = false;
+        ival=ival+15;
+
+        List<RegistrationModel> memberList = new ArrayList<>();
+
+
+        int index = sva.getItemCount() - 1;
+        int end = index + PAGE_SIZE;
+        Log.e("index", "" + index + " " + end + " size is " + queryCount);
+
+        if (end <= queryCountforTotalPatient) {
+            try {
+                memberList = sqlController.getPatientListForPhoneNumberFilter(searchNumber, ival, loadLimit);
+            } catch (ClirNetAppException e) {
+
+                e.printStackTrace();
+            }
+
+            //  patientData.addAll(memberList);
+            // adapter.notifyDataSetChanged();
+            sva.addAll(memberList);
+            if(end >= queryCount){
+                sva.setLoading(false);
+
+            }
+
+        }
+
     }
 }
 

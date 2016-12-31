@@ -22,7 +22,8 @@
         android:orderInCategory="100"
         android:showAsAction="ifRoom|withText"
         android:title="@string/refresh"
-        tools:ignore="AppCompatResource" />
+        tools:ignore="AppCompatResource"
+        android:visible="false"/>
 
     <item
         android:id="@+id/about"

@@ -439,7 +439,7 @@ public class SQLController {
         String countQuery= new Counts().getCountQuery();
         Log.d("count", ""+countQuery );
         int numRows=0;
-        if(countQuery.length()>10){
+        if(countQuery !=null && countQuery.length()>10){
 
         numRows = (int) DatabaseUtils.longForQuery(db1, countQuery, null);
         Log.d("count", ""+countQuery +"  " + numRows);
@@ -541,22 +541,22 @@ public class SQLController {
     }
 
 
-    public ArrayList<RegistrationModel> getPatientListForPhoneNumberFilter(String number) throws ClirNetAppException {
+    public ArrayList<RegistrationModel> getPatientListForPhoneNumberFilter(String number,int page,int limit) throws ClirNetAppException {
 
         ArrayList<RegistrationModel> hotelList = new ArrayList<>();
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {                                                                                                                                                                                                                                                                                                                                                                                          //p.first_name like '%" + fname + "%'
             // String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like  '% " + number + " %'  group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc " ;
-            String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like '%" + number + "%' group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc ";
+            String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like '%" + number + "%' group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc limit " + page + " , " + limit +";";
+            String countQuery="select COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id and p.phonenumber like '%" + number + "%' order by ph.key_visit_id desc ";
+
+            new Counts().setCountQueryforHomeFragmentNoFilter(countQuery);
+
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-            // Log.d("cursor", "" + cursor.getCount());
+            Log.d("selectQuery", "" + selectQuery);
 
-
-            int count = cursor.getCount();
-            // Log.d("count", "" + count);
-            // looping through all rows and adding to list
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
                 do {
@@ -586,7 +586,19 @@ public class SQLController {
 
     }
 
+    public  int getCountResultforgetPatientListForPhoneNumberFilter(){
 
+        SQLiteDatabase  db1 = dbHelper.getReadableDatabase();
+        String countQuery= new Counts().getCountQueryforHomeFragmentNoFilter();
+        Log.d("count", ""+countQuery );
+        int numRows=0;
+        if(countQuery.length()>1){
+
+            numRows = (int) DatabaseUtils.longForQuery(db1, countQuery, null);
+            Log.d("count", ""+countQuery +"  " + numRows);
+        }
+        return numRows;
+    }
     //This will show all the visit  history of patient to show on AddPatientUpdate and ShowPaersonalDetals page
     //ashish
     public ArrayList<RegistrationModel> getPatientHistoryListAll(String patient_id) throws ClirNetAppException {

@@ -330,7 +330,7 @@ public class SyncDataService extends Service {
         }
     }
 
-    //log file sending cod
+    //store last sync time in prefrence
     public void lastSyncTime(String lastSyncTime ) {
 
         getSharedPreferences("SyncFlag", MODE_PRIVATE)

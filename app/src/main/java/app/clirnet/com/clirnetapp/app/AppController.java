@@ -159,6 +159,7 @@ public class AppController extends Application {
         return (sdf.format(cal.getTime()));
     }
     public String getDateTimenew() {
+
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         return (sdf.format(cal.getTime()));
@@ -357,6 +358,8 @@ public class AppController extends Application {
 
         return length;
     }
+
+    //get the hours between two dates
     public static int hoursAgo(String datetime) {
         Date date = null; // Parse into Date object
         long differenceInHours = 0;
