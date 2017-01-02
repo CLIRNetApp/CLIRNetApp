@@ -145,8 +145,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private boolean isLastPage = false;
     private boolean isLoading = false;
 
-
-
     private TextView todays_patient_updatetxt;
     private View view;
     private String savedUserName;
@@ -517,8 +515,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                         getPatientRecords(savedUserName, savedUserPassword);
                         new LastNameAsynTask(getContext(),savedUserName, savedUserPassword);
-                        /*LongOperation longOperation=new LongOperation();
-                        longOperation.execute(savedUserName,savedUserPassword);*/
+
+
 
                     }
                 }
@@ -639,7 +637,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         if (isInternetPresent) {
 
-            if (patientIds_List != null && !patientIds_List.isEmpty() || getPatientVisitIdsList != null || !getPatientVisitIdsList.isEmpty()) {
+            if (patientIds_List != null && !patientIds_List.isEmpty() || getPatientVisitIdsList != null && !getPatientVisitIdsList.isEmpty()) {
                 // Log.e("senddata", "data is sending");
                 sendDataToServer(patientInfoArayString, patientVisitHistorArayString);
 
@@ -1002,9 +1000,18 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         Random r = new Random();
         int n=r.nextInt(10);
-        String imgstring= String.valueOf(imageArray[n]);
-        Log.e("imgstring","   "+ n + "   "+imgstring);
+        String imgstring= getString(imageArray[n]).toString();
+        Log.e("imgstring", "   " + n + "   " + imgstring);
+
+        final String url=getString(imageArray[n]).toString();
         backChangingImages.setImageResource(imageArray[n]);
+
+        backChangingImages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getContext(), "Image Clicked" +url, Toast.LENGTH_SHORT).show();
+            }
+        });
         //backChangingImages.setBackgroundResource(imageArray[n]);
 
         /*Runnable runnable = new Runnable() {
@@ -1168,7 +1175,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             @Override
             public void onResponse(String response) {
 
-                hideDialog();
+                //hideDialog();
 
 
                 try {
@@ -1217,7 +1224,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();
                     } else {
-                        Toast.makeText(getContext(), "" + msg, Toast.LENGTH_SHORT).show();
+
 
                     }
 
@@ -1294,12 +1301,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         String tag_string_req = "req_login";
 
 
-        pDialog.setMessage("Initializing Application. Please Wait...");
+        pDialog.setMessage("Initializing Application. Please Wait...1");
         showDialog();
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_PATIENT_RECORDS, new Response.Listener<String>() {
-
 
 
             @Override
@@ -1307,7 +1313,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 Log.d(TAG, "Sync Response: " + response);
                 Log.e("responseresponse", "" + response);
 
-                //   new DownloadMusicfromInternet().execute(response);
+                new getPatientRecordsFromServer().execute(response);
+
+             /*
                 try {
                     JSONObject jObj = new JSONObject(response);
 
@@ -1336,8 +1344,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     e.printStackTrace();
                     appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e);
                     Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-                hideDialog();
+                }*/
+                //hideDialog();
             }
         }, new Response.ErrorListener() {
 
@@ -1379,15 +1387,15 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     private void setPatientPersonalList(JSONArray jsonArray) throws JSONException {
 
+
         List<RegistrationModel> inputPatientData = new ArrayList<>();
+
         for (int i = 0; i < jsonArray.length(); i++) {
 
             JSONObject jsonProsolveObject = jsonArray.getJSONObject(i);
 
-
             String pat_id = jsonProsolveObject.getString("pat_id");
             String flag = "1";
-
 
             String doctor_id = jsonProsolveObject.getString("doctor_id");
             String doc_membership_id = jsonProsolveObject.getString("doc_membership_id");
@@ -1410,7 +1418,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String special_instruction = jsonProsolveObject.getString("special_instruction");
             String added_by = jsonProsolveObject.getString("added_by");
             String added_on = jsonProsolveObject.getString("added_on");
-
 
             String modified_by = jsonProsolveObject.getString("modified_by");
             String modified_on = jsonProsolveObject.getString("modified_on");
@@ -1443,6 +1450,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 e.printStackTrace();
                 appController.appendLog("Home Fragment" + e);
             }
+
             dbController.addPatientPersoanlRecords(pat_id, doctor_id, doc_membership_id, patient_info_type_form, pat_first_name, pat_middle_name, pat_last_name,
                     pat_gender, converteddobDate, pat_age, pat_mobile_no, pat_address, pat_city_town, pat_pincode, pat_district, pref_lang, photo_name, consent,
                     special_instruction, added_by, convertedDate, convertedTime, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, flag);
@@ -1450,7 +1458,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             inputPatientData.add(new RegistrationModel(pat_id, doctor_id, doc_membership_id, patient_info_type_form, pat_first_name, pat_middle_name, pat_last_name,
                     pat_gender, converteddobDate, pat_age, pat_mobile_no, pat_address, pat_city_town, pat_pincode, pat_district, pref_lang, photo_name, consent,
                     special_instruction, added_by, added_on, convertedDate, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, flag));
-
 
         }
         SessionManager session = new SessionManager(getContext().getApplicationContext());
@@ -1463,10 +1470,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     //This method will get patient History details from server and stores into db
     private void setPatientHistoryList(JSONArray patientHistoryList) throws JSONException {
         String flag = "1";
+
+
         for (int i = 0; i < patientHistoryList.length(); i++) {
 
             JSONObject jsonPatientHistoryObject = patientHistoryList.getJSONObject(i);
-
 
             String visit_id = jsonPatientHistoryObject.getString("visit_id");
             String pat_id = jsonPatientHistoryObject.getString("pat_id");
@@ -1494,10 +1502,23 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String     sugar= jsonPatientHistoryObject.getString("sugar");
             String   drugs= jsonPatientHistoryObject.getString  ("drugs");
             String    tests=  jsonPatientHistoryObject.getString("tests");
-            String  dihnosis= jsonPatientHistoryObject.getString  ( "diagnosis");
+            String  dihnosis= jsonPatientHistoryObject.getString  ("diagnosis");
             String    symptoms=  jsonPatientHistoryObject.getString("symptoms");
             String  prescription=  jsonPatientHistoryObject.getString ( "prescription");
-            String added_by = jsonPatientHistoryObject.getString("added_by");
+
+            /*String notes = null; //for test purpose
+            String weight=null;
+            String   pulse= null;
+            String  bp_high= null;
+            String    bp_low= null;
+            String    temp= null;
+            String     sugar= null;
+            String   drugs= null;
+            String    tests=  null;
+            String  dihnosis=null;
+            String    symptoms=  null;
+            String  prescription= null;*/
+                    String added_by = jsonPatientHistoryObject.getString("added_by");
             String added_on = jsonPatientHistoryObject.getString("added_on");
 
             String modified_by = jsonPatientHistoryObject.getString("modified_by");
@@ -1567,7 +1588,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     follow_up_weeks, follow_up_months, convertedActualfodDate, notes, added_by, convertedAddedonDate, convertedAddedonTime, modified_by, modified_on, is_disabled, disabled_by, disabled_on,
                     is_deleted, deleted_by, deleted_on, flag, patient_info_type_form,prescription,weight,pulse,bp_high,bp_low,temp,sugar,symptoms,dihnosis,tests,drugs);
 
-
         }
 
         dbController.addAsync();
@@ -1579,8 +1599,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         Intent i = new Intent(getContext(), NavigationActivity.class);
         startActivity(i);
 
-        makeToast("Application Initialization Successful");
-
+        /*if(pDialog != null){
+            hideDialog();
+        }*/
     }
 
     //custom dialog  for the sync button result
@@ -1731,7 +1752,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         int hrs = AppController.hoursAgo(loginTime);
         Log.e("loginTime", "" + loginTime + " hours " + hrs);
 
-        if (hrs > 8) {
+        if (hrs >= 8) {
             Intent i = new Intent(getContext(), LoginActivity.class);
             startActivity(i);
             System.gc();
@@ -1756,27 +1777,60 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 .apply();
 
     }
-    private class LongOperation extends AsyncTask<String, Void, String> {
+    private class getPatientRecordsFromServer extends AsyncTask<String, Void, String> {
+
         ProgressDialog pd;
         @Override
         protected String doInBackground(String... params) {
 
-            new LastNameAsynTask(getContext(),savedUserName, savedUserPassword);
+
+            try {
+
+                JSONObject jObj = new JSONObject(params[0].toString());
+
+                // Check for error node in json
+                // user successfully logged in
+                // Now store the user in SQLite
+
+
+                JSONObject user = jObj.getJSONObject("data");
+
+                JSONArray jsonArray = user.getJSONArray("doctor_patient_relation");
+                //  Log.e("jsonArray", "" + jsonArray);
+                JSONArray patientHistoryList = user.getJSONArray("patient_visit_details");//for live api
+                // JSONArray patientHistoryList = user.getJSONArray("patinet_visit_details"); //for local addrres
+                // Log.e("jsonArray", "" + patientHistoryList);
+                setPatientPersonalList(jsonArray);
+                setPatientHistoryList(patientHistoryList);
+
+
+
+            } catch (JSONException e) {
+                // JSON error
+                e.printStackTrace();
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e);
+                //Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+           /* new LastNameAsynTask(getContext(),savedUserName, savedUserPassword);*/
             return null;
         }
 
         @Override
         protected void onPostExecute(String result) {
-            Log.e("onPostExecute","onPostExecute");
-            pd.dismiss();
+            Log.e("onPostExecute", "onPostExecute");
+          //  pDialog.dismiss();
+            hideDialog();
+            makeToast("Application Initialization Successful");
+
         }
 
         @Override
         protected void onPreExecute() {
             Log.e("onPreExecute","onPreExecute");
-             pd = new ProgressDialog(getContext());
-            pd.setMessage("loading");
-            pd.show();
+            // pd = new ProgressDialog(getContext());
+           //  pd.setMessage("Initializing Application. Please Wait...2");
+            // pDialog.show();
+            showDialog();
         }
 
         @Override
@@ -1844,7 +1898,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             }
 
         }
-
     }
 }
 

@@ -9,14 +9,16 @@ public class AppConfig {
 
 
     //Patient all records
-    //public static final String URL_PATIENT_RECORDS = "http://doctor.clirnet.com/doctor/webapi/initialpatientdata";
-    public static final String URL_PATIENT_RECORDS = "http://192.168.1.53/clirnetapplication/public/doctor/webapi/initialpatientdata";
+
+
+   public static final String URL_PATIENT_RECORDS = "http://doctor.clirnet.com/doctor/webapi/initialpatientdata";
+    //public static final String URL_PATIENT_RECORDS = "http://192.168.1.53/clirnetapplication/public/doctor/webapi/initialpatientdata";
 
     //public static final String URL_SYCHRONISED_TOSERVER = "http://doctor.clirnet.com/doctor/webapi/syncpatientdata";
     public static final String URL_SYCHRONISED_TOSERVER = "http://192.168.1.53/clirnetapplication/public/doctor/webapi/syncpatientdata";
 
-    //public static final String URL_DOCTORINFO = "http://doctor.clirnet.com/doctor/webapi/doctordetailedinformation";
-    public static final String URL_DOCTORINFO = "http://192.168.1.53/clirnetapplication/public/doctor/webapi/doctordetailedinformation";
+    public static final String URL_DOCTORINFO = "http://doctor.clirnet.com/doctor/webapi/doctordetailedinformation";
+   // public static final String URL_DOCTORINFO = "http://192.168.1.53/clirnetapplication/public/doctor/webapi/doctordetailedinformation";
 
     //public static String URL_CHANGE_PASSWORD="http://doctor.clirnet.com/doctor/webapi/updatepassword";
 

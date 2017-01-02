@@ -30,6 +30,7 @@ import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.app.DoctorDeatilsAsynTask;
 import app.clirnet.com.clirnetapp.app.LoginAsyncTask;
 import app.clirnet.com.clirnetapp.app.UpdatePassworsAsynTask;
+import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
@@ -83,6 +84,7 @@ public class LoginActivity extends Activity  {
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
 
         DatabaseClass databaseClass = new DatabaseClass(getApplicationContext());
+        BannerClass bannerClass = new BannerClass(getApplicationContext());
         LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
         appController = new AppController();
 
@@ -150,6 +152,7 @@ public class LoginActivity extends Activity  {
         try {
 
             databaseClass.createDataBase();
+            bannerClass.createDataBase();
             phoneNumber = sqlController.getPhoneNumber();
 
         } catch (Exception ioe) {
@@ -163,6 +166,7 @@ public class LoginActivity extends Activity  {
         try {
 
             databaseClass.openDataBase();
+            bannerClass.openDataBase();
 
 
         } catch (Exception e) {
@@ -226,7 +230,8 @@ public class LoginActivity extends Activity  {
                                             strPassword = inputPassword.getText().toString().trim();
 
                                             String time=appController.getDateTimenew();
-                                            Log.e("current Time",""+time);
+                                           // String time="2-1-2017 05:22:21";
+                                           // Log.e("current Time",""+time);
                                             //This code used for Remember Me(ie. save login id and password for future ref.)
                                             rememberMe(name, strPassword, time); //save username only
 

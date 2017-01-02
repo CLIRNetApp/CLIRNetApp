@@ -196,7 +196,6 @@ public class SyncDataService extends Service {
                 try {
                     JSONObject jObj = new JSONObject(response);
 
-
                     JSONObject user = jObj.getJSONObject("data");
 
                     String msg = user.getString("msg");

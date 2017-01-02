@@ -146,6 +146,41 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
 
+    private static final String TABLE_COMPANY_BANNER = "company_banners";
+
+   // private static final String CREATE_COMPANY_BANNERS ="CREATE TABLE `company_banners` ( `banner_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `company_id` INTEGER, `type` TEXT, `brand_name` TEXT, `folder_name` TEXT, `banner_image1` TEXT, `product_image2` TEXT, `banner_type` TEXT, `status` TEXT, `speciality` TEXT, `generic_name` TEXT, `manufactured_by` TEXT, `marketed_by` TEXT, `group_name` TEXT, `link_to_page` TEXT, `call_me` TEXT, `meet_me` TEXT, `priority` INTEGER, `start_time` TEXT, `end_time` TEXT, `clinical_trial_source` TEXT, `clinical_trial_identifier` TEXT, `clinical_trial_link` TEXT, `clinical_sponsor` TEXT, `drug_composition` TEXT, `drug_dosing_durability` TEXT, `added_by` INTEGER NOT NULL, `added_on` TEXT NOT NULL, `modified_on` INTEGER, `modified_by` TEXT, `is_disabled` TEXT NOT NULL, `disabled_by` INTEGER, `is_deleted` INTEGER, `deleted_on` TEXT, `deleted_by` INTEGER, `disabled_on` TEXT )";
+
+    private static final String BANNER_ID = " banner_id";
+    private static String COMPANY_ID="company_id";
+    private static final String TYPE = "type";
+    private static final String BRAND_NAME = "brand_name";
+    private static final String FOLDER_NAME = "folder_name";
+
+    private static final String BANNER_IMAGE = "banner_image1";
+    private static final String PRODUCT_IMAGE = "product_image2";
+
+    private static final String BANNER_TYPE = "banner_type";
+
+    private static final String STATUS = "status";
+    private static final String SPECIALITY = "speciality";
+    private static final String GENERIC_NAME = "generic_name";
+    private static final String MANUFACTURED_BY = "manufactured_by";
+    private static final String MARKETED_BY = "marketed_by";
+    private static final String GROUP_NAME = "group_name";
+    private static final String LINK_TO_PAGE ="link_to_page" ;
+    private static final String CALL_ME = "call_me";
+    private static final String MEET_ME = "meet_me";
+    private static final String PRIORITY = "priority";
+    private static final String START_TIME = "start_time";
+    private static final String END_TIME = "end_time";
+    private static final String CLINICAL_TRIAL_SOURCE = "clinical_trial_source";
+    private static final String CLINICAL_TRIAL_IDENTIFIER = "clinical_trial_identifier";
+    private static final String CLINICAL_TRIAL_LINK = "clinical_trial_link";
+    private static final String CLINICAL_SPONSOR = "clinical_sponsor";
+    private static final String DRUG_COMPOSITION = "drug_composition";
+    private static final String DRUG_DOSING_DURABILITY = "drug_dosing_durability";
+
+
     // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -196,6 +231,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_TESTS = " ALTER TABLE patient_history" + " ADD COLUMN tests text;";
 
     private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_DRUGS = " ALTER TABLE patient_history" + " ADD COLUMN drugs text;";
+    private static final String DATABASE_ALTER_TABLE_DOCTORINFO = " ALTER TABLE doctor_perInfo" + " ADD COLUMN company_id text;";
 
     // Upgrading database
     @Override
@@ -221,20 +257,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_DRUGS);
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_PHONE_TYPE);
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_ISD_CODE);
-
+            db.execSQL(DATABASE_ALTER_TABLE_DOCTORINFO);//adding column company_id
         }
     }
 
-    private void addDummyColumn() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor=db.rawQuery("SELECT * FROM user",null);
-        int deleteStateColumnIndex=cursor.getColumnIndex("test");
-        Log.e("deleteStateColumnIndex"," "+deleteStateColumnIndex);
-        if(deleteStateColumnIndex <0){
-            db.execSQL("ALTER TABLE user ADD COLUMN test text;");
-            Log.e("deleteStateColumnIndex", "column cretaed " );
-        }
-    }
 
     /**
      * Updating Patient Personal details in database
@@ -270,9 +296,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(PATIENT_STATE, state);
             values.put(PHONE_TYPE,phoneType);
 
-
             // Inserting Row
             id = db.update(TABLE_PATIENT, values, KEY_PATIENT_ID + "=" + keyid, null);
+
         } catch (Exception e) {
             throw new ClirNetAppException("Error inserting data");
         } finally {
