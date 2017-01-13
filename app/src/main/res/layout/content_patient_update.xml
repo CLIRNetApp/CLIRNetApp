@@ -813,18 +813,21 @@
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 
+
+
             <LinearLayout
                 android:id="@+id/presciptionlayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
                 android:layout_below="@+id/presciptiontext"
                 android:background="@drawable/rectangle_corner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:layout_marginTop="0dp"
                 android:padding="5dp"
                 android:paddingTop="5dp"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp">
+                android:paddingRight="10dp"
+                android:visibility="gone">
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
 
@@ -832,7 +835,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_marginRight="5dp"
-                    android:layout_weight="1"
+                    android:layout_weight="0.6"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:fontFamily="sans-serif"
@@ -844,15 +847,6 @@
                     app:bootstrapSize="md"
                     app:roundedCorners="false" />
 
-                <View
-                    android:id="@+id/view2"
-                    android:layout_width="2dp"
-                    android:layout_height="35dp"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginRight="5dp"
-                    android:layout_toRightOf="@+id/txt"
-                    android:background="@color/grey"
-                    android:visibility="gone" />
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
 
@@ -860,7 +854,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_below="@+id/txtsymptomsanddignost"
-                    android:layout_weight="1"
+                    android:layout_weight="0.6"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:fontFamily="sans-serif"
@@ -870,60 +864,52 @@
                     android:textSize="12sp"
                     app:bootstrapBrand="success"
                     app:bootstrapSize="md"
-                    app:roundedCorners="false" />
+                    app:roundedCorners="false"
+                    android:layout_marginRight="5dp"/>
+
+                <Button
+                    android:id="@+id/addPatientprescriptionBtn"
+                    android:layout_width="150dp"
+                    android:layout_height="45dp"
+                    android:background="#50BAA0"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:paddingLeft="20dp"
+                    android:paddingRight="20dp"
+                    android:text="@string/addimage"
+                    android:textAllCaps="false"
+                    android:textColor="#ffffff"
+                    android:textSize="16sp" />
+
+                <Button
+                    android:id="@+id/addPatientprescriptionBtn1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:background="#50BAA0"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:paddingRight="5dp"
+                    android:text="Add Prescription"
+                    android:textColor="#ffffff"
+                    android:textSize="16sp"
+                    tools:targetApi="jelly_bean"
+                    android:visibility="gone"/>
+
+                <ImageView
+                    android:id="@+id/imageViewprescription"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="0.5"
+                    android:contentDescription="@string/desc"
+                    android:padding="10dp"
+                    android:src="@drawable/emp_img"
+                    android:visibility="gone"/>
 
             </LinearLayout>
 
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/rectangle_corner"
-                    android:orientation="horizontal"
-                    android:padding="5dp"
-                    android:layout_marginLeft="0dp"
-                    android:layout_marginRight="0dp"
-                    android:layout_marginTop="30dp">
-
-                    <Button
-                        android:id="@+id/addPatientprescriptionBtn"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.4"
-                        android:background="#50BAA0"
-                        android:fontFamily="sans-serif-medium"
-                        android:gravity="center"
-                        android:paddingRight="5dp"
-                        android:text="Add Prescription"
-                        android:textColor="#ffffff"
-                        android:textSize="16sp"
-                        tools:targetApi="jelly_bean" />
-
-                    <ImageView
-                        android:id="@+id/imageViewprescription"
-                        android:layout_width="0dp"
-                        android:layout_height="40dp"
-                        android:layout_weight="0.5"
-                        android:contentDescription="@string/desc"
-                        android:padding="10dp"
-                        android:src="@drawable/emp_img" />
-
-                    <!--<com.mikhaellopez.circularimageview.CircularImageView
-                        android:id="@+id/imageViewprescription"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/main_profile"
-                        app:civ_border_color="#EEEEEE"
-                        app:civ_border_width="4dp"
-                        app:civ_shadow="true"
-                        app:civ_shadow_radius="10"
-                        app:civ_shadow_color="#FF0000"
-                        android:visibility="gone"/>-->
-
-                </LinearLayout>
-
-                <TextView
+            <TextView
                     android:layout_width="match_parent"
                     android:layout_height="10dp" />
 

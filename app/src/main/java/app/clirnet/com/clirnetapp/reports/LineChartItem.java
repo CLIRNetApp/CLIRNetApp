@@ -23,18 +23,16 @@ public class LineChartItem extends ChartItem {
 
     private Typeface mTf;
     Context mContext;
-    private ViewHolder holder;
     private ArrayList<String> date;
     private ArrayList<String> nocountsperday;
     private ArrayList<String> mDate;
-    private String fromDate, toDate;
 
 
     public LineChartItem(ChartData<?> cd, Context c, String fromDate, String toDate) {
         super(cd);
         this.mContext = c;
-        this.fromDate = fromDate;
-        this.toDate = toDate;
+        String fromDate1 = fromDate;
+        String toDate1 = toDate;
         Utils.init(mContext.getResources());
         Utils.init(mContext);
 
@@ -49,7 +47,7 @@ public class LineChartItem extends ChartItem {
     @Override
     public View getView(int position, View convertView, Context c) {
 
-        holder = null;
+        ViewHolder holder = null;
 
         if (convertView == null) {
 

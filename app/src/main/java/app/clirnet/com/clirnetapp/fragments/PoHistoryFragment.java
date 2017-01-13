@@ -2,6 +2,7 @@ package app.clirnet.com.clirnetapp.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,9 +26,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -42,6 +45,7 @@ import app.clirnet.com.clirnetapp.activity.ShowPersonalDetailsActivity;
 import app.clirnet.com.clirnetapp.activity.TermsCondition;
 import app.clirnet.com.clirnetapp.adapters.PoHistoryAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
@@ -97,11 +101,12 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
     private int PAGE_SIZE = 10;
 
-    private boolean isLastPage = false;
     private boolean isLoading = false;
 
     private int queryCount;
-
+    private ArrayList<String> bannerimgNames;
+    private BannerClass bannerClass;
+    private String doctor_membership_number;
 
     public PoHistoryFragment() {
         this.setHasOptionsMenu(true);
@@ -184,7 +189,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         appController = new AppController();
 
 
-        setupAnimation();
+
 
         try {
 
@@ -193,10 +198,16 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             if (databaseClass == null) {
                 databaseClass = new DatabaseClass(getContext());
             }
+            if(bannerClass == null){
+                bannerClass=new BannerClass(getContext());
+            }
+            bannerimgNames= bannerClass.getImageName();
+            Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1).toString());
+            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Frgament" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Frgament" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -249,10 +260,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 String[] temp = strAilment.split(delimiter);
                 selectedAilmentList = new ArrayList();
              /* print substrings */
-                for (String aTemp : temp) {
-
-                    selectedAilmentList.add(aTemp);
-                }
+                Collections.addAll(selectedAilmentList, temp);
                 int sizegender = selectedListGender.size();
                 int sizeage = selectedAgeList.size();
                 int sizeailment = selectedAilmentList.size();
@@ -280,7 +288,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Fragment" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Fragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
                 } finally {
                     if (sqlController != null) {
                         sqlController.close();
@@ -291,6 +299,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 int count = patientData.size();
                 try {
                     if (count > 0) {
+
                         /*final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
                         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
                         recyclerView.setLayoutManager(layoutManager);*/
@@ -315,7 +324,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Fragment" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Fragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
 
             }
@@ -338,6 +347,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         }));
 
         setUpSpinner();
+        setupAnimation();
         return rootview;
     }
 
@@ -363,7 +373,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e);
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
             if (databaseClass != null) {
                 databaseClass.close();
@@ -513,7 +523,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             } else selectedItems[i] = 0;
         }
-        for (int i = 0; i < selectedItems.length; i++) {
+        for (int selectedItem : selectedItems) {
             // if(selectedItems[i]==1)
             // System.out.println(al.get(i));
             //  selectedListGender.add(genderList.get(i).toString());
@@ -547,11 +557,33 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
     private void setupAnimation() {
 
-        Random r = new Random();
-        int n = r.nextInt(10);
-        String imgstring = String.valueOf(imageArray[n]);
-        Log.e("imgstring", "   " + n + "   " + imgstring);
-        backChangingImages.setImageResource(imageArray[n]);
+       try {
+           Random r = new Random();
+           int n = r.nextInt(bannerimgNames.size());
+
+           // final String url = getString(imageArray[n]);
+           //  backChangingImages.setImageResource(imageArray[n]);
+           final String url = bannerimgNames.get(n).toString();
+           Log.e("nUrl", "" + n + "" + url);
+
+           BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
+           backChangingImages.setImageDrawable(d);
+           backChangingImages.setOnClickListener(new View.OnClickListener() {
+               @Override
+               public void onClick(View v) {
+                   Toast.makeText(getContext(), "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+
+                   String action = "clicked";
+
+                   appController.showAdDialog(getContext(), url);
+                   appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+               }
+           });
+           String action = "display";
+           appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+       }catch (Exception e){
+           e.printStackTrace();
+       }
 
        /* Runnable runnable = new Runnable() {
 
@@ -602,6 +634,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
             Log.e("visibleItemCount", "" + visibleItemCount + " totalItemCount  " + totalItemCount + " firstVisibleItemPosition " + firstVisibleItemPosition);
 
+            boolean isLastPage = false;
             if (!isLoading && !isLastPage) {
                 if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                         && firstVisibleItemPosition >= 0
@@ -653,33 +686,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
     }
 
-    /*//This method will filter data from our database generated list according to user query by Phone Number 6/8/i Ashish
-    private ArrayList<RegistrationModel> filter(List<RegistrationModel> models, String fn, String ln, String mobileno, String agestr) {
 
-        fn = fn.toLowerCase();
-        ln = ln.toLowerCase();
-        mobileno = mobileno.toLowerCase();
-        agestr = agestr.toLowerCase();
-
-        final ArrayList<RegistrationModel> filteredModelList = new ArrayList<>();
-        //final ArrayList<RegistrationModel> filteredModelList1 = new ArrayList<>();
-        for (RegistrationModel model : models) {
-            final String fname = model.getFirstName().toLowerCase();
-            final String mname = model.getLastName().toLowerCase();
-            final String mobno = model.getMobileNumber().toLowerCase();
-            final String age = model.getAge().toLowerCase();
-
-            if (fname.contains(fn) && mname.contains(ln) && mobno.contains(mobileno) && age.contains(agestr)) {
-
-                filteredModelList.remove(model);
-                Log.e("result", "" + fname);
-            } else {
-                filteredModelList.add(model);
-                Log.e("Allready", "Record is allready there");
-            }
-        }
-        return filteredModelList;
-    }*/
 
     @Override
     public void onPause() {
@@ -710,6 +717,10 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         if (databaseClass != null) {
             databaseClass = null;
         }
+        if(bannerClass != null){
+            bannerClass= null;
+        }
+        bannerimgNames=null;
 
 
         patientData.clear();
@@ -743,6 +754,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         ageGapSpinner = null;
         selectedAilmentList = null;
         mLayoutManager = null;
+        doctor_membership_number=null;
         Log.e("onDetach", "onDetach Home Fragment");
     }
 }

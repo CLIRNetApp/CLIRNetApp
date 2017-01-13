@@ -60,7 +60,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
         }
         catch(Exception e){
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Addpatient update Adapter"+e);
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Addpatient update Adapter"+e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         holder.tv_visit_date.setText(model.getVisit_date());

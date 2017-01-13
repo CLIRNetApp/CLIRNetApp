@@ -37,10 +37,6 @@
             android:label="@string/title_activity_navigation"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".activity.RegistrationActivity"
-            android:label="@string/title_activity_register"
-            android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
             android:name=".activity.EditPatientUpdate"
             android:label="@string/title_activity_patient_update"
             android:theme="@style/AppTheme.NoActionBar"
@@ -70,12 +66,12 @@
             android:label="@string/title_activity_privacy_policy"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".activity.TermsCondition" />
-        <activity android:name=".activity.AboutAppPage" >
-        </activity>
-        <activity android:name=".activity.RegistrationActivityNew" >
-        </activity>
-        <activity android:name=".activity.ShowPrescriptionImageActivity" >
-        </activity>
+        <activity android:name=".activity.RegistrationActivityNew"/> >
+
+        <activity android:name=".activity.ShowPrescriptionImageActivity" />
+
+        <activity android:name=".activity.ServiceArea"/>
+
     </application>
 
 </manifest>

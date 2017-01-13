@@ -105,7 +105,7 @@ public class NavigationActivity extends AppCompatActivity
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation" + e);
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
             if (sqlController != null) {
                 sqlController.close();

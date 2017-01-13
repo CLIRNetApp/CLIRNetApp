@@ -31,4 +31,11 @@
         android:showAsAction="ifRoom|withText"
         android:title="@string/about"
         tools:ignore="AppCompatResource" />
+
+    <item
+        android:id="@+id/tool"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/tools"
+        tools:ignore="AppCompatResource" />
 </menu>

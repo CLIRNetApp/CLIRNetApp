@@ -3,6 +3,7 @@ package app.clirnet.com.clirnetapp.fragments;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -20,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -37,6 +39,7 @@ import app.clirnet.com.clirnetapp.activity.TermsCondition;
 import app.clirnet.com.clirnetapp.adapters.FollowUpDateSearchAdapter;
 import app.clirnet.com.clirnetapp.adapters.RVAdapterforUpdateDate;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
@@ -50,7 +53,7 @@ public class ConsultationLogFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
 
-    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom,R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest,R.drawable.revituz,R.drawable.suprizon};
+    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom, R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest, R.drawable.revituz, R.drawable.suprizon};
 
     private OnFragmentInteractionListener mListener;
     private EditText date;
@@ -72,6 +75,9 @@ public class ConsultationLogFragment extends Fragment {
     private ArrayList<RegistrationModel> filterfodList;
     private ArrayList<RegistrationModel> filterVistDateList;
     private AppController appController;
+    private ArrayList<String> bannerimgNames;
+    private BannerClass bannerClass;
+    private String doctor_membership_number;
 
     public ConsultationLogFragment() {
         // this.setHasOptionsMenu(true);
@@ -104,6 +110,8 @@ public class ConsultationLogFragment extends Fragment {
 
 
         view = inflater.inflate(R.layout.fragment_consultation_log, container, false);
+        ((NavigationActivity) getActivity()).setActionBarTitle("Consultation Log");
+
         date = (EditText) view.findViewById(R.id.date);
         final Button searchRecords = (Button) view.findViewById(R.id.search);
         TextView currdate = (TextView) view.findViewById(R.id.sysdate);
@@ -120,10 +128,10 @@ public class ConsultationLogFragment extends Fragment {
         String dd = sdf.format(todayDate);
         currdate.setText("Today's Date " + dd);
 
-        ((NavigationActivity) getActivity()).setActionBarTitle("Consulation Log");
 
         followUpDateSearchAdapter = new FollowUpDateSearchAdapter(filterfodList);
         rvAdapterforUpdateDate = new RVAdapterforUpdateDate(filterfodList);
+        bannerClass = new BannerClass(getContext());
 
         TextView privacyPolicy = (TextView) view.findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) view.findViewById(R.id.termsandCondition);
@@ -153,10 +161,13 @@ public class ConsultationLogFragment extends Fragment {
             sqlController.open();
             appController = new AppController();
             // patientData = (sqlController.getPatientList());
+            bannerimgNames = bannerClass.getImageName();
+            Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1).toString());
+            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
         }
 
 
@@ -220,11 +231,11 @@ public class ConsultationLogFragment extends Fragment {
                 try {
 
                     reformattedStr = myFormat.format(fromUser.parse(searchdate));
-                   // Log.e("reformattedStr", "" + reformattedStr);
+                    // Log.e("reformattedStr", "" + reformattedStr);
 
                 } catch (ParseException e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
                 }
 
                 if (TextUtils.isEmpty(searchdate)) {
@@ -325,7 +336,7 @@ public class ConsultationLogFragment extends Fragment {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime()+" " +"/ "+"Add Patient" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
                 }
 
             }
@@ -452,11 +463,42 @@ public class ConsultationLogFragment extends Fragment {
 
         backChangingImages = (ImageView) view.findViewById(R.id.backChangingImages);
 
-        Random r = new Random();
+       /* Random r = new Random();
         int n=r.nextInt(10);
-        String imgstring= String.valueOf(imageArray[n]);
-        Log.e("imgstring","   "+ n + "   "+imgstring);
+
         backChangingImages.setImageResource(imageArray[n]);
+        final String url= getString(imageArray[n]);*/
+
+        Random r = new Random();
+        try {
+            int n = r.nextInt(bannerimgNames.size());
+
+            // final String url = getString(imageArray[n]);
+            //  backChangingImages.setImageResource(imageArray[n]);
+            final String url = bannerimgNames.get(n).toString();
+            Log.e("nUrl", "" + n + "" + url);
+
+            BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
+            backChangingImages.setImageDrawable(d);
+
+            backChangingImages.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getContext(), "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+
+                    String action = "clicked";
+
+                    appController.showAdDialog(getContext(), url);
+                    appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+
+
+                }
+            });
+            String action = "display";
+            appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
        /* Runnable runnable = new Runnable() {
             int i = 0;
@@ -501,8 +543,13 @@ public class ConsultationLogFragment extends Fragment {
         if (appController != null) {
             appController = null;
         }
+        if (bannerClass != null) {
+            bannerClass = null;
+        }
+        bannerimgNames = null;
         patientData.clear();
         patientData = null;
+        doctor_membership_number = null;
 
         recycler_view.setOnClickListener(null);
         //  searchView.setOnClickListener(null);

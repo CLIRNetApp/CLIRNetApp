@@ -833,15 +833,26 @@
                     android:id="@+id/presciptionlayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:orientation="vertical"
                     android:layout_below="@+id/presciptiontext"
                     android:background="@drawable/rectangle_corner"
-                    android:orientation="horizontal"
                     android:layout_marginTop="0dp"
                     android:padding="5dp"
                     android:paddingTop="5dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
                     android:visibility="gone">
+                <LinearLayout
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="0dp"
+                    android:padding="5dp"
+                    android:paddingTop="5dp"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    >
 
                     <com.beardedhen.androidbootstrap.BootstrapEditText
 
@@ -891,73 +902,74 @@
 
                 </LinearLayout>
 
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="0dp"
+                        android:layout_weight="1"
+                        android:orientation="horizontal"
+                        android:padding="5dp"
+                        android:layout_marginTop="25dp">
+
+                        <Button
+                            android:id="@+id/addPatientprescriptionBtn"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.4"
+                            android:background="#50BAA0"
+                            android:fontFamily="sans-serif-medium"
+                            android:gravity="center"
+                            android:paddingRight="5dp"
+                            android:text="Add Prescription"
+                            android:textColor="#ffffff"
+                            android:textSize="16sp"
+                            tools:targetApi="jelly_bean" />
+
+                        <TextView
+                            android:id="@+id/sendreminder"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/presciptionlayout"
+                            android:layout_marginLeft="5dp"
+                            android:layout_toRightOf="@+id/prescriptionBtn"
+                            android:gravity="center"
+                            android:text="@string/visitDate"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="18sp" />
+
+                        <EditText
+                            android:id="@+id/visitDate"
+                            android:layout_width="300dp"
+                            android:layout_height="45dp"
+                            android:background="@drawable/rectangle_corner"
+                            android:drawableRight="@android:drawable/ic_menu_my_calendar"
+                            android:layout_marginLeft="5dp"
+                            android:inputType="date"
+                            android:gravity="center"
+                            android:editable="false"
+                            android:focusable="false"
+                            android:text="@string/visitDate"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textSize="14sp"
+                            android:textColor="@color/black" />
+                        <!--<com.mikhaellopez.circularimageview.CircularImageView
+                            android:id="@+id/imageViewprescription"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:src="@drawable/main_profile"
+                            app:civ_border_color="#EEEEEE"
+                            app:civ_border_width="4dp"
+                            app:civ_shadow="true"
+                            app:civ_shadow_radius="10"
+                            app:civ_shadow_color="#FF0000"
+                            android:visibility="gone"/>-->
+
+                    </LinearLayout>
+
+                </LinearLayout>
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="10dp" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:background="@drawable/rectangle_corner"
-                    android:orientation="horizontal"
-                    android:padding="5dp"
-                    android:layout_marginTop="25dp">
-
-                    <Button
-                        android:id="@+id/addPatientprescriptionBtn"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.4"
-                        android:background="#50BAA0"
-                        android:fontFamily="sans-serif-medium"
-                        android:gravity="center"
-                        android:paddingRight="5dp"
-                        android:text="Add Prescription"
-                        android:textColor="#ffffff"
-                        android:textSize="16sp"
-                        tools:targetApi="jelly_bean" />
-
-                    <TextView
-                        android:id="@+id/sendreminder"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@+id/presciptionlayout"
-                        android:layout_marginLeft="5dp"
-                        android:layout_toRightOf="@+id/prescriptionBtn"
-                        android:gravity="center"
-                        android:text="@string/visitDate"
-                        android:textColor="@color/colorPrimary"
-                        android:textSize="18sp" />
-
-                    <EditText
-                        android:id="@+id/visitDate"
-                        android:layout_width="300dp"
-                        android:layout_height="45dp"
-                        android:background="@drawable/rectangle_corner"
-                        android:drawableRight="@android:drawable/ic_menu_my_calendar"
-                        android:layout_marginLeft="5dp"
-                        android:inputType="date"
-                        android:gravity="center"
-                        android:editable="false"
-                        android:focusable="false"
-                        android:text="@string/visitDate"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textSize="14sp"
-                        android:textColor="@color/black" />
-                    <!--<com.mikhaellopez.circularimageview.CircularImageView
-                        android:id="@+id/imageViewprescription"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
-                        android:src="@drawable/main_profile"
-                        app:civ_border_color="#EEEEEE"
-                        app:civ_border_width="4dp"
-                        app:civ_shadow="true"
-                        app:civ_shadow_radius="10"
-                        app:civ_shadow_color="#FF0000"
-                        android:visibility="gone"/>-->
-
-                </LinearLayout>
 
                 <TextView
                     android:layout_width="match_parent"

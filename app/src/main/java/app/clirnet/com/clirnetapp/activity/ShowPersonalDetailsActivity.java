@@ -1,6 +1,7 @@
 package app.clirnet.com.clirnetapp.activity;
 
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -25,6 +26,7 @@ import java.util.Random;
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.adapters.ShowPersonalDetailsAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
@@ -57,6 +59,10 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private AppController appController;
     private String fromWhere;
 
+    private ArrayList<String> bannerimgNames;
+    private BannerClass bannerClass;
+    private String doctor_membership_number;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,7 +81,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Show patient Detail" + e);
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Show patient Detail" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -131,7 +137,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         });
 
 
-        getSysDate();
+
         setDatatoText();
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy");//it will show date as 10 sep,2016
@@ -153,11 +159,16 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
                 recyclerView.setAdapter(showPersonalDetailsAdapter);
 
             }
+            if(bannerClass == null){
+                bannerClass=new BannerClass(ShowPersonalDetailsActivity.this);
+            }
+            bannerimgNames= bannerClass.getImageName();
+            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Show patient Details" + e);
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Show patient Details" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         //To changes backgound images on time slot
 
@@ -173,49 +184,19 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
         });
 
-       /* toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // back button pressed
-                Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
-                i.putExtra("FROMWHERE", fromWhere);
-                startActivity(i);
-                finish();
 
-            }
-        });*/
         if (strPatientPhoto != null && !TextUtils.isEmpty(strPatientPhoto)) {
             if (strPatientPhoto.length() > 0) {
                 setUpGlide(patientImage);
 
-
             }
         }
-       /* patientImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                 //  llayout.setBackground(patientImage.getDrawable());
-                    imagefrdDisplay.setVisibility(View.VISIBLE);
-                    Glide.with(ShowPersonalDetailsActivity.this)
-                            .load(strPatientPhoto)
-                            .crossFade()
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .skipMemoryCache(true)
-                            .error(R.drawable.main_profile)
-                            .into(imagefrdDisplay);
 
-
-
-                }
-            }
-        });*/
-        if (patientPersonalData.size() > 0) {
-
-        } else {
+        if (patientPersonalData.size() <= 0) {
             Toast.makeText(getApplicationContext(), "There is no history to update!!!", Toast.LENGTH_LONG).show();
         }
 
+        setupAnimation();
     }
 
     private void setUpGlide(ImageView patientImage) {
@@ -256,20 +237,43 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         editgender.setText(strgender);
     }
 
-    private void getSysDate() {
 
-        setupAnimation();
-    }
 
     //this will used to change banner image after some time interval
     private void setupAnimation() {
 
         Random r = new Random();
-        int n=r.nextInt(10);
-        String imgstring= String.valueOf(imageArray[n]);
-        Log.e("imgstring","   "+ n + "   "+imgstring);
-        backChangingImages.setImageResource(imageArray[n]);
+        try {
+            int n = r.nextInt(bannerimgNames.size());
 
+            // final String url = getString(imageArray[n]);
+            //  backChangingImages.setImageResource(imageArray[n]);
+            final String url = bannerimgNames.get(n).toString();
+            Log.e("nUrl", "" + n + "" + url);
+
+            BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
+            backChangingImages.setImageDrawable(d);
+
+            backChangingImages.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(ShowPersonalDetailsActivity.this, "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+
+                    String action = "clicked";
+
+                    appController.showAdDialog(ShowPersonalDetailsActivity.this, url);
+                    appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action);
+
+
+                }
+            });
+            String action = "display";
+            appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action);
+        }catch (Exception e){
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Show patient Details" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+        }
        /* Runnable runnable = new Runnable() {
             int i = 0;
 
@@ -318,6 +322,11 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         strAge = null;
         strDob = null;
         strLastName = null;
+        if(bannerClass != null){
+            bannerClass=null;
+        }
+        bannerimgNames=null;
+        doctor_membership_number=null;
         // System.gc();
     }
 

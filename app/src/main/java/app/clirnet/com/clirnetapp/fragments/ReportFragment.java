@@ -48,16 +48,12 @@ public class ReportFragment extends Fragment {
     private AppController appController;
     private OnFragmentInteractionListener mListener;
 
-    private String date;
     private ArrayList<String> nocountsperday;
     ViewPager viewPager;
     TabLayout tabLayout;
     private EditText fromdate;
     private EditText todate;
 
-    private int year;
-    private int month;
-    private int day;
     private int cur = 0;
     private ImageView filterDate;
     private Button lastweek;
@@ -156,7 +152,7 @@ public class ReportFragment extends Fragment {
 
                 } catch (ParseException e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
 
                 if (diffInHours <= 0) {
@@ -281,15 +277,15 @@ public class ReportFragment extends Fragment {
 
         } catch (ParseException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 
     private void setCurrentDateOnView(String val) {
         final Calendar c = Calendar.getInstance();
-        year = c.get(Calendar.YEAR);
-        month = c.get(Calendar.MONTH);
-        day = c.get(Calendar.DAY_OF_MONTH);
+        int year = c.get(Calendar.YEAR);
+        int month = c.get(Calendar.MONTH);
+        int day = c.get(Calendar.DAY_OF_MONTH);
 
         // set current date into textview
         todate.setText(new StringBuilder()
@@ -297,6 +293,7 @@ public class ReportFragment extends Fragment {
                 .append(year).append("-").append(month + 1).append("-")
                 .append(day).append(" "));
         //came form last week
+        String date;
         if (val.equals("1")) {
             date = AppController.addDay(new Date(), -7);
             fromdate.setText(date);

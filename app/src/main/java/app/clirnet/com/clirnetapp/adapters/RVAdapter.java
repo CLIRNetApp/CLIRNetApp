@@ -49,7 +49,23 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder>
         holder.name.setText(name);
 
 
-        holder.follow_up_date.setText(model.getActualFollowupDate());
+        //holder.follow_up_date.setText(model.getActualFollowupDate());
+
+        String follow_up_date = model.getActualFollowupDate();
+
+        try{
+            if(follow_up_date == null || follow_up_date.equals("") || follow_up_date .equals("0000-00-00") || follow_up_date.equals("30-11-0002") ){
+                holder.follow_up_date.setText("--");
+            }
+            else{
+                holder.follow_up_date.setText(follow_up_date);
+            }
+
+        }
+        catch(Exception e){
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Addpatient update Adapter"+e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
 
 
         int posi=position+1;

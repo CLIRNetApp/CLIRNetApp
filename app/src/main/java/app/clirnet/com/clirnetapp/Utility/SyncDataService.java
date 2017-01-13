@@ -64,6 +64,8 @@ public class SyncDataService extends Service {
     private String mEmailId;
     private static final int MY_NOTIFICATION_ID = 1;
     private NotificationManager nMn;
+    private String docId;
+    private String doctor_membership_number;
 
     @Override
     public void onCreate() {
@@ -102,6 +104,8 @@ public class SyncDataService extends Service {
             Log.e("PatientVisitHistor", " " + patientInfoArayString);
             mPhoneNumber = sqlController.getPhoneNumber();
             mEmailId = sqlController.getDocdoctorEmail();
+            docId = sqlController.getDoctorId();
+            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
             getUsernamePasswordFromDatabase();
 
@@ -156,7 +160,8 @@ public class SyncDataService extends Service {
                         .apply();
                 Log.e("sending12", "data is sending");
 
-                sendDataToServer(patientInfoArayString, patientVisitHistorArayString);
+              //  sendDataToServer(patientInfoArayString, patientVisitHistorArayString,doctor_membership_number,docId,patientIds_List.size(),getPatientVisitIdsList.size());
+                sendDataToServer(patientInfoArayString, patientVisitHistorArayString,doctor_membership_number,docId,getPatientVisitIdsList.size(),patientIds_List.size());
 
                // new LogFileAsyncTask(mUserName, mPassword); //send log file to server
 
@@ -181,7 +186,7 @@ public class SyncDataService extends Service {
     }
 
     //this will send data to server
-    private void sendDataToServer(final String patient_details, final String patient_visits) {
+    private void sendDataToServer(final String patient_details, final String patient_visits, final String docMemId, final String docId, final int  patient_visits_count, final int patient_details_count  ) {
 
         String tag_string_req = "req_login";
 
@@ -217,16 +222,18 @@ public class SyncDataService extends Service {
                         Log.e("TAG", "" + getPatientVisitIdsList.size());
                         int listsize = getPatientVisitIdsList.size();
                         for (int i = 0; i < listsize; i++) {
-                            String patientId = getPatientVisitIdsList.get(i).getPat_id();
+                            // String patientId = getPatientVisitIdsList.get(i).getPat_id();
                             String patientVisitId = getPatientVisitIdsList.get(i).getKey_visit_id();
                             String flag = "1";
-                            Log.e("TAG" + i, " " + patientId + "patientVisitId  " + patientVisitId);
+                            Log.e("TAG" + i, "patientVisitId  " + patientVisitId);
                             //saved last updated sync time in shared prefrence
 
                             //update flag after success
                             dbController.FlagupdatePatientVisit(patientVisitId, flag);
                         }
+
                         Log.e("sending12", "Data Sent");
+
                         getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
                                 .edit()
                                 .putString(PREF_VALUE, "2")
@@ -234,6 +241,10 @@ public class SyncDataService extends Service {
 
                         String time=appController.getDateTimenew();
                         lastSyncTime(time);
+
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "data is sync to server from sync service  : patient Visit Count :" + listsize + " patient Count  :" + size);
+
+                     //   appController.appendLog(appController.getDateTime() + " " + "/ " + "data is sent to server");
 
                     } else if (msg.equals("Credentials Mismatch or Not Found")) {
                         Log.e("TAG", "" + msg);
@@ -257,7 +268,6 @@ public class SyncDataService extends Service {
                 Log.e(TAG, "Login Error: " + error.getMessage());
                 appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + error);
 
-
             }
         }) {
 
@@ -265,10 +275,14 @@ public class SyncDataService extends Service {
             protected Map<String, String> getParams() {
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<>();
-
-                params.put("apikey", "PFFt0436yjfn0945DevOp0958732Cons3214556");
+                String keyid = getResources().getString(R.string.apikey);
+                params.put("apikey",keyid);
                 params.put("patient_details", patient_details);
                 params.put("patient_visits", patient_visits);
+                params.put("membershipid", docMemId);
+                params.put("docId", docId);
+                params.put("patient_visits_count", String.valueOf(patient_visits_count));
+                params.put("patient_details_count", String.valueOf(patient_details_count));
 
 
                 return params;

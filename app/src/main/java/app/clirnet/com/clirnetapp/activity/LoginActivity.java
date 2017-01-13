@@ -7,7 +7,11 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -15,17 +19,35 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
+import app.clirnet.com.clirnetapp.Utility.ImageDownloader;
 import app.clirnet.com.clirnetapp.Utility.MD5;
 import app.clirnet.com.clirnetapp.Utility.SyncDataService;
+import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.app.DoctorDeatilsAsynTask;
 import app.clirnet.com.clirnetapp.app.LoginAsyncTask;
@@ -38,12 +60,14 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
 
-public class LoginActivity extends Activity  {
+public class LoginActivity extends Activity {
     private static final String TAG = "Login";
     private static final String PREFS_NAME = "savedCredit";
     private static final String PREF_USERNAME = "username";
     private static final String PREF_PASSWORD = "password";
     private static final String LOGIN_TIME = "loginTime";
+    private static final String FISRT_TIME_LOGIN = "firstTimeLogin";
+    private static final String LOGIN_COUNT = "firstTimeLogin";
 
     private EditText inputEmail;
     private EditText inputPassword;
@@ -51,7 +75,6 @@ public class LoginActivity extends Activity  {
     private String name;
     private MD5 md5;
     private ConnectionDetector connectionDetector;
-    private boolean isInternetPresent;
     private SQLiteHandler dbController;
     private String strPassword;
     private String md5EncyptedDataPassword;
@@ -65,8 +88,14 @@ public class LoginActivity extends Activity  {
     private EditText confirmPassword;
     private String username;
     private String doctor_membership_number;
-    private String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
 
+    private BannerClass bannerClass;
+
+    private ImageDownloader mDownloader;
+    private static Bitmap bmp;
+    private FileOutputStream fos;
+    private ProgressBar pb;
+    private SharedPreferences.Editor editor;
 
 
     @Override
@@ -84,16 +113,12 @@ public class LoginActivity extends Activity  {
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
 
         DatabaseClass databaseClass = new DatabaseClass(getApplicationContext());
-        BannerClass bannerClass = new BannerClass(getApplicationContext());
+        bannerClass = new BannerClass(getApplicationContext());
         LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
         appController = new AppController();
 
         convertDate();
 
-
-        /*Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
-        serviceIntent. putExtra("UserID", "123456");
-        startService(serviceIntent);*/
 
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,7 +128,6 @@ public class LoginActivity extends Activity  {
 
             }
         });
-
 
         //redirect to TermsCondition Page
         termsandCondition.setOnClickListener(new View.OnClickListener() {
@@ -132,8 +156,6 @@ public class LoginActivity extends Activity  {
         // showDialog12();
 
         connectionDetector = new ConnectionDetector(getApplicationContext());
-
-
         //open database controller class for further operations on database
         // Cursor cursor = null;
 
@@ -141,12 +163,18 @@ public class LoginActivity extends Activity  {
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
             dbController = new SQLiteHandler(getApplicationContext());
-            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
-
+            Boolean value=getFirstTimeLoginStatus();
+            if(value) {
+                doctor_membership_number = sqlController.getDoctorMembershipIdNew();
+            }else{
+                Log.e("FisrtTimeLogin","FisrtTimeLogin to application");
+            }
+           /* dbController.FlagupdatePatientVisit("0");
+            dbController.FlagupdatePatientPersonal("0");*/
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         try {
@@ -156,10 +184,9 @@ public class LoginActivity extends Activity  {
             phoneNumber = sqlController.getPhoneNumber();
 
         } catch (Exception ioe) {
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Home" + ioe);
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Home" + ioe+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             throw new Error("Unable to create database");
-
 
         }
 
@@ -184,6 +211,7 @@ public class LoginActivity extends Activity  {
             lastnameDatabaseClass.createDataBase();
 
         } catch (IOException ioe) {
+
             appController.appendLog(appController.getDateTime() + "" + "/" + "Home" + ioe);
 
             throw new Error("Unable to create database");
@@ -229,9 +257,9 @@ public class LoginActivity extends Activity  {
                                             name = inputEmail.getText().toString().trim();
                                             strPassword = inputPassword.getText().toString().trim();
 
-                                            String time=appController.getDateTimenew();
-                                           // String time="2-1-2017 05:22:21";
-                                           // Log.e("current Time",""+time);
+                                            String time = appController.getDateTimenew();
+                                            // String time="2-1-2017 05:22:21";
+                                            // Log.e("current Time",""+time);
                                             //This code used for Remember Me(ie. save login id and password for future ref.)
                                             rememberMe(name, strPassword, time); //save username only
 
@@ -258,7 +286,8 @@ public class LoginActivity extends Activity  {
 
 
     }
-//it will hide the keyboard on button pressed
+
+    //it will hide the keyboard on button pressed
     private void hideKeyBoard() {
 
         InputMethodManager inputManager = (InputMethodManager)
@@ -269,6 +298,7 @@ public class LoginActivity extends Activity  {
     }
 
     private void convertDate() {
+
         SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -286,61 +316,40 @@ public class LoginActivity extends Activity  {
 
     }
 
-
-// --Commented out by Inspection START (07-11-2016 16:43):
-//// This method to add ailments from asset folder to our db ie. ailments
-//    private void saveAilmentToDb() {
-//        Thread thread = new Thread(){
-//            public void run(){
-//                Cursor cursor = null;
-//                //this will populate ailments  from asset folder ailment table
-//                DatabaseClass databaseClass = new DatabaseClass(LoginActivity.this);
-//                try {
-//                    cursor = databaseClass.getAilmentsList();
-//                    ArrayList<Object> mAilmemtArrayList = new ArrayList<>();
-//                    int columnIndex = cursor.getColumnIndex("ailment_name");
-//                    while (cursor.moveToNext()) {
-//                        mAilmemtArrayList.add(cursor.getString(columnIndex)); //add the item
-//                        dbController.addAilments(cursor.getString(columnIndex));
-//                        Log.e("ali", "ali is:" + cursor.getString(columnIndex));
-//                    }
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    if (cursor != null) {
-//                        cursor.close();
-//                    }
-//                    if(databaseClass !=null){
-//                        databaseClass.close();
-//                    }
-//                }
-//            }
-//        };
-//
-//        thread.start();
-//    }
-// --Commented out by Inspection STOP (07-11-2016 16:43)
-
     //Do login authentication Operations 2-11-2016
     private void LoginAuthentication() {
 
         md5EncyptedDataPassword = MD5.getMD5(strPassword);
-
+        String company_id = null;
 
         // Check for empty data in the form
         if (!name.isEmpty() && !strPassword.isEmpty()) {
 
             //Check if internet in on or not and if on authenticate user via entered Credentials
             // login user
-            isInternetPresent = connectionDetector.isConnectingToInternet();
+            boolean isInternetPresent = connectionDetector.isConnectingToInternet();
             if (isInternetPresent) {
                 //Toast.makeText(this, " Connected ", Toast.LENGTH_LONG).show();
                 //  checkLogin(name, md5EncyptedDataPassword);
+                try {
+                    company_id=sqlController.getCompany_id();
+                    Log.e("current Time", "" + company_id);
+                } catch (ClirNetAppException e) {
+                    e.printStackTrace();
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
+                }
 
                 new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword);
+
+                String apiKey = getResources().getString(R.string.apikey);
+
                 new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber);
                 startService();
+                savedLoginCounter("true");//to save shrd pref to update login counter
+
+               // getBannersData(username, strPassword, apiKey, doctor_membership_number, company_id);
+
+
                 //update last sync time if sync from server
                 String time = appController.getDateTimenew();
                 Log.e("current Time", "" + time);
@@ -353,12 +362,12 @@ public class LoginActivity extends Activity  {
                 boolean isLogin;
                 try {
                     //check last sync time to check if last sync from server is more than 72 hours or not
-                    int lasttimeSync= getLastSyncTime();
+                    int lasttimeSync = getLastSyncTime();
 
-                    if(lasttimeSync > 72){
+                    if (lasttimeSync > 72) {
                         showCreatePatientAlertDialog();
-                        Toast.makeText(getApplicationContext(),"Please login via internet and sync data to server",Toast.LENGTH_LONG).show();
-                    }else {
+                        Toast.makeText(getApplicationContext(), "Please login via internet and sync data to server", Toast.LENGTH_LONG).show();
+                    } else {
 
                         isLogin = sqlController.validateUser(name, md5EncyptedDataPassword, phoneNumber);
 
@@ -400,34 +409,19 @@ public class LoginActivity extends Activity  {
         SharedPreferences pref1 = getSharedPreferences("SyncFlag", MODE_PRIVATE);
         String lastSyncTime = pref1.getString("lastSyncTime", null);
         int hrslastSync = AppController.hoursAgo(lastSyncTime);
-        Log.e("loginTime12", "" + lastSyncTime+"  "+hrslastSync);
+        Log.e("loginTime12", "" + lastSyncTime + "  " + hrslastSync);
 
-        return  hrslastSync;
+        return hrslastSync;
     }
 
     private void startService() {
+        String apiKey = getResources().getString(R.string.apikey);
         Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
         serviceIntent.putExtra("name", name);
         serviceIntent.putExtra("password", md5EncyptedDataPassword);
-        serviceIntent.putExtra("apikey", "PFFt0436yjfn0945DevOp0958732Cons3214556");
+        serviceIntent.putExtra("apikey", apiKey);
         startService(serviceIntent);
     }
-
-// --Commented out by Inspection START (07-11-2016 16:43):
-//    private void rememberMeCheckbox() {
-//        CheckBox ch = (CheckBox) findViewById(R.id.ch_rememberme);
-//        try {
-//            if (ch.isChecked()) {
-//                rememberMe(name, strPassword); //save username and password
-//            } else {
-//                rememberMe(name, ""); //save username and password
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
-// --Commented out by Inspection STOP (07-11-2016 16:43)
 
 
     private void showChangePassDialog() {
@@ -439,13 +433,10 @@ public class LoginActivity extends Activity  {
         dialog.setCanceledOnTouchOutside(false);
 
         // set the custom dialog components - text, image and button
-
-
         TextView btnSubmitPass = (TextView) dialog.findViewById(R.id.submit);
 
-
         oldPassword = (EditText) dialog.findViewById(R.id.oldPassword);
-         newPassword = (EditText) dialog.findViewById(R.id.password);
+        newPassword = (EditText) dialog.findViewById(R.id.password);
         confirmPassword = (EditText) dialog.findViewById(R.id.confirmPassword);
         //  TextView gotosetting = (TextView) dialog.findViewById(R.id.gotosetting);
         //text.setText("Android custom dialog example!");
@@ -457,13 +448,13 @@ public class LoginActivity extends Activity  {
             public void onClick(View v) {
 
                 String oldPass = oldPassword.getText().toString().trim();
-                String newPass =newPassword.getText().toString().trim();
-                String confirmPass=confirmPassword.getText().toString().trim();
+                String newPass = newPassword.getText().toString().trim();
+                String confirmPass = confirmPassword.getText().toString().trim();
 
 
                 if (TextUtils.isEmpty(oldPass)) {
                     oldPassword.setError("Please enter Password !");
-                  return;
+                    return;
                 }
                 if (TextUtils.isEmpty(newPass)) {
                     newPassword.setError("Please enter Password !");
@@ -473,16 +464,16 @@ public class LoginActivity extends Activity  {
                     confirmPassword.setError("Please enter Password !");
                     return;
                 }
-                if(!newPass.equals(confirmPass)){
-                    Toast.makeText(getApplicationContext(),"Old and new Password did not match ",Toast.LENGTH_LONG).show();
+                if (!newPass.equals(confirmPass)) {
+                    Toast.makeText(getApplicationContext(), "Old and new Password did not match ", Toast.LENGTH_LONG).show();
                     confirmPassword.setError("Old and new Password did not match  !");
                     return;
                 }
 
                 String md5oldPassword = MD5.getMD5(oldPass);
                 String md5newPassword = MD5.getMD5(newPass);
-              //  Log.e("oldand new",""+md5oldPassword +" new "+md5newPassword);
-                new UpdatePassworsAsynTask(LoginActivity.this,username,doctor_membership_number,md5oldPassword,md5newPassword);
+                //  Log.e("oldand new",""+md5oldPassword +" new "+md5newPassword);
+                new UpdatePassworsAsynTask(LoginActivity.this, username, doctor_membership_number, md5oldPassword, md5newPassword);
                 dialog.dismiss();
             }
         });
@@ -500,57 +491,6 @@ public class LoginActivity extends Activity  {
     }
 
 
-// --Commented out by Inspection START (07-11-2016 16:43):
-//    private void showAlert() {
-//        final Dialog dialog = new Dialog(LoginActivity.this);
-//        dialog.setContentView(R.layout.custom_popup);
-//        dialog.setTitle("Change Password...");
-//
-//        // set the custom dialog components - text, image and button
-//
-//        TextView btnSubmit = (TextView) dialog.findViewById(R.id.submit);
-//
-//
-//        password = (EditText) dialog.findViewById(R.id.password);
-//        confirmPassord = (EditText) dialog.findViewById(R.id.confirmpassword);
-//
-//        //  image.setImageResource(R.drawable.ic_launcher);
-//        btnSubmit.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                String pass = password.getText().toString();
-//                String conPass = confirmPassord.getText().toString();
-//
-//                if (TextUtils.isEmpty(pass)) {
-//                    password.setError("Please enter Username !");
-//                    return;
-//                }
-//
-//                if (TextUtils.isEmpty(conPass)) {
-//                    confirmPassord.setError("Please enter Conform Password !");
-//                    return;
-//                }
-//                if (!pass.equals(conPass)) {
-//                    confirmPassord.setError("Password doesn't match ! Try again");
-//                }
-//
-//            }
-//        });
-//
-//        TextView cancel = (TextView) dialog.findViewById(R.id.cancel);
-//        // if button is clicked, close the custom dialog
-//        cancel.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                dialog.dismiss();
-//            }
-//        });
-//
-//        dialog.show();
-//    }
-// --Commented out by Inspection STOP (07-11-2016 16:43)
-
 
     private void goToNavigation() {
 
@@ -567,13 +507,13 @@ public class LoginActivity extends Activity  {
     }
 
     //save username and password in SharedPreferences
-    private void rememberMe(String user,String password,String dateTime ) {
+    private void rememberMe(String user, String password, String dateTime) {
 
         getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
                 .edit()
                 .putString(PREF_USERNAME, user)
                 .putString(PREF_PASSWORD, password)
-                .putString(LOGIN_TIME,dateTime)
+                .putString(LOGIN_TIME, dateTime)
                 .apply();
 
     }
@@ -591,19 +531,18 @@ public class LoginActivity extends Activity  {
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         username = pref.getString(PREF_USERNAME, null);
         String password = pref.getString(PREF_PASSWORD, null);
-       // Log.e("password", "" + username + "" + password);
+        // Log.e("password", "" + username + "" + password);
         SharedPreferences pref1 = getSharedPreferences("SyncFlag", MODE_PRIVATE);
-        String lastSync=pref1.getString("lastSyncTime",null);
+        String lastSync = pref1.getString("lastSyncTime", null);
         Log.e("lastSync", "" + lastSync);
 
         if (username != null || password != null) {
             //directly show logout form
             //  showLogout(username);
             inputEmail.setText(username);
-           // inputPassword.setText(password);
+            // inputPassword.setText(password);
         }
     }
-
 
     @Override
     public void onDestroy() {
@@ -631,6 +570,7 @@ public class LoginActivity extends Activity  {
         inputPassword = null;
         System.gc();
     }
+
     /*private static String getScreenResolution(Context context)
     {
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -643,7 +583,7 @@ public class LoginActivity extends Activity  {
         return "{" + width + "," + height + "}";
     }*/
     //store last sync time in prefrence
-    public void lastSyncTime(String lastSyncTime ) {
+    public void lastSyncTime(String lastSyncTime) {
 
         getSharedPreferences("SyncFlag", MODE_PRIVATE)
                 .edit()
@@ -679,7 +619,7 @@ public class LoginActivity extends Activity  {
 
             @Override
             public void onClick(View v) {
-               Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+                Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
                 /*Intent intent = new Intent(Intent.ACTION_MAIN);
@@ -692,6 +632,337 @@ public class LoginActivity extends Activity  {
         });
 
         dialog.show();
+
+    }
+
+    private void getBannersData(final String savedUserName, final String savedUserPassword, final String apiKey, final String docMemId, final String companyid) {
+        // Tag used to cancel the request
+        String tag_string_req = "req_login";
+
+
+        pDialog.setMessage("Initializing Application. Please Wait...");
+        pDialog.setCancelable(false);
+        //showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_BANNER_API, new Response.Listener<String>() {
+
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Sync Response: " + response);
+                Log.e("getBannersData", "" + response);
+
+                // new getPatientRecordsFromServer().execute(response);
+
+
+                new getBannerImagesFromServer().execute(response);
+
+                //  Log.e("jsonArray", "" + jsonArray);
+                // JSONArray patientHistoryList = user.getJSONArray("patient_visit_details");//for live api
+                // JSONArray patientHistoryList = user.getJSONArray("patinet_visit_details"); //for local addrres
+                // Log.e("jsonArray", "" + patientHistoryList);
+                // setPatientPersonalList(jsonArray);
+                //setPatientHistoryList(patientHistoryList);
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e(TAG, "Login Error: Failed To Initalize Data" + error.getMessage());
+                Toast.makeText(getApplicationContext(),
+                        "Failed To Initalize Data" + error.getMessage(), Toast.LENGTH_LONG).show();
+                // hideDialog();
+
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<>();
+
+                params.put("username", savedUserName);
+                params.put("password", savedUserPassword);
+                params.put("apikey", getResources().getString(R.string.apikey));
+                params.put("membershipid", docMemId);
+                params.put("companyid", companyid);
+                // Log.e("apikey",""+savedUserName + "  "+savedUserPassword + " "+ getResources().getString(R.string.apikey));
+                return params;
+            }
+
+        };
+        //todo need to check the retry code for multiple times
+        //this will retry the request for 2 times
+        int socketTimeout = 30000;//30 seconds - change to what you want
+        int retryforTimes = 2;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, retryforTimes, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        strReq.setRetryPolicy(policy);
+        AppController.getInstance().setPriority(Request.Priority.HIGH);
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
+    }
+
+    private class getBannerImagesFromServer extends AsyncTask<String, Void, String> {
+
+        ProgressDialog pd;
+
+        @Override
+        protected String doInBackground(String... params) {
+
+
+            try {
+
+                JSONObject jObj = new JSONObject(params[0]);
+
+                // Check for error node in json
+                // user successfully logged in
+                // Now store the user in SQLite
+
+                JSONObject user = jObj.getJSONObject("data");
+                Log.e("123456", "" + user);
+
+
+                String msg = user.getString("msg");
+                String responce = user.getString("response");
+
+                if (msg.equals("OK") && responce.equals("200")) {
+
+                    JSONArray jsonArray = user.getJSONArray("result");
+
+
+                    setBannerImgListList(jsonArray);
+
+                }
+
+            } catch (JSONException e) {
+                // JSON error
+                e.printStackTrace();
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e);
+                //Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+           /* new LastNameAsynTask(getContext(),savedUserName, savedUserPassword);*/
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.e("onPostExecute", "onPostExecute");
+              pd.dismiss();
+            // hideDialog();
+            //makeToast("Application Initialization Successful");
+
+        }
+
+        @Override
+        protected void onPreExecute() {
+            Log.e("onPreExecute", "onPreExecute");
+             pd = new ProgressDialog(LoginActivity.this);
+              pd.setMessage("Initializing Application. Please Wait...2");
+              pd.show();
+            // showDialog();
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+    }
+
+    private void setBannerImgListList(JSONArray jsonArray) throws JSONException {
+
+
+        for (int i = 0; i < jsonArray.length(); i++) {
+
+            JSONObject jsonProsolveObject = jsonArray.getJSONObject(i);
+
+            String banner_id = jsonProsolveObject.getString("banner_id");
+            Log.e("banner_id",""+banner_id);
+
+
+            String company_id = jsonProsolveObject.getString("company_id");
+            String brand_name = jsonProsolveObject.getString("brand_name");
+            String banner_image_name = jsonProsolveObject.getString("banner_image1");
+            banner_image_name = banner_image_name.replace(".jpg", "");
+            String type = jsonProsolveObject.getString("type");
+            String banner_image_url = jsonProsolveObject.getString("banner_image_url");
+            Log.e("banner_image_urlbefore", "" + banner_image_url);
+            banner_image_url = banner_image_url.replace("://", "http://");
+            banner_image_url = banner_image_url.replace(" ", "%20");
+            Log.e("banner_image_urlafter", "" + banner_image_url);
+
+            String speciality_name = jsonProsolveObject.getString("speciality_name");
+            String product_image_url = jsonProsolveObject.getString("product_image_url");
+            product_image_url = product_image_url.replace("://", "http://");
+            product_image_url = product_image_url.replace(" ", "%20");
+            String product_image_name = jsonProsolveObject.getString("product_image2");
+            String product_imagenm = product_image_name.replace(".jpg", "");
+            String banner_type=jsonProsolveObject.getString("banner_type_id");
+
+
+            String generic_name = jsonProsolveObject.getString("generic_name");
+            String manufactured_by = jsonProsolveObject.getString("manufactured_by");
+            String marketed_by = jsonProsolveObject.getString("marketed_by");
+            String group_name = jsonProsolveObject.getString("group_name");
+            String link_to_page = jsonProsolveObject.getString("link_to_page");
+            String call_me = jsonProsolveObject.getString("call_me");
+            String meet_me = jsonProsolveObject.getString("meet_me");
+
+            String priority = jsonProsolveObject.getString("priority");
+
+            String status = jsonProsolveObject.getString("status");
+
+            String start_time = jsonProsolveObject.getString("start_time");
+            String end_time = jsonProsolveObject.getString("end_time");
+            String clinical_trial_source = jsonProsolveObject.getString("clinical_trial_source");
+            String clinical_trial_identifier = jsonProsolveObject.getString("clinical_trial_identifier");
+
+            String clinical_trial_link = jsonProsolveObject.getString("clinical_trial_link");
+            String clinical_sponsor = jsonProsolveObject.getString("clinical_sponsor");
+            String drug_composition = jsonProsolveObject.getString("drug_composition");
+            String drug_dosing_durability = jsonProsolveObject.getString("drug_dosing_durability");
+
+
+            String added_by = jsonProsolveObject.getString("added_by");
+            String added_on = jsonProsolveObject.getString("added_on");
+            String modified_by = jsonProsolveObject.getString("modified_by");
+            String modified_on = jsonProsolveObject.getString("modified_on");
+            String is_disabled = jsonProsolveObject.getString("is_disabled");
+            String disabled_by = jsonProsolveObject.getString("disabled_by");
+            String disabled_on = jsonProsolveObject.getString("disabled_on");
+            String is_deleted = jsonProsolveObject.getString("is_deleted");
+            String deleted_by = jsonProsolveObject.getString("deleted_by");
+            String deleted_on = jsonProsolveObject.getString("deleted_on");
+
+            if(checkifImageExists(banner_id))
+            {
+                File file = getImage("/"+banner_id+".png");
+                String path = file.getAbsolutePath();
+                if (path != null){
+                    /*b = BitmapFactory.decodeFile(path);
+                    imageView.setImageBitmap(b);*/
+                    Log.e("imageExist","imageExist allready");
+                }
+            } else {
+                Log.e("imageExist","imageExist not");
+                downloadImage(banner_image_url, banner_id);
+            }
+            if(checkifImageExists(product_imagenm))
+            {
+                File file = getImage("/"+product_imagenm+".png");
+                String path = file.getAbsolutePath();
+                if (path != null){
+                    /*b = BitmapFactory.decodeFile(path);
+                    imageView.setImageBitmap(b);*/
+                    Log.e("imageExist","imageExist allready");
+                }
+            } else {
+                Log.e("imageExist","imageExist not");
+                downloadImage(product_image_url, product_imagenm);
+            }
+
+            //saveImageToSD(banner_image1);
+
+            bannerClass.addBannerData(banner_id, company_id, brand_name, type, banner_image_url, speciality_name,
+                    product_image_url, generic_name, manufactured_by, marketed_by, group_name, link_to_page, call_me, meet_me,
+                    priority, status, start_time, end_time,
+                    clinical_trial_source, clinical_trial_identifier, clinical_trial_link, clinical_sponsor, drug_composition, drug_dosing_durability, added_by, added_on, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on,banner_image_name,banner_type,product_imagenm);
+
+        }
+    }
+
+    private void downloadImage(final String banner_image_url, final String banner_image1) {
+          /*--- check whether there is some Text entered ---*/
+        if (banner_image_url.trim().length() > 0) {
+            /*--- instantiate our downloader passing it required components ---*/
+            LoginActivity.this.runOnUiThread(new Runnable() {
+                public void run() {
+                    mDownloader = new ImageDownloader(banner_image_url
+                            .trim(), banner_image1.trim(), pb, LoginActivity.this, bmp, new ImageDownloader.ImageLoaderListener() {
+                        @Override
+                        public void onImageDownloaded(Bitmap bmp) {
+                            LoginActivity.bmp = bmp;
+         /*--- here we assign the value of bmp field in our Loader class
+                   * to the bmp field of the current class ---*/
+                        }
+                    });
+                    mDownloader.execute();
+                }
+
+
+            });
+
+
+            /*--- we need to call execute() since nothing will happen otherwise ---*/
+
+        }
+    }
+    public static boolean checkifImageExists(String imagename)
+    {
+        Bitmap b = null ;
+        File file = getImage("/"+imagename+".png");
+        String path = file.getAbsolutePath();
+
+        if (path != null)
+            b = BitmapFactory.decodeFile(path);
+
+        if(b == null ||  b.equals(""))
+        {
+            return false ;
+        }
+        return true ;
+    }
+    public static File getImage(String imagename) {
+
+        File mediaImage = null;
+        try {
+            String root = Environment.getExternalStorageDirectory().toString();
+            File myDir = new File(root);
+            if (!myDir.exists())
+                return null;
+
+            mediaImage = new File("sdcard/BannerImages/"+imagename);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return mediaImage;
+    }
+    private void getTermsAndCondition() {
+        SharedPreferences pref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        String firstTimeLogin = pref.getString(FISRT_TIME_LOGIN
+                , null);
+
+        Log.e("firstTimeLogin", ""+ firstTimeLogin);
+        if(firstTimeLogin == null){
+            showChangePassDialog();
+        }else if(firstTimeLogin.equals("false")){
+            showChangePassDialog();
+        }else{
+            //do nothing
+        }
+    }
+    public boolean getFirstTimeLoginStatus(){
+        SharedPreferences pref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        String firstTimeLogin = pref.getString(LOGIN_COUNT
+                , null);
+        Log.e("firstTimeLogin", ""+ firstTimeLogin);
+        if(firstTimeLogin == null){
+           return false;
+        }else if(firstTimeLogin.equals("false")){
+
+            return false;
+        }
+        return  true;
+    }
+
+    private void savedLoginCounter(String answer) {
+
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .edit()
+                .putString(LOGIN_COUNT, answer)
+                .apply();
 
     }
 }

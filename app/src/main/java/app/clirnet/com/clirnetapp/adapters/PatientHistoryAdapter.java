@@ -53,7 +53,7 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
         }
         catch(Exception e){
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+" Patient HIstory Adapter"+e);
+            appController.appendLog(appController.getDateTime()+" " +"/ "+" Patient HIstory Adapter"+e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 

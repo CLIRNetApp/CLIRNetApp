@@ -48,10 +48,11 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
         }
     }
 
+
     public void createDataBase() throws IOException {
 
         boolean dbExist = checkDataBase();
-        boolean tblExist=isTableExists(database,"last_name_master");
+        boolean tblExist=isTableExists(database, "last_name_master");
 
         if (tblExist) {
             //do nothing - database already exist
@@ -73,24 +74,8 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             }
         }
 
-        /*if (dbExist) {
-            //do nothing - database already exist
-        } else {
 
-            //By calling this method and empty database will be created into the default system path
-            //of your application so we are gonna be able to overwrite that database with our database.
-            this.getReadableDatabase();
 
-            try {
-
-                copyDataBase();
-
-            } catch (IOException e) {
-
-                throw new Error("Error copying database");
-
-            }
-        }*/
 
     }
 
@@ -147,7 +132,6 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
         myOutput.flush();
         myOutput.close();
         myInput.close();
-
     }
 
     public void openDataBase() throws SQLException {
@@ -157,7 +141,6 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
         File file = new File(myPath);
         if (file.exists() && !file.isDirectory())
             myDataBase = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.OPEN_READONLY);
-
     }
 
     @Override
@@ -200,7 +183,6 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             db1 = dbHelper.getReadableDatabase();
             String query="select max(id) from last_name_master";
             cursor = db1.rawQuery(query, null);
-
 
             if (cursor.moveToFirst()) {
                 returnValue=cursor.getInt(0);
@@ -308,7 +290,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
 
     }
 
-    boolean isTableExists(SQLiteDatabase db, String tableName)
+    private boolean isTableExists(SQLiteDatabase db, String tableName)
     {
         if (tableName == null || db == null || !db.isOpen())
         {

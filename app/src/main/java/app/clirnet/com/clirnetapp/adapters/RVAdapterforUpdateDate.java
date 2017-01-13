@@ -52,9 +52,8 @@ public class RVAdapterforUpdateDate extends RecyclerView.Adapter<RVAdapterforUpd
 
         String fod = model.getActualFollowupDate();
 
-
         try {
-            if (fod.equals("30-11-0002")) {
+            if (fod == null || fod.equals("0000-00-00") || fod.equals("30-11-0002")) {
 
                 holder.modified_on.setText("--");
 

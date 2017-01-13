@@ -6,6 +6,7 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -49,6 +50,7 @@ import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
@@ -84,7 +86,6 @@ public class EditPersonalInfo extends AppCompatActivity {
     private String strdateob;
     private int pateintAge;
     private RadioGroup radioSexGroup;
-    private RadioButton radioSexButton;
     private String sex;
     private int position;
 
@@ -107,6 +108,9 @@ public class EditPersonalInfo extends AppCompatActivity {
     private BootstrapEditText edtCity;
     private BootstrapEditText edtDistrict;
     private BootstrapEditText edtPin;
+    private ArrayList<String> bannerimgNames;
+    private BannerClass bannerClass;
+    private String doctor_membership_number;
 
 
     @Override
@@ -122,7 +126,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         getSupportActionBar().setTitle(Html.fromHtml("<font color='white'>Edit Personal Information</font>"));
@@ -238,10 +242,17 @@ public class EditPersonalInfo extends AppCompatActivity {
 
             }
 
+            if(bannerClass == null){
+                bannerClass=new BannerClass(getApplicationContext());
+            }
+            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
+            bannerimgNames= bannerClass.getImageName();
+           // Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1).toString());
+
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
             if (sqlController != null) {
                 sqlController.close();
@@ -251,7 +262,6 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
 
         }
-
 
         //This will used to set radio button click came from previous form
         if (strgender.equals("Male")) {
@@ -318,7 +328,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         //set Language value to  spinner
@@ -343,7 +353,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -569,7 +579,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                         age = Integer.parseInt(editAge);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration Page : " + e);
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration Page : " + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
                     }
                 }
                 //   editAge = AppController.removeLeadingZeroes(editAge);
@@ -640,7 +650,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
                 } finally {
                     if (dbController != null) {
                         dbController.close();
@@ -778,7 +788,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 
@@ -799,7 +809,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             //  patientImage.setImageBitmap(bitmap);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
     }
@@ -845,27 +855,38 @@ public class EditPersonalInfo extends AppCompatActivity {
         }
     }
 
-    private void setupAnimation() {  Random r = new Random();
-        int n=r.nextInt(10);
-        String imgstring= String.valueOf(imageArray[n]);
-        Log.e("imgstring","   "+ n + "   "+imgstring);
-        backChangingImages.setImageResource(imageArray[n]);
+    private void setupAnimation() {
+
+        Random r = new Random();
+        try {
+            int n = r.nextInt(bannerimgNames.size());
+
+            // final String url = getString(imageArray[n]);
+            //  backChangingImages.setImageResource(imageArray[n]);
+            final String url = bannerimgNames.get(n).toString();
+            Log.e("nUrl", "" + n + "" + url);
+
+            BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
+            backChangingImages.setImageDrawable(d);
+
+            backChangingImages.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(EditPersonalInfo.this, "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+
+                    String action = "clicked";
+
+                    appController.showAdDialog(EditPersonalInfo.this, url);
+                    appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action);
 
 
-
-       /* Runnable runnable = new Runnable() {
-            int i = 0;
-
-            public void run() {
-                backChangingImages.setImageResource(imageArray[i]);
-                i++;
-                if (i > imageArray.length - 1) {
-                    i = 0;
                 }
-                backChangingImages.postDelayed(this, 10000);  //for interval...
-            }
-        };
-        backChangingImages.postDelayed(runnable, 200); //for initial delay..*/
+            });
+            String action = "display";
+            appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -914,6 +935,11 @@ public class EditPersonalInfo extends AppCompatActivity {
         if (appController != null) {
             appController = null;
         }
+        if(bannerClass != null){
+            bannerClass=null;
+        }
+        doctor_membership_number=null;
+        bannerimgNames=null;
         cleanResources();
         System.gc();
 
@@ -942,7 +968,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         bitmap = null;
         strdateob = null;
         radioSexGroup = null;
-        radioSexButton = null;
+        RadioButton radioSexButton = null;
         sex = null;
         modified_on_date = null;
         docId = null;
@@ -986,7 +1012,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 Log.v("item", (String) parent.getItemAtPosition(position));
 
                 selectedPhoneType = (String) parent.getItemAtPosition(position);
-                Toast.makeText(EditPersonalInfo.this, "selected language is:" + (String) parent.getItemAtPosition(position), Toast.LENGTH_LONG).show();
+                Toast.makeText(EditPersonalInfo.this, "selected language is:" + selectedPhoneType, Toast.LENGTH_LONG).show();
             }
 
             @Override

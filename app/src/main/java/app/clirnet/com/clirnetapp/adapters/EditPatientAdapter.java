@@ -31,7 +31,6 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.HistoryViewHolder> {
 
     private final List<RegistrationModel> patientList;
-    private AppController appController;
     private Context mContext;
 
     public EditPatientAdapter(Context context, List<RegistrationModel> patientList) {
@@ -60,7 +59,7 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
         String follow_up_date = patientList.get(position).getActualFollowupDate();
         //
 
-        appController = new AppController();
+        AppController appController = new AppController();
         try {
             if (follow_up_date == null || follow_up_date.equals("0000-00-00")) {
                 holder.tv_fod.setText("--");
@@ -70,7 +69,7 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient Adapter" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient Adapter" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 

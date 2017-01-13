@@ -58,7 +58,7 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Show personalo details Adapter" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "ShowPersonalDetailsAdapter" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -67,13 +67,26 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
         holder.tv_ailment.setText(model.getAilments());
 
         String actFod = model.getActualFollowupDate();
-        if (actFod.equals("30-11-0002")) {
+        /*try {
+            if (actFod == null || actFod.equals("0000-00-00") || actFod.equals("30-11-0002")) {
+                holder.tv_fod.setText("--");
+            } else {
+                holder.tv_fod.setText(follow_up_date);
+            }
+
+        }  catch(Exception e){
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Addpatient update Adapter"+e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }*/
+
+        if (actFod.equals("30-11-0002")||actFod == null || actFod.equals("0000-00-00")) {
 
 
-            actFod = "--";
+            holder.tv_fod.setText("--");
 
+        }else {
+            holder.tv_fod.setText(actFod);
         }
-        holder.tv_fod.setText(actFod);
 
         String clinicalNotes = model.getClinicalNotes().trim();
         if (clinicalNotes.length() > 0) {

@@ -61,7 +61,7 @@ public class FollowUpDateSearchAdapter extends RecyclerView.Adapter<FollowUpDate
 
 
 
-        if (fod.equals("30-11-0002")) {
+        if (fod == null || fod.equals("0000-00-00") || fod.equals("30-11-0002")) {
 
             holder.follow_up_date.setText("--");
 

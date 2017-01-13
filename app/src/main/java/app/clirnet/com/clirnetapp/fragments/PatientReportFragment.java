@@ -221,14 +221,9 @@ public class PatientReportFragment extends Fragment {
             } catch (ParseException e) {
 
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "PatientReportFragment" + e);
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "PatientReportFragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
-          /*  for(int i1 = 0 ; i1 < newdate.size() ; i1++) {
-
-               // System.out.println(newdate.get(i1) + " " + newcount.get(i1));
-            }
-*/
             int size1 = newcount.size();
             if (size1 > 0) {
                 for (int in = 0; in < size1; in++) {
@@ -243,7 +238,7 @@ public class PatientReportFragment extends Fragment {
 
         } catch (Exception e) {
             e.printStackTrace();
-            new AppController().appendLog(new AppController().getDateTime() + " " + "/ " + "PatientReportFragment" + e);
+            new AppController().appendLog(new AppController().getDateTime() + " " + "/ " + "PatientReportFragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         LineDataSet set1;
@@ -266,6 +261,7 @@ public class PatientReportFragment extends Fragment {
             // fill drawable only supported on api level 18 and above
             Drawable drawable = ContextCompat.getDrawable(getContext(), R.drawable.fade_red);
             set1.setFillDrawable(drawable);
+
         } else {
             set1.setFillColor(Color.BLACK);
         }

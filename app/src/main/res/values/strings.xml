@@ -173,6 +173,14 @@
     <string name="settings_pwd_equal">Password Match</string>
     <string name="settings_pwd_not_equal">Password did not match</string>
     <string name="type">Type</string>
+    <string name="tools">Tools</string>
+    <string name="service_area">Service Area</string>
+    <string name="firstname">First Name</string>
+    <string name="lastname">Last Name</string>
+    <string name="phoneno">Phone No.</string>
+    <string name="docmemid">Doctor mem.Id</string>
+    <string name="emailid">Email Id</string>
+    <string name="doc_id">Doctor Id</string>
 
 
 </resources>

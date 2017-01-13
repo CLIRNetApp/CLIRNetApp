@@ -134,6 +134,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
     }
 
     private void getDataSet() {
+
         ArrayList<IBarDataSet> dataSets = null;
         ArrayList<BarEntry> male = new ArrayList<>();
         ArrayList<BarEntry> female = new ArrayList<>();
@@ -229,7 +230,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
 
 
         } catch (Exception e) {
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "BarChartFragment" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "BarChartFragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
             e.printStackTrace();
         }
 

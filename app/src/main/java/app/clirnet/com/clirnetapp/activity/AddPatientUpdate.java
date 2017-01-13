@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,6 +51,7 @@ import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.Validator;
 import app.clirnet.com.clirnetapp.adapters.AddPatientUpdateAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
@@ -80,7 +82,6 @@ public class AddPatientUpdate extends AppCompatActivity {
     private String strDob;
 
     private String strPatientId;
-    private TextView txtfollow_up_date;
     private String fowSel = null;
     private String usersellectedDate ;
     private String monthSel = null;
@@ -142,6 +143,10 @@ public class AddPatientUpdate extends AppCompatActivity {
     private int countAddressLayout = 1;
     private EditText visitDate;
 
+    private ArrayList<String> bannerimgNames;
+    private BannerClass bannerClass;
+
+
 
     @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
     @Override
@@ -158,7 +163,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e);
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         if (databaseClass == null) {
@@ -289,7 +294,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         int day1 = c.get(Calendar.DAY_OF_MONTH);
 
          addedOnDate = String.valueOf(new StringBuilder().append(day1).append("-").append(month1 + 1).append("-").append(year1).append(""));
-        // visitDate.setText(addedOnDate);
+         visitDate.setText(addedOnDate);
 
         editpatientName.setText(strName);
         editmobileno.setText(strPhone);
@@ -317,6 +322,12 @@ public class AddPatientUpdate extends AppCompatActivity {
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
             docId = sqlController.getDoctorId();
             maxVisitId = sqlController.getPatientVisitIdCount();
+
+            if(bannerClass == null){
+                bannerClass=new BannerClass(getApplicationContext());
+            }
+            bannerimgNames= bannerClass.getImageName();
+            Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1).toString());
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
         } finally {
@@ -348,7 +359,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             maxid = id + 1;
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e);
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
 
             if (cursor != null) {
@@ -374,27 +385,10 @@ public class AddPatientUpdate extends AppCompatActivity {
                 // Bitmap bitmap = BitmapFactory.decodeFile(strPatientPhoto);
                 setUpGlide(strPatientPhoto, patientImage);
 
-
-                //  patientImage.setImageBitmap(bitmap);
             }
         }
 
-       /* if (strPrescriptionImage != null && !TextUtils.isEmpty(strPrescriptionImage)) {
-            if (strPrescriptionImage.length() > 0) {
-                // Bitmap bitmap = BitmapFactory.decodeFile(strPatientPhoto);
 
-                setUpGlide(strPrescriptionImage, imageViewprescription);
-               *//* Glide.with(AddPatientUpdate.this)
-                        .load(strPrescriptionImage)
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
-                        .error(R.drawable.main_profile)
-                        .into(imageViewprescription);*//*
-
-                //  patientImage.setImageBitmap(bitmap);
-            }
-        }*/
 
         addPatientprescriptionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -877,7 +871,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         } catch (ParseException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -899,12 +893,38 @@ public class AddPatientUpdate extends AppCompatActivity {
     //this will used to change banner image after some time interval
     private void setupAnimation() {
 
-        Random r = new Random();
-        int n=r.nextInt(10);
-        String imgstring= String.valueOf(imageArray[n]);
-        Log.e("imgstring","   "+ n + "   "+imgstring);
-        backChangingImages.setImageResource(imageArray[n]);
 
+        Random r = new Random();
+        try {
+            int n = r.nextInt(bannerimgNames.size());
+
+
+            // final String url = getString(imageArray[n]);
+            //  backChangingImages.setImageResource(imageArray[n]);
+            final String url = bannerimgNames.get(n).toString();
+            Log.e("nUrl", "" + n + "" + url);
+
+            BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
+            backChangingImages.setImageDrawable(d);
+
+            backChangingImages.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(AddPatientUpdate.this, "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+
+                    String action = "clicked";
+
+                    appController.showAdDialog(AddPatientUpdate.this, url);
+                    appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action);
+
+
+                }
+            });
+            String action = "display";
+            appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
         /*Runnable runnable = new Runnable() {
             int i = 0;
 
@@ -947,7 +967,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 
@@ -1088,6 +1108,14 @@ public class AddPatientUpdate extends AppCompatActivity {
         if (appController != null) {
             appController = null;
         }
+        if (mAilmemtArrayList != null) {
+            mAilmemtArrayList = null;
+        }
+        if(bannerClass != null){
+            bannerClass=null;
+        }
+        doctor_membership_number=null;
+        bannerimgNames=null;
 
         cleanResources();
         System.gc();
@@ -1110,7 +1138,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         strLastName = null;
         strDob = null;
         strPatientId = null;
-        txtfollow_up_date = null;
+        TextView txtfollow_up_date = null;
         fowSel = null;
         usersellectedDate = null;
         monthSel = null;

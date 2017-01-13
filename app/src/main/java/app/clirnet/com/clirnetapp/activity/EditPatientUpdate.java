@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -50,6 +51,7 @@ import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.Validator;
 import app.clirnet.com.clirnetapp.adapters.EditPatientAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
@@ -139,6 +141,11 @@ public class EditPatientUpdate extends AppCompatActivity {
     private int countPrescriptiontLayout = 1;
     private ExpandableListView expListView;
 
+    private ArrayList<String> bannerimgNames;
+    private BannerClass bannerClass;
+
+    private String doctor_membership_number;
+
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
@@ -155,7 +162,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         if (databaseClass == null && dbController == null) {
             databaseClass = new DatabaseClass(getApplicationContext());
@@ -394,9 +401,18 @@ public class EditPatientUpdate extends AppCompatActivity {
             }
             int id = databaseClass.getMaxAimId();
             maxid = id + 1;
+
+            if(bannerClass == null){
+                bannerClass=new BannerClass(getApplicationContext());
+            }
+            bannerimgNames= bannerClass.getImageName();
+            Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1).toString());
+
+            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
+
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog("Edit Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
             if (sqlController != null) {
                 sqlController.close();
@@ -420,7 +436,7 @@ public class EditPatientUpdate extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog("Edit Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         }
 
@@ -583,7 +599,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             }
         });
 
-        setupAnimation();
+
 
         ailments1.addTextChangedListener(new TextWatcher() {
 
@@ -600,6 +616,8 @@ public class EditPatientUpdate extends AppCompatActivity {
                 ailments1.setError(null);
             }
         });
+
+        setupAnimation();
     }
 
     private void addArrowUpDownListner() {
@@ -655,6 +673,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                 //  txtRecord.setBackground(R.drawable.);
             }
         });
+
     }
 
 
@@ -837,8 +856,6 @@ public class EditPatientUpdate extends AppCompatActivity {
                 // dbController.addAilment(temp[i]);
                 databaseClass.addAilments(aTemp, maxid);
                 maxid = maxid + 1;
-
-
             }
         }
 
@@ -852,7 +869,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                     strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs);
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         Toast.makeText(getApplicationContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
@@ -866,10 +883,45 @@ public class EditPatientUpdate extends AppCompatActivity {
     private void setupAnimation() {
 
         Random r = new Random();
+        try {
+            int n = r.nextInt(bannerimgNames.size());
+
+            // final String url = getString(imageArray[n]);
+            //  backChangingImages.setImageResource(imageArray[n]);
+            final String url = bannerimgNames.get(n).toString();
+            Log.e("nUrl", "" + n + "" + url);
+
+            BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
+            backChangingImages.setImageDrawable(d);
+            backChangingImages.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(EditPatientUpdate.this, "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+
+                    String action = "clicked";
+
+                    appController.showAdDialog(EditPatientUpdate.this, url);
+                    appController.saveBannerDataIntoDb(url, EditPatientUpdate.this, doctor_membership_number, action);
+
+
+                }
+            });
+            String action = "display";
+            appController.saveBannerDataIntoDb(url, EditPatientUpdate.this, doctor_membership_number, action);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        /*Random r = new Random();
         int n=r.nextInt(10);
-        String imgstring= String.valueOf(imageArray[n]);
-        Log.e("imgstring","   "+ n + "   "+imgstring);
+
         backChangingImages.setImageResource(imageArray[n]);
+        final String url= getString(imageArray[n]);
+        backChangingImages.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+            }
+        });*/
         /*Runnable runnable = new Runnable() {
             int i = 0;
 
@@ -908,7 +960,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 
@@ -934,7 +986,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             //  patientImage.setImageBitmap(bitmap);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
     }
@@ -1054,6 +1106,14 @@ public class EditPatientUpdate extends AppCompatActivity {
         if (appController != null) {
             appController = null;
         }
+        if (mAilmemtArrayList != null) {
+            mAilmemtArrayList = null;
+        }
+        if(bannerClass != null){
+            bannerClass=null;
+        }
+        doctor_membership_number=null;
+        bannerimgNames=null;
 
         sdf1 = null;
 
@@ -1112,9 +1172,6 @@ public class EditPatientUpdate extends AppCompatActivity {
         presciptiontext = null;
 
 
-        if (mAilmemtArrayList != null) {
-            mAilmemtArrayList = null;
-        }
     }
 
 }
