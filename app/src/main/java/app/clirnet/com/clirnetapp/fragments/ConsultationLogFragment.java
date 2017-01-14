@@ -100,7 +100,6 @@ public class ConsultationLogFragment extends Fragment {
         super.onDestroyView();
         view = null; // now cleaning up!
 
-
     }
 
     @Override

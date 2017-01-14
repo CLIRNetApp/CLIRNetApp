@@ -18,8 +18,6 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.fragments.BarChartFragment;
@@ -113,10 +111,6 @@ public class NavigationActivity extends AppCompatActivity
         }
 
 
-        /*  fragmentManager = getSupportFragmentManager();
-
-        fragmentManager.beginTransaction().replace(R.id.flContent, new HomeFragment()).commit();*/
-
         String fromWhere = getIntent().getStringExtra("FROMWHERE");//check from which fragment call came and redirect to that fragment
         // Log.e("fromWhereNavigation", "" + fromWhere);
 
@@ -137,7 +131,7 @@ public class NavigationActivity extends AppCompatActivity
         }
         //for any other values
         else {
-            // Log.e("any", "Fragment is already open");
+
             fragment = new HomeFragment();
         }
         fragmentManager = getSupportFragmentManager();
@@ -145,21 +139,12 @@ public class NavigationActivity extends AppCompatActivity
 
         // Highlight the selected item, update the title, and close the drawer
 
-
-        Glide.get(getApplicationContext()).clearMemory();
     }
 
     //this will prevent user to access back press from tab
 
     @Override
     public void onBackPressed() {
-       /* DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-  */
     }
 
 

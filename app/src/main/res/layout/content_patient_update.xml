@@ -759,8 +759,7 @@
                 android:padding="5dp">
 
 
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-
+                <MultiAutoCompleteTextView
                     android:id="@+id/symptoms"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
@@ -768,32 +767,39 @@
                     android:layout_weight="1"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
+                    android:background="@drawable/rectangle_corner"
+                    android:digits="@string/digitsnumber"
+                    android:ems="13"
                     android:fontFamily="sans-serif"
                     android:hint="Symptoms"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     app:bootstrapBrand="success"
                     app:bootstrapSize="md"
-                    app:roundedCorners="false" />
+                    app:roundedCorners="false"
+                    android:paddingLeft="5dp"/>
 
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-
+                <MultiAutoCompleteTextView
                     android:id="@+id/dignosis"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
-                    android:layout_below="@+id/txtsymptomsanddignost"
                     android:layout_weight="1"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:fontFamily="sans-serif"
                     android:hint="Dignosis"
                     android:inputType="text"
+                    android:background="@drawable/rectangle_corner"
+                    android:digits="@string/digitsnumber"
+                    android:ems="13"
+                    android:fontFamily="sans-serif"
+                    android:paddingLeft="5dp"
                     android:maxLines="1"
-                    android:textSize="12sp"
+                    android:textSize="13sp"
                     app:bootstrapBrand="success"
                     app:bootstrapSize="md"
                     app:roundedCorners="false" />
+
             </LinearLayout>
 
             <TextView

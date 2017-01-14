@@ -54,6 +54,7 @@ import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
+import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
@@ -120,8 +121,8 @@ public class AddPatientUpdate extends AppCompatActivity {
     private EditText edtLowBp;
     private EditText edtInput_temp;
     private EditText edtInput_sugar;
-    private BootstrapEditText edtSymptoms;
-    private BootstrapEditText edtDignosis;
+    private MultiAutoCompleteTextView edtSymptoms;
+    private MultiAutoCompleteTextView edtDignosis;
     private BootstrapEditText edtTest;
     private BootstrapEditText edtDrugs;
     private BootstrapEditText fodtextshow;
@@ -145,7 +146,9 @@ public class AddPatientUpdate extends AppCompatActivity {
 
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
-
+    private LastnameDatabaseClass lastNamedb;
+    private ArrayList<String> mSymptomsList;
+    private ArrayList<String> mDiagnosisList;
 
 
     @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
@@ -168,6 +171,9 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         if (databaseClass == null) {
             databaseClass = new DatabaseClass(getApplicationContext());
+        }
+        if(lastNamedb == null){
+            lastNamedb = new LastnameDatabaseClass(getApplicationContext());
         }
 
 
@@ -228,8 +234,8 @@ public class AddPatientUpdate extends AppCompatActivity {
         edtInput_temp = (EditText) findViewById(R.id.input_temp);
         edtInput_sugar = (EditText) findViewById(R.id.input_sugar);
 
-        edtSymptoms = (BootstrapEditText) findViewById(R.id.symptoms);
-        edtDignosis = (BootstrapEditText) findViewById(R.id.dignosis);
+        edtSymptoms = (MultiAutoCompleteTextView) findViewById(R.id.symptoms);
+        edtDignosis = (MultiAutoCompleteTextView) findViewById(R.id.dignosis);
         edtTest = (BootstrapEditText) findViewById(R.id.test);
         edtDrugs = (BootstrapEditText) findViewById(R.id.drugs);
 
@@ -369,6 +375,38 @@ public class AddPatientUpdate extends AppCompatActivity {
                 databaseClass.close();
             }
         }
+
+        try {
+            mSymptomsList = lastNamedb.getSymptoms();
+            if (mSymptomsList.size() > 0) {
+                ArrayAdapter<String> lastnamespin = new ArrayAdapter<>(AddPatientUpdate.this,
+                        android.R.layout.simple_dropdown_item_1line, mSymptomsList);
+
+                edtSymptoms.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+                lastnamespin.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                edtSymptoms.setThreshold(1);
+                edtSymptoms.setAdapter(lastnamespin);
+            }
+        } catch (ClirNetAppException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+        try {
+            mDiagnosisList = lastNamedb.getDiagnosis();
+            if (mDiagnosisList.size() > 0) {
+                ArrayAdapter<String> lastnamespin = new ArrayAdapter<>(AddPatientUpdate.this,
+                        android.R.layout.simple_dropdown_item_1line, mDiagnosisList);
+
+                edtDignosis.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+                lastnamespin.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                edtDignosis.setThreshold(1);
+                edtDignosis.setAdapter(lastnamespin);
+            }
+        } catch (ClirNetAppException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+
 
 
         new Thread(new Runnable() {
@@ -1114,6 +1152,12 @@ public class AddPatientUpdate extends AppCompatActivity {
         if(bannerClass != null){
             bannerClass=null;
         }
+        if(mSymptomsList!= null){
+            mSymptomsList=null;
+        }
+        if(mSymptomsList != null){
+            mSymptomsList =null;
+        }
         doctor_membership_number=null;
         bannerimgNames=null;
 
@@ -1138,7 +1182,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         strLastName = null;
         strDob = null;
         strPatientId = null;
-        TextView txtfollow_up_date = null;
+
         fowSel = null;
         usersellectedDate = null;
         monthSel = null;

@@ -99,7 +99,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private ArrayList selectedAilmentList;
     private LinearLayoutManager mLayoutManager;
 
-    private int PAGE_SIZE = 10;
+    private int PAGE_SIZE = 4;
 
     private boolean isLoading = false;
 
@@ -272,19 +272,21 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     patientData = (sqlController.getFilterDatanew(strfname, strlname, sex, strpno, strage, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit));
                     //    patientData = sqlController.getFilterDatanew(strfname, strlname, selectedListGender.get(i).toString(), strpno, strage);
                     queryCount = sqlController.getCountResult();
-
+                    Log.e("queryCount", "" + queryCount );
 
                     int beforeFilterCount = patientData.size();
 
-                    if (patientData.size() > 0) {
+
+                    /*if (patientData.size() > 0) {
                         removeDuplicate(patientData);
                     }
+                    Log.e("queryCountafterFilter", "" + patientData.size() );
 
                     int afterFilterCount = patientData.size();
 
                     int totalFilterDataCount = beforeFilterCount - afterFilterCount;
 
-                    queryCount = queryCount - totalFilterDataCount;
+                    queryCount = queryCount - totalFilterDataCount;*/
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -662,7 +664,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         List<RegistrationModel> memberList = new ArrayList<>();
 
 
-        int index = poHistoryAdapter.getItemCount() - 1;
+        int index = poHistoryAdapter.getItemCount();
         int end = index + PAGE_SIZE;
         Log.e("index", "" + index + " " + end + " size is " + queryCount);
 
@@ -673,6 +675,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                 e.printStackTrace();
             }
+
 
             //  patientData.addAll(memberList);
             // adapter.notifyDataSetChanged();

@@ -331,10 +331,21 @@ public class SQLController {
         Set<RegistrationModel> pList1 = new LinkedHashSet<>();
         try {
             open();
-            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
-            String countQuery = "select  COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
+            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id" ;//and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
+
+            String countQuery = "select  COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id ";
 
             //  String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%' and ( p.gender like '%" + male + "%' or p.gender like '%" + female + "%' and p.gender like '%" + other + "%' or p.gender like '%" + na + "%' )and p.phonenumber like '%" + phoneno + "%' and p.age like '%" + age + "%'  order by ph.key_visit_id desc limit 30;";
+           if(fname != null){
+               selectQuery=selectQuery.concat(" and p.first_name like '%" + fname + "%'");
+               countQuery = countQuery.concat(" and p.first_name like '%" + fname + "%'");
+           }
+
+            if(lname != null){
+                selectQuery=selectQuery.concat(" and p.last_name like '%" + lname + "%'");
+                countQuery = countQuery.concat(" and p.last_name like '%" + lname + "%'");
+            }
+
             if (sex.size() > 0) {
                 for (int i = 0; i < sex.size(); i++) {
                     if (i != 0) {
@@ -386,7 +397,6 @@ public class SQLController {
                     } else {
                         selectQuery = selectQuery.concat(" AND ( ph.ailment like '%" + value + "%'");
                         countQuery = countQuery.concat(" AND ( ph.ailment like '%" + value + "%'");
-
                     }
                 }
 
@@ -402,6 +412,7 @@ public class SQLController {
             new Counts().setCountQuery(countQuery);
 
             Log.e("selectQuery", "" + selectQuery);
+            Log.e("countQueryQuery", "" + countQuery);
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
 
@@ -433,14 +444,25 @@ public class SQLController {
 
     public int getCountResult() {
         SQLiteDatabase db1 = dbHelper.getReadableDatabase();
-        String countQuery = new Counts().getCountQuery();
-        Log.d("count", "" + countQuery);
         int numRows = 0;
-        if (countQuery != null && countQuery.length() > 10) {
+        try {
+            String countQuery = new Counts().getCountQuery();
+            Log.d("count", "" + countQuery);
 
-            numRows = (int) DatabaseUtils.longForQuery(db1, countQuery, null);
-            Log.d("count", "" + countQuery + "  " + numRows);
+            if (countQuery != null && countQuery.length() > 10) {
+
+                numRows = (int) DatabaseUtils.longForQuery(db1, countQuery, null);
+                Log.d("count", "" + countQuery + "  " + numRows);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if(db1!= null){
+                db1.close();
+
+            }
         }
+
         return numRows;
     }
 
@@ -545,6 +567,8 @@ public class SQLController {
         try {                                                                                                                                                                                                                                                                                                                                                                                          //p.first_name like '%" + fname + "%'
             // String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like  '% " + number + " %'  group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc " ;
             String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like '%" + number + "%' group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc limit " + page + " , " + limit + ";";
+
+
             String countQuery = "select COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id and p.phonenumber like '%" + number + "%' order by ph.key_visit_id desc ";
 
             new Counts().setCountQueryforHomeFragmentNoFilter(countQuery);
@@ -585,13 +609,22 @@ public class SQLController {
     public int getCountResultforgetPatientListForPhoneNumberFilter() {
 
         SQLiteDatabase db1 = dbHelper.getReadableDatabase();
-        String countQuery = new Counts().getCountQueryforHomeFragmentNoFilter();
-        Log.d("count", "" + countQuery);
         int numRows = 0;
-        if (countQuery.length() > 1) {
+        try {
+            String countQuery = new Counts().getCountQueryforHomeFragmentNoFilter();
+            Log.d("count", "" + countQuery);
 
-            numRows = (int) DatabaseUtils.longForQuery(db1, countQuery, null);
-            Log.d("count", "" + countQuery + "  " + numRows);
+            if (countQuery.length() > 1) {
+
+                numRows = (int) DatabaseUtils.longForQuery(db1, countQuery, null);
+                Log.d("count", "" + countQuery + "  " + numRows);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if(db1!=null){
+                db1.close();
+            }
         }
         return numRows;
     }
@@ -605,7 +638,7 @@ public class SQLController {
         Cursor cursor = null;
         try {
 
-            String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient_history  ph , patient p where p.patient_id=" + patient_id + " and  p.patient_id=ph.patient_id order by ph.added_on desc ";
+            String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,ph.symptoms,ph.diagnosis  from patient_history  ph , patient p where p.patient_id=" + patient_id + " and  p.patient_id=ph.patient_id order by ph.key_visit_id desc ";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
             Log.d("cursor", "" + cursor.getCount());
@@ -617,7 +650,7 @@ public class SQLController {
                     RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
                             cursor.getString(7), cursor.getString(8),
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
-                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21));
+                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),cursor.getString(22),cursor.getString(23));
                     hotelList.add(user);
 
                 } while (cursor.moveToNext());

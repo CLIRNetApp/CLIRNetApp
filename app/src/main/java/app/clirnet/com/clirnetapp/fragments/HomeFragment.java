@@ -934,6 +934,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     }
 
     private void dateisBefore(int position) {
+
         RegistrationModel registrationModel = filteredModelList.get(position);
         Intent i = new Intent(getContext(), AddPatientUpdate.class);
         i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
@@ -1758,6 +1759,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     }
 
     private void showCreatePatientAlertDialog() {
+
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.about_app_dialog);
 
@@ -1790,10 +1792,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     private void checkLastLoginTime() {
 
-      /*  getContext(). getSharedPreferences("SyncFlag", getContext().MODE_PRIVATE)
-            .edit()
-            .putString("lastSyncTime", "31-12-2016 2:04:21")
-                .apply();*/
 
 
         SharedPreferences pref = getContext().getSharedPreferences("savedCredit", getContext().MODE_PRIVATE);
@@ -1809,16 +1807,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             System.gc();
         }
 
-        /*SharedPreferences pref1 = getContext().getSharedPreferences("SyncFlag", getContext().MODE_PRIVATE);
-        String lastSyncTime = pref1.getString("lastSyncTime", null);
-        int hrslastSync = AppController.hoursAgo(lastSyncTime);
-        Log.e("loginTime12", "" + lastSyncTime + " hours " + hrslastSync);
-
-       *//* if (hrslastSync > 72) {
-            Intent i = new Intent(getContext(), LoginActivity.class);
-            startActivity(i);
-            System.gc();
-        }*/
     }
 
     public void lastSyncTime(String lastSyncTime) {
@@ -1927,7 +1915,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         List<RegistrationModel> memberList = new ArrayList<>();
 
-
         int index = sva.getItemCount() - 1;
         int end = index + PAGE_SIZE;
         Log.e("index", "" + index + " " + end + " size is " + queryCount);
@@ -2026,7 +2013,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 JSONObject jObj = new JSONObject(params[0]);
 
                 JSONObject user = jObj.getJSONObject("data");
-                Log.e("123456", "" + user);
+
 
 
                 String msg = user.getString("msg");
@@ -2110,6 +2097,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String marketed_by = jsonProsolveObject.getString("marketed_by");
             String group_name = jsonProsolveObject.getString("group_name");
             String link_to_page = jsonProsolveObject.getString("link_to_page");
+          /*  if(link_to_page.startsWith("www")){
+                link_to_page.replace("http://www", "www");
+            }*/
             String call_me = jsonProsolveObject.getString("call_me");
             String meet_me = jsonProsolveObject.getString("meet_me");
 
@@ -2233,6 +2223,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         }
         return mediaImage;
     }
+
     private void showChangePassDialog() {
 
         final Dialog dialog = new Dialog(getContext());

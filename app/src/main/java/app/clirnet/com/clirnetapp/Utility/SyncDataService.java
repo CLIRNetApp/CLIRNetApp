@@ -86,10 +86,8 @@ public class SyncDataService extends Service {
         Log.e("id", "servic started" + imeiid);
        // showNotification();
 
-        Log.e("userID", "servic started" + mUserName);
 
         try {
-
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
             dbController = new SQLiteHandler(getApplicationContext());
@@ -111,7 +109,7 @@ public class SyncDataService extends Service {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         handler.removeCallbacks(sendUpdatesToUI);
@@ -127,17 +125,18 @@ public class SyncDataService extends Service {
         public void run() {
             //DisplayLoggingInfo();   //this used to test the service weather it is sending data to activity or not 29/8/2016 Ashish
             try {
-                asyncTask();
+                sendDataToServerAsyncTask();
+
             } catch (ClirNetAppException e) {
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + e);
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             }
             handler.postDelayed(this, 1800000); // 10 seconds 10000 //1800000
         }
     };
 
-    private void asyncTask() throws ClirNetAppException {
+    private void sendDataToServerAsyncTask() throws ClirNetAppException {
 
 
         patientIds_List = sqlController.getPatientIdsFalg0();
@@ -158,7 +157,7 @@ public class SyncDataService extends Service {
                         .edit()
                         .putString(PREF_VALUE, "1")
                         .apply();
-                Log.e("sending12", "data is sending");
+               // Log.e("sending12", "data is sending");
 
               //  sendDataToServer(patientInfoArayString, patientVisitHistorArayString,doctor_membership_number,docId,patientIds_List.size(),getPatientVisitIdsList.size());
                 sendDataToServer(patientInfoArayString, patientVisitHistorArayString,doctor_membership_number,docId,getPatientVisitIdsList.size(),patientIds_List.size());
@@ -167,7 +166,7 @@ public class SyncDataService extends Service {
 
 
             } else {
-                Log.e("nodata12", "no data to send");
+              //  Log.e("nodata12", "no data to send");
             }
         }
     }
@@ -204,35 +203,34 @@ public class SyncDataService extends Service {
                     JSONObject user = jObj.getJSONObject("data");
 
                     String msg = user.getString("msg");
-                    //String result = user.getString("result");
+
 
                     if (msg.equals("OK")) {
 
-                        Log.e("TAG", "" + patientIds_List.size());
+                       // Log.e("TAG", "" + patientIds_List.size());
                         int size = patientIds_List.size();
                         for (int i = 0; i < size; i++) {
                             String patientId = patientIds_List.get(i).getPat_id();
                             String flag = "1";
-                            //Log.e("TAG"+i," "+patientId);
-                            //update flag after success
+
                             dbController.FlagupdatePatientPersonal(patientId, flag);
                         }
 
 
-                        Log.e("TAG", "" + getPatientVisitIdsList.size());
+                       // Log.e("TAG", "" + getPatientVisitIdsList.size());
                         int listsize = getPatientVisitIdsList.size();
                         for (int i = 0; i < listsize; i++) {
                             // String patientId = getPatientVisitIdsList.get(i).getPat_id();
                             String patientVisitId = getPatientVisitIdsList.get(i).getKey_visit_id();
                             String flag = "1";
-                            Log.e("TAG" + i, "patientVisitId  " + patientVisitId);
+                           // Log.e("TAG" + i, "patientVisitId  " + patientVisitId);
                             //saved last updated sync time in shared prefrence
 
                             //update flag after success
                             dbController.FlagupdatePatientVisit(patientVisitId, flag);
                         }
 
-                        Log.e("sending12", "Data Sent");
+                        //Log.e("sending12", "Data Sent");
 
                         getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
                                 .edit()
@@ -248,14 +246,15 @@ public class SyncDataService extends Service {
 
                     } else if (msg.equals("Credentials Mismatch or Not Found")) {
                         Log.e("TAG", "" + msg);
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "data is sync to server from sync service  : patient Visit Count :" + msg);
 
-                       // showNotification();
+                        // showNotification();
                     }
 
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                     Log.e("Json error", "Json error: " + e.getMessage());
 
@@ -266,7 +265,7 @@ public class SyncDataService extends Service {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.e(TAG, "Login Error: " + error.getMessage());
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + error);
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + error+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             }
         }) {
@@ -331,7 +330,7 @@ public class SyncDataService extends Service {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "SyncDataService " + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "SyncDataService " + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
 
             if (cursor != null) {

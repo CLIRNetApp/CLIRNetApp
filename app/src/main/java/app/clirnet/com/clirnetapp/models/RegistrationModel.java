@@ -418,6 +418,36 @@ public class RegistrationModel {
         this.actualFollowupDate = actualFod;
     }
 
+    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,String mSymptoms,String mDiagnosis) {
+
+        this.pat_id = id;
+        this.firstName = first_name;
+        this.middleName = middle_name;
+        this.lastName = last_name;
+        this.dob = strdate_of_birth;
+        this.gender = gender;
+
+        this.age = current_age;
+        this.mobileNumber = phone_number;
+        this.language = selectedLanguage;
+        this.photo = patientImagePath;
+        this.followUpDate = follow_up_date;
+
+        this.followUpdays = daysSel;
+        this.followUpWeek = weekSel;
+        this.followUpMonth = monthSel;
+        this.ailments = ailmentList;
+        this.pres_img = prescriptionImgPath;
+        this.clinicalNotes = clinical_note;
+        this.added_on = added_on;
+        this.visit_date = visit_date;
+        this.modified_on = modified_on;
+        this.key_visit_id = key_visit_id;
+        this.actualFollowupDate = actFolDate;
+        this.symptoms=mSymptoms;
+        this.dignosis=mDiagnosis;
+    }
+
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate) {
 
         this.pat_id = id;
@@ -445,6 +475,7 @@ public class RegistrationModel {
         this.key_visit_id = key_visit_id;
         this.actualFollowupDate = actFolDate;
     }
+
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String gender, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String usersellectedDate, String daysSel, String monthSel, String weekSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String modified_on, String actfod, String action) {
         this.pat_id = id;

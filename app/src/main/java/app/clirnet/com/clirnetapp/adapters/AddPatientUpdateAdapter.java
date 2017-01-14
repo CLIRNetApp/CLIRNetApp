@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -122,6 +123,8 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
         private final TextView tv_visit_date;
         public final TextView tv_clinical_notes;
         private final TextView imgText;
+        private final LinearLayout linearlayoutSymptoms;
+        private final LinearLayout linearlayoutDiagnosis;
 
         public HistoryViewHolder(View view) {
             super(view);
@@ -130,6 +133,8 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
             tv_fod = (TextView) view.findViewById(R.id.tv_fod);
             imgText=(TextView)view.findViewById(R.id.imgText);
             tv_clinical_notes = (TextView) view.findViewById(R.id.tv_clinical_notes);
+            linearlayoutSymptoms=(LinearLayout)view.findViewById(R.id.linearlayoutSymptoms);
+            linearlayoutDiagnosis=(LinearLayout)view.findViewById(R.id.linearlayoutDiagnosis);
 
         }
     }

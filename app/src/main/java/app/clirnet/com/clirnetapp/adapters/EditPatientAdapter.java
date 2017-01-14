@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,22 +55,20 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
         RegistrationModel model = patientList.get(position);
 
 
-        String visit_date = patientList.get(position).getVisit_date();
-        String ailments = patientList.get(position).getAilments();
         String follow_up_date = patientList.get(position).getActualFollowupDate();
         //
 
         AppController appController = new AppController();
         try {
-            if (follow_up_date == null || follow_up_date.equals("0000-00-00")) {
+            if (follow_up_date == null || follow_up_date.equals("0000-00-00") || follow_up_date.equals("30-11-0002") || follow_up_date.equals("")) {
                 holder.tv_fod.setText("--");
             } else {
-                holder.tv_fod.setText(model.getActualFollowupDate());
+                holder.tv_fod.setText(follow_up_date);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient Adapter" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient Adapter" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -92,8 +91,21 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
         } else {
             holder.tv_clinical_notes.setText("No Aailable Notes");
         }
+        String mSymptoms = model.getSymptoms();
+        if (mSymptoms != null && !mSymptoms.equals("") && mSymptoms.length()>0) {
+            holder.tv_symptoms.setText(mSymptoms);
+        }else{
+            holder.linearlayoutSymptoms.setVisibility(View.GONE);
+        }
 
-       try {
+        String mDiagnosis = model.getDignosis();
+        if (mDiagnosis != null && !mDiagnosis.equals("") && mDiagnosis.length()>0) {
+            holder.tv_diagnosis.setText(mDiagnosis);
+        }else{
+            holder.linearlayoutDiagnosis.setVisibility(View.GONE);
+        }
+
+        try {
             final String imgPath = patientList.get(position).getPres_img();
             if (!TextUtils.isEmpty(imgPath) && imgPath != null) {
 
@@ -101,15 +113,15 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
                 holder.imgText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                      //  Toast.makeText(mContext,"PATH IS: "+imgPath.trim(),Toast.LENGTH_LONG).show();
-                      //  showDialog(imgPath.trim());
+                        //  Toast.makeText(mContext,"PATH IS: "+imgPath.trim(),Toast.LENGTH_LONG).show();
+                        //  showDialog(imgPath.trim());
                         Intent i = new Intent(mContext, ShowPrescriptionImageActivity.class);
                         i.putExtra("PRESCRIPTIONIMAGE", imgPath);
                         mContext.startActivity(i);
                     }
                 });
 
-            }else{
+            } else {
                 holder.imgText.setText("No Prescription Attached");
             }
         } catch (NullPointerException e) {
@@ -119,8 +131,6 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
 
     private void showDialog(String imgPath) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-
-
 
 
         //Yes Button
@@ -135,7 +145,7 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
 
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialoglayout = inflater.inflate(R.layout.custom_image_view_dialog, null);
-        ImageView precImg=(ImageView)dialoglayout.findViewById(R.id.imageView);
+        ImageView precImg = (ImageView) dialoglayout.findViewById(R.id.imageView);
 
         Glide.with(mContext)
                 .load(imgPath)
@@ -164,7 +174,9 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
         public final TextView tv_fod;
         private final TextView tv_visit_date;
         public final TextView tv_clinical_notes;
-        private final TextView imgText;
+        private final TextView imgText, tv_diagnosis, tv_symptoms;
+        private final LinearLayout linearlayoutSymptoms;
+        private final LinearLayout linearlayoutDiagnosis;
 
 
         public HistoryViewHolder(View view) {
@@ -172,10 +184,14 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
             tv_visit_date = (TextView) view.findViewById(R.id.tv_visit_date);
             tv_ailment = (TextView) view.findViewById(R.id.tv_ailment);
             tv_fod = (TextView) view.findViewById(R.id.tv_fod);
-           // prescriptionImg = (ImageView) view.findViewById(R.id.prescriptionImg);
-            imgText=(TextView)view.findViewById(R.id.imgText);
+            // prescriptionImg = (ImageView) view.findViewById(R.id.prescriptionImg);
+            imgText = (TextView) view.findViewById(R.id.imgText);
+            tv_diagnosis = (TextView) view.findViewById(R.id.tv_diagnosis);
+            tv_symptoms = (TextView) view.findViewById(R.id.tv_symptoms);
 
             tv_clinical_notes = (TextView) view.findViewById(R.id.tv_clinical_notes);
+            linearlayoutSymptoms = (LinearLayout) view.findViewById(R.id.linearlayoutSymptoms);
+            linearlayoutDiagnosis = (LinearLayout) view.findViewById(R.id.linearlayoutDiagnosis);
 
 
         }

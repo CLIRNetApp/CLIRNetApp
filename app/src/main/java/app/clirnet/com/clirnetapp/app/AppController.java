@@ -455,7 +455,8 @@ public class AppController extends Application {
 
             Log.e("BitmapDrawable", "" + d +" ////  "+product_image_name);
             if(d!=null){
-            productImage.setImageDrawable(d);}
+            productImage.setImageDrawable(d);
+            }
         }else{
             productImage.setImageResource(R.drawable.brand);
         }
@@ -506,7 +507,11 @@ public class AppController extends Application {
             public void onClick(View v) {
 
                 if(finalLink_to_page != null && finalLink_to_page.trim().length()>0){
-                    context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalLink_to_page)));
+                    try {
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalLink_to_page)));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
                    /* Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalLink_to_page));
                     startActivity(browserIntent);*/
                 }else{

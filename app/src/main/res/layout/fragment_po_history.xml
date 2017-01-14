@@ -130,7 +130,7 @@
                     android:layout_margin="4dp"
                     android:layout_weight="1.4"
                     android:background="@drawable/rectangle_corner"
-                    android:digits="@string/digits"
+                    android:digits="@string/digitsnumber"
                     android:fontFamily="sans-serif"
                     android:hint="Enter Ailment"
                     android:maxLines="1"

@@ -345,7 +345,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             lastNamedb.openDataBase();
 
 
-            mLastNameList = lastNamedb.getAilmentsListNew();
+            mLastNameList = lastNamedb.getLastNameNew();
 
             if (mLastNameList.size() > 0) {
                 setLastnameSpinner();

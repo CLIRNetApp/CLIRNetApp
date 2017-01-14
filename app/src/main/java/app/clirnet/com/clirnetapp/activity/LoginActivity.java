@@ -169,8 +169,6 @@ public class LoginActivity extends Activity {
             }else{
                 Log.e("FisrtTimeLogin","FisrtTimeLogin to application");
             }
-           /* dbController.FlagupdatePatientVisit("0");
-            dbController.FlagupdatePatientPersonal("0");*/
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -293,8 +291,13 @@ public class LoginActivity extends Activity {
         InputMethodManager inputManager = (InputMethodManager)
                 getSystemService(Context.INPUT_METHOD_SERVICE);
 
-        inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
-                InputMethodManager.HIDE_NOT_ALWAYS);
+        try {
+
+            inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private void convertDate() {

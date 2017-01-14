@@ -229,7 +229,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
     }
 
     //method to fetch ailments from db
-    public ArrayList<String> getAilmentsListNew() throws ClirNetAppException {
+    public ArrayList<String> getLastNameNew() throws ClirNetAppException {
         ArrayList<String> ailmentList = new ArrayList<>();
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
@@ -331,9 +331,127 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
                 db.close();
             }
         }
-
-       // Log.d("addedailemnt", "New last_names inserted into sqlite: " + id);
-
     }
+
+    public ArrayList<String> getSymptoms() throws ClirNetAppException {
+        ArrayList<String> all_symptomsList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "SELECT  symptoms_name  FROM Symptoms ";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    String user=cursor.getString(0);
+                    //  AilmentModel user = new AilmentModel(cursor.getString(0), cursor.getString(1) );
+
+                    all_symptomsList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            appController.appendLog(appController.getDateTime() + "" + "/" + "LastNamedatabase getSymptoms" + e);
+            //TODO Create cutom exception and throw from here
+            throw new ClirNetAppException("Something went wrong while getting getSymptoms records");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+        return  all_symptomsList;
+    }
+
+    public ArrayList<String> getDiagnosis() throws ClirNetAppException {
+        ArrayList<String> all_symptomsList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "SELECT  diagnosis_name  FROM Diagnosis ";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    String user=cursor.getString(0);
+                    //  AilmentModel user = new AilmentModel(cursor.getString(0), cursor.getString(1) );
+
+                    all_symptomsList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            appController.appendLog(appController.getDateTime() + "" + "/" + "LastNamedatabase getSymptoms" + e);
+            //TODO Create cutom exception and throw from here
+            throw new ClirNetAppException("Something went wrong while getting getSymptoms records");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+        return  all_symptomsList;
+    }
+    public void addSymptoms(String symptoms_name, String added_by,String date_time) throws ClirNetAppException {
+        SQLiteDatabase db = null;
+        long id = 0;
+        try {
+            db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("symptoms_name", symptoms_name);
+            values.put("added_by", added_by);
+            values.put("date_time", date_time);
+            // values.put("id", nameid);
+
+            id = db.insert("Symptoms", null, values);
+
+
+        }   catch (Exception e) {
+            e.printStackTrace();
+            throw new ClirNetAppException("Something went wrong while storing Symptoms db");
+
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+    }
+
+    public void addDiagnosis(String diagnosis, String added_by,String date_time) throws ClirNetAppException {
+        SQLiteDatabase db = null;
+        long id = 0;
+        try {
+            db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("diagnosis_name", diagnosis);
+            values.put("added_by", added_by);
+            values.put("date_time", date_time);
+
+            id = db.insert("Diagnosis", null, values);
+
+
+        }   catch (Exception e) {
+            e.printStackTrace();
+            throw new ClirNetAppException("Something went wrong while storing Symptoms db");
+
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+    }
+
 }
 

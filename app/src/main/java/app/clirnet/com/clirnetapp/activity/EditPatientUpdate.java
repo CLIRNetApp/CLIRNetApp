@@ -54,6 +54,7 @@ import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
+import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
@@ -124,8 +125,8 @@ public class EditPatientUpdate extends AppCompatActivity {
     private EditText edtlowBp;
     private EditText edtInput_temp;
     private EditText edtInput_sugar;
-    private BootstrapEditText edtSymptoms;
-    private BootstrapEditText edtDignosis;
+    private MultiAutoCompleteTextView edtSymptoms;
+    private MultiAutoCompleteTextView edtDignosis;
     private BootstrapEditText edtTest;
     private BootstrapEditText edtDrugs;
     private String strAddress;
@@ -145,6 +146,9 @@ public class EditPatientUpdate extends AppCompatActivity {
     private BannerClass bannerClass;
 
     private String doctor_membership_number;
+    private LastnameDatabaseClass lastNamedb;
+    private ArrayList<String> mSymptomsList;
+    private ArrayList<String> mDiagnosisList;
 
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -237,8 +241,8 @@ public class EditPatientUpdate extends AppCompatActivity {
         edtInput_temp = (EditText) findViewById(R.id.input_temp);
         edtInput_sugar = (EditText) findViewById(R.id.input_sugar);
 
-        edtSymptoms = (BootstrapEditText) findViewById(R.id.symptoms);
-        edtDignosis = (BootstrapEditText) findViewById(R.id.dignosis);
+        edtSymptoms = (MultiAutoCompleteTextView) findViewById(R.id.symptoms);
+        edtDignosis = (MultiAutoCompleteTextView) findViewById(R.id.dignosis);
         edtTest = (BootstrapEditText) findViewById(R.id.test);
         edtDrugs = (BootstrapEditText) findViewById(R.id.drugs);
 
@@ -382,15 +386,19 @@ public class EditPatientUpdate extends AppCompatActivity {
 
             databaseClass.openDataBase();
 
-            ArrayList<RegistrationModel> patientData = (sqlController.getPatientHistoryListAll(strId));
+            if(lastNamedb == null){
+                lastNamedb = new LastnameDatabaseClass(getApplicationContext());
+            }
 
-
+            ArrayList<RegistrationModel> patientData = sqlController.getPatientHistoryListAll(strId);
 
             List<RegistrationModel> filteredpatientData = filterBySystemDate(patientData, justDate);
             Log.e("asize0", "" + filteredpatientData.size());
             int size = filteredpatientData.size();
 
             if (size > 0) {
+                //Removed 1st element from list bcs it is allreday showning in upper section
+                filteredpatientData.remove(0);
 
                 EditPatientAdapter editPatientAdapter = new EditPatientAdapter(EditPatientUpdate.this, filteredpatientData);
                 recyclerView.setAdapter(editPatientAdapter);
@@ -438,6 +446,37 @@ public class EditPatientUpdate extends AppCompatActivity {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
 
+        }
+
+        try {
+            mSymptomsList = lastNamedb.getSymptoms();
+            if (mSymptomsList.size() > 0) {
+                ArrayAdapter<String> lastnamespin = new ArrayAdapter<>(EditPatientUpdate.this,
+                        android.R.layout.simple_dropdown_item_1line, mSymptomsList);
+
+                edtSymptoms.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+                lastnamespin.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                edtSymptoms.setThreshold(1);
+                edtSymptoms.setAdapter(lastnamespin);
+            }
+        } catch (ClirNetAppException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+        try {
+            mDiagnosisList = lastNamedb.getDiagnosis();
+            if (mDiagnosisList.size() > 0) {
+                ArrayAdapter<String> lastnamespin = new ArrayAdapter<>(EditPatientUpdate.this,
+                        android.R.layout.simple_dropdown_item_1line, mDiagnosisList);
+
+                edtDignosis.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+                lastnamespin.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                edtDignosis.setThreshold(1);
+                edtDignosis.setAdapter(lastnamespin);
+            }
+        } catch (ClirNetAppException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         //this code is for setting list to auto complete text view  8/6/16
@@ -1111,6 +1150,12 @@ public class EditPatientUpdate extends AppCompatActivity {
         }
         if(bannerClass != null){
             bannerClass=null;
+        }
+        if(mSymptomsList!= null){
+            mSymptomsList=null;
+        }
+        if(mSymptomsList != null){
+            mSymptomsList =null;
         }
         doctor_membership_number=null;
         bannerimgNames=null;
