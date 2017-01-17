@@ -161,7 +161,6 @@ public class ConsultationLogFragment extends Fragment {
             appController = new AppController();
             // patientData = (sqlController.getPatientList());
             bannerimgNames = bannerClass.getImageName();
-            Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1).toString());
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
         } catch (Exception e) {

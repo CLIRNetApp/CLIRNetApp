@@ -89,7 +89,7 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
             holder.tv_clinical_notes.setText(clinicalNotes);
 
         } else {
-            holder.tv_clinical_notes.setText("No Aailable Notes");
+            holder.tv_clinical_notes.setText("No Available Notes");
         }
         String mSymptoms = model.getSymptoms();
         if (mSymptoms != null && !mSymptoms.equals("") && mSymptoms.length()>0) {

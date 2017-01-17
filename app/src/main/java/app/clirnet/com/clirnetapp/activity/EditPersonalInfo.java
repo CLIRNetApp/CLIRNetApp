@@ -111,6 +111,10 @@ public class EditPersonalInfo extends AppCompatActivity {
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
     private String doctor_membership_number;
+    private String strAlternatenumber;
+    private String strAlternatephtype;
+    private String selectedPhoneTypealternate_no;
+    private BootstrapEditText alternatemobile_no;
 
 
     @Override
@@ -153,6 +157,9 @@ public class EditPersonalInfo extends AppCompatActivity {
         String strPinNo = getIntent().getStringExtra("PIN");
         String strState = getIntent().getStringExtra("STATE");
         fromWhere = getIntent().getStringExtra("FROMWHERE");
+        strAlternatenumber=getIntent().getStringExtra("ALTERNATENUMBER");
+
+        strAlternatephtype=getIntent().getStringExtra("ALTERNATENUMBERTYPE");
 
 
         patientImage = (ImageView) findViewById(R.id.patientimage);
@@ -165,9 +172,10 @@ public class EditPersonalInfo extends AppCompatActivity {
         editmobile_no = (EditText) findViewById(R.id.mobile_no);
         radioSexGroup = (RadioGroup) findViewById(R.id.radioGender);
         RadioGroup radioLanguage = (RadioGroup) findViewById(R.id.radioLanguage);
-        phType = (Spinner) findViewById(R.id.phType);
+        phType = (Spinner) findViewById(R.id.phoneTypeSpinner);
+        alternatemobile_no=(BootstrapEditText)findViewById(R.id.alternatemobile_no);
 
-        Spinner stateSpinner = (Spinner) findViewById(R.id.stateSpinner);
+
 
         edtAddress = (BootstrapEditText) findViewById(R.id.address);
         edtCity = (BootstrapEditText) findViewById(R.id.city);
@@ -187,6 +195,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         edtCity.setText(strCityorTown);
         edtDistrict.setText(strDistrict);
         edtPin.setText(strPinNo);
+        alternatemobile_no.setText(strAlternatenumber);
 
         editmobile_no.setInputType(InputType.TYPE_CLASS_NUMBER);//this will do not let user to enter any other text than digit 0-9 only
         editmobile_no.setText(strPhone);
@@ -260,7 +269,6 @@ public class EditPersonalInfo extends AppCompatActivity {
             if (lastNamedb != null) {
                 lastNamedb.close();
             }
-
         }
 
         //This will used to set radio button click came from previous form
@@ -564,6 +572,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 String editAge = editage.getText().toString().trim();
                 String editPno = editmobile_no.getText().toString();
                 strdateob = editdob.getText().toString();
+                String editAltrntNumber=alternatemobile_no.getText().toString();
 
                 String strAddress = edtAddress.getText().toString().trim();
                 String strCity = edtCity.getText().toString().trim();
@@ -622,6 +631,11 @@ public class EditPersonalInfo extends AppCompatActivity {
                     return;
                 }
 
+                /*if (editAltrntNumber.length() < 10) {
+                    alternatemobile_no.setError("Mobile Number should be 10 digits");
+                    return;
+                }*/
+
                 if (selectedLanguage != null && selectedLanguage.length() > 0) {
 
                     Log.e("tang1", "" + strLanguage);
@@ -639,10 +653,10 @@ public class EditPersonalInfo extends AppCompatActivity {
                 try {
                     if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
 
-                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState,selectedPhoneType);
+                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState,selectedPhoneType,selectedPhoneTypealternate_no,editAltrntNumber);
                         // Log.e("kt", "1");
                     } else {
-                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState,selectedPhoneType);
+                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState,selectedPhoneType,selectedPhoneTypealternate_no,editAltrntNumber);
                         //Log.e("bt", "2");
                     }
                     Toast.makeText(getApplicationContext(), "Record Updated", Toast.LENGTH_LONG).show();
@@ -659,21 +673,6 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         });
 
-
-        /*//This will redirect user to main activity
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-
-
-            @Override
-            public void onClick(View v) {
-                // back button pressed
-                goToNavigation();
-
-            }
-
-
-        });
-*/
 
         setupAnimation();
     }
@@ -713,7 +712,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 Log.v("item", (String) parent.getItemAtPosition(position));
 
                 selectedState = (String) parent.getItemAtPosition(position);
-               // Toast.makeText(getApplicationContext(), "selected language is:" + (String) parent.getItemAtPosition(position), Toast.LENGTH_LONG).show();
+
             }
 
             @Override
@@ -721,6 +720,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 // TODO Auto-generated method stub
             }
         });
+
     }
 
 
@@ -896,14 +896,6 @@ public class EditPersonalInfo extends AppCompatActivity {
 
     }
 
-   /* @Override
-    public void onBackPressed() {
-        *//*this.onBackPressed();
-        finish();*//*
-        goToNavigation();
-
-    }*/
-
 
     private void goToNavigation() {
 
@@ -996,14 +988,14 @@ public class EditPersonalInfo extends AppCompatActivity {
 
     private void setPhoneTypeSpinnerAdapters() {
 
-        ArrayAdapter<CharSequence> language_reasonAdapter = ArrayAdapter
+        ArrayAdapter<CharSequence> dataAdapter = ArrayAdapter
                 .createFromResource(EditPersonalInfo.this, R.array.phType_group,
                         android.R.layout.simple_spinner_item);
-        language_reasonAdapter
+        dataAdapter
                 .setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         // Apply the adapter to the spinner commented fro
-        phType.setAdapter(language_reasonAdapter);
+        phType.setAdapter(dataAdapter);
         phType.setSelection(position);
         phType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -1012,7 +1004,27 @@ public class EditPersonalInfo extends AppCompatActivity {
                 Log.v("item", (String) parent.getItemAtPosition(position));
 
                 selectedPhoneType = (String) parent.getItemAtPosition(position);
-                Toast.makeText(EditPersonalInfo.this, "selected language is:" + selectedPhoneType, Toast.LENGTH_LONG).show();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // TODO Auto-generated method stub
+            }
+        });
+        Spinner phoneTypeSpinner2=(Spinner)findViewById(R.id.phoneTypeSpinner2);
+        phoneTypeSpinner2.setAdapter(dataAdapter);
+        phoneTypeSpinner2.setSelection(position);
+
+        phoneTypeSpinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                Log.v("item", (String) parent.getItemAtPosition(position));
+
+                selectedPhoneTypealternate_no = (String) parent.getItemAtPosition(position);
+
             }
 
             @Override

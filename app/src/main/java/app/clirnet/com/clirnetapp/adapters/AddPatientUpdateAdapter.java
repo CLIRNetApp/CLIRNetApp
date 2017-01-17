@@ -51,7 +51,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
 
 
         try{
-            if(follow_up_date == null || follow_up_date .equals("0000-00-00") || follow_up_date.equals("30-11-0002") ){
+            if(follow_up_date == null || follow_up_date .equals("0000-00-00") || follow_up_date.equals("30-11-0002")|| follow_up_date.equals("") ){
                 holder.tv_fod.setText("--");
             }
             else{
@@ -74,18 +74,23 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
             holder.tv_clinical_notes.setText(clinicalNotes);
         }
         else{
-            holder.tv_clinical_notes.setText("No Aailable Notes");
+            holder.tv_clinical_notes.setText("No Available Notes");
         }
 
-
-
-        clinicalNotes =model.getClinicalNotes().trim();
-        if(clinicalNotes.length() > 0){
-            holder.tv_clinical_notes.setText(clinicalNotes);
+        String mSymptoms = model.getSymptoms();
+        if (mSymptoms != null && !mSymptoms.equals("") && mSymptoms.length()>0) {
+            holder.tv_symptoms.setText(mSymptoms);
+        }else{
+            holder.linearlayoutSymptoms.setVisibility(View.GONE);
         }
-        else{
-            holder.tv_clinical_notes.setText("No Aailable Notes");
+
+        String mDiagnosis = model.getDignosis();
+        if (mDiagnosis != null && !mDiagnosis.equals("") && mDiagnosis.length()>0) {
+            holder.tv_diagnosis.setText(mDiagnosis);
+        }else{
+            holder.linearlayoutDiagnosis.setVisibility(View.GONE);
         }
+
         try {
             final String imgPath = patientList.get(position).getPres_img();
             if (!TextUtils.isEmpty(imgPath) && imgPath != null) {
@@ -125,6 +130,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
         private final TextView imgText;
         private final LinearLayout linearlayoutSymptoms;
         private final LinearLayout linearlayoutDiagnosis;
+        private final TextView  tv_diagnosis, tv_symptoms;
 
         public HistoryViewHolder(View view) {
             super(view);
@@ -133,8 +139,11 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
             tv_fod = (TextView) view.findViewById(R.id.tv_fod);
             imgText=(TextView)view.findViewById(R.id.imgText);
             tv_clinical_notes = (TextView) view.findViewById(R.id.tv_clinical_notes);
-            linearlayoutSymptoms=(LinearLayout)view.findViewById(R.id.linearlayoutSymptoms);
-            linearlayoutDiagnosis=(LinearLayout)view.findViewById(R.id.linearlayoutDiagnosis);
+            tv_diagnosis = (TextView) view.findViewById(R.id.tv_diagnosis);
+            tv_symptoms = (TextView) view.findViewById(R.id.tv_symptoms);
+
+            linearlayoutSymptoms = (LinearLayout) view.findViewById(R.id.linearlayoutSymptoms);
+            linearlayoutDiagnosis = (LinearLayout) view.findViewById(R.id.linearlayoutDiagnosis);
 
         }
     }

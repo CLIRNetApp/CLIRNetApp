@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.support.multidex.MultiDex;
@@ -17,6 +18,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -32,6 +34,7 @@ import java.io.IOException;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,6 +45,7 @@ import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
+import app.clirnet.com.clirnetapp.models.LoginModel;
 
 public class AppController extends Application {
 
@@ -60,6 +64,8 @@ public class AppController extends Application {
     private static AppController mInstance;
     private TextView fromtime;
     private HashMap<String, String> listBannerInformation;
+    private String savedUserName;
+    private String savedUserPassword;
 
 
     @Override
@@ -315,7 +321,7 @@ public class AppController extends Application {
 
         } catch (ParseException e) {
             e.printStackTrace();
-            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         return frmtedDate;
     }
@@ -409,10 +415,10 @@ public class AppController extends Application {
 
         String manufactured_by = null;
         String marketed_by = null;
-        String clinical_trial_link=null;
-        String link_to_page= null;
-        String product_image_name=null;
-        String product_image_url=null;
+        String clinical_trial_link = null;
+        String link_to_page = null;
+        String product_image_name = null;
+        String product_image_url = null;
 
         SQLController sqlController = new SQLController(context);
         try {
@@ -422,16 +428,16 @@ public class AppController extends Application {
 
                 manufactured_by = list.get("manufactured_by");
                 marketed_by = list.get("marketed_by");
-                clinical_trial_link=list.get("clinical_trial_link");
-                link_to_page=list.get("link_to_page");
-                product_image_name=list.get("product_image_name");
-                product_image_url=list.get("product_image2");
-                Log.e("Banner Info ", " Banner Info   " + list.size() + " " + manufactured_by + "   " + marketed_by+" product_image_name "+product_image_name);
+                clinical_trial_link = list.get("clinical_trial_link");
+                link_to_page = list.get("link_to_page");
+                product_image_name = list.get("product_image_name");
+                product_image_url = list.get("product_image2");
+                Log.e("Banner Info ", " Banner Info   " + list.size() + " " + manufactured_by + "   " + marketed_by + " product_image_name " + product_image_name);
                 listBannerInformation = sqlController.getBannerInformation(img_name);
                 String brand_name = listBannerInformation.get("brand_name");
                 String generic_name = listBannerInformation.get("generic_name");
                 Log.e("brand_namegeneric_name ", " Banner Info   " + listBannerInformation.size() + " " + brand_name + "   " + generic_name);
-
+                getUsernamePasswordFromDatabase(context);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -447,17 +453,17 @@ public class AppController extends Application {
 
         TextView mktcmpny_name = (TextView) dialog.findViewById(R.id.mktcmpny_name);
         TextView maketed_by = (TextView) dialog.findViewById(R.id.produced_by);
-        ImageView productImage=(ImageView)dialog.findViewById(R.id.productImage);
+        ImageView productImage = (ImageView) dialog.findViewById(R.id.productImage);
 
-        if(!product_image_name.equals("")&& product_image_url != null && product_image_url.trim().length()>0 && product_image_name != null && product_image_name.trim().length()>0){
+        if (!product_image_name.equals("") && product_image_url != null && product_image_url.trim().length() > 0 && product_image_name != null && product_image_name.trim().length() > 0) {
 
             BitmapDrawable d = new BitmapDrawable(context.getResources(), "sdcard/BannerImages/" + product_image_name + ".png"); // path is ur resultant //image
 
-            Log.e("BitmapDrawable", "" + d +" ////  "+product_image_name);
-            if(d!=null){
-            productImage.setImageDrawable(d);
+            Log.e("BitmapDrawable", "" + d + " ////  " + product_image_name);
+            if (d != null) {
+                productImage.setImageDrawable(d);
             }
-        }else{
+        } else {
             productImage.setImageResource(R.drawable.brand);
         }
         if (manufactured_by != null && manufactured_by.length() > 0) {
@@ -506,35 +512,93 @@ public class AppController extends Application {
             @Override
             public void onClick(View v) {
 
-                if(finalLink_to_page != null && finalLink_to_page.trim().length()>0){
+                if (finalLink_to_page != null && finalLink_to_page.trim().length() > 0) {
                     try {
                         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalLink_to_page)));
-                    }catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                    /* Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalLink_to_page));
                     startActivity(browserIntent);*/
-                }else{
-                    Toast.makeText(context1,"No Link Avaialable",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(context1, "No Link Avaialable", Toast.LENGTH_LONG).show();
                 }
             }
         });
 
-        Button btnseeclinical_trial=(Button)dialog.findViewById(R.id.seeclinical_trial);
+        Button btnseeclinical_trial = (Button) dialog.findViewById(R.id.seeclinical_trial);
         final String finalClinical_trial_link = clinical_trial_link;
         btnseeclinical_trial.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(finalClinical_trial_link != null && finalClinical_trial_link.trim().length()>0 ){
+                if (finalClinical_trial_link != null && finalClinical_trial_link.trim().length() > 0) {
 
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalClinical_trial_link));
                     context.startActivity(browserIntent);
-                }else{
-                    Toast.makeText(context1,"No Link Avaialable",Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(context1, "No Link Avaialable", Toast.LENGTH_LONG).show();
                 }
             }
         });
+        Button btnrequest_sample = (Button) dialog.findViewById(R.id.request_sample);
+        String brand_name = listBannerInformation.get("brand_name");
+        btnrequest_sample.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+                creteSampleRequestDialog(context1, listBannerInformation.get("brand_name"));
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void creteSampleRequestDialog(final Context context1, final String brand_name) {
+
+        final Dialog dialog = new Dialog(context1);
+        dialog.setContentView(R.layout.requestsample_dialog);
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setTitle("Request Sample Form");
+
+        final TextView edtQuantity = (TextView) dialog.findViewById(R.id.edtQuantity);
+        final TextView edtotherTxt = (TextView) dialog.findViewById(R.id.otherTxt);
+        final RadioGroup radioreasonGroup = (RadioGroup) dialog.findViewById(R.id.radioreason);
+        TextView textbrandname = (TextView) dialog.findViewById(R.id.textbrandname);
+        textbrandname.setText(brand_name);
+
+
+        Button send = (Button) dialog.findViewById(R.id.send);
+        send.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String strQty = edtQuantity.getText().toString();
+                String strother = edtotherTxt.getText().toString();
+
+                String generic_name = null;
+                String company_id = null;
+                String doc_mem_id = null;
+                // find the radiobutton by returned id
+                //RadioButton radioSexButton = (RadioButton) dialog.findViewById(selectedId);
+               // String selectedOtherValue = radioSexButton.getText().toString();
+                int index = radioreasonGroup.indexOfChild(dialog.findViewById(radioreasonGroup.getCheckedRadioButtonId()));
+                Log.e("selectedId ",""+index);
+                String selected_id = String.valueOf(index);
+
+                if (index == 3) {
+                    selected_id = "other";
+                }
+                if (listBannerInformation.size() > 0) {
+
+                    generic_name = listBannerInformation.get("generic_name");
+                    company_id = listBannerInformation.get("company_id");
+                    doc_mem_id = listBannerInformation.get("doc_mem_id");
+                }
+
+                new AskforSampleAsyncTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, doc_mem_id, selected_id, strQty, strother);
+
+                dialog.dismiss();
+            }
+        });
         dialog.show();
     }
 
@@ -543,7 +607,7 @@ public class AppController extends Application {
         final Dialog dialog = new Dialog(context1);
         dialog.setContentView(R.layout.callme_dialog);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle("Request Sample Form");
+        dialog.setTitle(called_from);
         final TextView date = (TextView) dialog.findViewById(R.id.date);
         final TextView fromtime = (TextView) dialog.findViewById(R.id.fromtime);
 
@@ -553,7 +617,8 @@ public class AppController extends Application {
         final EditText reason = (EditText) dialog.findViewById(R.id.reason);
 
 
-        final SQLiteHandler dbController = new  SQLiteHandler(context1);;
+        final SQLiteHandler dbController = new SQLiteHandler(context1);
+        ;
         try {
             SQLController sqlController = new SQLController(context1);
             sqlController.open();
@@ -594,13 +659,15 @@ public class AppController extends Application {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 String address = location.getText().toString();
                 String strreason = reason.getText().toString();
                 String strDate = date.getText().toString();
                 String brand_name = null, generic_name = null;
                 String company_id = null, doctor_id = null, doc_mem_id = null, modified_on = null, is_deleted = null;
                 String deleted_on = null, is_disabled = null, disabled_by = null, disabled_on = null;
-                String request_on= getDateTimenew();//get current time stamp
+                String request_on = getDateTimenew();//get current time stamp
+
 
                 if (strDate.length() <= 0) {
                     date.setError("Please Enter Date");
@@ -620,12 +687,12 @@ public class AppController extends Application {
                     reason.setError("Please Enter Value");
                     return;
                 }
-                String from_time=fromtime.getText().toString();
-                String to_time=totime.getText().toString();
-                String reqest_fullfilled=null;
+                String from_time = fromtime.getText().toString();
+                String to_time = totime.getText().toString();
+                String reqest_fullfilled = null;
 
-                String modified_by=null;
-                String flag="0";
+                String modified_by = null;
+                String flag = "0";
                 if (listBannerInformation.size() > 0) {
 
                     brand_name = listBannerInformation.get("brand_name");
@@ -635,12 +702,12 @@ public class AppController extends Application {
                     doc_mem_id = listBannerInformation.get("doc_mem_id");
 
                 }
-                String added_by=doctor_id;
-                String added_on=request_on;
-                //TODO TOMMOROW add data into db
-                dbController.addCallMeetMeData(brand_name,company_id,generic_name,called_from,strDate,from_time,to_time,
-                  address,strreason,doctor_id,doc_mem_id,request_on,reqest_fullfilled,modified_on,modified_by,is_deleted,is_disabled,disabled_by,disabled_on,deleted_on,flag,added_on,added_by);
-                Toast.makeText(context1,"Message send  you will recieve responce soon",Toast.LENGTH_LONG).show();
+                String added_by = doctor_id;
+                String added_on = request_on;
+                new CallMeMeetMeAsynTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, called_from, strDate, from_time, to_time, address, strreason, doc_mem_id);
+               /* dbController.addCallMeetMeData(brand_name, company_id, generic_name, called_from, strDate, from_time, to_time,
+                        address, strreason, doctor_id, doc_mem_id, request_on, reqest_fullfilled, modified_on, modified_by, is_deleted, is_disabled, disabled_by, disabled_on,deleted_on,flag,added_on,added_by);*/
+                //Toast.makeText(context1,"Message send  you will recieve responce soon",Toast.LENGTH_LONG).show();
                 dialog.dismiss();
             }
         });
@@ -758,38 +825,71 @@ public class AppController extends Application {
             Log.e("company_id", "  " + company_id);
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
-            appendLog(getDateTime() + " " + "/ " + "App Controller" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appendLog(getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         try {
-            if(dbController !=null)
-            if (action.equals("display")) {
+            if (dbController != null)
+                if (action.equals("display")) {
 
 
-                dbController.addBannerDisplayData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time);
+                    dbController.addBannerDisplayData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time);
 
-            } else {
+                } else {
 
-                dbController.addBannerClickedData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time);
+                    dbController.addBannerClickedData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time);
 
-            }
-        }catch (NullPointerException e){
+                }
+        } catch (NullPointerException e) {
             e.printStackTrace();
-            this.appendLog(getDateTime()+"saveBannerDataIntoDb"+e);
+            this.appendLog(getDateTime() + "saveBannerDataIntoDb" + e);
         }
 
     }
-    public boolean getFirstTimeLoginStatus(){
+
+    public boolean getFirstTimeLoginStatus() {
         SharedPreferences pref = getSharedPreferences(PREFS_NAMEsavedCredit, Context.MODE_PRIVATE);
         String firstTimeLogin = pref.getString(FISRT_TIME_LOGIN
                 , null);
-        Log.e("firstTimeLogin", ""+ firstTimeLogin);
-        if(firstTimeLogin == null){
+        Log.e("firstTimeLogin", "" + firstTimeLogin);
+        if (firstTimeLogin == null) {
             return false;
-        }else if(firstTimeLogin.equals("false")){
+        } else if (firstTimeLogin.equals("false")) {
 
             return false;
         }
-        return  true;
+        return true;
     }
+
+    private void getUsernamePasswordFromDatabase(Context context) {
+        Cursor cursor = null;
+        SQLController sqlController1 = null;
+        try {
+
+            sqlController1 = new SQLController(context);
+            sqlController1.open();
+
+
+            ArrayList<LoginModel> al;
+            al = sqlController1.getUserLoginRecrodsNew();
+            if (al.size() != 0) {
+                savedUserName = al.get(0).getUserName();
+                savedUserPassword = al.get(0).getPassowrd();
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            appendLog(getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+        } finally {
+
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (sqlController1 != null) {
+                sqlController1.close();
+            }
+        }
+    }
+
 }
 

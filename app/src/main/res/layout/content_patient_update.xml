@@ -74,7 +74,7 @@
                     android:layout_gravity="start"
                     android:contentDescription="@string/desc"
                     android:orientation="vertical"
-                    android:src="@drawable/change_imgfive_converted"></ImageView>
+                    android:src="@drawable/change_imgfive_converted"/>
 
             </LinearLayout>
 
@@ -322,7 +322,7 @@
                     android:textColor="@color/bg_login"
                     android:textSize="14sp" />
 
-                <LinearLayout
+               <!-- <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -362,7 +362,7 @@
                         tools:targetApi="jelly_bean" />
 
                 </LinearLayout>
-
+-->
             </LinearLayout>
             <TextView
                 android:id="@+id/followuptxt"
@@ -395,8 +395,9 @@
                     android:id="@+id/fodtextshow"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
+                    android:drawableRight="@android:drawable/ic_menu_my_calendar"
                     android:layout_marginRight="15dp"
-                    android:layout_weight="1"
+                    android:layout_weight="0.6"
                     android:editable="false"
                     android:focusable="false"
                     android:focusableInTouchMode="true"
@@ -482,6 +483,22 @@
                         android:textColor="#000"
                         android:textSize="14sp" />
                 </LinearLayout>
+
+               <Button
+                    android:id="@+id/btnclear"
+                    android:layout_width="0dp"
+                    android:layout_weight="0.5"
+                    android:layout_height="40dp"
+                    android:background="@drawable/circle"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:paddingRight="7dp"
+                    android:text="@string/clear"
+                    android:textAllCaps="false"
+                    android:textColor="#000"
+                    android:textSize="14sp"
+                    />
+
             </LinearLayout>
 
 
@@ -553,6 +570,75 @@
                         android:textColor="@color/black"
                         android:textSize="12sp" />
 
+                    <EditText
+                        android:id="@+id/input_height"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.4"
+                        android:background="@drawable/rectangle_corner"
+                        android:fontFamily="sans-serif"
+                        android:hint="Height"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="0dp"
+                        android:paddingTop="5dp"
+                        android:singleLine="true"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:layout_width="40dp"
+                        android:layout_height="50dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@color/light_grey"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center"
+                        android:hint="Cms"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:id="@+id/input_bmi"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.4"
+                        android:background="@drawable/rectangle_corner"
+                        android:fontFamily="sans-serif"
+                        android:hint="BMI"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="0dp"
+                        android:paddingTop="5dp"
+                        android:singleLine="true"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:layout_width="40dp"
+                        android:layout_height="50dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@color/light_grey"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center"
+                        android:hint="bmi"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
 
                     <EditText
                         android:id="@+id/input_pulse"
@@ -562,7 +648,7 @@
                         android:background="@drawable/rectangle_corner"
                         android:hint="Pulse"
                         android:inputType="number"
-                        android:maxLength="2"
+                        android:maxLength="3"
                         android:paddingBottom="5dp"
                         android:paddingLeft="5dp"
                         android:paddingRight="1dp"
@@ -587,6 +673,52 @@
                         android:textColor="@color/black"
                         android:textSize="12sp" />
 
+
+                    <EditText
+                        android:id="@+id/input_temp"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.4"
+                        android:background="@drawable/rectangle_corner"
+                        android:hint="Temp"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="1dp"
+                        android:paddingTop="5dp"
+                        android:singleLine="true"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:layout_width="40dp"
+                        android:layout_height="50dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@color/light_grey"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center"
+                        android:hint="&#xb0;F"
+                        android:inputType="number"
+                        android:maxLength="3"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="2dp"
+                        android:paddingRight="2dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/actVitalsLayout1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
 
                     <EditText
                         android:id="@+id/input_bp"
@@ -627,7 +759,7 @@
                         android:layout_height="50dp"
                         android:layout_weight="0.4"
                         android:background="@drawable/rectangle_corner"
-                        android:hint="Dystole"
+                        android:hint="Diastole"
                         android:inputType="number"
                         android:maxLength="3"
                         android:paddingBottom="5dp"
@@ -653,51 +785,13 @@
                         android:textColor="@color/black"
                         android:textSize="12sp" />
 
-
-                    <EditText
-                        android:id="@+id/input_temp"
-                        android:layout_width="0dp"
-                        android:layout_height="50dp"
-                        android:layout_weight="0.4"
-                        android:background="@drawable/rectangle_corner"
-                        android:hint="Temp"
-                        android:inputType="number"
-                        android:maxLength="3"
-                        android:paddingBottom="5dp"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="1dp"
-                        android:paddingTop="5dp"
-                        android:singleLine="true"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textColor="@color/black"
-                        android:textSize="12sp" />
-
-                    <EditText
-                        android:layout_width="40dp"
-                        android:layout_height="50dp"
-                        android:layout_marginRight="5dp"
-                        android:background="@color/light_grey"
-                        android:focusableInTouchMode="false"
-                        android:gravity="center"
-                        android:hint="&#xb0;F"
-                        android:inputType="number"
-                        android:maxLength="3"
-                        android:paddingBottom="5dp"
-                        android:paddingLeft="5dp"
-                        android:paddingRight="5dp"
-                        android:paddingTop="5dp"
-                        android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:textColor="@color/black"
-                        android:textSize="12sp" />
-
-
                     <EditText
                         android:id="@+id/input_sugar"
                         android:layout_width="0dp"
                         android:layout_height="50dp"
                         android:layout_weight="0.3"
                         android:background="@drawable/rectangle_corner"
-                        android:hint="Sugar"
+                        android:hint="Sugar(p.p)"
                         android:inputType="number"
                         android:maxLength="3"
                         android:paddingBottom="5dp"
@@ -723,10 +817,40 @@
                         android:textColor="@color/black"
                         android:textSize="12sp" />
 
+                    <EditText
+                        android:id="@+id/input_sugarfasting"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="0.3"
+                        android:background="@drawable/rectangle_corner"
+                        android:hint="Sugar(Fasting)"
+                        android:inputType="numberDecimal"
+                        android:maxLength="4"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="5dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+
+                    <EditText
+                        android:layout_width="40dp"
+                        android:layout_height="50dp"
+                        android:layout_marginRight="5dp"
+                        android:background="@color/light_grey"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center"
+                        android:hint="mg/dl"
+                        android:paddingBottom="5dp"
+                        android:paddingLeft="2dp"
+                        android:paddingRight="2dp"
+                        android:paddingTop="5dp"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
             </LinearLayout>
-
 
             <TextView
                 android:id="@+id/txtsymptomsanddignost"
@@ -758,6 +882,22 @@
                 android:paddingRight="10dp"
                 android:padding="5dp">
 
+                <MultiAutoCompleteTextView
+                    android:id="@+id/ailments1"
+                    android:layout_width="match_parent"
+                    android:layout_height="45dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/rectangle_corner"
+                    android:digits="@string/digitsnumber"
+                    android:ems="13"
+                    android:fontFamily="sans-serif"
+                    android:hint="Ailments"
+                    android:paddingLeft="5dp"
+                    android:textSize="13sp"
+                    app:bootstrapBrand="success"
+                    app:bootstrapSize="md"
+                    app:roundedCorners="false" />
 
                 <MultiAutoCompleteTextView
                     android:id="@+id/symptoms"
@@ -787,7 +927,7 @@
                     android:layout_weight="1"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
-                    android:hint="Dignosis"
+                    android:hint="Diagnosis"
                     android:inputType="text"
                     android:background="@drawable/rectangle_corner"
                     android:digits="@string/digitsnumber"
@@ -851,7 +991,8 @@
                     android:textSize="12sp"
                     app:bootstrapBrand="success"
                     app:bootstrapSize="md"
-                    app:roundedCorners="false" />
+                    app:roundedCorners="false"
+                    android:visibility="gone"/>
 
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
@@ -871,7 +1012,8 @@
                     app:bootstrapBrand="success"
                     app:bootstrapSize="md"
                     app:roundedCorners="false"
-                    android:layout_marginRight="5dp"/>
+                    android:layout_marginRight="5dp"
+                    android:visibility="gone"/>
 
                 <Button
                     android:id="@+id/addPatientprescriptionBtn"

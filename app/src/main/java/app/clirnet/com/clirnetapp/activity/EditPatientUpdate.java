@@ -4,7 +4,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -149,6 +148,12 @@ public class EditPatientUpdate extends AppCompatActivity {
     private LastnameDatabaseClass lastNamedb;
     private ArrayList<String> mSymptomsList;
     private ArrayList<String> mDiagnosisList;
+    private Button btnclear;
+    private EditText edtInput_sugarfasting;
+    private EditText edtInput_bmi;
+    private EditText edtInput_height;
+    private String strAlternatenumber;
+    private String strAlternatephtype;
 
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -161,7 +166,6 @@ public class EditPatientUpdate extends AppCompatActivity {
         setSupportActionBar(toolbar);
         appController = new AppController();
         try {
-            //noinspection ConstantConditions
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
@@ -217,6 +221,13 @@ public class EditPatientUpdate extends AppCompatActivity {
         String strTests = getIntent().getStringExtra("TESTS");
         String strDrugs = getIntent().getStringExtra("DRUGS");
 
+        String strbmi=getIntent().getStringExtra("BMI");
+        strAlternatenumber=getIntent().getStringExtra("ALTERNATENUMBER");
+
+        strAlternatephtype=getIntent().getStringExtra("ALTERNATENUMBERTYPE");
+        String height=getIntent().getStringExtra("HEIGHT");
+        String sugarfasting=getIntent().getStringExtra("SUGARFASTING");
+
         backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
         ImageView patientImage = (ImageView) findViewById(R.id.patientImage);
         TextView date = (TextView) findViewById(R.id.sysdate);
@@ -231,10 +242,13 @@ public class EditPatientUpdate extends AppCompatActivity {
         days = (Button) findViewById(R.id.days);
         week = (Button) findViewById(R.id.week);
         month = (Button) findViewById(R.id.month);
+        btnclear=(Button)findViewById(R.id.btnclear);
+
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         expListView = (ExpandableListView) findViewById(R.id.lvExp);
 
         edtInput_weight = (EditText) findViewById(R.id.input_weight);
+        edtInput_height=(EditText)findViewById(R.id.input_height);
         edtInput_pulse = (EditText) findViewById(R.id.input_pulse);
         edtInput_bp = (EditText) findViewById(R.id.input_bp);
         edtlowBp = (EditText) findViewById(R.id.lowBp);
@@ -246,6 +260,9 @@ public class EditPatientUpdate extends AppCompatActivity {
         edtTest = (BootstrapEditText) findViewById(R.id.test);
         edtDrugs = (BootstrapEditText) findViewById(R.id.drugs);
 
+        edtInput_sugarfasting = (EditText) findViewById(R.id.input_sugarfasting);
+        edtInput_bmi=(EditText)findViewById(R.id.input_bmi);
+
         ailments1 = (MultiAutoCompleteTextView) findViewById(R.id.ailments1);
 
         clinicalNotes = (EditText) findViewById(R.id.clinicalNotes);
@@ -253,12 +270,6 @@ public class EditPatientUpdate extends AppCompatActivity {
         cancel = (Button) findViewById(R.id.cancel);
         editUpdate = (Button) findViewById(R.id.editUpdate);
         imageViewprescription = (ImageView) findViewById(R.id.imageViewprescription);
-        // txtfollow_up_date = (TextView) findViewById(R.id.txtfollow_up_date);
-
-        /*noRecordsText=(TextView)findViewById(R.id.noRecordsText);
-
-        lastUpdateButton=(Button)findViewById(R.id.lastUpdate);
-*/
 
         addFollowupdateButtonListner();
         addArrowUpDownListner();
@@ -353,6 +364,10 @@ public class EditPatientUpdate extends AppCompatActivity {
         edtDignosis.setText(strDignosis);
         edtTest.setText(strTests);
         edtDrugs.setText(strDrugs);
+
+        edtInput_bmi.setText(strbmi);
+        edtInput_height.setText(height);
+        edtInput_sugarfasting.setText(sugarfasting);
 
         fodtextshow.setText(strActualFollowUpDate);//add selected date to date text view
 
@@ -550,6 +565,8 @@ public class EditPatientUpdate extends AppCompatActivity {
                 i.putExtra("DISTRICT", strDistrict);
                 i.putExtra("PIN", strPinNo);
                 i.putExtra("STATE", strState);
+                i.putExtra("ALTERNATENUMBER",strAlternatenumber);
+                i.putExtra("ALTERNATENUMBERTYPE",strAlternatephtype );
                 i.putExtra("FROMWHERE", "editpatient");
                 startActivity(i);
                // finish();
@@ -575,14 +592,11 @@ public class EditPatientUpdate extends AppCompatActivity {
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // frameLayout.setVisibility(View.VISIBLE);
-              /*  AppController appController=new AppController();
-                appController.goToNavigationActivity(getApplicationContext(),NavigationActivity.class);*/
-                //redirect to navigation activity
+
 
                 goToNavigation();
 
-                // Toast.makeText(getContext(),"chala  jana bhai",Toast.LENGTH_SHORT).show();
+
             }
         });
 //update the data to db
@@ -612,7 +626,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                 // back button pressed
                 //redirect to navigation activity
                 goToNavigation1();
-                //  Toast.makeText(EditPatientUpdate.this,"back is pressed",Toast.LENGTH_SHORT).show();
+
             }
         });
 
@@ -805,7 +819,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         month.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                month.getBackground().setColorFilter(Color.BLUE, PorterDuff.Mode.MULTIPLY);
+                month.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     days.setBackground(getResources().getDrawable(R.drawable.circle));
                     week.setBackground(getResources().getDrawable(R.drawable.circle));
@@ -832,14 +846,43 @@ public class EditPatientUpdate extends AppCompatActivity {
             }
         });
 
+        fodtextshow.setOnClickListener(new View.OnClickListener() {
 
+
+            @Override
+            public void onClick(View v) {
+
+
+                shpwDialog(DATE_DIALOG_ID);
+
+            }
+        });
+        btnclear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                fodtextshow.setText("");
+                CleanFollowup();
+            }
+        });
+
+    }
+    private void CleanFollowup(){
+
+        month.setTextColor(getResources().getColor(R.color.black));
+        days.setTextColor(getResources().getColor(R.color.black));
+        week.setTextColor(getResources().getColor(R.color.black));
+        inputnumber.setText("");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            days.setBackground(getResources().getDrawable(R.drawable.circle));
+            month.setBackground(getResources().getDrawable(R.drawable.circle));
+            week.setBackground(getResources().getDrawable(R.drawable.circle));
+        }
     }
 
     //saved the user enetred data to db
     private void saveData() {
-        //l String daysSel = null;
-        //  monthSel = null;
-        //fowSel = null;
+
         String strfollow_up_date = null;
         String ailments = ailments1.getText().toString().trim();
         String clinical_note = clinicalNotes.getText().toString().trim();
@@ -858,17 +901,31 @@ public class EditPatientUpdate extends AppCompatActivity {
         String strTests = edtTest.getText().toString().trim();
         String strDrugs = edtDrugs.getText().toString().trim();
 
-        if (TextUtils.isEmpty(ailments)) {
-            ailments1.setError("Please enter Ailment");
+        String strHeight=edtInput_height.getText().toString().trim();
+        String strbmi=edtInput_bmi.getText().toString().trim();
+        String strSugarFasting=edtInput_sugarfasting.getText().toString().trim();
+
+        if (TextUtils.isEmpty(ailments) && TextUtils.isEmpty(strSymptoms)&& TextUtils.isEmpty(strDignosis)) {
+            Toast.makeText(getApplicationContext(),"Please enter any of Ailemnts,Symptoms or Diagnosis ",Toast.LENGTH_LONG).show();
+            // ailment.setError("Please enter Ailment");
             return;
-        } else {
-            ailments1.setError(null);
         }
+
+
+
         if (ailments.length() > 0 && ailments.length() < 2 && ailments.contains(",")) {
             ailments1.setError("Please Enter Valid ailment");
             return;
         }
-
+        if(strTemp.length()>0){
+            int intTemp = Integer.parseInt(strTemp);
+            if (intTemp > 110) {
+                edtInput_temp.setError("Temp can not be more than 110 ");
+                return;
+            } else {
+                edtInput_temp.setError(null);
+            }
+        }
         //remove comma occurance from string
         ailments = appController.removeCommaOccurance(ailments);
         //Remove spaces between text if more than 2 white spaces found 12-12-2016
@@ -905,7 +962,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         String action = "updated";
         try {
             dbController.updatePatientOtherInfo(strId, strVisitId, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, clinical_note, patientImagePath, ailments, sysdate, updatedTime, modified_by, action, patientInfoType, flag,
-                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs);
+                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs,strHeight,strbmi,strSugarFasting);
         } catch (ClirNetAppException e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -950,32 +1007,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         }catch (Exception e){
             e.printStackTrace();
         }
-        /*Random r = new Random();
-        int n=r.nextInt(10);
 
-        backChangingImages.setImageResource(imageArray[n]);
-        final String url= getString(imageArray[n]);
-        backChangingImages.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "Image Clicked" + url, Toast.LENGTH_SHORT).show();
-            }
-        });*/
-        /*Runnable runnable = new Runnable() {
-            int i = 0;
-
-            public void run() {
-                backChangingImages.setImageResource(imageArray[i]);
-
-
-                i++;
-                if (i > imageArray.length - 1) {
-                    i = 0;
-                }
-                backChangingImages.postDelayed(this, 10000);  //for interval...
-            }
-        };
-        backChangingImages.postDelayed(runnable, 100); //for initial delay..*/
     }
 
     @Override
@@ -999,7 +1031,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 
@@ -1011,18 +1043,8 @@ public class EditPatientUpdate extends AppCompatActivity {
 
             if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
                 setUpGlide(patientImagePath, imageViewprescription);
-                      /*Glide.with(EditPatientUpdate.this)
-                        .load(patientImagePath)
-                        .crossFade()
-                        .diskCacheStrategy(DiskCacheStrategy.NONE)
-                        .skipMemoryCache(true)
-                        .into(imageViewprescription);*/
-
-
             }
-       /*     Toast.makeText(EditPatientUpdate.this, "Patient Image Path=" + patientImagePath, Toast.LENGTH_LONG).show();*/
 
-            //  patientImage.setImageBitmap(bitmap);
         } catch (NullPointerException e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1040,7 +1062,7 @@ public class EditPatientUpdate extends AppCompatActivity {
     }
 
     //show date sellector dialog box
-    private void shpwDialog() {
+    private void shpwDialog(int id) {
 
         switch (EditPatientUpdate.DATE_DIALOG_ID) {
             case DATE_DIALOG_ID:
@@ -1059,9 +1081,10 @@ public class EditPatientUpdate extends AppCompatActivity {
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
 
-                                follow_up_date.setText(dayOfMonth + "-"
+                                fodtextshow.setText(dayOfMonth + "-"
                                         + (monthOfYear + 1) + "-" + year);
-                                txtfollow_up_date.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                                fodtextshow.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                                CleanFollowup();
 
                                 // we calculate age from dob and set to text view.
                             }
@@ -1157,6 +1180,9 @@ public class EditPatientUpdate extends AppCompatActivity {
         if(mSymptomsList != null){
             mSymptomsList =null;
         }
+        if(lastNamedb != null){
+            lastNamedb=null;
+        }
         doctor_membership_number=null;
         bannerimgNames=null;
 
@@ -1215,7 +1241,10 @@ public class EditPatientUpdate extends AppCompatActivity {
         txtRecord = null;
         txtsymtomsanddignost = null;
         presciptiontext = null;
-
+        edtInput_height=null;
+        edtInput_sugarfasting=null;
+        edtInput_bmi=null;
+        btnclear=null;
 
     }
 

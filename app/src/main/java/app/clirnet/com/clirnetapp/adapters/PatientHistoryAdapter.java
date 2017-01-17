@@ -69,17 +69,7 @@ public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAd
             holder.tv_clinical_notes.setText(clinicalNotes);
         }
         else{
-            holder.tv_clinical_notes.setText("No Aailable Notes");
-        }
-
-
-
-        clinicalNotes =model.getClinicalNotes().trim();
-        if(clinicalNotes.length() > 0){
-            holder.tv_clinical_notes.setText(clinicalNotes);
-        }
-        else{
-            holder.tv_clinical_notes.setText("No Aailable Notes");
+            holder.tv_clinical_notes.setText("No Available Notes");
         }
 
     }

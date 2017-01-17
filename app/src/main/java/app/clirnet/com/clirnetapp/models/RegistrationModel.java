@@ -157,7 +157,31 @@ public class RegistrationModel {
     private String dignosis;
     private String tests;
     private String drugs;
+    private String bmi;
+    private String alternatePhoneType;
+    private String alternatePhoneNumber;
+    private String height;
+    private String sugarFasting;
 
+    public String getSugarFasting() {
+        return sugarFasting;
+    }
+
+    public String getHeight() {
+        return height;
+    }
+
+    public String getAlternatePhoneNumber() {
+        return alternatePhoneNumber;
+    }
+
+    public String getAlternatePhoneType() {
+        return alternatePhoneType;
+    }
+
+    public String getBmi() {
+        return bmi;
+    }
 
     public String getAction() {
         return action;
@@ -507,7 +531,8 @@ public class RegistrationModel {
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
                              String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String tests, String drugs) {
+                             String sugar, String symptoms, String dignosis, String tests, String drugs,String altername_no,String height,String bmi,String sugar_fasting,String altternate_phType) {
+
         this.pat_id = id;
         this.firstName = first_name;
         this.middleName = middle_name;
@@ -549,7 +574,11 @@ public class RegistrationModel {
         this.dignosis = dignosis;
         this.tests = tests;
         this.drugs = drugs;
-
+        this.bmi=bmi;
+        this.height=height;
+        this.alternatePhoneNumber=altername_no;
+        this.alternatePhoneType=altternate_phType;
+        this.sugarFasting=sugar_fasting;
 
     }
 

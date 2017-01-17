@@ -99,7 +99,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private ArrayList selectedAilmentList;
     private LinearLayoutManager mLayoutManager;
 
-    private int PAGE_SIZE = 4;
+    private int PAGE_SIZE = 2;
 
     private boolean isLoading = false;
 
@@ -186,8 +186,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         });
 
 
-        appController = new AppController();
-
 
 
 
@@ -200,6 +198,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             }
             if(bannerClass == null){
                 bannerClass=new BannerClass(getContext());
+            }
+            if(appController == null){
+                appController = new AppController();
             }
             bannerimgNames= bannerClass.getImageName();
             Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1).toString());
@@ -246,7 +247,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 strpno = phone_no.getText().toString().trim();
                 String strAilment = ailments.getText().toString().trim();
 
-                //String strM,strF,strOthr,strNa;
 
                 //remove comma occurance from string
                 strAilment = appController.removeCommaOccurance(strAilment);
@@ -276,8 +276,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     int beforeFilterCount = patientData.size();
 
-
-                    /*if (patientData.size() > 0) {
+                    if (patientData.size() > 0) {
                         removeDuplicate(patientData);
                     }
                     Log.e("queryCountafterFilter", "" + patientData.size() );
@@ -286,7 +285,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     int totalFilterDataCount = beforeFilterCount - afterFilterCount;
 
-                    queryCount = queryCount - totalFilterDataCount;*/
+                    queryCount = queryCount - totalFilterDataCount;
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -356,7 +355,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
     private void setAilmentData() {
         try {
-
             databaseClass.openDataBase();
             mAilmemtArrayList = databaseClass.getAilmentsListNew();
 

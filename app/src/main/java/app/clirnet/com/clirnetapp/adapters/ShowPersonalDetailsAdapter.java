@@ -7,6 +7,7 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -92,16 +93,24 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
         if (clinicalNotes.length() > 0) {
             holder.tv_clinical_notes.setText(clinicalNotes);
         } else {
-            holder.tv_clinical_notes.setText("No Aailable Notes");
+            holder.tv_clinical_notes.setText("No Available Notes");
+        }
+
+        String mSymptoms = model.getSymptoms();
+        if (mSymptoms != null && !mSymptoms.equals("") && mSymptoms.length()>0) {
+            holder.tv_symptoms.setText(mSymptoms);
+        }else{
+            holder.linearlayoutSymptoms.setVisibility(View.GONE);
+        }
+
+        String mDiagnosis = model.getDignosis();
+        if (mDiagnosis != null && !mDiagnosis.equals("") && mDiagnosis.length()>0) {
+            holder.tv_diagnosis.setText(mDiagnosis);
+        }else{
+            holder.linearlayoutDiagnosis.setVisibility(View.GONE);
         }
 
 
-        clinicalNotes = model.getClinicalNotes().trim();
-        if (clinicalNotes.length() > 0) {
-            holder.tv_clinical_notes.setText(clinicalNotes);
-        } else {
-            holder.tv_clinical_notes.setText("No Aailable Notes");
-        }
         try {
             final String imgPath = patientList.get(position).getPres_img();
             if (!TextUtils.isEmpty(imgPath) && imgPath != null) {
@@ -140,6 +149,9 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
         private final TextView tv_visit_date;
         public final TextView tv_clinical_notes;
         private final TextView imgText;
+        private final LinearLayout linearlayoutSymptoms;
+        private final LinearLayout linearlayoutDiagnosis;
+        private final TextView  tv_diagnosis, tv_symptoms;
 
         public HistoryViewHolder(View view) {
             super(view);
@@ -149,6 +161,11 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
             imgText=(TextView)view.findViewById(R.id.imgText);
             tv_clinical_notes = (TextView) view.findViewById(R.id.tv_clinical_notes);
 
+            tv_diagnosis = (TextView) view.findViewById(R.id.tv_diagnosis);
+            tv_symptoms = (TextView) view.findViewById(R.id.tv_symptoms);
+
+            linearlayoutSymptoms = (LinearLayout) view.findViewById(R.id.linearlayoutSymptoms);
+            linearlayoutDiagnosis = (LinearLayout) view.findViewById(R.id.linearlayoutDiagnosis);
 
         }
     }

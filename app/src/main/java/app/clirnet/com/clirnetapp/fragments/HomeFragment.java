@@ -174,8 +174,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private ArrayList<String> bannerimgNames;
     private String company_id;
     private ImageDownloader mDownloader;
-    private  Bitmap bmp;
-    private FileOutputStream fos;
+
+    private FileOutputStream fos;  private  Bitmap bmp;
     private ProgressBar pb;
 
     private EditText oldPassword;
@@ -280,10 +280,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             try {
              String    encryptedMsg = AESCrypt.encrypt("password", patientInfoArayString);
 
-                String messageAfterDecrypt = AESCrypt.decrypt("password", encryptedMsg);
-                /* Log.e(TAG, encryptedMsg);
-                 Log.e(TAG, messageAfterDecrypt);*/
-                // Log.e(TAG, encryptedMsg);
             }catch (GeneralSecurityException e){
                 //handle error
             }
@@ -601,6 +597,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("PIN", registrationModel.getPin_code());
         i.putExtra("STATE", registrationModel.getState());
 
+        i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
+        i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
+
+
         startActivity(i);
 //                        Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
     }
@@ -645,7 +645,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("DIGNOSIS", registrationModel.getDignosis());
         i.putExtra("TESTS", registrationModel.getTests());
         i.putExtra("DRUGS", registrationModel.getDrugs());
-
+        i.putExtra("BMI", registrationModel.getBmi());
+        i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
+        i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
+        i.putExtra("HEIGHT", registrationModel.getHeight());
+        i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
 
         startActivity(i);
     }
@@ -885,6 +889,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     }
 
     private void dateisCurrent(int position) {
+
         RegistrationModel registrationModel = filteredModelList.get(position);
         Intent i = new Intent(getActivity().getApplicationContext(), EditPatientUpdate.class);
 
@@ -929,13 +934,18 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("DIGNOSIS", registrationModel.getDignosis());
         i.putExtra("TESTS", registrationModel.getTests());
         i.putExtra("DRUGS", registrationModel.getDrugs());
-
+        i.putExtra("BMI", registrationModel.getBmi());
+        i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
+        i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
+        i.putExtra("HEIGHT", registrationModel.getHeight());
+        i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
         startActivity(i);
     }
 
     private void dateisBefore(int position) {
 
         RegistrationModel registrationModel = filteredModelList.get(position);
+
         Intent i = new Intent(getContext(), AddPatientUpdate.class);
         i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
         i.putExtra("PatientID", registrationModel.getPat_id());
@@ -964,6 +974,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("DISTRICT", registrationModel.getDistrict());
         i.putExtra("PIN", registrationModel.getPin_code());
         i.putExtra("STATE", registrationModel.getState());
+
+        i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
+        i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
 
         startActivity(i);
     }
@@ -1043,7 +1056,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     //this will used to change banner image after some time interval
     private void setupAnimation()  {
-
 
         if(bannerimgNames.size()>0) {
             Random r = new Random();
@@ -2032,7 +2044,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 // JSON error
                 e.printStackTrace();
                 appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e +""+Thread.currentThread().getStackTrace()[2].getLineNumber());
-                //Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+
             }
            /* new LastNameAsynTask(getContext(),savedUserName, savedUserPassword);*/
             return null;
@@ -2292,28 +2304,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         dialog.show();
     }
-    private boolean getFirstTimeLoginStatus(){
-        SharedPreferences pref = getContext().getSharedPreferences(PREFS_NAMEsavedCredit, Context.MODE_PRIVATE);
-        String firstTimeLogin = pref.getString(FISRT_TIME_LOGIN
-                , null);
-        Log.e("firstTimeLogin", ""+ firstTimeLogin);
-        boolean value=false;
-        if(firstTimeLogin == null){
-            value= true;
-        }else if(firstTimeLogin.equals("false")){
 
-            value= true;
-        }
-        return  value;
-    }
-    private void savedLoginCounter(String answer) {
-
-        getContext().getSharedPreferences(PREFS_NAMEsavedCredit, Context.MODE_PRIVATE)
-                .edit()
-                .putString(FISRT_TIME_LOGIN, answer)
-                .apply();
-
-    }
 }
 
 
