@@ -1,7 +1,6 @@
 package app.clirnet.com.clirnetapp.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,7 +79,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder>
         String stringdistance = String.valueOf(model.getLanguage());//Need to convert to string to set into text view Ashish U 21-04-2016
 
 
-        Log.d("dis", "" + stringdistance);
+       // Log.d("dis", "" + stringdistance);
 
 
             holder.gender.setText(model.getGender());

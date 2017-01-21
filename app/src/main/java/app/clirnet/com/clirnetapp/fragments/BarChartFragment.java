@@ -45,11 +45,9 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
 
     private BarEntry v1e1;
     private BarEntry v2e1;
-    private Typeface mTfRegular;
     private ArrayList<String> ageBoundlis;
     private BarChart chart;
     private ArrayList<String> date;
-    private ArrayList<String> listSetAgeBound;
     private List<Integer> male;
     private AppController appController;
 
@@ -72,7 +70,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTfRegular = Typeface.createFromAsset(getContext().getAssets(), "OpenSans-Regular.ttf");
+        Typeface mTfRegular = Typeface.createFromAsset(getContext().getAssets(), "OpenSans-Regular.ttf");
     }
 
     @Override
@@ -138,7 +136,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
         ArrayList<IBarDataSet> dataSets = null;
         ArrayList<BarEntry> male = new ArrayList<>();
         ArrayList<BarEntry> female = new ArrayList<>();
-        listSetAgeBound = new ArrayList<>();
+        ArrayList<String> listSetAgeBound = new ArrayList<>();
 
         try {
             SQLController sqlController = new SQLController(getContext());
@@ -314,7 +312,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(Uri uri);
     }
 
 

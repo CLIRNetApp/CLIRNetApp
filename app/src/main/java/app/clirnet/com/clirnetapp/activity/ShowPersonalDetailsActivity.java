@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -62,6 +63,16 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
     private String doctor_membership_number;
+    private Button editlastUpdate;
+    private String strPhoneType;
+    private String strAddress;
+    private String strCityorTown;
+    private String strDistrict;
+    private String strPinNo;
+    private String strState;
+    private String strAlternatenumber;
+    private String strAlternatephtype;
+    private String strPhoneTpe;
 
 
     @Override
@@ -93,12 +104,23 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         strMiddleName = getIntent().getStringExtra("MIDDLENAME");
         strLastName = getIntent().getStringExtra("LASTNAME");
         strPhone = getIntent().getStringExtra("PHONE");
+
+        strPhoneType=getIntent().getStringExtra("PHONETYPE");
         strAge = getIntent().getStringExtra("AGE");
         strDob = getIntent().getStringExtra("DOB");
         strLanguage = getIntent().getStringExtra("LANGUAGE");
         strgender = getIntent().getStringExtra("GENDER");
         fromWhere=getIntent().getStringExtra("FROMWHERE");
 
+        strAddress = getIntent().getStringExtra("ADDRESS");
+        strCityorTown = getIntent().getStringExtra("CITYORTOWN");
+        strDistrict = getIntent().getStringExtra("DISTRICT");
+        strPinNo = getIntent().getStringExtra("PIN");
+        strState = getIntent().getStringExtra("STATE");
+        strAlternatenumber=getIntent().getStringExtra("ALTERNATENUMBER");
+
+        strAlternatephtype=getIntent().getStringExtra("ALTERNATENUMBERTYPE");
+        strPhoneTpe=getIntent().getStringExtra("PHONETYPE");
 
 
         TextView txtSysDate = (TextView) findViewById(R.id.sysdate);
@@ -111,6 +133,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         editmobileno = (TextView) findViewById(R.id.mobileno);
         editgender = (TextView) findViewById(R.id.gender);
         editlang = (TextView) findViewById(R.id.lang);
+         editlastUpdate=(Button)findViewById(R.id.editlastUpdate);
 
 
         TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
@@ -151,18 +174,18 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             sqlController.open();
 
             patientPersonalData  = new ArrayList<>();
-            patientPersonalData = (sqlController.getPatientHistoryListAll(strId)); //get all patient data from db
+            patientPersonalData = sqlController.getPatientHistoryListAll1(strId); //get all patient data from db
             int size = patientPersonalData.size();
             if (size > 0) {
 
                 ShowPersonalDetailsAdapter showPersonalDetailsAdapter = new ShowPersonalDetailsAdapter(ShowPersonalDetailsActivity.this,patientPersonalData);
                 recyclerView.setAdapter(showPersonalDetailsAdapter);
-
             }
             if(bannerClass == null){
                 bannerClass=new BannerClass(ShowPersonalDetailsActivity.this);
             }
             bannerimgNames= bannerClass.getImageName();
+            Log.e("bannerimgNames","  "+bannerimgNames.size());
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
 
@@ -183,7 +206,63 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
 
         });
+        editlastUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
+             //   Toast.makeText(getApplicationContext(), "There is no history to update!!!", Toast.LENGTH_LONG).show();
+                if (patientPersonalData.size() > 0) {
+                    RegistrationModel registrationModel = patientPersonalData.get(0);
+                    Intent i = new Intent(getApplicationContext(), EditPatientUpdate.class);
+
+                    i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
+                    i.putExtra("ID", registrationModel.getPat_id());
+                    i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
+                    i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
+                    i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
+                    i.putExtra("LASTNAME", registrationModel.getLastName());
+                    i.putExtra("DOB", registrationModel.getDob());
+                    i.putExtra("PHONE", registrationModel.getMobileNumber());
+                    i.putExtra("PHONETYPE",registrationModel.getPhone_type());
+                    i.putExtra("AGE", registrationModel.getAge());
+                    i.putExtra("LANGUAGE", registrationModel.getLanguage());
+                    i.putExtra("GENDER", registrationModel.getGender());
+                    i.putExtra("ACTUALFOD", registrationModel.getActualFollowupDate());
+                    i.putExtra("FOD", registrationModel.getFollowUpDate());
+                    i.putExtra("AILMENT", registrationModel.getAilments());
+                    i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
+                    i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
+                    i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
+                    i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
+                    i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
+                    i.putExtra("VISITID", registrationModel.getKey_visit_id());
+
+                    i.putExtra("ADDRESS", registrationModel.getAddress());
+                    i.putExtra("CITYORTOWN", registrationModel.getCityortown());
+                    i.putExtra("DISTRICT", registrationModel.getDistrict());
+                    i.putExtra("PIN", registrationModel.getPin_code());
+                    i.putExtra("STATE", registrationModel.getState());
+                    i.putExtra("WEIGHT", registrationModel.getWeight());
+                    i.putExtra("PULSE", registrationModel.getPulse());
+                    i.putExtra("BP", registrationModel.getBp());
+                    i.putExtra("LOWBP", registrationModel.getlowBp());
+                    i.putExtra("TEMPRATURE", registrationModel.getTemprature());
+                    i.putExtra("SUGAR", registrationModel.getSugar());
+                    i.putExtra("SYMPTOMS", registrationModel.getSymptoms());
+                    i.putExtra("DIGNOSIS", registrationModel.getDignosis());
+                    i.putExtra("TESTS", registrationModel.getTests());
+                    i.putExtra("DRUGS", registrationModel.getDrugs());
+                    i.putExtra("BMI", registrationModel.getBmi());
+                    i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
+                    i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
+                    i.putExtra("HEIGHT", registrationModel.getHeight());
+                    i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
+                    startActivity(i);
+                }
+            }
+
+
+        });
 
         if (strPatientPhoto != null && !TextUtils.isEmpty(strPatientPhoto)) {
             if (strPatientPhoto.length() > 0) {
@@ -220,11 +299,19 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         i.putExtra("MIDDLEAME", strMiddleName);
         i.putExtra("LASTNAME", strLastName);
         i.putExtra("PHONE", strPhone);
+        i.putExtra("PHONETYPE",strPhoneType);
         i.putExtra("DOB", strDob);
         i.putExtra("AGE", strAge);
         i.putExtra("LANGUAGE", strLanguage);
         i.putExtra("GENDER", strgender);
         i.putExtra("FROMWHERE", fromWhere);
+        i.putExtra("ADDRESS", strAddress);
+        i.putExtra("CITYORTOWN", strCityorTown);
+        i.putExtra("DISTRICT", strDistrict);
+        i.putExtra("PIN", strPinNo);
+        i.putExtra("STATE", strState);
+        i.putExtra("ALTERNATENUMBER",strAlternatenumber);
+        i.putExtra("ALTERNATENUMBERTYPE",strAlternatephtype );
         startActivity(i);
        // finish();
     }
@@ -248,7 +335,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
             // final String url = getString(imageArray[n]);
             //  backChangingImages.setImageResource(imageArray[n]);
-            final String url = bannerimgNames.get(n).toString();
+            final String url = bannerimgNames.get(n);
             Log.e("nUrl", "" + n + "" + url);
 
             BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
@@ -314,7 +401,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             appController = null;
         }
 
-
+        strPhoneType=null;
         patientPersonalData = null;
         strPatientPhoto = null;
         strLanguage = null;

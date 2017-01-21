@@ -79,7 +79,6 @@ public class EditPatientUpdate extends AppCompatActivity {
     private String strLastName;
     private String strDob;
     private String strId;
-    private TextView txtfollow_up_date;
     private String fowSel;
     private String usersellectedDate = null;
     private String monthSel;
@@ -100,7 +99,6 @@ public class EditPatientUpdate extends AppCompatActivity {
 
     private String updatedTime;
     private String sysdate;
-    private TextView noRecordsText;
     private String docId;
 
     private String strVisitId;
@@ -139,7 +137,6 @@ public class EditPatientUpdate extends AppCompatActivity {
     private TextView presciptiontext;
     private int countsymtomsanddignostLayout = 1;
     private int countPrescriptiontLayout = 1;
-    private ExpandableListView expListView;
 
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
@@ -147,13 +144,13 @@ public class EditPatientUpdate extends AppCompatActivity {
     private String doctor_membership_number;
     private LastnameDatabaseClass lastNamedb;
     private ArrayList<String> mSymptomsList;
-    private ArrayList<String> mDiagnosisList;
     private Button btnclear;
     private EditText edtInput_sugarfasting;
     private EditText edtInput_bmi;
     private EditText edtInput_height;
     private String strAlternatenumber;
     private String strAlternatephtype;
+    private String strPhoneTpe;
 
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -188,6 +185,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         strMiddleName = getIntent().getStringExtra("MIDDLENAME");
         strLastName = getIntent().getStringExtra("LASTNAME");
         strPhone = getIntent().getStringExtra("PHONE");
+
         strAge = getIntent().getStringExtra("AGE");
         strDob = getIntent().getStringExtra("DOB");
 
@@ -205,11 +203,15 @@ public class EditPatientUpdate extends AppCompatActivity {
         String strPrescriptionImage = getIntent().getStringExtra("PRESCRIPTION");
         strVisitId = getIntent().getStringExtra("VISITID");
         strAddress = getIntent().getStringExtra("ADDRESS");
-
         strCityorTown = getIntent().getStringExtra("CITYORTOWN");
         strDistrict = getIntent().getStringExtra("DISTRICT");
         strPinNo = getIntent().getStringExtra("PIN");
         strState = getIntent().getStringExtra("STATE");
+        strAlternatenumber=getIntent().getStringExtra("ALTERNATENUMBER");
+
+        strAlternatephtype=getIntent().getStringExtra("ALTERNATENUMBERTYPE");
+        strPhoneTpe=getIntent().getStringExtra("PHONETYPE");
+
         String strWeight = getIntent().getStringExtra("WEIGHT");
         String strPulse = getIntent().getStringExtra("PULSE");
         String strBp = getIntent().getStringExtra("BP");
@@ -222,9 +224,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         String strDrugs = getIntent().getStringExtra("DRUGS");
 
         String strbmi=getIntent().getStringExtra("BMI");
-        strAlternatenumber=getIntent().getStringExtra("ALTERNATENUMBER");
 
-        strAlternatephtype=getIntent().getStringExtra("ALTERNATENUMBERTYPE");
         String height=getIntent().getStringExtra("HEIGHT");
         String sugarfasting=getIntent().getStringExtra("SUGARFASTING");
 
@@ -245,7 +245,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         btnclear=(Button)findViewById(R.id.btnclear);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        expListView = (ExpandableListView) findViewById(R.id.lvExp);
+        ExpandableListView expListView = (ExpandableListView) findViewById(R.id.lvExp);
 
         edtInput_weight = (EditText) findViewById(R.id.input_weight);
         edtInput_height=(EditText)findViewById(R.id.input_height);
@@ -368,21 +368,26 @@ public class EditPatientUpdate extends AppCompatActivity {
         edtInput_bmi.setText(strbmi);
         edtInput_height.setText(height);
         edtInput_sugarfasting.setText(sugarfasting);
+        if(strActualFollowUpDate == null || strActualFollowUpDate .equals("0000-00-00") || strActualFollowUpDate.equals("30-11-0002")|| strActualFollowUpDate.equals("") ){
+            fodtextshow.setText("");//add selected date to date text view
+            CleanFollowup();
+        }else {
+            fodtextshow.setText(strActualFollowUpDate);//add selected date to date text view
+        }
 
-        fodtextshow.setText(strActualFollowUpDate);//add selected date to date text view
-
-        if (strFollowupDays != null) {
+        if (strFollowupDays != null && strFollowupDays!="" && !strFollowupDays.equals("0")) {
             inputnumber.setText(strFollowupDays);
             days.setSelected(true);
             days.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
             daysSel = strFollowupDays;
 
-        } else if (strFollowupWeeks != null) {
+        } else if (strFollowupWeeks != null && strFollowupWeeks!="" && !strFollowupWeeks.equals("0")) {
             inputnumber.setText(strFollowupWeeks);
             week.setSelected(true);
             week.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
             fowSel = strFollowupWeeks;
-        } else if (strFollowupMonth != null) {
+        } else if (strFollowupMonth != null && strFollowupMonth!="" && !strFollowupMonth.equals("0")) {
+          //  Log.e("strFollowupMonth ","   "+strFollowupMonth);
             inputnumber.setText(strFollowupMonth);
             month.setSelected(true);
             month.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
@@ -394,7 +399,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         }*/
 
         try {
-            expListView = (ExpandableListView) findViewById(R.id.lvExp);
+           /* expListView = (ExpandableListView) findViewById(R.id.lvExp);*/
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
             docId = sqlController.getDoctorId();
@@ -412,7 +417,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             int size = filteredpatientData.size();
 
             if (size > 0) {
-                //Removed 1st element from list bcs it is allreday showning in upper section
+                //Removed 1st element from list bcs it is allreday showing in upper section
                 filteredpatientData.remove(0);
 
                 EditPatientAdapter editPatientAdapter = new EditPatientAdapter(EditPatientUpdate.this, filteredpatientData);
@@ -429,7 +434,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                 bannerClass=new BannerClass(getApplicationContext());
             }
             bannerimgNames= bannerClass.getImageName();
-            Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1).toString());
+            Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1));
 
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
@@ -479,7 +484,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         try {
-            mDiagnosisList = lastNamedb.getDiagnosis();
+            ArrayList<String> mDiagnosisList = lastNamedb.getDiagnosis();
             if (mDiagnosisList.size() > 0) {
                 ArrayAdapter<String> lastnamespin = new ArrayAdapter<>(EditPatientUpdate.this,
                         android.R.layout.simple_dropdown_item_1line, mDiagnosisList);
@@ -556,6 +561,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                 i.putExtra("MIDDLEAME", strMiddleName);
                 i.putExtra("LASTNAME", strLastName);
                 i.putExtra("PHONE", strPhone);
+                i.putExtra("PHONETYPE",strPhoneTpe);
                 i.putExtra("DOB", strDob);
                 i.putExtra("AGE", strAge);
                 i.putExtra("LANGUAGE", strLanguage);
@@ -765,6 +771,8 @@ public class EditPatientUpdate extends AppCompatActivity {
                     String dateis = sdf1.format(appController.addDay1(new Date(), val));
                     fodtextshow.setText(dateis);
                     daysSel = value;
+                    monthSel=null;
+                    fowSel=null;
                     usersellectedDate = dateis;
 
                 } else if (event.getAction() == KeyEvent.ACTION_UP) {
@@ -812,6 +820,8 @@ public class EditPatientUpdate extends AppCompatActivity {
                 String dateis = sdf1.format(appController.addDay1(new Date(), fVal));
                 usersellectedDate = dateis;
                 fowSel = value;
+                daysSel=null;
+                monthSel=null;
                 fodtextshow.setText(dateis);
             }
         });
@@ -842,6 +852,8 @@ public class EditPatientUpdate extends AppCompatActivity {
                 String dateis = sdf1.format(appController.addMonth(new Date(), Integer.parseInt(value)));
                 usersellectedDate = dateis;
                 monthSel = value;
+                daysSel=null;
+                fowSel=null;
                 fodtextshow.setText(dateis);
             }
         });
@@ -862,6 +874,9 @@ public class EditPatientUpdate extends AppCompatActivity {
             public void onClick(View v) {
 
                 fodtextshow.setText("");
+                 daysSel=null;
+                fowSel=null;
+                monthSel = null;
                 CleanFollowup();
             }
         });
@@ -984,7 +999,7 @@ public class EditPatientUpdate extends AppCompatActivity {
 
             // final String url = getString(imageArray[n]);
             //  backChangingImages.setImageResource(imageArray[n]);
-            final String url = bannerimgNames.get(n).toString();
+            final String url = bannerimgNames.get(n);
             Log.e("nUrl", "" + n + "" + url);
 
             BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
@@ -1200,7 +1215,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         strLanguage = null;
         strgender = null;
         strPatientPhoto = null;
-        txtfollow_up_date = null;
+        TextView txtfollow_up_date = null;
 
         clinicalNotes = null;
         strFirstName = null;
@@ -1220,7 +1235,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         sdf1 = null;
         updatedTime = null;
         sysdate = null;
-        noRecordsText = null;
+        TextView noRecordsText = null;
         docId = null;
         strVisitId = null;
         strAddress = null;

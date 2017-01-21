@@ -294,16 +294,20 @@ public class ReportFragment extends Fragment {
                 .append(day).append(" "));
         //came form last week
         String date;
-        if (val.equals("1")) {
-            date = AppController.addDay(new Date(), -7);
-            fromdate.setText(date);
-        } else if (val.equals("2")) {  //came form last month
-            date = appController.addDay(new Date(), -30);
-            fromdate.setText(date);
+        switch (val) {
+            case "1":
+                date = AppController.addDay(new Date(), -7);
+                fromdate.setText(date);
+                break;
+            case "2":   //came form last month
+                date = appController.addDay(new Date(), -30);
+                fromdate.setText(date);
 
-        } else if (val.equals("3")) {      //came form last quarter
-            date = appController.addDay(new Date(), -90);
-            fromdate.setText(date);
+                break;
+            case "3":       //came form last quarter
+                date = appController.addDay(new Date(), -90);
+                fromdate.setText(date);
+                break;
         }
     }
 

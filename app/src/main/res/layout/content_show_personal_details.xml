@@ -319,7 +319,6 @@
                         android:orientation="horizontal">
 
                         <TextView
-
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="0.9"
@@ -348,7 +347,7 @@
                             android:text="Edit Last Update"
                             android:textColor="#ffffff"
                             android:textSize="16sp"
-                            android:visibility="invisible"
+                            android:visibility="visible"
                             tools:targetApi="jelly_bean" />
 
                     </LinearLayout>

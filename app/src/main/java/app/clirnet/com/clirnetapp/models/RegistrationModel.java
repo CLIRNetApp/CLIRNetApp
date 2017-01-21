@@ -20,6 +20,10 @@ public class RegistrationModel {
     private String middleName;
     private String dob;
     private String mobileNumber;
+    private  String phone_type;
+
+
+
     private String gender;
     private String age;
     private String language;
@@ -132,6 +136,10 @@ public class RegistrationModel {
 
     public String getDoc_mem_id() {
         return doc_mem_id;
+    }
+
+    public String getPhone_type() {
+        return phone_type;
     }
 
     private String special_instruction;
@@ -501,7 +509,7 @@ public class RegistrationModel {
     }
 
 
-    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String gender, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String usersellectedDate, String daysSel, String monthSel, String weekSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String modified_on, String actfod, String action) {
+    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String gender, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String usersellectedDate, String daysSel, String monthSel, String weekSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String modified_on, String actfod, String action,String address, String city, String district, String pin, String state,String altername_no,String altternate_phType,String phone_type) {
         this.pat_id = id;
         this.firstName = first_name;
         this.middleName = middle_name;
@@ -527,11 +535,20 @@ public class RegistrationModel {
         this.actualFollowupDate = actfod;
         this.action = action;
 
+        this.address = address;
+        this.cityortown = city;
+        this.district = district;
+        this.pin_code = pin;
+        this.state = state;
+        this.alternatePhoneNumber=altername_no;
+        this.alternatePhoneType=altternate_phType;
+        this.phone_type=phone_type;
+
     }
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
                              String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String tests, String drugs,String altername_no,String height,String bmi,String sugar_fasting,String altternate_phType) {
+                             String sugar, String symptoms, String dignosis, String tests, String drugs,String altername_no,String height,String bmi,String sugar_fasting,String altternate_phType,String phone_type) {
 
         this.pat_id = id;
         this.firstName = first_name;
@@ -579,6 +596,7 @@ public class RegistrationModel {
         this.alternatePhoneNumber=altername_no;
         this.alternatePhoneType=altternate_phType;
         this.sugarFasting=sugar_fasting;
+        this.phone_type=phone_type;
 
     }
 

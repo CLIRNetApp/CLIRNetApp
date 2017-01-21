@@ -101,7 +101,6 @@ public class EditPersonalInfo extends AppCompatActivity {
     private AppController appController;
     private Button save;
     private String fromWhere;
-    private Button addPatientImgBtn;
     private String selectedPhoneType;
     private String selectedState;
     private BootstrapEditText edtAddress;
@@ -111,10 +110,10 @@ public class EditPersonalInfo extends AppCompatActivity {
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
     private String doctor_membership_number;
-    private String strAlternatenumber;
-    private String strAlternatephtype;
     private String selectedPhoneTypealternate_no;
     private BootstrapEditText alternatemobile_no;
+    private Spinner stateSpinner;
+    private Spinner phoneTypeSpinner2;
 
 
     @Override
@@ -143,6 +142,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         String strMiddleName = getIntent().getStringExtra("MIDDLEAME");
         String strLastName = getIntent().getStringExtra("LASTNAME");
         String strPhone = getIntent().getStringExtra("PHONE");
+        String strPhoneType=getIntent().getStringExtra("PHONETYPE");
         String strAge = getIntent().getStringExtra("AGE");
         String strDob = getIntent().getStringExtra("DOB");
 
@@ -156,17 +156,18 @@ public class EditPersonalInfo extends AppCompatActivity {
         String strDistrict = getIntent().getStringExtra("DISTRICT");
         String strPinNo = getIntent().getStringExtra("PIN");
         String strState = getIntent().getStringExtra("STATE");
+        Log.e("STATE","  "+strState);
         fromWhere = getIntent().getStringExtra("FROMWHERE");
-        strAlternatenumber=getIntent().getStringExtra("ALTERNATENUMBER");
+        String strAlternatenumber = getIntent().getStringExtra("ALTERNATENUMBER");
 
-        strAlternatephtype=getIntent().getStringExtra("ALTERNATENUMBERTYPE");
+        String strAlternatephtype = getIntent().getStringExtra("ALTERNATENUMBERTYPE");
 
 
         patientImage = (ImageView) findViewById(R.id.patientimage);
         editfirstname = (EditText) findViewById(R.id.firstname);
         editmiddlename = (EditText) findViewById(R.id.middlename);
         editlasttname = (AutoCompleteTextView) findViewById(R.id.lastname);
-        addPatientImgBtn = (Button) findViewById(R.id.addPatientImgBtn);
+        Button addPatientImgBtn = (Button) findViewById(R.id.addPatientImgBtn);
         editdob = (EditText) findViewById(R.id.dob);
         editage = (EditText) findViewById(R.id.age);
         editmobile_no = (EditText) findViewById(R.id.mobile_no);
@@ -272,22 +273,31 @@ public class EditPersonalInfo extends AppCompatActivity {
         }
 
         //This will used to set radio button click came from previous form
-        if (strgender.equals("Male")) {
-            radioSexGroup.check(R.id.radioMale);
-        } else if (strgender.equals("Female")) {
-            radioSexGroup.check(R.id.radioFemale);
-        } else if (strgender.equals("OTHR")) {
-            radioSexGroup.check(R.id.radioOther);
-        } else {
-            radioSexGroup.check(R.id.radioNa);
+        switch (strgender) {
+            case "Male":
+                radioSexGroup.check(R.id.radioMale);
+                break;
+            case "Female":
+                radioSexGroup.check(R.id.radioFemale);
+                break;
+            case "OTHR":
+                radioSexGroup.check(R.id.radioOther);
+                break;
+            default:
+                radioSexGroup.check(R.id.radioNa);
+                break;
         }
 
-        if (strLanguage.equals("Englis")) {
-            radioLanguage.check(R.id.radioEng);
-        } else if (strLanguage.equals("Hindi")) {
-            radioLanguage.check(R.id.radioHin);
-        } else if (strLanguage.equals("Bengali")) {
-            radioLanguage.check(R.id.radioBen);
+        switch (strLanguage) {
+            case "Englis":
+                radioLanguage.check(R.id.radioEng);
+                break;
+            case "Hindi":
+                radioLanguage.check(R.id.radioHin);
+                break;
+            case "Bengali":
+                radioLanguage.check(R.id.radioBen);
+                break;
         }
 
         int size = strDob.trim().length();
@@ -377,6 +387,37 @@ public class EditPersonalInfo extends AppCompatActivity {
 
 
         setUpSpinner();
+
+        String[] some_array = getResources().getStringArray(R.array.states);
+         ArrayList<String> _stateList=new ArrayList<>();
+        for(String  i:some_array){
+            System.out.println(i);
+            _stateList.add(i);
+        }
+        if(strState!= null) {
+            int postion = getCategoryPos(_stateList, strState);
+            stateSpinner.setSelection(postion);
+        }
+
+        String[] phTypeArray=getResources().getStringArray(R.array.phType_group);
+        ArrayList<String> _phTypeList=new ArrayList<>();
+        for(String  i:phTypeArray){
+            System.out.println(i);
+            _phTypeList.add(i);
+        }
+        if(strAlternatephtype != null) {
+            int postion = getCategoryPos(_phTypeList, strAlternatephtype);
+            phoneTypeSpinner2.setSelection(postion);
+        }
+
+        if(strPhoneType != null) {
+            int postion = getCategoryPos(_phTypeList, strPhoneType);
+            phType.setSelection(postion);
+        }
+
+
+
+        // Log.e("States ", "" + some_array + " "+_categories.size()+"  position "+ getCategoryPos(_categories,"West Bengal"));
 
 
         final Button cancel = (Button) findViewById(R.id.cancel);
@@ -688,7 +729,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         editlasttname.setThreshold(1);
         editlasttname.setAdapter(lastnamespin);
         ///////////////////////////////////////////////
-        Spinner stateSpinner = (Spinner) findViewById(R.id.stateSpinner);
+         stateSpinner = (Spinner) findViewById(R.id.stateSpinner);
         //stateSpinner.setOnItemSelectedListener(EditPatientUpdate.this);
        // stateSpinner.setPrompt("Select State");
 
@@ -863,7 +904,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
             // final String url = getString(imageArray[n]);
             //  backChangingImages.setImageResource(imageArray[n]);
-            final String url = bannerimgNames.get(n).toString();
+            final String url = bannerimgNames.get(n);
             Log.e("nUrl", "" + n + "" + url);
 
             BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
@@ -1012,7 +1053,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 // TODO Auto-generated method stub
             }
         });
-        Spinner phoneTypeSpinner2=(Spinner)findViewById(R.id.phoneTypeSpinner2);
+        phoneTypeSpinner2=(Spinner)findViewById(R.id.phoneTypeSpinner2);
         phoneTypeSpinner2.setAdapter(dataAdapter);
         phoneTypeSpinner2.setSelection(position);
 
@@ -1053,6 +1094,9 @@ public class EditPersonalInfo extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+   private int getCategoryPos( ArrayList<String> _categories, String category) {
+        return _categories.indexOf(category);
     }
 }
 

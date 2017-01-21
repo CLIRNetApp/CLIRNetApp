@@ -29,7 +29,7 @@
 
     </group>
 
-    <item android:title="Knowledge Suit ">
+    <item android:title="Knowledge Suite ">
         <menu>
             <item
                 android:id="@+id/nav_knowldge"

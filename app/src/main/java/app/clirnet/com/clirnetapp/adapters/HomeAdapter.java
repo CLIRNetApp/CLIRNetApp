@@ -1,7 +1,6 @@
 package app.clirnet.com.clirnetapp.adapters;
 
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,7 +43,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.PatientViewHol
         String last_name = patientList.get(position).getLastName();
 
         holder.name.setText(first_name + " " + middle_name + " " + last_name);
-        Log.d("title", "" + patientList.get(position).getMobileNumber());
+       // Log.d("title", "" + patientList.get(position).getMobileNumber());
 
         holder.address.setText(model.getDob());
 

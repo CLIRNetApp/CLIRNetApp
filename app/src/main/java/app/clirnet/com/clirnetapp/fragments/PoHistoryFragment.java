@@ -186,9 +186,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         });
 
 
-
-
-
         try {
 
             sqlController = new SQLController(getContext().getApplicationContext());
@@ -203,7 +200,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 appController = new AppController();
             }
             bannerimgNames= bannerClass.getImageName();
-            Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1).toString());
+          //  Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1));
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
         } catch (Exception e) {
@@ -272,14 +269,14 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     patientData = (sqlController.getFilterDatanew(strfname, strlname, sex, strpno, strage, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit));
                     //    patientData = sqlController.getFilterDatanew(strfname, strlname, selectedListGender.get(i).toString(), strpno, strage);
                     queryCount = sqlController.getCountResult();
-                    Log.e("queryCount", "" + queryCount );
+                  //  Log.e("queryCount", "" + queryCount );
 
                     int beforeFilterCount = patientData.size();
 
                     if (patientData.size() > 0) {
                         removeDuplicate(patientData);
                     }
-                    Log.e("queryCountafterFilter", "" + patientData.size() );
+                   // Log.e("queryCountafterFilter", "" + patientData.size() );
 
                     int afterFilterCount = patientData.size();
 
@@ -443,12 +440,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         RegistrationModel book = patientData.get(position);
 
         Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
-        Bundle bundle = new Bundle();
-        //Add your data from getFactualResults method to bundle
 
-        //Add the bundle to the intent
-        i.putExtras(bundle);
-        i.putExtra("PATIENTPHOTO", book.getPhoto());
+       /* i.putExtra("PATIENTPHOTO", book.getPhoto());
         i.putExtra("ID", book.getPat_id());
 
         i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
@@ -458,7 +451,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         i.putExtra("DOB", book.getDob());
 
         i.putExtra("PHONE", book.getMobileNumber());
-
+        i.putExtra("PHONETYPE", book.getPhone_type());
         i.putExtra("AGE", book.getAge());
         i.putExtra("LANGUAGE", book.getLanguage());
         i.putExtra("GENDER", book.getGender());
@@ -470,6 +463,50 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         i.putExtra("CLINICALNOTES", book.getClinicalNotes());
         i.putExtra("PRESCRIPTION", book.getPres_img());
         i.putExtra("FROMWHERE", "3"); //thi will identify from which fragment we are navigating
+*/
+
+        i.putExtra("PATIENTPHOTO", book.getPhoto());
+        i.putExtra("ID", book.getPat_id());
+        i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
+        i.putExtra("FIRSTTNAME", book.getFirstName());
+        i.putExtra("MIDDLENAME", book.getMiddleName());
+        i.putExtra("LASTNAME", book.getLastName());
+        i.putExtra("DOB", book.getDob());
+        i.putExtra("PHONE", book.getMobileNumber());
+        i.putExtra("PHONETYPE", book.getPhone_type());
+        i.putExtra("AGE", book.getAge());
+        i.putExtra("LANGUAGE", book.getLanguage());
+        i.putExtra("GENDER", book.getGender());
+        i.putExtra("ACTUALFOD", book.getActualFollowupDate());
+        i.putExtra("FOD", book.getFollowUpDate());
+        i.putExtra("AILMENT", book.getAilments());
+        i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
+        i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
+        i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
+        i.putExtra("CLINICALNOTES", book.getClinicalNotes());
+        i.putExtra("PRESCRIPTION", book.getPres_img());
+        i.putExtra("VISITID", book.getKey_visit_id());
+
+        i.putExtra("ADDRESS", book.getAddress());
+        i.putExtra("CITYORTOWN", book.getCityortown());
+        i.putExtra("DISTRICT", book.getDistrict());
+        i.putExtra("PIN", book.getPin_code());
+        i.putExtra("STATE", book.getState());
+        i.putExtra("WEIGHT", book.getWeight());
+        i.putExtra("PULSE", book.getPulse());
+        i.putExtra("BP", book.getBp());
+        i.putExtra("LOWBP", book.getlowBp());
+        i.putExtra("TEMPRATURE", book.getTemprature());
+        i.putExtra("SUGAR", book.getSugar());
+        i.putExtra("SYMPTOMS", book.getSymptoms());
+        i.putExtra("DIGNOSIS", book.getDignosis());
+        i.putExtra("TESTS", book.getTests());
+        i.putExtra("DRUGS", book.getDrugs());
+        i.putExtra("BMI", book.getBmi());
+        i.putExtra("ALTERNATENUMBER", book.getAlternatePhoneNumber());
+        i.putExtra("ALTERNATENUMBERTYPE", book.getAlternatePhoneType());
+        i.putExtra("HEIGHT", book.getHeight());
+        i.putExtra("SUGARFASTING", book.getSugarFasting());
 
         startActivity(i);
 
@@ -543,11 +580,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             } else selectedItems2[i] = 0;
         }
-        for (int i = 0; i < selectedItems2.length; i++) {
-            // if(selectedItems[i]==1)
-            // System.out.println(al.get(i));
-            //  selectedListGender.add(genderList.get(i).toString());
-        }
+
     }
 
 
@@ -563,7 +596,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
            // final String url = getString(imageArray[n]);
            //  backChangingImages.setImageResource(imageArray[n]);
-           final String url = bannerimgNames.get(n).toString();
+           final String url = bannerimgNames.get(n);
            Log.e("nUrl", "" + n + "" + url);
 
            BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image

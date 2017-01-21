@@ -241,10 +241,10 @@ public class ConsultationLogFragment extends Fragment {
                     return;
                 }
 
-
                 try {
                     SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
                     Date date1 = sdf1.parse(searchdate);
+                    Log.e("date1","   "+date1);
 
                     Date currentdate = sdf1.parse(String.valueOf(sysdate));
 
@@ -258,6 +258,7 @@ public class ConsultationLogFragment extends Fragment {
 
                         filterfodList = new ArrayList<>();
                         //get records from database vai entered follow up date
+                      //  filterfodList = sqlController.getPatientList(reformattedStr);
                         filterfodList = sqlController.getPatientListnew(reformattedStr);
 
                         int filterModelSize = filterfodList.size();
@@ -329,8 +330,6 @@ public class ConsultationLogFragment extends Fragment {
                             }
 
                         }));
-
-
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -358,7 +357,7 @@ public class ConsultationLogFragment extends Fragment {
         i.putExtra("DOB", book.getDob());
 
         i.putExtra("PHONE", book.getMobileNumber());
-
+        i.putExtra("PHONETYPE",book.getPhone_type());
         i.putExtra("AGE", book.getAge());
         i.putExtra("LANGUAGE", book.getLanguage());
         i.putExtra("GENDER", book.getGender());
@@ -391,7 +390,7 @@ public class ConsultationLogFragment extends Fragment {
         i.putExtra("DOB", book.getDob());
 
         i.putExtra("PHONE", book.getMobileNumber());
-
+        i.putExtra("PHONETYPE",book.getPhone_type());
         i.putExtra("AGE", book.getAge());
         i.putExtra("LANGUAGE", book.getLanguage());
         i.putExtra("GENDER", book.getGender());
@@ -473,7 +472,7 @@ public class ConsultationLogFragment extends Fragment {
 
             // final String url = getString(imageArray[n]);
             //  backChangingImages.setImageResource(imageArray[n]);
-            final String url = bannerimgNames.get(n).toString();
+            final String url = bannerimgNames.get(n);
             Log.e("nUrl", "" + n + "" + url);
 
             BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
@@ -498,19 +497,6 @@ public class ConsultationLogFragment extends Fragment {
             e.printStackTrace();
         }
 
-       /* Runnable runnable = new Runnable() {
-            int i = 0;
-
-            public void run() {
-                backChangingImages.setImageResource(imageArray[i]);
-                i++;
-                if (i > imageArray.length - 1) {
-                    i = 0;
-                }
-                backChangingImages.postDelayed(this, 10000);  //for interval...
-            }
-        };
-        backChangingImages.postDelayed(runnable, 100); //for initial delay..*/
     }
 
     @Override

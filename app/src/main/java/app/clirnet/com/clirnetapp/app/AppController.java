@@ -42,6 +42,7 @@ import java.util.List;
 import java.util.Locale;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
@@ -57,15 +58,14 @@ public class AppController extends Application {
 
     private RequestQueue mRequestQueue;
     Request.Priority priority = Request.Priority.HIGH;
-    private int hour;
-    private int minute;
-
 
     private static AppController mInstance;
-    private TextView fromtime;
+
     private HashMap<String, String> listBannerInformation;
     private String savedUserName;
     private String savedUserPassword;
+    private ConnectionDetector connectionDetector;
+
 
 
     @Override
@@ -277,13 +277,11 @@ public class AppController extends Application {
         String result = value.replaceAll("[,]", "");
         String regex = "[0-9]+";
         return result.matches(regex);
-
     }
 
     public boolean findEmptyString(String value) {
         boolean result = (TextUtils.isEmpty(value.trim()));
         return result;
-
     }
     //check the input filed has any text or not
     //return true if it contains text otherwise return false.
@@ -310,14 +308,14 @@ public class AppController extends Application {
         SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy");
         SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
 
-        String flag = "0";
+
         String frmtedDate = "";
 
         //convert visit date from 2016-11-1 to 2016-11-01
         try {
 
             frmtedDate = myFormat.format(fromUser.parse(date));
-            Log.e("reformattedStrqq", "" + frmtedDate);
+            //Log.e("reformattedStrqq", "" + frmtedDate);
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -327,22 +325,14 @@ public class AppController extends Application {
     }
 
     public boolean emptyDataValidation(String value) {
-        if (value.trim().equals("") || value.equals(null)) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(value.trim().equals("") || value.equals(null));
     }
 
     public boolean PhoneNumberValidation(String value) {
         boolean result = true;
         try {
             long val = Integer.parseInt(value.trim());
-            if (val < 1000000000) {
-                result = false;
-            } else {
-                result = true;
-            }
+            result = val >= 1000000000;
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -350,7 +340,7 @@ public class AppController extends Application {
         return result;
     }
 
-    // to do remove it and write update while inserting
+
     //Method to validate if there is allready records in db to check
     public boolean isDuplicate(List<String> col, String value) {
         boolean isDuplicate = false;
@@ -444,7 +434,6 @@ public class AppController extends Application {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
 
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.ad_dialog);
@@ -566,6 +555,7 @@ public class AppController extends Application {
         TextView textbrandname = (TextView) dialog.findViewById(R.id.textbrandname);
         textbrandname.setText(brand_name);
 
+        connectionDetector = new ConnectionDetector(context1);
 
         Button send = (Button) dialog.findViewById(R.id.send);
         send.setOnClickListener(new View.OnClickListener() {
@@ -593,8 +583,13 @@ public class AppController extends Application {
                     company_id = listBannerInformation.get("company_id");
                     doc_mem_id = listBannerInformation.get("doc_mem_id");
                 }
+                boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
+                if (isInternetPresent) {
+                    new AskforSampleAsyncTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, doc_mem_id, selected_id, strQty, strother);
+                }else{
 
-                new AskforSampleAsyncTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, doc_mem_id, selected_id, strQty, strother);
+                    Toast.makeText(context1,"Please Connect to Internet and try again",Toast.LENGTH_LONG).show();
+                }
 
                 dialog.dismiss();
             }
@@ -617,11 +612,14 @@ public class AppController extends Application {
         final EditText reason = (EditText) dialog.findViewById(R.id.reason);
 
 
-        final SQLiteHandler dbController = new SQLiteHandler(context1);
-        ;
+
+
         try {
             SQLController sqlController = new SQLController(context1);
             sqlController.open();
+            if(connectionDetector == null) {
+                connectionDetector = new ConnectionDetector(context1);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -673,7 +671,7 @@ public class AppController extends Application {
                     date.setError("Please Enter Date");
                     return;
                 }
-                if (address != null && address.trim().length() > 0) {
+                if (address.trim().length() > 0) {
                     location.setError("");
 
                 } else {
@@ -681,7 +679,7 @@ public class AppController extends Application {
                     return;
                 }
 
-                if (strreason != null && strreason.trim().length() > 0) {
+                if (strreason.trim().length() > 0) {
                     reason.setError("");
                 } else {
                     reason.setError("Please Enter Value");
@@ -704,8 +702,14 @@ public class AppController extends Application {
                 }
                 String added_by = doctor_id;
                 String added_on = request_on;
-                new CallMeMeetMeAsynTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, called_from, strDate, from_time, to_time, address, strreason, doc_mem_id);
-               /* dbController.addCallMeetMeData(brand_name, company_id, generic_name, called_from, strDate, from_time, to_time,
+                boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
+                if (isInternetPresent) {
+                    new CallMeMeetMeAsynTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, called_from, strDate, from_time, to_time, address, strreason, doc_mem_id);
+                }else{
+
+                    Toast.makeText(context1,"Please Connect to Internet and try again",Toast.LENGTH_LONG).show();
+                }
+                 /* dbController.addCallMeetMeData(brand_name, company_id, generic_name, called_from, strDate, from_time, to_time,
                         address, strreason, doctor_id, doc_mem_id, request_on, reqest_fullfilled, modified_on, modified_by, is_deleted, is_disabled, disabled_by, disabled_on,deleted_on,flag,added_on,added_by);*/
                 //Toast.makeText(context1,"Message send  you will recieve responce soon",Toast.LENGTH_LONG).show();
                 dialog.dismiss();
@@ -769,8 +773,7 @@ public class AppController extends Application {
             minutes = String.valueOf(mins);
 
         // Append in a StringBuilder
-        String aTime = new StringBuilder().append(hours).append(':')
-                .append(minutes).append(" ").append(timeSet).toString();
+        String aTime = String.valueOf(hours) + ':' + minutes + " " + timeSet;
 
         fromtime.setText(aTime);
     }
@@ -804,6 +807,7 @@ public class AppController extends Application {
     }
 
     public void saveBannerDataIntoDb(String image_url, Context context, String doctor_membership_number, String action) {
+
         SQLiteHandler dbController = null;
 
         String docId = null;
@@ -813,16 +817,20 @@ public class AppController extends Application {
         String banner_image = image_url;
         int banner_type_id = 0;
         String module = "patient";
-        String is_deleted = null;
-        String is_disbled = null;
+        String is_deleted = "0";
+        String is_disbled = "0";
+        String flag = "0";
         String display_time = getDateTimenew();
         try {
             SQLController sqlController = new SQLController(context);
             sqlController.open();
             dbController = new SQLiteHandler(context);
             docId = sqlController.getDoctorId();
-            company_id = sqlController.getCompany_id();
-            Log.e("company_id", "  " + company_id);
+            banner_id=sqlController.getBannerId(banner_image);
+            banner_folder=sqlController.getFolderName(banner_image);
+            company_id = sqlController.getBannerCompany_id();
+            banner_type_id=sqlController.getBannerTypeId(banner_image);
+            Log.e("banner_id", "  " + banner_id+""+banner_folder);
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
             appendLog(getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -831,26 +839,24 @@ public class AppController extends Application {
             if (dbController != null)
                 if (action.equals("display")) {
 
-
-                    dbController.addBannerDisplayData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time);
+                    dbController.addBannerDisplayData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time,flag);
 
                 } else {
 
-                    dbController.addBannerClickedData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time);
+                    dbController.addBannerClickedData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time,flag);
 
                 }
         } catch (NullPointerException e) {
             e.printStackTrace();
             this.appendLog(getDateTime() + "saveBannerDataIntoDb" + e);
         }
-
     }
 
     public boolean getFirstTimeLoginStatus() {
         SharedPreferences pref = getSharedPreferences(PREFS_NAMEsavedCredit, Context.MODE_PRIVATE);
         String firstTimeLogin = pref.getString(FISRT_TIME_LOGIN
                 , null);
-        Log.e("firstTimeLogin", "" + firstTimeLogin);
+       // Log.e("firstTimeLogin", "" + firstTimeLogin);
         if (firstTimeLogin == null) {
             return false;
         } else if (firstTimeLogin.equals("false")) {

@@ -93,7 +93,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
 
         try {
             final String imgPath = patientList.get(position).getPres_img();
-            if (!TextUtils.isEmpty(imgPath) && imgPath != null) {
+            if (!TextUtils.isEmpty(imgPath)) {
 
                 holder.imgText.setText("View Prescription");
                 holder.imgText.setOnClickListener(new View.OnClickListener() {

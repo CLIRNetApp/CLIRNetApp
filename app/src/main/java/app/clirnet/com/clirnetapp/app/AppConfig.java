@@ -32,7 +32,7 @@ public class AppConfig {
     public static String UPLOAD_LOG_FILE = LOCAL_DEMO_URL+"clirnetapplicationv2/public/doctor/webapi/logfiles";
 
 
-    public static final String URL_LAST_NAME = LOCAL_DEMO_URL+"clirnetapplication/public/doctor/webapi/lastnameMaster";
+    public static final String URL_LAST_NAME = LOCAL_DEMO_URL+"clirnetapplicationv2/public/doctor/webapi/lastnameMaster";
 
     public static final String URL_BANNER_API = LOCAL_DEMO_URL+"clirnetapplicationv2/public/doctor/webapi/sendbannerurldata";
 
@@ -41,6 +41,9 @@ public class AppConfig {
     public static final String KNOWLEDGE_CALLMEMMEETME_URL = LOCAL_DEMO_URL+"clirnetapplicationv2/public/doctor/webapi/callmeeturldata";
 
     public static final String SAMPLEREQUEST_URL = LOCAL_DEMO_URL+"clirnetapplicationv2/public/doctor/webapi/sendsamplerequestdata";
+
+
+    public static final String UPLOAD_BANNER_DATA = LOCAL_DEMO_URL+"clirnetapplicationv2/public/doctor/webapi/bannersstatistics";
 
 
 }

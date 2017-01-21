@@ -629,7 +629,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(PATIENT_STATE, state);
             values.put(PHONE_TYPE,phoneType);
             values.put(ALTERNATE_PHONE_NO,alternatePhone_no);
-            values.put(ALTERNATE_PHONE_TYPE,selectedPhoneTypealternate_no);
+            values.put(ALTERNATE_PHONE_TYPE, selectedPhoneTypealternate_no);
 
 
             // Inserting Row
@@ -1029,7 +1029,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Log.d("update", "user password changed: " + id);
     }
     public void addBannerDisplayData(String doc_id,String membership_id ,String company_id, String banner_id, String banner_folder, String banner_image_url,
-                              int  banner_image_type, String module, String is_disabled, String is_deleted,  String added_on) {
+                              int  banner_image_type, String module, String is_disabled, String is_deleted,  String added_on,String flag) {
 
         SQLiteDatabase db = null;
         long id = 0;
@@ -1052,6 +1052,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(IS_DISABLED, is_disabled);
             values.put(IS_DELETED, is_deleted);
             values.put(ADDED_ON, added_on);
+            values.put(FLAG,flag);
 
             // int rows = db.update("last_name_master", values, "last_name" + "= ?", new String[]{lastName});
             //id =db.insertWithOnConflict("table_LastNames", null, values, SQLiteDatabase.CONFLICT_REPLACE);
@@ -1072,7 +1073,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     public void addBannerClickedData(String doc_id,String membership_id ,String company_id, String banner_id, String banner_folder, String banner_image_url,
-                                     int  banner_image_type, String module, String is_disabled, String is_deleted,  String added_on) {
+                                     int  banner_image_type, String module, String is_disabled, String is_deleted,  String added_on,String flag) {
 
         SQLiteDatabase db = null;
         long id = 0;
@@ -1094,6 +1095,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(IS_DISABLED, is_disabled);
             values.put(IS_DELETED, is_deleted);
             values.put(ADDED_ON, added_on);
+            values.put(FLAG, flag);
+
 
             // int rows = db.update("last_name_master", values, "last_name" + "= ?", new String[]{lastName});
             //id =db.insertWithOnConflict("table_LastNames", null, values, SQLiteDatabase.CONFLICT_REPLACE);
@@ -1219,5 +1222,171 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
         Log.d("update", "patient data modified into sqlite: " + id);
+    }
+
+    //this will give u a json array of patient records where flag =o
+    public JSONArray getResultsForBannerDisplay() {
+
+        JSONArray resultSet;
+        //or you can use `context.getDatabasePath("my_db_test.db")`
+        Cursor cursor = null;
+
+        SQLiteDatabase db1 = getReadableDatabase();
+        //Cursor cursor = db1.rawQuery(selectQuery, null);
+
+        //SQLiteDatabase myDataBase = SQLiteDatabase.openDatabase(DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY);'
+        try {
+            resultSet = new JSONArray();
+            String searchQuery = "SELECT  * FROM banner_display where flag = 0 ";
+
+            cursor = db1.rawQuery(searchQuery, null);
+
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+
+                int totalColumn = cursor.getColumnCount();
+                JSONObject rowObject = new JSONObject();
+
+                for (int i = 0; i < totalColumn; i++) {
+                    if (cursor.getColumnName(i) != null) {
+                        try {
+                            if (cursor.getString(i) != null) {
+                                Log.d("TAG_NAME", cursor.getString(i));
+                                rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                            } else {
+                                rowObject.put(cursor.getColumnName(i), "");
+                            }
+                        } catch (Exception e) {
+                            Log.d("TAG_NAME", e.getMessage());
+                        }
+
+                    }
+                }
+                resultSet.put(rowObject);
+                cursor.moveToNext();
+            }
+
+
+            Log.d("TAG_NAME", resultSet.toString());
+
+            return resultSet;
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+    }
+
+    //this will give u a json array of patient records where flag =o
+    public JSONArray getResultsForBannerClicked() {
+
+        JSONArray resultSet;
+        //or you can use `context.getDatabasePath("my_db_test.db")`
+        Cursor cursor = null;
+
+        SQLiteDatabase db1 = getReadableDatabase();
+        //Cursor cursor = db1.rawQuery(selectQuery, null);
+
+        //SQLiteDatabase myDataBase = SQLiteDatabase.openDatabase(DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY);'
+        try {
+            resultSet = new JSONArray();
+            String searchQuery = "SELECT  * FROM banner_clicked where flag = 0 ";
+
+            cursor = db1.rawQuery(searchQuery, null);
+
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+
+                int totalColumn = cursor.getColumnCount();
+                JSONObject rowObject = new JSONObject();
+
+                for (int i = 0; i < totalColumn; i++) {
+                    if (cursor.getColumnName(i) != null) {
+                        try {
+                            if (cursor.getString(i) != null) {
+                                Log.d("TAG_NAME", cursor.getString(i));
+                                rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                            } else {
+                                rowObject.put(cursor.getColumnName(i), "");
+                            }
+                        } catch (Exception e) {
+                            Log.d("TAG_NAME", e.getMessage());
+                        }
+
+                    }
+                }
+                resultSet.put(rowObject);
+                cursor.moveToNext();
+            }
+
+
+            Log.d("TAG_NAME", resultSet.toString());
+
+            return resultSet;
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+    }
+
+    //update the flag once data send to server successfully
+    public void updateBannerDisplayDataF(String bid, String flag) {
+        SQLiteDatabase db = null;
+        long id = 0;
+        try {
+            db = this.getWritableDatabase();
+
+
+            ContentValues values = new ContentValues();
+
+            values.put(SYCHRONIZED, flag); // Name
+
+            // Inserting Row
+            id = db.update(TABLE_BANNER_DISPLAY, values, KEY_ID + "=" + bid, null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        Log.d("updated", "banner flag data modified into sqlite: " + id);
+    }
+
+    //update the flag once data send to server successfully
+    public void updateBannerClickedDataFlag(String bid, String flag) {
+        SQLiteDatabase db = null;
+        long id = 0;
+        try {
+            db = this.getWritableDatabase();
+
+
+            ContentValues values = new ContentValues();
+
+            values.put(SYCHRONIZED, flag); // Name
+
+            // Inserting Row
+            id = db.update(TABLE_BANNER_CLICKED, values, KEY_ID + "=" + bid, null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        Log.d("updated", "banner flag data modified into sqlite: " + id);
     }
 }

@@ -148,7 +148,6 @@ public class AddPatientUpdate extends AppCompatActivity {
     private BannerClass bannerClass;
     private LastnameDatabaseClass lastNamedb;
     private ArrayList<String> mSymptomsList;
-    private ArrayList<String> mDiagnosisList;
     private EditText edtInput_sugarfasting;
     private EditText edtInput_bmi;
     private EditText edtInput_height;
@@ -330,7 +329,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
             dbController = new SQLiteHandler(getApplicationContext());
             //This will get all the visit  history of patient
-            patientHistoryData = (sqlController.getPatientHistoryListAll(strPatientId)); //get all patient data from db
+            patientHistoryData = (sqlController.getPatientHistoryListAll1(strPatientId)); //get all patient data from db
             int size = patientHistoryData.size();
 
             if (size > 0) {
@@ -347,7 +346,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 bannerClass=new BannerClass(getApplicationContext());
             }
             bannerimgNames= bannerClass.getImageName();
-            Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1).toString());
+            Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1));
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
         } finally {
@@ -406,7 +405,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         try {
-            mDiagnosisList = lastNamedb.getDiagnosis();
+            ArrayList<String> mDiagnosisList = lastNamedb.getDiagnosis();
             if (mDiagnosisList.size() > 0) {
                 ArrayAdapter<String> lastnamespin = new ArrayAdapter<>(AddPatientUpdate.this,
                         android.R.layout.simple_dropdown_item_1line, mDiagnosisList);
@@ -792,33 +791,54 @@ public class AddPatientUpdate extends AppCompatActivity {
     //this will send data to EditPatientUpdate Activity
     private void sendDataToEditPatientUpdate() {
 
-        Intent i = new Intent(AddPatientUpdate.this, EditPatientUpdate.class);
+        if (patientHistoryData.size() > 0) {
+            RegistrationModel registrationModel = patientHistoryData.get(0);
 
-        i.putExtra("PATIENTPHOTO", patientHistoryData.get(0).getPhoto());
-        i.putExtra("ID", patientHistoryData.get(0).getPat_id());
+            Intent i = new Intent(getApplicationContext(), EditPatientUpdate.class);
 
+            i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
+            i.putExtra("ID", registrationModel.getPat_id());
+            i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
+            i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
+            i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
+            i.putExtra("LASTNAME", registrationModel.getLastName());
+            i.putExtra("DOB", registrationModel.getDob());
+            i.putExtra("PHONE", registrationModel.getMobileNumber());
+            i.putExtra("AGE", registrationModel.getAge());
+            i.putExtra("LANGUAGE", registrationModel.getLanguage());
+            i.putExtra("GENDER", registrationModel.getGender());
+            i.putExtra("ACTUALFOD", registrationModel.getActualFollowupDate());
+            i.putExtra("FOD", registrationModel.getFollowUpDate());
+            i.putExtra("AILMENT", registrationModel.getAilments());
+            i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
+            i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
+            i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
+            i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
+            i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
+            i.putExtra("VISITID", registrationModel.getKey_visit_id());
 
-        i.putExtra("NAME", patientHistoryData.get(0).getFirstName() + " " + patientHistoryData.get(0).getLastName());
-        i.putExtra("FIRSTTNAME", patientHistoryData.get(0).getFirstName());
-        i.putExtra("MIDDLENAME", patientHistoryData.get(0).getMiddleName());
-        i.putExtra("LASTNAME", patientHistoryData.get(0).getLastName());
-        i.putExtra("DOB", patientHistoryData.get(0).getDob());
-
-        i.putExtra("PHONE", patientHistoryData.get(0).getMobileNumber());
-
-        i.putExtra("AGE", patientHistoryData.get(0).getAge());
-        i.putExtra("LANGUAGE", patientHistoryData.get(0).getLanguage());
-        i.putExtra("GENDER", patientHistoryData.get(0).getGender());
-        i.putExtra("FOD", patientHistoryData.get(0).getFollowUpDate());
-        i.putExtra("AILMENT", patientHistoryData.get(0).getAilments());
-        i.putExtra("FOLLOWDAYS", patientHistoryData.get(0).getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", patientHistoryData.get(0).getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", patientHistoryData.get(0).getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", patientHistoryData.get(0).getClinicalNotes());
-        i.putExtra("PRESCRIPTION", patientHistoryData.get(0).getPres_img());
-        Log.e("img", "" + patientHistoryData.get(0).getPres_img());
-
-        startActivity(i);
+            i.putExtra("ADDRESS", registrationModel.getAddress());
+            i.putExtra("CITYORTOWN", registrationModel.getCityortown());
+            i.putExtra("DISTRICT", registrationModel.getDistrict());
+            i.putExtra("PIN", registrationModel.getPin_code());
+            i.putExtra("STATE", registrationModel.getState());
+            i.putExtra("WEIGHT", registrationModel.getWeight());
+            i.putExtra("PULSE", registrationModel.getPulse());
+            i.putExtra("BP", registrationModel.getBp());
+            i.putExtra("LOWBP", registrationModel.getlowBp());
+            i.putExtra("TEMPRATURE", registrationModel.getTemprature());
+            i.putExtra("SUGAR", registrationModel.getSugar());
+            i.putExtra("SYMPTOMS", registrationModel.getSymptoms());
+            i.putExtra("DIGNOSIS", registrationModel.getDignosis());
+            i.putExtra("TESTS", registrationModel.getTests());
+            i.putExtra("DRUGS", registrationModel.getDrugs());
+            i.putExtra("BMI", registrationModel.getBmi());
+            i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
+            i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
+            i.putExtra("HEIGHT", registrationModel.getHeight());
+            i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
+            startActivity(i);
+        }
     }
 
     private void setUpGlide(String imgPath, ImageView patientImage) {
@@ -985,7 +1005,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
             // final String url = getString(imageArray[n]);
             //  backChangingImages.setImageResource(imageArray[n]);
-            final String url = bannerimgNames.get(n).toString();
+            final String url = bannerimgNames.get(n);
             Log.e("nUrl", "" + n + "" + url);
 
             BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
@@ -1203,9 +1223,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         if(mSymptomsList!= null){
             mSymptomsList=null;
         }
-        if(mSymptomsList != null){
-            mSymptomsList =null;
-        }
+
         if(lastNamedb != null){
             lastNamedb=null;
         }
