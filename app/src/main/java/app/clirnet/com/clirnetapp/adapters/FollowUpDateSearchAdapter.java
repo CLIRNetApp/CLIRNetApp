@@ -1,6 +1,7 @@
 package app.clirnet.com.clirnetapp.adapters;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,12 +57,10 @@ public class FollowUpDateSearchAdapter extends RecyclerView.Adapter<FollowUpDate
         holder.name.setText(name);
 
 
-
         String fod = model.getVisit_date();
+        Log.e("fod", "" + fod);
 
-
-
-        if (fod == null || fod.equals("0000-00-00") || fod.equals("30-11-0002")) {
+        if (fod == null || fod.equals("0000-00-00") || fod.equals("30-11-0002") || fod.equals("")) {
 
             holder.follow_up_date.setText("--");
 

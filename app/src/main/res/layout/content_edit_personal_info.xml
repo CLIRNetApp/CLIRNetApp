@@ -221,6 +221,20 @@
                         app:bootstrapSize="md"
                         app:roundedCorners="false" />
 
+                    <Button
+                        android:id="@+id/resetdobage"
+                        android:layout_width="150dp"
+                        android:layout_height="45dp"
+                        android:background="#50BAA0"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:paddingRight="5dp"
+                        android:paddingLeft="5dp"
+                        android:text="@string/reset"
+                        android:textAllCaps="false"
+                        android:textColor="#ffffff"
+                        android:textSize="16sp" />
+
                 </LinearLayout>
 
                 <TextView
@@ -448,7 +462,8 @@
                             android:textColor="@color/grey"
                             android:textSize="14sp" />
 
-                        <TextView
+                        <Spinner
+                            android:id="@+id/isd_code"
                             android:layout_width="50dp"
                             android:layout_height="45dp"
                             android:layout_marginLeft="5dp"
@@ -484,94 +499,7 @@
 
                     </LinearLayout>
 
-                    <LinearLayout
 
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:paddingBottom="3dp"
-                        android:paddingTop="3dp">
-
-                        <TextView
-                            android:layout_width="70dp"
-                            android:layout_height="45dp"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginTop="5dp"
-                            android:gravity="center"
-                            android:text="@string/type"
-                            android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:textColor="@color/grey"
-                            android:textSize="14sp" />
-
-                        <Spinner
-                            android:id="@+id/phoneTypeSpinner2"
-                            android:layout_width="0dp"
-                            android:layout_height="45dp"
-                            android:layout_marginBottom="5dp"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_weight="1"
-                            android:background="@drawable/gradient_spineer"
-                            android:gravity="center"
-                            android:prompt="@string/spinner_prompt"
-                            android:spinnerMode="dropdown"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            android:background="@drawable/rectangle_corner"
-                            android:gravity="center"
-                            android:visibility="gone" />
-
-                        <TextView
-                            android:layout_width="100dp"
-                            android:layout_height="45dp"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginTop="5dp"
-                            android:gravity="center"
-                            android:text="@string/number"
-                            android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:textColor="@color/grey"
-                            android:textSize="14sp" />
-
-                        <TextView
-                            android:layout_width="50dp"
-                            android:layout_height="45dp"
-                            android:layout_marginLeft="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_weight="0.1"
-                            android:background="@drawable/rectangle_corner"
-                            android:gravity="center"
-                            android:text="@string/mobstart"
-                            android:textColor="@color/grey"
-                            android:textSize="14sp" />
-
-                        <com.beardedhen.androidbootstrap.BootstrapEditText
-                            android:id="@+id/alternatemobile_no"
-                            android:layout_width="150dp"
-                            android:layout_height="45dp"
-                            android:layout_marginBottom="5dp"
-                            android:layout_marginRight="5dp"
-                            android:layout_marginTop="5dp"
-                            android:layout_weight="0.6"
-                            android:focusable="true"
-                            android:focusableInTouchMode="true"
-                            android:fontFamily="sans-serif"
-                            android:gravity="center"
-                            android:hint="Alternate Phone Number"
-                            android:inputType="phone"
-                            android:maxLength="10"
-                            android:maxLines="1"
-                            android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:textSize="14sp"
-                            app:bootstrapBrand="success"
-                            app:bootstrapSize="md"
-                            app:roundedCorners="false" />
-
-                    </LinearLayout>
                 </LinearLayout>
 
                 <TextView
@@ -699,7 +627,184 @@
                             android:spinnerMode="dialog"/>
 
                     </LinearLayout>
+                    <LinearLayout
 
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="3dp"
+                        android:paddingTop="3dp">
+
+                        <TextView
+                            android:layout_width="70dp"
+                            android:layout_height="45dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:gravity="center"
+                            android:text="@string/type"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/grey"
+                            android:textSize="14sp" />
+
+                        <Spinner
+                            android:id="@+id/phoneTypeSpinner2"
+                            android:layout_width="0dp"
+                            android:layout_height="45dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/gradient_spineer"
+                            android:gravity="center"
+                            android:prompt="@string/spinner_prompt"
+                            android:spinnerMode="dropdown"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:background="@drawable/rectangle_corner"
+                            android:gravity="center"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:layout_width="100dp"
+                            android:layout_height="45dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:gravity="center"
+                            android:text="@string/number"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/grey"
+                            android:textSize="14sp" />
+
+                        <Spinner
+                            android:id="@+id/isd_code2"
+                            android:layout_width="50dp"
+                            android:layout_height="45dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="0.1"
+                            android:background="@drawable/rectangle_corner"
+                            android:gravity="center"
+                            android:text="@string/mobstart"
+                            android:textColor="@color/grey"
+                            android:textSize="14sp" />
+
+                        <com.beardedhen.androidbootstrap.BootstrapEditText
+                            android:id="@+id/alternatemobile_no"
+                            android:layout_width="150dp"
+                            android:layout_height="45dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginRight="1dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="0.6"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:fontFamily="sans-serif"
+                            android:gravity="center"
+                            android:hint="Alternate Phone Number"
+                            android:inputType="phone"
+                            android:maxLength="10"
+                            android:maxLines="1"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textSize="14sp"
+                            app:bootstrapBrand="success"
+                            app:bootstrapSize="md"
+                            app:roundedCorners="false" />
+
+                    </LinearLayout>
+                    <LinearLayout
+
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="3dp"
+                        android:paddingTop="3dp">
+
+                        <TextView
+                            android:layout_width="70dp"
+                            android:layout_height="45dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:gravity="center"
+                            android:text="@string/uidtype"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/grey"
+                            android:textSize="14sp" />
+
+                        <Spinner
+                            android:id="@+id/uidtype"
+                            android:layout_width="0dp"
+                            android:layout_height="45dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="1"
+                            android:background="@drawable/gradient_spineer"
+                            android:gravity="center"
+                            android:prompt="@string/spinner_prompt"
+                            android:spinnerMode="dropdown"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5dp"
+                            android:background="@drawable/rectangle_corner"
+                            android:gravity="center"
+                            android:visibility="gone" />
+
+                        <TextView
+                            android:layout_width="100dp"
+                            android:layout_height="45dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:gravity="center"
+                            android:text="@string/uid"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textColor="@color/grey"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="50dp"
+                            android:layout_height="45dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="0.1"
+                            android:background="@drawable/rectangle_corner"
+                            android:gravity="center"
+                            android:text="@string/mobstart"
+                            android:textColor="@color/grey"
+                            android:textSize="14sp"
+                            android:visibility="invisible"/>
+
+                        <com.beardedhen.androidbootstrap.BootstrapEditText
+                            android:id="@+id/uid"
+                            android:layout_width="150dp"
+                            android:layout_height="45dp"
+                            android:layout_marginBottom="5dp"
+                            android:layout_marginRight="1dp"
+                            android:layout_marginTop="5dp"
+                            android:layout_weight="0.6"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
+                            android:fontFamily="sans-serif"
+                            android:gravity="center"
+                            android:hint="UID"
+                            android:inputType="text"
+                            android:maxLength="12"
+                            android:maxLines="1"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:textSize="14sp"
+                            app:bootstrapBrand="success"
+                            app:bootstrapSize="md"
+                            app:roundedCorners="false" />
+
+                    </LinearLayout>
                 </LinearLayout>
             </RelativeLayout>
             <TextView

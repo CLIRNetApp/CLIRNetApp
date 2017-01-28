@@ -43,6 +43,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Random;
 
@@ -151,6 +152,8 @@ public class EditPatientUpdate extends AppCompatActivity {
     private String strAlternatenumber;
     private String strAlternatephtype;
     private String strPhoneTpe;
+    private String strIsd_code;
+    private String strAlternateIsd_code;
 
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -211,6 +214,9 @@ public class EditPatientUpdate extends AppCompatActivity {
 
         strAlternatephtype=getIntent().getStringExtra("ALTERNATENUMBERTYPE");
         strPhoneTpe=getIntent().getStringExtra("PHONETYPE");
+
+        strIsd_code=getIntent().getStringExtra("ISDCODE");
+        strAlternateIsd_code=getIntent().getStringExtra("ALTERNATEISDCODE");
 
         String strWeight = getIntent().getStringExtra("WEIGHT");
         String strPulse = getIntent().getStringExtra("PULSE");
@@ -298,7 +304,7 @@ public class EditPatientUpdate extends AppCompatActivity {
 
             }
         });
-        sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+        sdf1 = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
 
 
         final Calendar c = Calendar.getInstance();
@@ -309,10 +315,10 @@ public class EditPatientUpdate extends AppCompatActivity {
         sysdate = String.valueOf(new StringBuilder().append(day1).append("-").append(month1 + 1).append("-").append(year1).append(""));
 
 
-        SimpleDateFormat sdf0 = new SimpleDateFormat("dd-M-yyyy");
+        SimpleDateFormat sdf0 = new SimpleDateFormat("dd-M-yyyy",Locale.ENGLISH);
 
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
         Date todayDate = new Date();
 
         String dd = sdf.format(todayDate);
@@ -322,7 +328,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         //this date is ued to set update records date in patient history table
 
 
-        SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss",Locale.ENGLISH);
         Date todayDate3 = new Date();
 
         //this date is ued to set update records date in patient history table
@@ -336,7 +342,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             }
         }
 
-        if (strFollowupWeeks == "0") {
+        if (Objects.equals(strFollowupWeeks, "0")) {
 
             strFollowupWeeks = "";
         }
@@ -375,28 +381,24 @@ public class EditPatientUpdate extends AppCompatActivity {
             fodtextshow.setText(strActualFollowUpDate);//add selected date to date text view
         }
 
-        if (strFollowupDays != null && strFollowupDays!="" && !strFollowupDays.equals("0")) {
+        if (strFollowupDays != null && !strFollowupDays.equals("") && !strFollowupDays.equals("0")) {
             inputnumber.setText(strFollowupDays);
             days.setSelected(true);
             days.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
             daysSel = strFollowupDays;
 
-        } else if (strFollowupWeeks != null && strFollowupWeeks!="" && !strFollowupWeeks.equals("0")) {
+        } else if (strFollowupWeeks != null && !strFollowupWeeks.equals("") && !strFollowupWeeks.equals("0")) {
             inputnumber.setText(strFollowupWeeks);
             week.setSelected(true);
             week.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
             fowSel = strFollowupWeeks;
-        } else if (strFollowupMonth != null && strFollowupMonth!="" && !strFollowupMonth.equals("0")) {
+        } else if (strFollowupMonth != null && !strFollowupMonth.equals("") && !strFollowupMonth.equals("0")) {
           //  Log.e("strFollowupMonth ","   "+strFollowupMonth);
             inputnumber.setText(strFollowupMonth);
             month.setSelected(true);
             month.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
             monthSel = strFollowupMonth;
         }
-
-       /* if (TextUtils.isEmpty(strFollowupDays) && TextUtils.isEmpty(strFollowupWeeks) && TextUtils.isEmpty(strFollowupMonth)) {
-            follow_up_date.setText(strFollowUpDate);
-        }*/
 
         try {
            /* expListView = (ExpandableListView) findViewById(R.id.lvExp);*/
@@ -413,7 +415,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             ArrayList<RegistrationModel> patientData = sqlController.getPatientHistoryListAll(strId);
 
             List<RegistrationModel> filteredpatientData = filterBySystemDate(patientData, justDate);
-            Log.e("asize0", "" + filteredpatientData.size());
+
             int size = filteredpatientData.size();
 
             if (size > 0) {
@@ -434,7 +436,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                 bannerClass=new BannerClass(getApplicationContext());
             }
             bannerimgNames= bannerClass.getImageName();
-            Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1));
+          //  Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1));
 
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
@@ -573,6 +575,8 @@ public class EditPatientUpdate extends AppCompatActivity {
                 i.putExtra("STATE", strState);
                 i.putExtra("ALTERNATENUMBER",strAlternatenumber);
                 i.putExtra("ALTERNATENUMBERTYPE",strAlternatephtype );
+                i.putExtra("ISDCODE", strIsd_code);
+                i.putExtra("ALTERNATEISDCODE",strAlternateIsd_code);
                 i.putExtra("FROMWHERE", "editpatient");
                 startActivity(i);
                // finish();
@@ -744,9 +748,14 @@ public class EditPatientUpdate extends AppCompatActivity {
                 // TODO Auto-generated method stub
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     days.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+                    week.setTextColor(getResources().getColor(R.color.black));
+                    month.setTextColor(getResources().getColor(R.color.black));
+                    btnclear.setTextColor(getResources().getColor(R.color.black));
+                    days.setTextColor(getResources().getColor(R.color.white));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         week.setBackground(getResources().getDrawable(R.drawable.circle));
                         month.setBackground(getResources().getDrawable(R.drawable.circle));
+                        btnclear.setBackground(getResources().getDrawable(R.drawable.circle));
                     }
 
                     value = inputnumber.getText().toString().trim();
@@ -793,9 +802,14 @@ public class EditPatientUpdate extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 week.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+                week.setTextColor(getResources().getColor(R.color.white));
+                month.setTextColor(getResources().getColor(R.color.black));
+                days.setTextColor(getResources().getColor(R.color.black));
+                btnclear.setTextColor(getResources().getColor(R.color.black));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     days.setBackground(getResources().getDrawable(R.drawable.circle));
                     month.setBackground(getResources().getDrawable(R.drawable.circle));
+                    btnclear.setBackground(getResources().getDrawable(R.drawable.circle));
                 }
 
                 value = inputnumber.getText().toString().trim();
@@ -820,8 +834,8 @@ public class EditPatientUpdate extends AppCompatActivity {
                 String dateis = sdf1.format(appController.addDay1(new Date(), fVal));
                 usersellectedDate = dateis;
                 fowSel = value;
-                daysSel=null;
-                monthSel=null;
+                daysSel = null;
+                monthSel = null;
                 fodtextshow.setText(dateis);
             }
         });
@@ -830,9 +844,14 @@ public class EditPatientUpdate extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 month.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+                week.setTextColor(getResources().getColor(R.color.black));
+                month.setTextColor(getResources().getColor(R.color.white));
+                days.setTextColor(getResources().getColor(R.color.black));
+                btnclear.setTextColor(getResources().getColor(R.color.black));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     days.setBackground(getResources().getDrawable(R.drawable.circle));
                     week.setBackground(getResources().getDrawable(R.drawable.circle));
+                    btnclear.setBackground(getResources().getDrawable(R.drawable.circle));
                 }
 
                 value = inputnumber.getText().toString().trim();
@@ -872,12 +891,40 @@ public class EditPatientUpdate extends AppCompatActivity {
         btnclear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                btnclear.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+                btnclear.setTextColor(getResources().getColor(R.color.white));
+                inputnumber.setText("");
                 fodtextshow.setText("");
+                month.setTextColor(getResources().getColor(R.color.black));
+                days.setTextColor(getResources().getColor(R.color.black));
+                week.setTextColor(getResources().getColor(R.color.black));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    days.setBackground(getResources().getDrawable(R.drawable.circle));
+                    month.setBackground(getResources().getDrawable(R.drawable.circle));
+                    week.setBackground(getResources().getDrawable(R.drawable.circle));
+                }
                  daysSel=null;
                 fowSel=null;
                 monthSel = null;
                 CleanFollowup();
+            }
+        });
+
+        edtInput_height.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+
+                edtInput_height.setError(null);
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                String bmi = appController.CalculateBMI(edtInput_weight.getText().toString(), edtInput_height.getText().toString());
+                edtInput_bmi.setText(bmi);
             }
         });
 
@@ -1007,7 +1054,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             backChangingImages.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(EditPatientUpdate.this, "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+
 
                     String action = "clicked";
 
@@ -1141,9 +1188,7 @@ public class EditPatientUpdate extends AppCompatActivity {
     private void goToNavigation1() {
         this.onBackPressed();
         finish();
-        /*Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
-        startActivity(i);
-        finish();*/
+
     }
 
     private void goToNavigation() {

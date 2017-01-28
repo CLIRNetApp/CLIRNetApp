@@ -319,9 +319,10 @@
                         android:orientation="horizontal">
 
                         <TextView
+
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="0.9"
+                            android:layout_weight="0.93"
                             android:fontFamily="sans-serif-medium"
                             android:paddingLeft="7dp"
                             android:text="Update History"
@@ -339,16 +340,16 @@
                             android:id="@+id/editlastUpdate"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:background="@drawable/side_nav_bar"
+                            android:layout_weight="0.85"
+                            android:background="#50BAA0"
                             android:fontFamily="sans-serif-medium"
                             android:gravity="center"
-                            android:paddingLeft="5dp"
+                            android:paddingRight="10dp"
+                            android:textSize="16sp"
+                            tools:targetApi="jelly_bean"
                             android:text="Edit Last Update"
                             android:textColor="#ffffff"
-                            android:textSize="16sp"
-                            android:visibility="visible"
-                            tools:targetApi="jelly_bean" />
+                            />
 
                     </LinearLayout>
 

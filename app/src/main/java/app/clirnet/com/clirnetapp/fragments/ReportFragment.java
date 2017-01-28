@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
@@ -25,41 +26,38 @@ import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
 import app.clirnet.com.clirnetapp.app.AppController;
-import app.clirnet.com.clirnetapp.helper.SQLController;
 
 
 /**
  * Created by ${Ashish} on 22-04-2016.
  */
 public class ReportFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
     private static final int DATE_DIALOG_ID = 0;
     private static final int DATE_DIALOG_ID1 = 1;
-    private SQLController sqlController;
+
     private AppController appController;
     private OnFragmentInteractionListener mListener;
 
-    private ArrayList<String> nocountsperday;
     ViewPager viewPager;
     TabLayout tabLayout;
     private EditText fromdate;
     private EditText todate;
 
-    private int cur = 0;
+
     private ImageView filterDate;
     private Button lastweek;
     private Button lastmonth;
     private Button lastquarter;
-    private android.support.v4.app.FragmentManager mFragmentManager;
+    private FragmentManager mFragmentManager;
     private String startDate, endDate;
     private ReportFragmentViewPagerSetup fragment;
     private View rootview;
@@ -122,7 +120,7 @@ public class ReportFragment extends Fragment {
 
 
                 String format = "yyyy-MM-dd";
-                SimpleDateFormat sdf = new SimpleDateFormat(format);
+                SimpleDateFormat sdf = new SimpleDateFormat(format,Locale.ENGLISH);
                 try {
                     Date fromDate = sdf.parse(startDate);
                     Date toDate = sdf.parse(endDate);
@@ -133,13 +131,13 @@ public class ReportFragment extends Fragment {
 
                     diffInHours = TimeUnit.MILLISECONDS.toHours(duration);
 
-                  //  Log.e("diffInHours", "       " + diffInHours);
+                    //  Log.e("diffInHours", "       " + diffInHours);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
 
-                SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
-                SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
+                SimpleDateFormat fromUser = new SimpleDateFormat(format,Locale.ENGLISH);
+                SimpleDateFormat myFormat = new SimpleDateFormat(format,Locale.ENGLISH);
 
 
                 String reformattedStrDate = "";
@@ -152,7 +150,7 @@ public class ReportFragment extends Fragment {
 
                 } catch (ParseException e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
 
                 if (diffInHours <= 0) {
@@ -164,7 +162,7 @@ public class ReportFragment extends Fragment {
                     return;
                 }
 
-                // todo get data from db
+
                 ReportFragmentViewPagerSetup fragment = new ReportFragmentViewPagerSetup();
                 Bundle b = new Bundle();
                 b.putString("FROMDATE", reformattedStrDate);
@@ -191,14 +189,6 @@ public class ReportFragment extends Fragment {
                 getDateValues();
                 CallLastWeek();
 
-                /*ReportFragmentViewPagerSetup
-                        fragment = new ReportFragmentViewPagerSetup();
-                Bundle b = new Bundle();
-                b.putString("FROMDATE", startDate);
-                b.putString("TODATE", endDate);
-                fragment.setArguments(b);
-                mFragmentManager.beginTransaction()
-                        .replace(R.id.framecontainer, fragment).commit();*/
             }
         });
 
@@ -263,21 +253,19 @@ public class ReportFragment extends Fragment {
         startDate = fromdate.getText().toString().trim();
         endDate = todate.getText().toString().trim();
 
-        SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+        SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
 
 
-        String reformattedStrDate = "";
-        String reformatedToDate = "";
         try {
 
             startDate = myFormat.format(fromUser.parse(startDate));
             endDate = myFormat.format(fromUser.parse(endDate));
-           // Log.e("reformattedStr123", "" + startDate + "  ??/  " + endDate);
+            //Log.e("reformattedStr123", "" + startDate + "  ??/  " + endDate);
 
         } catch (ParseException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 
@@ -455,7 +443,6 @@ public class ReportFragment extends Fragment {
         return true;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -467,6 +454,14 @@ public class ReportFragment extends Fragment {
 
     public void onAttach(Context context) {
         super.onAttach(context);
+
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        rootview = null;
+
     }
 
     @Override
@@ -494,11 +489,11 @@ public class ReportFragment extends Fragment {
         startDate = null;
         endDate = null;
 
+
     }
 
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 

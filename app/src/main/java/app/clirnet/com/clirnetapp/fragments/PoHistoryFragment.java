@@ -26,13 +26,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
@@ -53,11 +53,9 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
 public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpinnerListener, MultiSpinner2.MultiSpinnerListener {
-    // TODO: Rename parameter arguments, choose names that match
+
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
-
-    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom, R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest, R.drawable.revituz, R.drawable.suprizon};
     private OnFragmentInteractionListener mListener;
     private EditText firstName;
     private EditText lastName;
@@ -109,7 +107,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private String doctor_membership_number;
 
     public PoHistoryFragment() {
-        this.setHasOptionsMenu(true);
+
     }
 
     @Override
@@ -117,6 +115,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         super.onDestroyView();
 
         rootview = null;
+
     }
 
 
@@ -155,7 +154,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         phone_no = (EditText) rootview.findViewById(R.id.mobile_no);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
         Date todayDate = new Date();
         String dd = sdf.format(todayDate);
 
@@ -441,30 +440,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
 
-       /* i.putExtra("PATIENTPHOTO", book.getPhoto());
-        i.putExtra("ID", book.getPat_id());
-
-        i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
-        i.putExtra("FIRSTTNAME", book.getFirstName());
-        i.putExtra("MIDDLENAME", book.getMiddleName());
-        i.putExtra("LASTNAME", book.getLastName());
-        i.putExtra("DOB", book.getDob());
-
-        i.putExtra("PHONE", book.getMobileNumber());
-        i.putExtra("PHONETYPE", book.getPhone_type());
-        i.putExtra("AGE", book.getAge());
-        i.putExtra("LANGUAGE", book.getLanguage());
-        i.putExtra("GENDER", book.getGender());
-        i.putExtra("FOD", book.getFollowUpDate());
-        i.putExtra("AILMENT", book.getAilments());
-        i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", book.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", book.getPres_img());
-        i.putExtra("FROMWHERE", "3"); //thi will identify from which fragment we are navigating
-*/
-
         i.putExtra("PATIENTPHOTO", book.getPhoto());
         i.putExtra("ID", book.getPat_id());
         i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
@@ -510,8 +485,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         startActivity(i);
 
-
-               /* Toast.makeText(getContext(), book.getFirstName() + " is selected!", Toast.LENGTH_SHORT).show();*/
     }
 
 
@@ -533,7 +506,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         return true;
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
+
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -560,11 +533,11 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             } else selectedItems[i] = 0;
         }
-        for (int selectedItem : selectedItems) {
+       /* for (int selectedItem : selectedItems) {
             // if(selectedItems[i]==1)
             // System.out.println(al.get(i));
             //  selectedListGender.add(genderList.get(i).toString());
-        }
+        }*/
     }
 
     @Override
@@ -573,7 +546,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         for (int i = 0; i < selected.length; i++) {
             if (selected[i]) {
                 selectedItems2[i] = 1;
-                System.out.println("______________________2" + ageList.get(i));
+               // System.out.println("______________________2" + ageList.get(i));
 
                 String ageString = ageList.get(i).toString();
                 selectedAgeList.add(ageString);
@@ -604,7 +577,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
            backChangingImages.setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View v) {
-                   Toast.makeText(getContext(), "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+
 
                    String action = "clicked";
 
@@ -618,20 +591,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
            e.printStackTrace();
        }
 
-       /* Runnable runnable = new Runnable() {
-
-            int i = 0;
-
-            public void run() {
-                backChangingImages.setImageResource(imageArray[i]);
-                i++;
-                if (i > imageArray.length - 1) {
-                    i = 0;
-                }
-                backChangingImages.postDelayed(this, 10000);  //for interval...
-            }
-        };
-        backChangingImages.postDelayed(runnable, 100); //for initial delay..*/
     }
 
     private static void removeDuplicate(final List<RegistrationModel> al) {
@@ -665,7 +624,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             int visibleItemCount = mLayoutManager.getChildCount();
             int totalItemCount = mLayoutManager.getItemCount();
             int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
-            Log.e("visibleItemCount", "" + visibleItemCount + " totalItemCount  " + totalItemCount + " firstVisibleItemPosition " + firstVisibleItemPosition);
+            //Log.e("visibleItemCount", "" + visibleItemCount + " totalItemCount  " + totalItemCount + " firstVisibleItemPosition " + firstVisibleItemPosition);
 
             boolean isLastPage = false;
             if (!isLoading && !isLastPage) {
@@ -697,7 +656,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         int index = poHistoryAdapter.getItemCount();
         int end = index + PAGE_SIZE;
-        Log.e("index", "" + index + " " + end + " size is " + queryCount);
+       // Log.e("index", "" + index + " " + end + " size is " + queryCount);
 
         if (end <= queryCount) {
             try {
@@ -789,7 +748,13 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         selectedAilmentList = null;
         mLayoutManager = null;
         doctor_membership_number=null;
-        Log.e("onDetach", "onDetach Home Fragment");
+        backChangingImages=null;
+        firstName=null;
+        lastName=null;
+        phone_no=null;
+        genderSpinner=null;
+
+        Log.e("onDetach", "onDetach Po hISTORY fRAGMENT Fragment");
     }
 }
 

@@ -27,6 +27,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -50,6 +51,10 @@ import app.clirnet.com.clirnetapp.models.LoginModel;
 
 public class AppController extends Application {
 
+  /*  public static RefWatcher getRefWatcher(Context context) {
+        AppController application = (AppController) context.getApplicationContext();
+        return application.refWatcher;
+    }*/
     private static final String TAG = AppController.class.getSimpleName();
 
     public static final String PREFS_NAME = "savedViewValue";
@@ -59,12 +64,13 @@ public class AppController extends Application {
     private RequestQueue mRequestQueue;
     Request.Priority priority = Request.Priority.HIGH;
 
-    private static AppController mInstance;
+    public static AppController mInstance;
 
     private HashMap<String, String> listBannerInformation;
     private String savedUserName;
     private String savedUserPassword;
     private ConnectionDetector connectionDetector;
+   // private RefWatcher refWatcher;
 
 
 
@@ -80,7 +86,27 @@ public class AppController extends Application {
         super.onCreate();
         MultiDex.install(this);
         mInstance = this;
+        /*if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        enabledStrictMode();
+        refWatcher = LeakCanary.install(this);*/
     }
+   /* public void mustDie(Object object) {
+        if (refWatcher != null)
+            refWatcher.watch(object);
+    }
+    private void enabledStrictMode() {
+        if (SDK_INT >= GINGERBREAD) {
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder() //
+                    .detectAll() //
+                    .penaltyLog() //
+                    .penaltyDeath() //
+                    .build());
+        }
+    }*/
 
     public static synchronized AppController getInstance() {
         return mInstance;
@@ -173,13 +199,7 @@ public class AppController extends Application {
                 result = 0;
             }
 
-        } // this will caklculate months if year <0
-        /*else {
-
-			result=nowMonths-monthOfYear;
-
-		}*/
-
+        }
         return result;
     }
 
@@ -251,8 +271,7 @@ public class AppController extends Application {
         cal.setTime(date);
         cal.add(Calendar.DAY_OF_YEAR, i);
 
-        String dateis = sdf.format(cal.getTime());
-        return dateis;
+        return sdf.format(cal.getTime());
     }
 
     public static Date addDay1(Date date, int i) {
@@ -280,8 +299,7 @@ public class AppController extends Application {
     }
 
     public boolean findEmptyString(String value) {
-        boolean result = (TextUtils.isEmpty(value.trim()));
-        return result;
+        return (TextUtils.isEmpty(value.trim()));
     }
     //check the input filed has any text or not
     //return true if it contains text otherwise return false.
@@ -299,9 +317,8 @@ public class AppController extends Application {
     }
 
     public Integer findLength(String value) {
-        int result = (value.length());
 
-        return result;
+        return (value.length());
     }
 
     public String ConvertDateFormat(String date) {
@@ -329,15 +346,20 @@ public class AppController extends Application {
     }
 
     public boolean PhoneNumberValidation(String value) {
-        boolean result = true;
-        try {
-            long val = Integer.parseInt(value.trim());
-            result = val >= 1000000000;
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return result;
+            boolean result = true;
+            try {
+                if(!value.equals("") || value!= null) {
+                    long val = Long.parseLong((value.trim()));
+                    result = val >= 1000000000;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            return result;
+
     }
 
 
@@ -401,8 +423,6 @@ public class AppController extends Application {
 
     public void showAdDialog(final Context context, final String img_name) {
 
-        final Context context1 = context;
-
         String manufactured_by = null;
         String marketed_by = null;
         String clinical_trial_link = null;
@@ -426,7 +446,7 @@ public class AppController extends Application {
                 listBannerInformation = sqlController.getBannerInformation(img_name);
                 String brand_name = listBannerInformation.get("brand_name");
                 String generic_name = listBannerInformation.get("generic_name");
-                Log.e("brand_namegeneric_name ", " Banner Info   " + listBannerInformation.size() + " " + brand_name + "   " + generic_name);
+               // Log.e("brand_namegeneric_name ", " Banner Info   " + listBannerInformation.size() + " " + brand_name + "   " + generic_name);
                 getUsernamePasswordFromDatabase(context);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -481,7 +501,7 @@ public class AppController extends Application {
             @Override
             public void onClick(View v) {
 
-                creteCallMeDialog(context1, "call_me");
+                creteCallMeDialog(context, "call_me");
             }
         });
 
@@ -490,7 +510,7 @@ public class AppController extends Application {
             @Override
             public void onClick(View v) {
 
-                creteCallMeDialog(context1, "meet_me");
+                creteCallMeDialog(context, "meet_me");
             }
         });
 
@@ -510,7 +530,7 @@ public class AppController extends Application {
                    /* Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalLink_to_page));
                     startActivity(browserIntent);*/
                 } else {
-                    Toast.makeText(context1, "No Link Avaialable", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "No Link Avaialable", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -525,7 +545,7 @@ public class AppController extends Application {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalClinical_trial_link));
                     context.startActivity(browserIntent);
                 } else {
-                    Toast.makeText(context1, "No Link Avaialable", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "No Link Avaialable", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -535,7 +555,7 @@ public class AppController extends Application {
             @Override
             public void onClick(View v) {
 
-                creteSampleRequestDialog(context1, listBannerInformation.get("brand_name"));
+                creteSampleRequestDialog(context, listBannerInformation.get("brand_name"));
             }
         });
 
@@ -895,6 +915,28 @@ public class AppController extends Application {
                 sqlController1.close();
             }
         }
+    }
+    public String CalculateBMI(String strWeight,String strHeight){
+
+        final double KILOGRAMS_PER_POUND = 0.453;
+        final double METERS_PER_INCH = 0.026;
+        float bmi = 0;
+
+        if(strHeight!= null && strWeight!=null && strHeight.trim().length()>0 && strWeight.trim().length()>0) {
+
+            float weight = Float.parseFloat(strWeight);
+            float height = Float.parseFloat(strHeight)/100;
+
+             double weightInKilogram = weight * KILOGRAMS_PER_POUND;
+            double meter = height / 100;
+            double heightInMeters = height * METERS_PER_INCH;
+            Log.e("ashish","   "+weightInKilogram+"   "+heightInMeters);
+
+            bmi = weight / (height * height);
+           // bmi=weightInKilogram / Math.pow(heightInMeters, 2) * 703;
+        }
+
+        return String.valueOf(bmi);
     }
 
 }

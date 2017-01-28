@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -22,8 +21,6 @@ import android.widget.Toast;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
@@ -43,12 +40,11 @@ import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
 
 public class LoginActivity extends Activity {
-    private static final String TAG = "Login";
+
     private static final String PREFS_NAME = "savedCredit";
     private static final String PREF_USERNAME = "username";
     private static final String PREF_PASSWORD = "password";
     private static final String LOGIN_TIME = "loginTime";
-    private static final String FISRT_TIME_LOGIN = "firstTimeLogin";
     private static final String LOGIN_COUNT = "firstTimeLogin";
 
     private EditText inputEmail;
@@ -74,10 +70,11 @@ public class LoginActivity extends Activity {
     private BannerClass bannerClass;
 
     private ImageDownloader mDownloader;
-    private static Bitmap bmp;
+    private  Bitmap bmp;
     private FileOutputStream fos;
     private ProgressBar pb;
     private SharedPreferences.Editor editor;
+    private Dialog dialog;
 
 
     @Override
@@ -98,8 +95,6 @@ public class LoginActivity extends Activity {
         bannerClass = new BannerClass(getApplicationContext());
         LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
         appController = new AppController();
-
-        convertDate();
 
 
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
@@ -129,13 +124,11 @@ public class LoginActivity extends Activity {
 
         new CallAsynOnce().setValue("1");//this set value which helps to call asyntask only once while app is running.
 
-//        String opinion = selectRadio.getText().toString();
+
         // Progress dialog
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
 
-        // SQLite database handler
-        // showDialog12();
 
         connectionDetector = new ConnectionDetector(getApplicationContext());
         //open database controller class for further operations on database
@@ -148,13 +141,11 @@ public class LoginActivity extends Activity {
             Boolean value=getFirstTimeLoginStatus();
             if(value) {
                 doctor_membership_number = sqlController.getDoctorMembershipIdNew();
-            }else{
-              //  Log.e("FisrtTimeLogin","FisrtTimeLogin to application");
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTimenew() + " " + "/ " + "Home" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         try {
@@ -164,7 +155,7 @@ public class LoginActivity extends Activity {
             phoneNumber = sqlController.getPhoneNumber();
 
         } catch (Exception ioe) {
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Home" + ioe+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTimenew() + "" + "/" + "Home" + ioe+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             throw new Error("Unable to create database");
 
@@ -177,7 +168,7 @@ public class LoginActivity extends Activity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Home" + e);
+            appController.appendLog(appController.getDateTimenew() + "" + "/" + "Home" + e);
         } finally {
             if (databaseClass != null) {
                 databaseClass.close();
@@ -191,7 +182,7 @@ public class LoginActivity extends Activity {
 
         } catch (IOException ioe) {
 
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Home" + ioe);
+            appController.appendLog(appController.getDateTimenew() + "" + "/" + "Home" + ioe);
 
             throw new Error("Unable to create database");
         }
@@ -203,7 +194,7 @@ public class LoginActivity extends Activity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Home" + e);
+            appController.appendLog(appController.getDateTimenew() + "" + "/" + "Home" + e);
         } finally {
             if (lastnameDatabaseClass != null) {
                 lastnameDatabaseClass.close();
@@ -237,8 +228,7 @@ public class LoginActivity extends Activity {
                                             strPassword = inputPassword.getText().toString().trim();
 
                                             String time = appController.getDateTimenew();
-                                            // String time="2-1-2017 05:22:21";
-                                            // Log.e("current Time",""+time);
+
                                             //This code used for Remember Me(ie. save login id and password for future ref.)
                                             rememberMe(name, strPassword, time); //save username only
 
@@ -281,30 +271,12 @@ public class LoginActivity extends Activity {
         }
     }
 
-    private void convertDate() {
 
-        SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd");
-
-        String searchdate = "2016-12-02";
-        String reformattedStr = "";
-        try {
-
-            reformattedStr = myFormat.format(fromUser.parse(searchdate));
-            Log.e("reformattedStrqq", "" + reformattedStr);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
-        }
-
-    }
 
     //Do login authentication Operations 2-11-2016
     private void LoginAuthentication() {
 
         md5EncyptedDataPassword = MD5.getMD5(strPassword);
-        String company_id = null;
 
         // Check for empty data in the form
         if (!name.isEmpty() && !strPassword.isEmpty()) {
@@ -313,29 +285,19 @@ public class LoginActivity extends Activity {
             // login user
             boolean isInternetPresent = connectionDetector.isConnectingToInternet();
             if (isInternetPresent) {
-                //Toast.makeText(this, " Connected ", Toast.LENGTH_LONG).show();
-                //  checkLogin(name, md5EncyptedDataPassword);
-                try {
-                    company_id=sqlController.getCompany_id();
-                 //   Log.e("current Time", "" + company_id);
-                } catch (ClirNetAppException e) {
-                    e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
-                }
 
-                new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword);
+               String start_time=appController.getDateTimenew();
 
-
-
-                new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber);
+                new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword,start_time);
+                new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber,start_time);
                 startService();
                 savedLoginCounter("true");//to save shrd pref to update login counter
 
                 //update last sync time if sync from server
-                String time = appController.getDateTimenew();
+
 
                 //update last login time
-                lastSyncTime(time);
+                lastSyncTime(start_time);
                 // hideDialog();
 
             } else {
@@ -361,12 +323,9 @@ public class LoginActivity extends Activity {
 
                         } else {
                             Toast.makeText(getApplicationContext(), "Username/Password Mismatch", Toast.LENGTH_LONG).show();
-
-                            // Toast.makeText(getApplicationContext(), " You are not connected to Internet!! ", Toast.LENGTH_LONG).show();
                         }
                     }
                 } catch (ClirNetAppException e) {
-                    //e.printStackTrace();
                     appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e);
                 } finally {
                     if (sqlController != null) {
@@ -389,10 +348,8 @@ public class LoginActivity extends Activity {
 
         SharedPreferences pref1 = getSharedPreferences("SyncFlag", MODE_PRIVATE);
         String lastSyncTime = pref1.getString("lastSyncTime", null);
-        int hrslastSync = AppController.hoursAgo(lastSyncTime);
-        //Log.e("loginTime12", "" + lastSyncTime + "  " + hrslastSync);
 
-        return hrslastSync;
+        return AppController.hoursAgo(lastSyncTime);
     }
 
     private void startService() {
@@ -406,7 +363,7 @@ public class LoginActivity extends Activity {
 
     private void showChangePassDialog() {
 
-        final Dialog dialog = new Dialog(LoginActivity.this);
+        dialog = new Dialog(LoginActivity.this);
         dialog.setContentView(R.layout.change_password_dialog);
         dialog.setTitle("Change Password");
         dialog.setCancelable(false);
@@ -418,8 +375,6 @@ public class LoginActivity extends Activity {
         oldPassword = (EditText) dialog.findViewById(R.id.oldPassword);
         newPassword = (EditText) dialog.findViewById(R.id.password);
         confirmPassword = (EditText) dialog.findViewById(R.id.confirmPassword);
-        //  TextView gotosetting = (TextView) dialog.findViewById(R.id.gotosetting);
-        //text.setText("Android custom dialog example!");
 
 
         //  image.setImageResource(R.drawable.ic_launcher);
@@ -452,8 +407,8 @@ public class LoginActivity extends Activity {
 
                 String md5oldPassword = MD5.getMD5(oldPass);
                 String md5newPassword = MD5.getMD5(newPass);
-                //  Log.e("oldand new",""+md5oldPassword +" new "+md5newPassword);
-                new UpdatePassworsAsynTask(LoginActivity.this, username, doctor_membership_number, md5oldPassword, md5newPassword);
+                String start_time=appController.getDateTimenew();
+                new UpdatePassworsAsynTask(LoginActivity.this, username, doctor_membership_number, md5oldPassword, md5newPassword,start_time);
                 dialog.dismiss();
             }
         });
@@ -511,10 +466,6 @@ public class LoginActivity extends Activity {
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         username = pref.getString(PREF_USERNAME, null);
         String password = pref.getString(PREF_PASSWORD, null);
-        // Log.e("password", "" + username + "" + password);
-        SharedPreferences pref1 = getSharedPreferences("SyncFlag", MODE_PRIVATE);
-        String lastSync = pref1.getString("lastSyncTime", null);
-       // Log.e("lastSync", "" + lastSync);
 
         if (username != null || password != null) {
             //directly show logout form
@@ -529,7 +480,7 @@ public class LoginActivity extends Activity {
         super.onDestroy();
        // Log.d("onDestroy", "The onDestroy() event");
         // session.setLogin(false);
-        //Close the all database connection opened here 31/10/2008 By. Ashish
+        //Close the all database connection opened here 31/10/2016 By. Ashish
         if (sqlController != null) {
             sqlController = null;
         }
@@ -543,11 +494,27 @@ public class LoginActivity extends Activity {
         if (appController != null) {
             appController = null;
         }
+        if(bannerClass!=null){
+            bannerClass=null;
+        }
         //  pDialog=null;
         md5 = null;
+        strPassword=null;
         md5EncyptedDataPassword = null;
         inputEmail = null;
         inputPassword = null;
+        name=null;
+        if(pDialog!=null){
+            pDialog=null;
+        }
+        dialog=null;
+        btnLogin=null;
+        phoneNumber=null;
+        oldPassword=null;
+        newPassword=null;
+        confirmPassword=null;
+        username=null;
+        doctor_membership_number=null;
         System.gc();
     }
 
@@ -601,20 +568,7 @@ public class LoginActivity extends Activity {
         dialog.show();
 
     }
-    private void getTermsAndCondition() {
-        SharedPreferences pref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String firstTimeLogin = pref.getString(FISRT_TIME_LOGIN
-                , null);
 
-      //  Log.e("firstTimeLogin", ""+ firstTimeLogin);
-        if(firstTimeLogin == null){
-            showChangePassDialog();
-        }else if(firstTimeLogin.equals("false")){
-            showChangePassDialog();
-        }else{
-            //do nothing
-        }
-    }
     public boolean getFirstTimeLoginStatus(){
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String firstTimeLogin = pref.getString(LOGIN_COUNT

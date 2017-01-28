@@ -24,6 +24,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     private static final String TAG = "SQLHandler";
 
+
     private final Context myContext;
 
 
@@ -135,6 +136,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     private static final String ALTERNATE_PHONE_TYPE = "alternate_phone_type";
     private static final String ISD_CODE= "isd_code";
+    private static final String ATERNATE_NO_ISD_CODE = "alternate_no_isd";
 
     private static final String CALLED_FROM = "called_from";
     private static final String PREFERED_TIME = "preferred_time";
@@ -144,6 +146,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String REQUEST_FULLFILLED = "request_fullfilled";
     private static final String FLAG = "flag";
     private static final String ALTERNATE_PHONE_NO = "alternate_no";
+
+    private static final String UID = "uid";
+    private static final String UIDTYPE = "uid_type";
 
 
     private static final String TABLE_ASYNC = "async";
@@ -269,6 +274,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     private static final String DATABASE_ALTER_TABLE_DOCTORINFO = " ALTER TABLE doctor_perInfo" + " ADD COLUMN company_id text;";
 
+
+
     // Upgrading database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -304,7 +311,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
      * Updating Patient Personal details in database
      */
     public void updatePatientPersonalInfo(String keyid, String firstname, String middlename, String lastname, String gender, String dateofbirth, String age, String phNo, String language, String imgPath, String modified_on_date, String modified_by, String modifiedTime, String action, String flag, String docId,
-                                          String address, String cityortown, String district, String pin, String state,String phoneType,String alternatephoneType,String alternatePhoneNumber) throws ClirNetAppException {
+                                          String address, String cityortown, String district, String pin, String state,String phoneType,String alternatephoneType,String alternatePhoneNumber,String uid,String uidType,String isd_code,String alternateisd_code) throws ClirNetAppException {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -335,6 +342,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(PHONE_TYPE,phoneType);
             values.put(ALTERNATE_PHONE_NO,alternatePhoneNumber);
             values.put(ALTERNATE_PHONE_TYPE,alternatephoneType);
+            values.put(UID, uid);
+            values.put(UIDTYPE, uidType);
+            values.put(ISD_CODE, isd_code);
+            values.put(ATERNATE_NO_ISD_CODE, alternateisd_code);
+
 
             // Inserting Row
             id = db.update(TABLE_PATIENT, values, KEY_PATIENT_ID + "=" + keyid, null);
@@ -594,7 +606,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     //This will add records from registration page into patient table  28/8/2016 ashish u
     public void addPatientPersonalfromLocal(int patient_id, String doctor_id, String first_name, String middle_name, String last_name, String sex, String strdate_of_birth, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String create_date, String doctor_membership_number, String flag, String patientInfoType, String addedTime, String added_by, String action,
-                                            String address, String city, String district, String pinno, String state,String phoneType,String alternatePhone_no,String selectedPhoneTypealternate_no) {
+                                            String address, String city, String district, String pinno, String state,String phoneType,String alternatePhone_no,String selectedPhoneTypealternate_no,String uid,String uidType,String selectedIsd_codeType,String alternate_no_isdcode) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -630,10 +642,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(PHONE_TYPE,phoneType);
             values.put(ALTERNATE_PHONE_NO,alternatePhone_no);
             values.put(ALTERNATE_PHONE_TYPE, selectedPhoneTypealternate_no);
-
+            values.put(UID, uid);
+            values.put(UIDTYPE, uidType);
+            values.put(ISD_CODE,selectedIsd_codeType);
+            values.put(ATERNATE_NO_ISD_CODE, alternate_no_isdcode);
 
             // Inserting Row
             id = db.insert(TABLE_PATIENT, null, values);
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -851,9 +867,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 resultSet.put(rowObject);
                 cursor.moveToNext();
             }
-            cursor.close();
-            db1.close();
-            Log.d("TAG_NAME", resultSet.toString());
             return resultSet;
         } finally {
             if (cursor != null) {
@@ -1389,4 +1402,71 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         Log.d("updated", "banner flag data modified into sqlite: " + id);
     }
+
+    public void addAsynctascRun_status(String process,String start_time,String end_time,String update_on) {
+
+        SQLiteDatabase db = null;
+        long id = 0;
+        try {
+            db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("process", process);
+            values.put("start_time", start_time);
+            values.put("end_time", end_time);
+            values.put("update_on", update_on);
+
+
+            boolean isImageUrlExistsboolean = isProcessExists(process);
+
+            if (!isImageUrlExistsboolean) {
+                id = db.insert("asynctascrun_status", null, values);
+            } else {
+                //  Log.e("allreadyExist", "  " + isImageUrlExistsboolean);
+                //  id = db.update(TABLE_COMPANY_BANNER, values, "banner_image1=? and banner_id=?", new String[]{banner_image_url,banner_id});
+                id = db.update("asynctascrun_status", values, "process=?", new String[]{process});
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+
+
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+        Log.d("ADDED", " user data ADDED into sqlite: " + id);
+
+
+    }
+
+    //checking if record exist in db  or not if not add it
+    public boolean isProcessExists(String process) {
+        SQLiteDatabase db = null;
+        this.getReadableDatabase();
+
+        Cursor cursor=null;
+        try {
+            db = this.getReadableDatabase();
+            cursor = null;
+            String selectQuery = "SELECT  *  FROM asynctascrun_status WHERE process ='" + process + "';";
+
+
+            cursor = db.rawQuery(selectQuery, null);
+
+            if (cursor != null && cursor.getCount() > 0) {
+                return true;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }finally {
+            if(cursor != null){
+                cursor.close();
+            }
+        }
+        return false;
+    }
+
 }

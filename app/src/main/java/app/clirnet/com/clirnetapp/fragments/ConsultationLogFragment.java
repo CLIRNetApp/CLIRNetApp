@@ -21,13 +21,13 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
@@ -49,18 +49,12 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
  */
 public class ConsultationLogFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
-
-    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom, R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest, R.drawable.revituz, R.drawable.suprizon};
-
     private OnFragmentInteractionListener mListener;
     private EditText date;
     private static final int DATE_DIALOG_ID = 0;
     private String searchdate;
     private SQLController sqlController;
-    private ArrayList<RegistrationModel> patientData = new ArrayList<>();
+
     private RecyclerView recycler_view;
     private ImageView backChangingImages;
     private LinearLayout norecordtv;
@@ -99,6 +93,7 @@ public class ConsultationLogFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         view = null; // now cleaning up!
+        //No leak found by leak canary lib   tested on 28-01-2017 2:36pm
 
     }
 
@@ -121,7 +116,7 @@ public class ConsultationLogFragment extends Fragment {
         txtupdateDate = (TextView) view.findViewById(R.id.txtupdateDate);
         txtfod = (TextView) view.findViewById(R.id.txtfod);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
         Date todayDate = new Date();
 
         String dd = sdf.format(todayDate);
@@ -171,15 +166,13 @@ public class ConsultationLogFragment extends Fragment {
 
 //To changes backgound images on time slot
 
-        final Calendar c = Calendar.getInstance();
+        Calendar c = Calendar.getInstance();
 
         int year1 = c.get(Calendar.YEAR);
         int month1 = c.get(Calendar.MONTH);
         int day1 = c.get(Calendar.DAY_OF_MONTH);
 
-
         // Show current date
-
         date.setText(new StringBuilder()
                 // Month is 0 based, just add 1
                 .append(day1).append("-").append(month1 + 1).append("-")
@@ -202,6 +195,7 @@ public class ConsultationLogFragment extends Fragment {
 
             @Override
             public boolean onTouch(View view, MotionEvent event) {
+
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
                     searchRecords.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
@@ -221,8 +215,8 @@ public class ConsultationLogFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy");
-                SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
                 searchdate = date.getText().toString();
                 String reformattedStr = "";
@@ -233,7 +227,7 @@ public class ConsultationLogFragment extends Fragment {
 
                 } catch (ParseException e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
+                    appController.appendLog(appController.getDateTimenew() + " " + "/ " + "ConsultationLog" + e);
                 }
 
                 if (TextUtils.isEmpty(searchdate)) {
@@ -242,9 +236,9 @@ public class ConsultationLogFragment extends Fragment {
                 }
 
                 try {
-                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
                     Date date1 = sdf1.parse(searchdate);
-                    Log.e("date1","   "+date1);
+                  //  Log.e("date1","   "+date1);
 
                     Date currentdate = sdf1.parse(String.valueOf(sysdate));
 
@@ -257,8 +251,7 @@ public class ConsultationLogFragment extends Fragment {
                         }
 
                         filterfodList = new ArrayList<>();
-                        //get records from database vai entered follow up date
-                      //  filterfodList = sqlController.getPatientList(reformattedStr);
+
                         filterfodList = sqlController.getPatientListnew(reformattedStr);
 
                         int filterModelSize = filterfodList.size();
@@ -300,8 +293,6 @@ public class ConsultationLogFragment extends Fragment {
                         //get records from database vai entered visit  date
                         filterVistDateList = sqlController.getPatientListVisitDateSearch(reformattedStr);
 
-                        //  System.out.println("Date1 is before or equal to Date2");
-
                         int filterModelSize = filterVistDateList.size();
                         if (filterModelSize > 0) {
                             norecordtv.setVisibility(View.GONE);
@@ -321,7 +312,6 @@ public class ConsultationLogFragment extends Fragment {
 
                                 setrvAdapterforUpdateDateToRecyclerView(position);
 
-                                //Toast.makeText(getContext(), book.getFirstName() + " is selected!", Toast.LENGTH_SHORT).show();
                             }
 
                             @Override
@@ -368,6 +358,8 @@ public class ConsultationLogFragment extends Fragment {
         i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
         i.putExtra("CLINICALNOTES", book.getClinicalNotes());
         i.putExtra("PRESCRIPTION", book.getPres_img());
+        i.putExtra("ISDCODE", book.getIsd_code());
+        i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
         i.putExtra("FROMWHERE", "2");
 
         startActivity(i);
@@ -401,6 +393,8 @@ public class ConsultationLogFragment extends Fragment {
         i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
         i.putExtra("CLINICALNOTES", book.getClinicalNotes());
         i.putExtra("PRESCRIPTION", book.getPres_img());
+        i.putExtra("ISDCODE", book.getIsd_code());
+        i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
         i.putExtra("FROMWHERE", "2");
         startActivity(i);
     }
@@ -413,8 +407,6 @@ public class ConsultationLogFragment extends Fragment {
                 int mYear2 = c2.get(Calendar.YEAR);
                 int mMonth2 = c2.get(Calendar.MONTH);
                 int mDay2 = c2.get(Calendar.DAY_OF_MONTH);
-                Log.d("date", "" + mDay2);
-                System.out.println("" + mDay2 + "-" + mMonth2 + "-" + mYear2);
 
                 DatePickerDialog dpd1 = new DatePickerDialog(getContext(),
                         new DatePickerDialog.OnDateSetListener() {
@@ -450,7 +442,7 @@ public class ConsultationLogFragment extends Fragment {
 
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         void onFragmentInteraction(Uri uri);
     }
 
@@ -460,20 +452,13 @@ public class ConsultationLogFragment extends Fragment {
 
         backChangingImages = (ImageView) view.findViewById(R.id.backChangingImages);
 
-       /* Random r = new Random();
-        int n=r.nextInt(10);
-
-        backChangingImages.setImageResource(imageArray[n]);
-        final String url= getString(imageArray[n]);*/
 
         Random r = new Random();
         try {
             int n = r.nextInt(bannerimgNames.size());
 
-            // final String url = getString(imageArray[n]);
-            //  backChangingImages.setImageResource(imageArray[n]);
+
             final String url = bannerimgNames.get(n);
-            Log.e("nUrl", "" + n + "" + url);
 
             BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
             backChangingImages.setImageDrawable(d);
@@ -481,13 +466,12 @@ public class ConsultationLogFragment extends Fragment {
             backChangingImages.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getContext(), "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(getContext(), "Image Clicked" + url, Toast.LENGTH_SHORT).show();
 
                     String action = "clicked";
 
                     appController.showAdDialog(getContext(), url);
                     appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
-
 
                 }
             });
@@ -531,12 +515,10 @@ public class ConsultationLogFragment extends Fragment {
             bannerClass = null;
         }
         bannerimgNames = null;
-        patientData.clear();
-        patientData = null;
+
         doctor_membership_number = null;
 
         recycler_view.setOnClickListener(null);
-        //  searchView.setOnClickListener(null);
 
         norecordtv = null;
 
@@ -544,8 +526,16 @@ public class ConsultationLogFragment extends Fragment {
         sysdate = null;
         date = null;
         txtfod = null;
+        recycler_view = null;
+        backChangingImages.setOnClickListener(null);
+        backChangingImages = null;
+        txtupdateDate=null;
 
-        Log.e("onDetach", "onDetach Home Fragment");
+        filterfodList=null;
+        filterVistDateList=null;
+
+
+        Log.e("onDetach", "onDetach Consultation Fragment");
     }
 }
 

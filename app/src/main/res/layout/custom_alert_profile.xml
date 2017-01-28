@@ -24,7 +24,7 @@
         style="@style/Base.TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"
         android:textSize="16sp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Mobile Number Not Found!!!"></TextView>
+        android:text="Mobile Number Not Found!!!"/>
 
 
     <TextView
@@ -36,7 +36,7 @@
         style="@style/Base.TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"
         android:textSize="14sp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Search Again or Add a New Patient Records"></TextView>
+        android:text="Search Again or Add a New Patient Records"/>
 
     <View
         android:layout_width="match_parent"

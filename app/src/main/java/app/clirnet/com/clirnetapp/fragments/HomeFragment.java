@@ -69,6 +69,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
@@ -102,16 +103,10 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 @SuppressWarnings("ConstantConditions")
 public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchListener {
-    // TODO: Rename parameter arguments, choose names that match
-
 
     private OnFragmentInteractionListener mListener;
 
-    private static final String TAG = "Synchronised";
-    private static final String PREFS_NAME = "SyncFlag";
-    private static final String PREF_VALUE = "status";
-    private static final String PREFS_NAMEsavedCredit = "savedCredit";
-    private static final String FISRT_TIME_LOGIN = "firstTimeLogin";
+
 
     private SearchView searchView;
 
@@ -119,7 +114,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     private RecyclerView recyclerView;
     private LinearLayout norecordtv;
-    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom, R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest, R.drawable.revituz, R.drawable.suprizon};
     private ImageView backChangingImages;
 
     private RecyclerView Searchrecycler_view;
@@ -178,10 +172,12 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private EditText confirmPassword;
     private String username;
     private String docId;
+    private String pateintrecordasync_start_time;
+    private String banner_downloadstart_time;
 
 
     public HomeFragment() {
-        this.setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
     }
 
 
@@ -219,18 +215,17 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         todays_patient_updatetxt = (TextView) view.findViewById(R.id.todays_patient_updatetxt);
 
 
-
         if (filteredModelList != null) {
             filteredModelList.clear();
         }
 
-        getFlagStatus();
+       // getFlagStatus();
         checkLastLoginTime();
 
         appController = new AppController();
         bannerClass=new BannerClass(getContext());
 
-        sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+        sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         pDialog = new ProgressDialog(getContext());
 
         connectionDetector = new ConnectionDetector(getContext());
@@ -273,13 +268,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             patientInfoArayString = String.valueOf(dbController.getResultsForPatientInformation());
 
-            /*try {
-             String    encryptedMsg = AESCrypt.encrypt("password", patientInfoArayString);
-
-            }catch (GeneralSecurityException e){
-                //handle error
-            }*/
-
             patientVisitHistorArayString = String.valueOf(dbController.getResultsForPatientHistory());
             bannerimgNames= bannerClass.getImageName();
             company_id=sqlController.getCompany_id();
@@ -293,7 +281,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 sqlController.close();
             }
         }
-
 
         new Thread(new Runnable() {
             @Override
@@ -497,7 +484,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             sqlController1 = new SQLController(getActivity().getApplicationContext());
             sqlController1.open();
 
-
             ArrayList<LoginModel> al;
             al = sqlController1.getUserLoginRecrodsNew();
             if (al.size() != 0) {
@@ -547,7 +533,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         String apiKey = getResources().getString(R.string.apikey);
                         getBannersData(savedUserName, savedUserPassword, apiKey, doctor_membership_number, company_id);
 
-                        new LastNameAsynTask(getContext(), savedUserName, savedUserPassword);
+
+                        new LastNameAsynTask(getContext(), savedUserName, savedUserPassword,appController.getDateTime());
                         getPatientRecords(savedUserName, savedUserPassword);
 
                     }
@@ -594,6 +581,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
         i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
+
+        i.putExtra("ISDCODE", registrationModel.getIsd_code());
+        i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
+        Log.e("odelM"," "+ registrationModel.getIsd_code()+"   "+registrationModel.getAlternate_isd_code());
 
 
         startActivity(i);
@@ -646,6 +637,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
         i.putExtra("HEIGHT", registrationModel.getHeight());
         i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
+        i.putExtra("ISDCODE", registrationModel.getIsd_code());
+        i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
 
         startActivity(i);
     }
@@ -733,7 +726,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         try {
             if (searchView == null)
                 //no inspection Constant Conditions
-                searchView = new SearchView(((NavigationActivity) getActivity()).getSupportActionBar().getThemedContext());
+            searchView = new SearchView(((NavigationActivity) getActivity()).getSupportActionBar().getThemedContext());
             searchView.setIconifiedByDefault(false);
             searchView.setInputType(InputType.TYPE_CLASS_NUMBER);//this will do not let user to enter any other text than digit 0-9 only
             searchView.setQueryHint(getResources().getString(R.string.hint_search));
@@ -935,6 +928,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
         i.putExtra("HEIGHT", registrationModel.getHeight());
         i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
+        i.putExtra("ISDCODE", registrationModel.getIsd_code());
+        i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
         startActivity(i);
     }
 
@@ -974,6 +969,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
         i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
 
+        i.putExtra("ISDCODE", registrationModel.getIsd_code());
+        i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
+        Log.e("odelM", " " + registrationModel.getIsd_code() + "   " + registrationModel.getAlternate_isd_code());
+
         startActivity(i);
     }
 
@@ -1003,7 +1002,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
 
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         void onFragmentInteraction(Uri uri);
     }
 
@@ -1365,21 +1364,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 System.out.println("patient_visits_count" + String.valueOf(patient_visits_count));
                 return params;
 
-                // return checkParams(params);
             }
-
-            /*private Map<String, String> checkParams(Map<String, String> params) {
-                Iterator<Map.Entry<String, String>> it = params.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry<String, String> pairs = (Map.Entry<String, String>) it.next();
-                    if (pairs.getValue() == null) {
-                        params.put(pairs.getKey(), "");
-                    }
-                }
-                return params;
-            }
-*/
-
         };
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
@@ -1412,6 +1397,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         pDialog.setMessage("Initializing Application.Getting patient records, Please Wait...");
         pDialog.setCancelable(false);
         showDialog();
+        pateintrecordasync_start_time=appController.getDateTimenew();
+
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_PATIENT_RECORDS, new Response.Listener<String>() {
@@ -1451,7 +1438,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             }
 
         };
-        //todo need to check the retry code for multiple times
+
         //this will retry the request for 2 times
         int socketTimeout = 30000;//30 seconds - change to what you want
         int retryforTimes = 2;
@@ -1656,6 +1643,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         }
 
         dbController.addAsync();
+        String end_time=appController.getDateTimenew();
+
+        dbController.addAsynctascRun_status("getPatientRecords",pateintrecordasync_start_time,end_time,"");//last parameter is update on which is blank right now
 
         Intent i = new Intent(getContext(), NavigationActivity.class);
         startActivity(i);
@@ -1747,7 +1737,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         savedUserPassword = null;
         patientInfoArayString = null;
         doctor_membership_number=null;
+        pateintrecordasync_start_time=null;
+        banner_downloadstart_time=null;
+        backChangingImages=null;
       //  Log.e("onDetach", "onDetach Home Fragment");
+
     }
 
     @Override
@@ -1757,13 +1751,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         super.onPause();
     }
 
-    private void getFlagStatus() {
-        SharedPreferences pref = getContext().getSharedPreferences(PREFS_NAME, getContext().MODE_PRIVATE);
-        String status = pref.getString(PREF_VALUE, null);
-
-      //  Log.e("Flag Status", "" + status);
-
-    }
 
     private void showCreatePatientAlertDialog() {
 
@@ -1795,11 +1782,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     public void onDestroyView() {
         super.onDestroyView();
         view = null;
+
     }
 
     private void checkLastLoginTime() {
-
-
 
         SharedPreferences pref = getContext().getSharedPreferences("savedCredit", getContext().MODE_PRIVATE);
 
@@ -1809,7 +1795,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     //    Log.e("loginTime", "" + loginTime + " hours " + hrs);
 
         if (hrs >= 8) {
-            Intent i = new Intent(getContext(), LoginActivity.class);
+            Intent i = new Intent(getContext().getApplicationContext(), LoginActivity.class);
             startActivity(i);
             System.gc();
         }
@@ -1870,7 +1856,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         @Override
         protected void onPreExecute() {
            // Log.e("onPreExecute", "onPreExecute");
-             pd = new ProgressDialog(getContext());
+              pd = new ProgressDialog(getContext());
               pd.setMessage("Initializing Application. Please Wait...2");
               pDialog.show();
               showDialog();
@@ -1950,6 +1936,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         pDialog.setMessage("Initializing Application.Getting Banner data Please Wait...");
         pDialog.setCancelable(false);
         showDialog();
+         banner_downloadstart_time=appController.getDateTimenew();
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_BANNER_API, new Response.Listener<String>() {
@@ -2025,7 +2012,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                     JSONArray jsonArray = user.getJSONArray("result");
 
-
                     setBannerImgListList(jsonArray);
 
                 }
@@ -2078,7 +2064,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String folder_name=jsonProsolveObject.getString("folder_name");
             String banner_image_name = jsonProsolveObject.getString("banner_image1");
             banner_image_name = banner_image_name.replace(".jpg", "");
-            //banner_image_name = banner_image_name.replace(" ", "%20");
+
             String type = jsonProsolveObject.getString("type");
             String banner_image_url = jsonProsolveObject.getString("banner_image_url");
           //  Log.e("banner_image_urlbefore", "" + banner_image_url);
@@ -2100,15 +2086,14 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String marketed_by = jsonProsolveObject.getString("marketed_by");
             String group_name = jsonProsolveObject.getString("group_name");
             String link_to_page = jsonProsolveObject.getString("link_to_page");
-          /*  if(link_to_page.startsWith("www")){
-                link_to_page.replace("http://www", "www");
-            }*/
+
             String call_me = jsonProsolveObject.getString("call_me");
             String meet_me = jsonProsolveObject.getString("meet_me");
 
             String priority = jsonProsolveObject.getString("priority");
 
             String status = jsonProsolveObject.getString("status");
+            String status_name = jsonProsolveObject.getString("status_name");
 
             String start_time = jsonProsolveObject.getString("start_time");
             String end_time = jsonProsolveObject.getString("end_time");
@@ -2138,10 +2123,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 String path = file.getAbsolutePath();
                 if (path != null){
 
-                   // Log.e("imageExist","imageExist allready");
+                    // Log.e("imageExist","imageExist allready");
                 }
             } else {
-               // Log.e("imageExist","imageExist not");
+                // Log.e("imageExist","imageExist not");
                 downloadImage(banner_image_url, banner_image_name);
             }
             if(checkifImageExists(product_imagenm))
@@ -2149,23 +2134,27 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 File file = getImage("/"+product_imagenm+".png");
                 String path = file.getAbsolutePath();
                 if (path != null){
-                    /*b = BitmapFactory.decodeFile(path);
-                    imageView.setImageBitmap(b);*/
-                  //  Log.e("imageExist","imageExist allready");
+
+                    //  Log.e("imageExist","imageExist allready");
                 }
             } else {
-               // Log.e("imageExist","imageExist not");
+                // Log.e("imageExist","imageExist not");
                 downloadImage(product_image_url, product_imagenm);
             }
 
             //saveImageToSD(banner_image1);
+            String img_download_status="inprogress";
+            String download_initialization_time=appController.getDateTimenew();
+
 
             bannerClass.addBannerData(banner_id, company_id, brand_name, type, banner_image_url, speciality_name,
                     product_image_url, generic_name, manufactured_by, marketed_by, group_name, link_to_page, call_me, meet_me,
                     priority, status, start_time, end_time,
-                    clinical_trial_source, clinical_trial_identifier, clinical_trial_link, clinical_sponsor, drug_composition, drug_dosing_durability, added_by, added_on, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on,banner_image_name,banner_type,product_imagenm,folder_name);
+                    clinical_trial_source, clinical_trial_identifier, clinical_trial_link, clinical_sponsor, drug_composition, drug_dosing_durability, added_by, added_on, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, banner_image_name, banner_type, product_imagenm, folder_name, status_name, img_download_status, download_initialization_time);
 
         }
+        String processend_time=appController.getDateTimenew();
+        dbController.addAsynctascRun_status("Banner Downloads",banner_downloadstart_time,processend_time,"");
     }
 
     private void downloadImage(final String banner_image_url, final String banner_image1) {
@@ -2184,13 +2173,16 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         }
                     });
                     mDownloader.execute();
+                    String img_download_status="downloading";
+                 //   String download_start_time=appController.getDateTimenew();
+
+                   // bannerClass.updateBannerImgDownloadStatus(banner_image1, banner_image_url, img_download_status,download_start_time);
+
+                    String download_start_time=appController.getDateTimenew();
+                    bannerClass.updateBannerImgDownloadStatus(banner_image1, banner_image_url, img_download_status,download_start_time);
                 }
 
-
             });
-
-            /*--- we need to call execute() since nothing will happen otherwise ---*/
-
         }
     }
     public static boolean checkifImageExists(String imagename)
@@ -2202,11 +2194,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         if (path != null)
             b = BitmapFactory.decodeFile(path);
 
-        if(b == null ||  b.equals(""))
-        {
-            return false ;
-        }
-        return true ;
+        return !(b == null || b.equals(""));
     }
     public static File getImage(String imagename) {
 
@@ -2219,7 +2207,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             mediaImage = new File("sdcard/BannerImages/"+imagename);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
         }
         return mediaImage;

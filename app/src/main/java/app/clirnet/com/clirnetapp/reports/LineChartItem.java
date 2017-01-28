@@ -31,8 +31,8 @@ public class LineChartItem extends ChartItem {
     public LineChartItem(ChartData<?> cd, Context c, String fromDate, String toDate) {
         super(cd);
         this.mContext = c;
-        String fromDate1 = fromDate;
-        String toDate1 = toDate;
+        //String fromDate1 = fromDate;
+       // String toDate1 = toDate;
         Utils.init(mContext.getResources());
         Utils.init(mContext);
 

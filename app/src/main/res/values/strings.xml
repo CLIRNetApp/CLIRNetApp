@@ -105,6 +105,20 @@
 
     </string-array>
 
+    <string-array name="uid_group">
+        <item>Adhaar</item>
+        <item>Passport</item>
+        <item>Driving Licence</item>
+        <item>Voting Card</item>
+        <item>Ration Card</item>
+        <item>Bank PassBook</item>
+    </string-array>
+
+    <string-array name="isd_code">
+        <item>+91</item>
+        <item>+880</item>
+    </string-array>
+
     <string name="title_activity_patient_update">Edit Patient Update</string>
     <string name="title_activity_edit_personal_info">Edit Personal Info</string>
     <string name="title_activity_add_patient_update">Add Patient Update</string>
@@ -182,6 +196,10 @@
     <string name="emailid">Email Id</string>
     <string name="doc_id">Doctor Id</string>
     <string name="clear">Clear</string>
+    <string name="uid">UID</string>
+    <string name="uidtype">Uid Type</string>
+    <string name="reset">Reset</string>
+    <string name="updateDate">Last Updated Date 25-01-2017</string>
 
 
 </resources>

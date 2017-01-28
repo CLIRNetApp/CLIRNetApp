@@ -53,7 +53,7 @@ public class RVAdapterforUpdateDate extends RecyclerView.Adapter<RVAdapterforUpd
         String fod = model.getActualFollowupDate();
 
         try {
-            if (fod == null || fod.equals("0000-00-00") || fod.equals("30-11-0002")) {
+            if (fod == null || fod.equals("0000-00-00") || fod.equals("30-11-0002") || fod.equals("")) {
 
                 holder.modified_on.setText("--");
 
@@ -64,20 +64,13 @@ public class RVAdapterforUpdateDate extends RecyclerView.Adapter<RVAdapterforUpd
 
         }
 
-
-
         int posi=position+1;
         String id=""+posi;
         holder.id.setText(id); // this will add i value in desc order ie fifo order as per client req. 25-8-16 ,this id is not stored in db.
 
 
-
         holder.age.setText(model.getAge());
         holder.phone_no.setText(model.getMobileNumber());
-
-
-
-
 
         holder.gender.setText(model.getGender());
 

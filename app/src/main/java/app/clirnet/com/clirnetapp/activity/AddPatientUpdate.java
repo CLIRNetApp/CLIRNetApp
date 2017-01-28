@@ -45,6 +45,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
@@ -63,10 +64,9 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 @SuppressWarnings("AccessStaticViaInstance")
 public class AddPatientUpdate extends AppCompatActivity {
 
-    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom, R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest, R.drawable.revituz, R.drawable.suprizon};
+
     private ImageView backChangingImages;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
-    private static final int DATE_DIALOG_ID = 0;
     private static final int DATE_DIALOG_ID1 = 1;
     private static final int DATE_DIALOG_ID2 = 2;
     private String strPhone;
@@ -133,7 +133,6 @@ public class AddPatientUpdate extends AppCompatActivity {
     private String value;
     private String buttonSelected;
     private String daysSel;
-    private TextView txtaddress;
     private TextView txtRecord;
     private TextView txtsymtomsanddignost;
     private TextView presciptiontext;
@@ -154,6 +153,8 @@ public class AddPatientUpdate extends AppCompatActivity {
     private Button btnclear;
     private String strAlternatenumber;
     private String strAlternatephtype;
+    private String strIsd_code;
+    private String strAlternateIsd_code;
 
 
     @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
@@ -203,6 +204,9 @@ public class AddPatientUpdate extends AppCompatActivity {
         strDistrict = getIntent().getStringExtra("DISTRICT");
         strPinNo = getIntent().getStringExtra("PIN");
         strState = getIntent().getStringExtra("STATE");
+
+        strIsd_code=getIntent().getStringExtra("ISDCODE");
+        strAlternateIsd_code=getIntent().getStringExtra("ALTERNATEISDCODE");
 
         strAlternatenumber=getIntent().getStringExtra("ALTERNATENUMBER");
 
@@ -287,9 +291,9 @@ public class AddPatientUpdate extends AppCompatActivity {
             validator = new Validator(getApplicationContext());
         }
 
-        sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+        sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy",Locale.ENGLISH);
         Date todayDate = new Date();
 
         String dd = sdf.format(todayDate);
@@ -298,7 +302,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         // String current_date = sdf.format(todayDate);
 
 
-        SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss",Locale.ENGLISH);
         Date todayDate3 = new Date();
 
 
@@ -346,7 +350,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 bannerClass=new BannerClass(getApplicationContext());
             }
             bannerimgNames= bannerClass.getImageName();
-            Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1));
+          //  Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1));
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
         } finally {
@@ -439,8 +443,6 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         }
 
-
-
         addPatientprescriptionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -483,6 +485,9 @@ public class AddPatientUpdate extends AppCompatActivity {
                 i.putExtra("STATE", strState);
                 i.putExtra("ALTERNATENUMBER",strAlternatenumber);
                 i.putExtra("ALTERNATENUMBERTYPE",strAlternatephtype );
+                i.putExtra("ISDCODE", strIsd_code);
+                i.putExtra("ALTERNATEISDCODE",strAlternateIsd_code);
+                i.putExtra("FROMWHERE", "editpatient");
                 startActivity(i);
                // finish();
             }
@@ -629,9 +634,11 @@ public class AddPatientUpdate extends AppCompatActivity {
                     week.setTextColor(getResources().getColor(R.color.black));
                     month.setTextColor(getResources().getColor(R.color.black));
                     days.setTextColor(getResources().getColor(R.color.white));
+                    btnclear.setTextColor(getResources().getColor(R.color.black));
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                         week.setBackground(getResources().getDrawable(R.drawable.circle));
                         month.setBackground(getResources().getDrawable(R.drawable.circle));
+                        btnclear.setBackground(getResources().getDrawable(R.drawable.circle));
                     }
 
                     value = inputnumber.getText().toString().trim();
@@ -679,9 +686,11 @@ public class AddPatientUpdate extends AppCompatActivity {
                 week.setTextColor(getResources().getColor(R.color.white));
                 month.setTextColor(getResources().getColor(R.color.black));
                 days.setTextColor(getResources().getColor(R.color.black));
+                btnclear.setTextColor(getResources().getColor(R.color.black));
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     days.setBackground(getResources().getDrawable(R.drawable.circle));
                     month.setBackground(getResources().getDrawable(R.drawable.circle));
+                    btnclear.setBackground(getResources().getDrawable(R.drawable.circle));
                 }
 
                 value = inputnumber.getText().toString().trim();
@@ -717,9 +726,12 @@ public class AddPatientUpdate extends AppCompatActivity {
                 week.setTextColor(getResources().getColor(R.color.black));
                 month.setTextColor(getResources().getColor(R.color.white));
                 days.setTextColor(getResources().getColor(R.color.black));
+                btnclear.setTextColor(getResources().getColor(R.color.black));
+
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     days.setBackground(getResources().getDrawable(R.drawable.circle));
                     week.setBackground(getResources().getDrawable(R.drawable.circle));
+                    btnclear.setBackground(getResources().getDrawable(R.drawable.circle));
                 }
 
                 value = inputnumber.getText().toString().trim();
@@ -746,8 +758,21 @@ public class AddPatientUpdate extends AppCompatActivity {
         btnclear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                btnclear.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+                btnclear.setTextColor(getResources().getColor(R.color.white));
+                inputnumber.setText("");
                 fodtextshow.setText("");
+                month.setTextColor(getResources().getColor(R.color.black));
+                days.setTextColor(getResources().getColor(R.color.black));
+                week.setTextColor(getResources().getColor(R.color.black));
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    days.setBackground(getResources().getDrawable(R.drawable.circle));
+                    month.setBackground(getResources().getDrawable(R.drawable.circle));
+                    week.setBackground(getResources().getDrawable(R.drawable.circle));
+                }
+                daysSel=null;
+                fowSel=null;
+                monthSel = null;
                 CleanFollowup();
             }
         });
@@ -774,6 +799,25 @@ public class AddPatientUpdate extends AppCompatActivity {
 
             }
         });
+
+        edtInput_height.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+
+                edtInput_height.setError(null);
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                String bmi = appController.CalculateBMI(edtInput_weight.getText().toString(), edtInput_height.getText().toString());
+                edtInput_bmi.setText(bmi);
+            }
+        });
+
     }
 
     private void initalizeView() {
@@ -1014,7 +1058,6 @@ public class AddPatientUpdate extends AppCompatActivity {
             backChangingImages.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(AddPatientUpdate.this, "Image Clicked" + url, Toast.LENGTH_SHORT).show();
 
                     String action = "clicked";
 
@@ -1029,20 +1072,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         }catch (Exception e){
             e.printStackTrace();
         }
-        /*Runnable runnable = new Runnable() {
-            int i = 0;
 
-            public void run() {
-                backChangingImages.setImageResource(imageArray[i]);
-
-                i++;
-                if (i > imageArray.length - 1) {
-                    i = 0;
-                }
-                backChangingImages.postDelayed(this, 10000);  //for interval...
-            }
-        };
-        backChangingImages.postDelayed(runnable, 100); //for initial delay..*/
     }
 
     //Image capture code
@@ -1256,13 +1286,54 @@ public class AddPatientUpdate extends AppCompatActivity {
         usersellectedDate = null;
         monthSel = null;
         sqlController = null;
-        mAilmemtArrayList = null;
         imageViewprescription = null;
-        doctor_membership_number = null;
         docId = null;
         addedTime = null;
         addedOnDate = null;
         patientHistoryData = null;
         PrescriptionimageName = null;
+        backChangingImages=null;
+        imageIntent=null;
+
+        imagesFolder=null;
+        uriSavedImage=null;
+        addUpdate=null;
+        cancel=null;
+        validator=null;
+        strCityorTown=null;
+        strDistrict=null;
+        strPinNo=null;
+        strState=null;
+        strAddress=null;
+
+        edtInput_weight=null;
+        edtInput_pulse=null;
+        edtInput_bp=null;
+        edtLowBp=null;
+        edtInput_temp=null;
+        edtInput_sugar=null;
+        edtSymptoms=null;
+        edtDignosis=null;
+        edtTest=null;
+        edtDrugs=null;
+        fodtextshow=null;
+        days=null;
+        week=null;
+        month=null;
+        inputnumber=null;
+        value=null;
+        daysSel=null;
+        TextView txtaddress = null;
+        txtRecord=null;
+        txtsymtomsanddignost=null;
+        presciptiontext=null;
+        edtInput_sugarfasting=null;
+        edtInput_bmi=null;
+        edtInput_height=null;
+        btnclear=null;
+        strAlternatenumber=null;
+        strAlternatephtype=null;
+        strIsd_code=null;
+        strAlternateIsd_code=null;
     }
 }

@@ -114,7 +114,7 @@ public class SearchViewdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
 
             try {
-                if (fod == null || fod.equals("") || fod == "0000-00-00" || fod.equals("30-11-0002")) {
+                if (fod == null || fod.equals("") || fod.equals("0000-00-00")  || fod.equals("30-11-0002")) {
                     memberViewHolder.follow_up_date.setText("--");
                 } else {
                     memberViewHolder.follow_up_date.setText(fod);

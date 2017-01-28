@@ -30,7 +30,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -45,7 +44,9 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
@@ -56,8 +57,6 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 
 public class EditPersonalInfo extends AppCompatActivity {
-
-    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom, R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest, R.drawable.revituz, R.drawable.suprizon};
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
     private static final int DATE_DIALOG_ID = 0;
@@ -114,6 +113,14 @@ public class EditPersonalInfo extends AppCompatActivity {
     private BootstrapEditText alternatemobile_no;
     private Spinner stateSpinner;
     private Spinner phoneTypeSpinner2;
+    private String selectedUidType;
+    private BootstrapEditText uid;
+    private String selectedIsd_codeType;
+    private String selectedAlternateNoIsd_codeType;
+    private String strIsd_code;
+    private String strAlternateIsd_code;
+    private Spinner isd_code;
+    private int position1;
 
 
     @Override
@@ -129,7 +136,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         getSupportActionBar().setTitle(Html.fromHtml("<font color='white'>Edit Personal Information</font>"));
@@ -142,7 +149,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         String strMiddleName = getIntent().getStringExtra("MIDDLEAME");
         String strLastName = getIntent().getStringExtra("LASTNAME");
         String strPhone = getIntent().getStringExtra("PHONE");
-        String strPhoneType=getIntent().getStringExtra("PHONETYPE");
+        String strPhoneType = getIntent().getStringExtra("PHONETYPE");
         String strAge = getIntent().getStringExtra("AGE");
         String strDob = getIntent().getStringExtra("DOB");
 
@@ -156,11 +163,14 @@ public class EditPersonalInfo extends AppCompatActivity {
         String strDistrict = getIntent().getStringExtra("DISTRICT");
         String strPinNo = getIntent().getStringExtra("PIN");
         String strState = getIntent().getStringExtra("STATE");
-        Log.e("STATE","  "+strState);
+        Log.e("STATE", "  " + strState);
         fromWhere = getIntent().getStringExtra("FROMWHERE");
         String strAlternatenumber = getIntent().getStringExtra("ALTERNATENUMBER");
 
         String strAlternatephtype = getIntent().getStringExtra("ALTERNATENUMBERTYPE");
+
+        strIsd_code = getIntent().getStringExtra("ISDCODE");
+        strAlternateIsd_code = getIntent().getStringExtra("ALTERNATEISDCODE");
 
 
         patientImage = (ImageView) findViewById(R.id.patientimage);
@@ -174,8 +184,8 @@ public class EditPersonalInfo extends AppCompatActivity {
         radioSexGroup = (RadioGroup) findViewById(R.id.radioGender);
         RadioGroup radioLanguage = (RadioGroup) findViewById(R.id.radioLanguage);
         phType = (Spinner) findViewById(R.id.phoneTypeSpinner);
-        alternatemobile_no=(BootstrapEditText)findViewById(R.id.alternatemobile_no);
-
+        alternatemobile_no = (BootstrapEditText) findViewById(R.id.alternatemobile_no);
+        uid = (BootstrapEditText) findViewById(R.id.uid);
 
 
         edtAddress = (BootstrapEditText) findViewById(R.id.address);
@@ -201,10 +211,10 @@ public class EditPersonalInfo extends AppCompatActivity {
         editmobile_no.setInputType(InputType.TYPE_CLASS_NUMBER);//this will do not let user to enter any other text than digit 0-9 only
         editmobile_no.setText(strPhone);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         Date todayDate = new Date();
 
-        SimpleDateFormat sdf1 = new SimpleDateFormat("dd MMMM,yyyy");
+        SimpleDateFormat sdf1 = new SimpleDateFormat("dd MMMM,yyyy",Locale.ENGLISH);
         Date todayDate1 = new Date();
 
         String dd = sdf1.format(todayDate1);
@@ -215,7 +225,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         modified_on_date = sdf.format(todayDate);
 
 
-        SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss",Locale.ENGLISH);
         Date todayDate3 = new Date();
 
 
@@ -248,21 +258,16 @@ public class EditPersonalInfo extends AppCompatActivity {
             } else {
 
                 editdob.setText(strDob);
-
-
             }
-
-            if(bannerClass == null){
-                bannerClass=new BannerClass(getApplicationContext());
+            if (bannerClass == null) {
+                bannerClass = new BannerClass(getApplicationContext());
             }
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
-            bannerimgNames= bannerClass.getImageName();
-           // Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1).toString());
-
+            bannerimgNames = bannerClass.getImageName();
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
             if (sqlController != null) {
                 sqlController.close();
@@ -346,7 +351,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         //set Language value to  spinner
@@ -371,7 +376,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -389,33 +394,41 @@ public class EditPersonalInfo extends AppCompatActivity {
         setUpSpinner();
 
         String[] some_array = getResources().getStringArray(R.array.states);
-         ArrayList<String> _stateList=new ArrayList<>();
-        for(String  i:some_array){
-            System.out.println(i);
-            _stateList.add(i);
-        }
-        if(strState!= null) {
+        ArrayList<String> _stateList = new ArrayList<>();
+        Collections.addAll(_stateList, some_array);
+        if (strState != null) {
             int postion = getCategoryPos(_stateList, strState);
             stateSpinner.setSelection(postion);
         }
 
-        String[] phTypeArray=getResources().getStringArray(R.array.phType_group);
-        ArrayList<String> _phTypeList=new ArrayList<>();
-        for(String  i:phTypeArray){
-            System.out.println(i);
-            _phTypeList.add(i);
-        }
-        if(strAlternatephtype != null) {
+        String[] phTypeArray = getResources().getStringArray(R.array.phType_group);
+        ArrayList<String> _phTypeList = new ArrayList<>();
+        Collections.addAll(_phTypeList, phTypeArray);//adding all elemnts into list from array
+        if (strAlternatephtype != null) {
             int postion = getCategoryPos(_phTypeList, strAlternatephtype);
             phoneTypeSpinner2.setSelection(postion);
         }
 
-        if(strPhoneType != null) {
+        if (strPhoneType != null) {
             int postion = getCategoryPos(_phTypeList, strPhoneType);
             phType.setSelection(postion);
         }
 
+        /*String[] isd_codearray = getResources().getStringArray(R.array.isd_code);
+        ArrayList<String> _isdList = new ArrayList<>();
+        for (String i : isd_codearray) {
+            //System.out.println(i);
+            _isdList.add(i);
+        }
+        if (strIsd_code != null) {
+            int postion = getCategoryPos(_isdList, strIsd_code);
+            isd_code.setSelection(postion);
+        }
 
+        if (strAlternateIsd_code != null) {
+            int postion = getCategoryPos(_isdList, strAlternateIsd_code);
+            isd_code2.setSelection(postion);
+        }*/
 
         // Log.e("States ", "" + some_array + " "+_categories.size()+"  position "+ getCategoryPos(_categories,"West Bengal"));
 
@@ -457,6 +470,18 @@ public class EditPersonalInfo extends AppCompatActivity {
 
             }
         });
+
+        Button resetdobage = (Button) findViewById(R.id.resetdobage);
+
+        resetdobage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                editage.setEnabled(true);
+                editage.setText("");
+                editdob.setText("");
+            }
+        });
         RadioGroup gndrbutton = (RadioGroup) findViewById(R.id.radioGender);
 
         sex = "Male";//set Daefault gender value to Male if not selected any other value to prevent null value. 14-12-2016
@@ -467,20 +492,16 @@ public class EditPersonalInfo extends AppCompatActivity {
                 switch (checkedId) {
                     case R.id.radioMale:
                         sex = "Male";
-                        // Toast.makeText(getApplicationContext(), "Male RadioButton checked", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.radioFemale:
                         sex = "Female";
-                        // Toast.makeText(getApplicationContext(), "FeMale RadioButton checked", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.radioOther:
                         sex = "Other";
-                        // Toast.makeText(getApplicationContext(), "Other RadioButton checked", Toast.LENGTH_SHORT).show();
                         break;
 
                     case R.id.radioNa:
                         sex = "NA";
-                        //Toast.makeText(getApplicationContext(), "Na RadioButton checked", Toast.LENGTH_SHORT).show();
                         break;
                     default:
                         break;
@@ -495,15 +516,12 @@ public class EditPersonalInfo extends AppCompatActivity {
                 switch (checkedId) {
                     case R.id.radioEng:
                         selectedLanguage = "English";
-                        // Toast.makeText(getApplicationContext(), "English RadioButton checked" + selectedLanguage, Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.radioHin:
                         selectedLanguage = "Hindi";
-                        //Toast.makeText(getApplicationContext(), "Hindi RadioButton checked" + selectedLanguage, Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.radioBen:
                         selectedLanguage = "Bengali";
-                        // Toast.makeText(getApplicationContext(), "Bengali RadioButton checked" + selectedLanguage, Toast.LENGTH_SHORT).show();
                         break;
 
 
@@ -540,8 +558,6 @@ public class EditPersonalInfo extends AppCompatActivity {
 
 
                 File image = new File(imagesFolder, imageName);
-                //  boolean deleted = image.delete();
-                // Log.e("bool",""+deleted);
 
                 uriSavedImage = Uri.fromFile(image);
                 imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
@@ -604,7 +620,6 @@ public class EditPersonalInfo extends AppCompatActivity {
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // frameLayout.setVisibility(View.VISIBLE);
 
 //dbController.updatePatientPersonalInfo(strId,strFirstName,strMiddleName, strLastName,strgender,strDob,strAge,strPhone,strLanguage);
                 String editfname = editfirstname.getText().toString();
@@ -613,7 +628,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 String editAge = editage.getText().toString().trim();
                 String editPno = editmobile_no.getText().toString();
                 strdateob = editdob.getText().toString();
-                String editAltrntNumber=alternatemobile_no.getText().toString();
+                String editAltrntNumber = alternatemobile_no.getText().toString();
 
                 String strAddress = edtAddress.getText().toString().trim();
                 String strCity = edtCity.getText().toString().trim();
@@ -629,7 +644,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                         age = Integer.parseInt(editAge);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration Page : " + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration Page : " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                     }
                 }
                 //   editAge = AppController.removeLeadingZeroes(editAge);
@@ -662,7 +677,13 @@ public class EditPersonalInfo extends AppCompatActivity {
                     editage.setError("Please enter Age");
                     return;
                 }
-
+                Boolean valuenew = appController.PhoneNumberValidation(editPno);
+                //  Log.e("value", "  "+value);
+                if (!valuenew) {
+                    editmobile_no.setError("Enter Valid Mobile Number");
+                    // Toast.makeText(getApplicationContext(), "Mobile Number should be 10 digits", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 if (TextUtils.isEmpty(editPno)) {
                     editmobile_no.setError("Please enter Mobile Number");
                     return;
@@ -672,11 +693,6 @@ public class EditPersonalInfo extends AppCompatActivity {
                     return;
                 }
 
-                /*if (editAltrntNumber.length() < 10) {
-                    alternatemobile_no.setError("Mobile Number should be 10 digits");
-                    return;
-                }*/
-
                 if (selectedLanguage != null && selectedLanguage.length() > 0) {
 
                     Log.e("tang1", "" + strLanguage);
@@ -684,20 +700,26 @@ public class EditPersonalInfo extends AppCompatActivity {
                     strLanguage = selectedLanguage;
 
                 }
-               /* int selectedId = radioSexGroup.getCheckedRadioButtonId();
-                radioSexButton = (RadioButton) findViewById(selectedId);
-                String sex = radioSexButton.getText().toString();*/
+                Boolean valuenew2 = appController.PhoneNumberValidation(editAltrntNumber);
+                //  Log.e("value", "  "+value);
+                if (!valuenew2) {
+                    alternatemobile_no.setError("Enter Valid Mobile Number");
+                    // Toast.makeText(getApplicationContext(), "Mobile Number should be 10 digits", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                String strUid = uid.getText().toString();
+
                 String modified_by = docId;
                 String action = "modified";
                 String flag = "0";
-                //dbController.updatePatientPersonalInfo(strId,"Ashish","G", "Umredkar",strgender,strDob,"28","9695863874",strLanguage);
                 try {
                     if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
 
-                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState,selectedPhoneType,selectedPhoneTypealternate_no,editAltrntNumber);
+                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType);
                         // Log.e("kt", "1");
                     } else {
-                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState,selectedPhoneType,selectedPhoneTypealternate_no,editAltrntNumber);
+                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType);
                         //Log.e("bt", "2");
                     }
                     Toast.makeText(getApplicationContext(), "Record Updated", Toast.LENGTH_LONG).show();
@@ -705,7 +727,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 } finally {
                     if (dbController != null) {
                         dbController.close();
@@ -714,8 +736,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         });
 
-
-        setupAnimation();
+         setupAnimation();
     }
 
 
@@ -729,9 +750,9 @@ public class EditPersonalInfo extends AppCompatActivity {
         editlasttname.setThreshold(1);
         editlasttname.setAdapter(lastnamespin);
         ///////////////////////////////////////////////
-         stateSpinner = (Spinner) findViewById(R.id.stateSpinner);
+        stateSpinner = (Spinner) findViewById(R.id.stateSpinner);
         //stateSpinner.setOnItemSelectedListener(EditPatientUpdate.this);
-       // stateSpinner.setPrompt("Select State");
+        // stateSpinner.setPrompt("Select State");
 
         // Creating adapter for spinner
         ArrayAdapter<CharSequence> stateAdapter = ArrayAdapter
@@ -750,7 +771,6 @@ public class EditPersonalInfo extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                Log.v("item", (String) parent.getItemAtPosition(position));
 
                 selectedState = (String) parent.getItemAtPosition(position);
 
@@ -758,9 +778,72 @@ public class EditPersonalInfo extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // TODO Auto-generated method stub
             }
         });
+
+       /////////////////////////////////////////////////////
+         isd_code = (Spinner) findViewById(R.id.isd_code);
+        isd_code.setPrompt("Select Type");
+
+        // Creating adapter for spinner
+        ArrayAdapter<CharSequence> isd_codeTypeAdapter = ArrayAdapter
+                .createFromResource(EditPersonalInfo.this, R.array.isd_code,
+                        android.R.layout.simple_spinner_item);
+
+        // Drop down layout style - list view with radio button
+        isd_codeTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        isd_code.setAdapter(isd_codeTypeAdapter);
+        isd_code.setSelection(position1);
+
+        isd_code.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                selectedIsd_codeType = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+/////////////////////////////////////////////////////
+        Spinner isd_code2=(Spinner)findViewById(R.id.isd_code2);
+        isd_code2.setPrompt("Select Type");
+
+        // Creating adapter for spinner
+        ArrayAdapter<CharSequence> isd_codeTypeAdapter2 = ArrayAdapter
+                .createFromResource(EditPersonalInfo.this, R.array.isd_code,
+                        android.R.layout.simple_spinner_item);
+
+        // Drop down layout style - list view with radio button
+        isd_codeTypeAdapter2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        isd_code2.setAdapter(isd_codeTypeAdapter);
+        isd_code2.setSelection(position1);
+
+        isd_code2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                //   Log.v("item", (String) parent.getItemAtPosition(position));
+
+                selectedAlternateNoIsd_codeType = (String) parent.getItemAtPosition(position);
+                // Toast.makeText(RegistrationActivityNew.this, "selected State is:" + selectedState, Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
+
 
     }
 
@@ -829,7 +912,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 
@@ -845,12 +928,10 @@ public class EditPersonalInfo extends AppCompatActivity {
 
 
             }
-
-
             //  patientImage.setImageBitmap(bitmap);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
     }
@@ -902,10 +983,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         try {
             int n = r.nextInt(bannerimgNames.size());
 
-            // final String url = getString(imageArray[n]);
-            //  backChangingImages.setImageResource(imageArray[n]);
             final String url = bannerimgNames.get(n);
-            Log.e("nUrl", "" + n + "" + url);
 
             BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
             backChangingImages.setImageDrawable(d);
@@ -913,7 +991,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             backChangingImages.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(EditPersonalInfo.this, "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(EditPersonalInfo.this, "Image Clicked" + url, Toast.LENGTH_SHORT).show();
 
                     String action = "clicked";
 
@@ -925,7 +1003,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             });
             String action = "display";
             appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -968,11 +1046,11 @@ public class EditPersonalInfo extends AppCompatActivity {
         if (appController != null) {
             appController = null;
         }
-        if(bannerClass != null){
-            bannerClass=null;
+        if (bannerClass != null) {
+            bannerClass = null;
         }
-        doctor_membership_number=null;
-        bannerimgNames=null;
+        doctor_membership_number = null;
+        bannerimgNames = null;
         cleanResources();
         System.gc();
 
@@ -1001,7 +1079,6 @@ public class EditPersonalInfo extends AppCompatActivity {
         bitmap = null;
         strdateob = null;
         radioSexGroup = null;
-        RadioButton radioSexButton = null;
         sex = null;
         modified_on_date = null;
         docId = null;
@@ -1014,6 +1091,24 @@ public class EditPersonalInfo extends AppCompatActivity {
         edtCity = null;
         edtDistrict = null;
         edtPin = null;
+        selectedAlternateNoIsd_codeType = null;
+        selectedIsd_codeType = null;
+        uid = null;
+        stateSpinner = null;
+        phoneTypeSpinner2 = null;
+        selectedUidType = null;
+        selectedPhoneTypealternate_no = null;
+        alternatemobile_no = null;
+        strIsd_code = null;
+        strAlternateIsd_code = null;
+        isd_code = null;
+        Spinner isd_code2 = null;
+        backChangingImages=null;
+        mLastNameList=null;
+        phType=null;
+
+        fromWhere=null;
+        selectedPhoneType=null;
     }
 
 
@@ -1042,8 +1137,6 @@ public class EditPersonalInfo extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
-                Log.v("item", (String) parent.getItemAtPosition(position));
-
                 selectedPhoneType = (String) parent.getItemAtPosition(position);
 
             }
@@ -1053,7 +1146,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 // TODO Auto-generated method stub
             }
         });
-        phoneTypeSpinner2=(Spinner)findViewById(R.id.phoneTypeSpinner2);
+        phoneTypeSpinner2 = (Spinner) findViewById(R.id.phoneTypeSpinner2);
         phoneTypeSpinner2.setAdapter(dataAdapter);
         phoneTypeSpinner2.setSelection(position);
 
@@ -1062,7 +1155,6 @@ public class EditPersonalInfo extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                Log.v("item", (String) parent.getItemAtPosition(position));
 
                 selectedPhoneTypealternate_no = (String) parent.getItemAtPosition(position);
 
@@ -1074,28 +1166,57 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         });
 
+////////////////////////////////////////////////////////////////////////////////////
+        Spinner uidType = (Spinner) findViewById(R.id.uidtype);
+        uidType.setPrompt("Select Type");
 
+        // Creating adapter for spinner
+        ArrayAdapter<CharSequence> uidTypeAdapter = ArrayAdapter
+                .createFromResource(EditPersonalInfo.this, R.array.uid_group,
+                        android.R.layout.simple_spinner_item);
+
+        // Drop down layout style - list view with radio button
+        uidTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        uidType.setAdapter(uidTypeAdapter);
+        uidType.setSelection(position1);
+
+        uidType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+
+                selectedUidType = (String) parent.getItemAtPosition(position);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
     }
+
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)
-    {
-        if ((keyCode == KeyEvent.KEYCODE_BACK))
-        {
-           finish();
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+            finish();
         }
         return super.onKeyDown(keyCode, event);
     }
+
     //work like default android back button
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
             onBackPressed();
-             finish();
+            finish();
             return true;
         }
         return false;
     }
-   private int getCategoryPos( ArrayList<String> _categories, String category) {
+
+    private int getCategoryPos(ArrayList<String> _categories, String category) {
         return _categories.indexOf(category);
     }
 }

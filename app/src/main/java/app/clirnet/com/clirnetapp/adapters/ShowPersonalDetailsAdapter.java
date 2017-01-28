@@ -51,7 +51,6 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
         appController=new AppController();
         String follow_up_date = patientList.get(position).getFollowUpDate();
 
-
         try {
             if (follow_up_date == null) {
                 holder.tv_fod.setText("--");
@@ -64,24 +63,17 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
 
 
         holder.tv_visit_date.setText(model.getVisit_date());
+        String strailment=model.getAilments();
+        if(strailment ==  null || strailment.length()== 0 || strailment.equals("") && model.getClinicalNotes().length()> 0 && model.getSymptoms().length()>0){
+            holder.tv_ailment.setVisibility(View.GONE);
+        }else {
 
-        holder.tv_ailment.setText(model.getAilments());
+            holder.tv_ailment.setText(strailment);
+        }
 
         String actFod = model.getActualFollowupDate();
-        /*try {
-            if (actFod == null || actFod.equals("0000-00-00") || actFod.equals("30-11-0002")) {
-                holder.tv_fod.setText("--");
-            } else {
-                holder.tv_fod.setText(follow_up_date);
-            }
 
-        }  catch(Exception e){
-            e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Addpatient update Adapter"+e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
-        }*/
-
-        if (actFod.equals("30-11-0002")||actFod == null || actFod.equals("0000-00-00")) {
-
+        if (actFod.equals("30-11-0002") || actFod.equals("0000-00-00")|| actFod.equals("")) {
 
             holder.tv_fod.setText("--");
 
@@ -110,7 +102,6 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
             holder.linearlayoutDiagnosis.setVisibility(View.GONE);
         }
 
-
         try {
             final String imgPath = patientList.get(position).getPres_img();
             if (!TextUtils.isEmpty(imgPath) && imgPath != null) {
@@ -125,8 +116,6 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
                         mContext.startActivity(i);
                     }
                 });
-
-
             }else{
                 holder.imgText.setText("No Prescription Attached");
             }

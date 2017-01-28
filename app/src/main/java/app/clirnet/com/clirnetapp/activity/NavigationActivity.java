@@ -12,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -42,7 +41,7 @@ public class NavigationActivity extends AppCompatActivity
     private FragmentManager fragmentManager;
 
 
-    private static final String msg = "Android : ";
+    //private  String msg = "Android : ";
     private SQLiteHandler dbController;
     private SQLController sqlController;
 
@@ -50,7 +49,7 @@ public class NavigationActivity extends AppCompatActivity
     private String docName;
     private String emailId;
     private AppController appController;
-    private boolean idle = true;
+
 
 
     @Override
@@ -211,7 +210,7 @@ public class NavigationActivity extends AppCompatActivity
 
         // Insert the fragment by replacing any existing fragment
         fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+               fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
         // Highlight the selected item, update the title, and close the drawer
         item.setChecked(true);
@@ -244,21 +243,21 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(msg, "The onResume() event");
+      //  Log.d(msg, "The onResume() event");
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(msg, "The onPause() event");
+      //  Log.d(msg, "The onPause() event");
 
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(msg, "The onStop() event");
+      //  Log.d(msg, "The onStop() event");
 
         System.gc();
     }
@@ -266,7 +265,7 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(msg, "The onDestroy() event");
+      //  Log.d(msg, "The onDestroy() event");
         // session.setLogin(false);
         //Close the all database connection opened here 31/10/2008 By. Ashish
         if (sqlController != null) {

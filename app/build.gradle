@@ -53,4 +53,5 @@ dependencies {
         exclude module: "httpclient"
     }
     compile 'com.github.delight-im:Android-AdvancedWebView:v3.0.0'
+    debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
 }

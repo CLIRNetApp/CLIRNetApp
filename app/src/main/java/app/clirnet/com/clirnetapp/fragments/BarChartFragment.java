@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,27 +16,18 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.formatter.LargeValueFormatter;
-import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.reports.GenderWiseDataModel;
 
-public class BarChartFragment extends android.support.v4.app.Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-
-
-    // TODO: Rename and change types of parameters
+public class BarChartFragment extends Fragment {
 
     private String mFromDate;
     private String mToDate;
@@ -47,8 +39,6 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
     private BarEntry v2e1;
     private ArrayList<String> ageBoundlis;
     private BarChart chart;
-    private ArrayList<String> date;
-    private List<Integer> male;
     private AppController appController;
 
 
@@ -70,7 +60,6 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Typeface mTfRegular = Typeface.createFromAsset(getContext().getAssets(), "OpenSans-Regular.ttf");
     }
 
     @Override
@@ -91,11 +80,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
             appController = new AppController();
         }
 
-        //Marker is working bt hide it,we dont want this functionality right now Dt-30-11-2016 By.Ashish
-       /* MyMarkerView mv = new MyMarkerView(getContext(), R.layout.custom_marker_view);
-        mv.setGravity(RelativeLayout.CENTER_IN_PARENT);
-        // Set the marker to the chart
-        chart.setMarkerView(mv);*/
+
 
         Utils.init(getResources());
         Utils.init(getContext());
@@ -105,26 +90,6 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
 
         //allow to set value of bar to top
         chart.setDrawValueAboveBar(true);
-
-        //  holder.chart.setHighlightFullBarEnabled(false);
-
-        // change the position of the y-labels
-
-
-
-        /*XAxis xLabels = chart.getXAxis();
-        xLabels.setPosition(XAxis.XAxisPosition.BOTTOM);// this will decide how to set the x axis value and where
-        //todo uncomment this to test for x axis value
-        xLabels.setTextSize(12f);
-        xLabels.setTextColor(Color.WHITE);
-
-        //  xLabels.setAxisMinimum(05f);
-        //  xLabels.setAxisMinimum(75f);
-
-        // xLabels.setGranularity(1f);
-        //  xLabels.setCenterAxisLabels(true);//this will set the x values to center
-        xLabels.setTypeface(mTfRegular);
-        xLabels.setValueFormatter(new MyValueFormatter());*/
 
         chart.invalidate();
 
@@ -155,8 +120,6 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
                     int fCount = Integer.parseInt(gd.get(im).getfCount());
                     String ageBound = gd.get(im).getAgeBound();
 
-                    // listSet.add(mcount);
-                    //listSetAgeBound.add(ageBound);
 
                     v1e1 = new BarEntry(mcount, im);
                     v2e1 = new BarEntry(fCount, im);
@@ -166,10 +129,9 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
                     listSetAgeBound.add(ageBound);
 
 
-                   // Log.e("Records789", " " + mcount + "-" + fCount + " - " + ageBound);
 
                 }
-                //setDataToLayout();
+
             }
             Utils.init(getResources());
             Utils.init(getContext());
@@ -232,30 +194,9 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
             e.printStackTrace();
         }
 
-
-        chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
-            @Override
-            public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
-                if (e != null) {
-                    String name = chart.getBarData().getXVals().get(e.getXIndex());
-                    int val = (int) e.getVal();
-                    //  Toast.makeText(getContext(),"Value is "+val,Toast.LENGTH_LONG).show();
-
-                    /*Toast  toast = Toast.makeText(getContext().getApplicationContext(), ""+val +" Patient", Toast.LENGTH_LONG);
-                    toast.setGravity(Gravity.CENTER, 0, 100);
-                    toast.show();*/
-                }
-            }
-
-            @Override
-            public void onNothingSelected() {
-
-            }
-        });
     }
 
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -311,7 +252,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
+
         void onFragmentInteraction(Uri uri);
     }
 

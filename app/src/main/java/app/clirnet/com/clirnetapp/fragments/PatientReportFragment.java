@@ -33,6 +33,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.adapters.ChartDataAdapter;
@@ -70,7 +71,7 @@ public class PatientReportFragment extends Fragment {
 
     public PatientReportFragment() {
         // Required empty public constructor
-        this.setHasOptionsMenu(true);
+        setHasOptionsMenu(true);
     }
 
 
@@ -129,9 +130,6 @@ public class PatientReportFragment extends Fragment {
         FragmentManager fragmentManager2 = getChildFragmentManager();
         fragmentManager2.beginTransaction().replace(R.id.flContent1, fragment2).commit();
 
-
-
-
         return view;
     }
 
@@ -166,8 +164,8 @@ public class PatientReportFragment extends Fragment {
                 }
             }
 
-            DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-            DateFormat format1 = new SimpleDateFormat("dd-MM-yyyy");
+            DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+            DateFormat format1 = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
             newdate = new LinkedList<>();
             List<String> newcount = new LinkedList<>();
             try {
@@ -191,8 +189,8 @@ public class PatientReportFragment extends Fragment {
 //here we are checking if date is present in dateList or not which came from db if not we r adding customly date and count which is 0. 29/11-2016 By.Ashish
                 for (Date date1 = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date1 = start.getTime()) {
 
-                    Format formatter = new SimpleDateFormat("dd-MM-yyyy");
-                    SimpleDateFormat   sdf = new SimpleDateFormat("dd-MM");
+                    Format formatter = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+                    SimpleDateFormat   sdf = new SimpleDateFormat("dd-MM",Locale.ENGLISH);
                     Date date;
                     String s = formatter.format(date1);
 
@@ -201,8 +199,8 @@ public class PatientReportFragment extends Fragment {
                         String countval =nocountsperday.get(getindex);
 
                         date =sdf.parse(s);
-                        System.out.println(date);
-                        System.out.println(sdf.format(date));
+                        //System.out.println(date);
+                       // System.out.println(sdf.format(date));
                        // Log.e("sdf.format(date)", "" + sdf.format(date));
                         String convertedDate=sdf.format(date);
                         newdate.add(convertedDate);
@@ -210,8 +208,8 @@ public class PatientReportFragment extends Fragment {
 
                     } else {
                         date =sdf.parse(s);
-                        System.out.println(date);
-                        System.out.println(sdf.format(date));
+                      //  System.out.println(date);
+                       // System.out.println(sdf.format(date));
                        // Log.e("sdf.format(date)", "" + sdf.format(date));
                         String convertedDate=sdf.format(date);
                         newdate.add(convertedDate);
@@ -269,8 +267,7 @@ public class PatientReportFragment extends Fragment {
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1); // add the datasets
 
-      //Sort the dateList Array list dateList wise
-        //sortDate(dateList);
+
 
         // create a data object with the datasets
         LineData data = new LineData(newdate,dataSets);
@@ -297,7 +294,6 @@ public class PatientReportFragment extends Fragment {
         });
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -312,7 +308,9 @@ public class PatientReportFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
+       if(mListener!=null){
+           mListener = null;
+       }
         if(view != null){
             view=null;
         }
@@ -337,7 +335,6 @@ public class PatientReportFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 
