@@ -67,8 +67,7 @@
                     android:layout_height="120dp"
                     android:layout_gravity="start"
                     android:contentDescription="@string/desc"
-                    android:orientation="vertical"
-                    android:src="@drawable/change_imgfive_converted"/>
+                    android:orientation="vertical" />
 
             </LinearLayout>
 

@@ -16,14 +16,5 @@ public class CallAsynOnce {
         return value;
     }
 
-    public void setValue1(String t) {
-        loginResult = t;
-    }
-
-    public String getValue1() {
-        return loginResult;
-    }
-
-
 
 }

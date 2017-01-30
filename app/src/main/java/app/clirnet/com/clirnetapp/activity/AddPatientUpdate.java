@@ -18,7 +18,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -184,10 +183,10 @@ public class AddPatientUpdate extends AppCompatActivity {
 
 
         strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
-        Log.e("photo", "" + strPatientPhoto);
+
         String strName = getIntent().getStringExtra("NAME");
         strPatientId = getIntent().getStringExtra("PatientID");
-        Log.e("patid", "" + strPatientId);
+
         strFirstName = getIntent().getStringExtra("FIRSTTNAME");
         strMiddleName = getIntent().getStringExtra("MIDDLENAME");
         strLastName = getIntent().getStringExtra("LASTNAME");
@@ -966,7 +965,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         if (ailments.length() > 0) {
             ailmentValue = appController.findNumbersAilment(ailments);
-            Log.e("ailmentValue", "" + ailmentValue);
+
             if (ailmentValue) {
                 ailments1.setError("Please Enter Valid ailment");
                 return;
@@ -1015,7 +1014,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             //convert visit date from 2016-11-1 to 2016-11-01
             visit_date = myFormat.format(fromUser.parse(added_on));
             added_on = myFormat.format(fromUser.parse(addedOnDate));
-            Log.e("reformattedStrqq", "" + visit_date);
+
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -1050,7 +1049,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             // final String url = getString(imageArray[n]);
             //  backChangingImages.setImageResource(imageArray[n]);
             final String url = bannerimgNames.get(n);
-            Log.e("nUrl", "" + n + "" + url);
+
 
             BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
             backChangingImages.setImageDrawable(d);
@@ -1078,7 +1077,7 @@ public class AddPatientUpdate extends AppCompatActivity {
     //Image capture code
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("cap_img", "" + CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+
         try {
 //        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -1110,7 +1109,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         try {
 
             String patientImagePath = uriSavedImage.getPath();
-            Log.e("path", "" + patientImagePath);
+
             if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
 
                 setUpGlide(patientImagePath, imageViewprescription);

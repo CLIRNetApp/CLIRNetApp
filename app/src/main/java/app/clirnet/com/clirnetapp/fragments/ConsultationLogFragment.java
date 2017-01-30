@@ -425,9 +425,6 @@ public class ConsultationLogFragment extends Fragment {
     }
 
 
-    // TODO: Rename method, update argument and hook method into UI event
-
-
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -485,7 +482,6 @@ public class ConsultationLogFragment extends Fragment {
 
     @Override
     public void onPause() {
-        Log.e("DEBUG", "OnPause of HomeFragment");
         InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         inputMethodManager.hideSoftInputFromWindow(date.getWindowToken(), 0);
@@ -534,8 +530,6 @@ public class ConsultationLogFragment extends Fragment {
         filterfodList=null;
         filterVistDateList=null;
 
-
-        Log.e("onDetach", "onDetach Consultation Fragment");
     }
 }
 

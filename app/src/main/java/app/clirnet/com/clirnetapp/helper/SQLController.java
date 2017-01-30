@@ -36,7 +36,7 @@ public class SQLController {
             dbHelper = new SQLiteHandler(ourcontext);
             database = dbHelper.getWritableDatabase();
         } else {
-            Log.e("DB Opended", "Database is allready opened");
+            //Log.e("DB Opended", "Database is allready opened");
         }
 
         return this;
@@ -52,22 +52,7 @@ public class SQLController {
     }
 
 
-    //method to fetch user name and password
-    public Cursor getUserLoginRecords() throws ClirNetAppException {
 
-        String[] cols = {SQLiteHandler.KEY_NAME, SQLiteHandler.KEY_PASSWORD};
-        Cursor cursor = null;
-        SQLiteDatabase database1 = null;
-
-        try {
-            database1 = dbHelper.getReadableDatabase();
-            cursor = database1.query(SQLiteHandler.TABLE_USER, cols, null,
-                    null, null, null, null);
-        } catch (Exception e) {
-            throw new ClirNetAppException("Something went wrong");
-        }
-        return cursor;
-    }
 
     //method to fetch user name and password
     public ArrayList<LoginModel> getUserLoginRecrodsNew() throws ClirNetAppException {
@@ -89,7 +74,6 @@ public class SQLController {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            //TODO Create cutom exception and throw from here
             throw new ClirNetAppException("Something went wrong while getting login records");
         } finally {
             //create method & pass cursor & db1 ref.
@@ -429,8 +413,8 @@ public class SQLController {
 
             new Counts().setCountQuery(countQuery);
 
-            Log.e("selectQuery", "" + selectQuery);
-            Log.e("countQueryQuery", "" + countQuery);
+          //  Log.e("selectQuery", "" + selectQuery);
+           // Log.e("countQueryQuery", "" + countQuery);
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
 
@@ -485,98 +469,6 @@ public class SQLController {
     }
 
 
-    /*//used to fileter data from Patient history module
-    public ArrayList<RegistrationModel> getFilterDatanew(String fname, String lname, String gender, String phoneno, String age) throws ClirNetAppException {
-        SQLiteDatabase db1 = null;
-        Cursor cursor = null;
-        Cursor cursor1 = null;
-        ArrayList<RegistrationModel> pList = new ArrayList<>();
-        Set<RegistrationModel> pList1 = new LinkedHashSet<>();
-        try {
-            open();
-            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%' and p.gender like '" + gender + "' and p.phonenumber like '%" + phoneno + "%' and p.age like '%" + age + "%'  order by ph.key_visit_id desc limit 30";
-            //String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%' and ( p.gender like '%" + male + "%' or p.gender like '%" + female + "%' and p.gender like '%" + other + "%' and p.gender like '%" + na + "%' )and p.phonenumber like '%" + phoneno + "%' and p.age like '%" + age + "%'  order by ph.key_visit_id desc limit 200;";
-            db1 = dbHelper.getReadableDatabase();
-            cursor = db1.rawQuery(selectQuery, null);
-
-            int count = cursor.getCount();
-            // Log.d("count", "" + count);
-
-
-            if (cursor.moveToFirst()) {
-                do {
-                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
-                            cursor.getString(7), cursor.getString(8),
-                            cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
-                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20));
-
-                    pList1.add(user);
-
-                } while (cursor.moveToNext());
-
-            }
-            pList.addAll(pList1);
-        } catch (Exception e) {
-            throw new ClirNetAppException("Something went wrong");
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-            if (db1 != null) {
-                db1.close();
-            }
-        }
-        ArrayList<RegistrationModel> list = new ArrayList<>(pList);
-        return list;
-    }*/
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//this will search for user entered phone number from Patient Central Page
-    public ArrayList<RegistrationModel> getPatientListForPhoneNumberFilter() throws ClirNetAppException {
-
-        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
-        SQLiteDatabase db1 = null;
-        Cursor cursor = null;
-        try {
-            String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient p , patient_history ph where ph.patient_id=p.patient_id  group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc  ";
-
-            db1 = dbHelper.getReadableDatabase();
-            cursor = db1.rawQuery(selectQuery, null);
-            // Log.d("cursor", "" + cursor.getCount());
-
-
-            int count = cursor.getCount();
-            //  Log.d("count", "" + count);
-            // looping through all rows and adding to list
-            // looping through all rows and adding to list
-            if (cursor.moveToFirst()) {
-                do {
-
-                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
-                            cursor.getString(7), cursor.getString(8),
-                            cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
-                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21));
-
-                    hotelList.add(user);
-
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            throw new ClirNetAppException("Something went wrong while getting getPatientListForPhoneNumberFilter");
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-            if (db1 != null) {
-                db1.close();
-            }
-        }
-        return hotelList;
-
-    }
-
-
     public ArrayList<RegistrationModel> getPatientListForPhoneNumberFilter(String number, int page, int limit) throws ClirNetAppException {
 
         ArrayList<RegistrationModel> hotelList = new ArrayList<>();
@@ -593,7 +485,7 @@ public class SQLController {
 
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-            Log.d("selectQuery", "" + selectQuery);
+            //Log.d("selectQuery", "" + selectQuery);
 
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
@@ -630,12 +522,12 @@ public class SQLController {
         int numRows = 0;
         try {
             String countQuery = new Counts().getCountQueryforHomeFragmentNoFilter();
-            Log.d("count", "" + countQuery);
+           // Log.d("count", "" + countQuery);
 
             if (countQuery.length() > 1) {
 
                 numRows = (int) DatabaseUtils.longForQuery(db1, countQuery, null);
-                Log.d("count", "" + countQuery + "  " + numRows);
+               /// Log.d("count", "" + countQuery + "  " + numRows);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -659,7 +551,7 @@ public class SQLController {
             String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,ph.symptoms,ph.diagnosis  from patient_history  ph , patient p where p.patient_id=" + patient_id + " and  p.patient_id=ph.patient_id order by ph.key_visit_id desc ";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-            Log.d("cursor", "" + cursor.getCount());
+            //Log.d("cursor", "" + cursor.getCount());
 
             // looping through all rows and adding to list
 
@@ -701,7 +593,7 @@ public class SQLController {
             String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms, ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd from patient_history  ph, patient p where p.patient_id=" + patient_id + " and  p.patient_id=ph.patient_id order by ph.key_visit_id desc ";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-            Log.d("cursor", "" + cursor.getCount());
+           // Log.d("cursor", "" + cursor.getCount());
 
             // looping through all rows and adding to list
 
@@ -737,7 +629,7 @@ public class SQLController {
 
     ///////////////////////////////////////////////////////////////
     //get all patients which is yet to send to server
-    //get all patients which is yet to send to server
+
     public ArrayList<RegistrationModel> getPatientIdsFalg0() throws ClirNetAppException {
 
         ArrayList<RegistrationModel> idList = new ArrayList<>();
@@ -820,7 +712,6 @@ public class SQLController {
 
             cursor = db1.rawQuery(query, null);
 
-
             if (cursor.moveToFirst()) {
                 returnString = cursor.getString(cursor.getColumnIndex("doc_mem_id"));
             }
@@ -837,37 +728,6 @@ public class SQLController {
         return returnString;
     }
 
-    public String getUserMailId() throws ClirNetAppException {
-        SQLiteDatabase db1 = null;
-        Cursor cursor = null;
-        String returnString = ""; // Your default if none is found
-        try {
-            db1 = dbHelper.getReadableDatabase();
-            //   stmt = db1.compileStatement("select doctor_id from doctor_perInfo order by doctor_id desc limit 1");
-
-            String query = "select name from user order by id desc limit 1";
-
-
-            cursor = db1.rawQuery(query, null);
-
-
-            if (cursor.moveToFirst()) {
-                returnString = cursor.getString(cursor.getColumnIndex("doctor_id"));
-            }
-        } catch (Exception e) {
-            throw new ClirNetAppException("Something went wrong while getting getUserMailId");
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-            if (db1 != null) {
-                db1.close();
-            }
-        }
-        return returnString;
-
-
-    }
 
     //get doctor id from db
     public String getDoctorId() throws ClirNetAppException {
@@ -944,15 +804,16 @@ public class SQLController {
     public String getPhoneNumber() throws ClirNetAppException {
         Cursor cursor = null;
         String returnString = ""; // Your default if none is found
-        database = dbHelper.getReadableDatabase();
+        SQLiteDatabase db1 = null;
+
 
         try {
-
+            db1 = dbHelper.getReadableDatabase();
             // stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
             String query = "select phonenumber from doctor_perInfo order by phonenumber desc limit 1";
 
 
-            cursor = database.rawQuery(query, null);
+            cursor = db1.rawQuery(query, null);
 
 
             if (cursor.moveToFirst()) {
@@ -967,8 +828,8 @@ public class SQLController {
                 //close statment
                 cursor.close();
             }
-            if (database != null) {
-                database.close();
+            if (db1 != null) {
+                db1.close();
             }
 
         }
@@ -982,7 +843,7 @@ public class SQLController {
 
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
-        String returnString = ""; // Your default if none is found
+        String returnString = "" ; // Your default if none is found
         try {
             db1 = dbHelper.getReadableDatabase();
 
@@ -1060,11 +921,12 @@ public class SQLController {
     //To validate user from sqlite stored values
     public boolean validateUser(String username, String password, String phoneNumber) throws ClirNetAppException {
 
-        database = dbHelper.getReadableDatabase();
         int count;
         Cursor c = null;
+        SQLiteDatabase db1 = null;
         try {
-            c = database.rawQuery(
+            db1 = dbHelper.getReadableDatabase();
+            c = db1.rawQuery(
                     "SELECT * FROM " + SQLiteHandler.TABLE_USER + " WHERE ("
                             + SQLiteHandler.KEY_NAME + "='" + username + "'OR " + SQLiteHandler.PHONE_NUMBER + "='" + phoneNumber + "' )AND " + SQLiteHandler.KEY_PASSWORD + "='" + password + "'", null);
             count = c.getCount();
@@ -1074,67 +936,16 @@ public class SQLController {
             if (c != null) {
                 c.close();
             }
-            if (database != null) {
-                database.close();
+            if (db1 != null) {
+                db1.close();
             }
-            // todo close db here
+
         }
         return count > 0;
 
     }
 
-    public Cursor getAilmentsListSql() throws ClirNetAppException {
-        SQLiteDatabase db1 = null;
-        String[] cols = {"id", "ailment"};
-        Cursor cursor = null;
-        try {
 
-            db1 = dbHelper.getReadableDatabase();
-            cursor = db1.query("table_MasterAilment", cols, null,
-                    null, null, null, null);
-        } catch (Exception e) {
-            throw new ClirNetAppException("Error while getting records");
-        }
-
-        //	c.close();
-        return cursor;
-    }
-
-    public ArrayList<Counts> countPerDay() throws ClirNetAppException {
-
-        ArrayList<Counts> VisitidList = new ArrayList<>();
-        SQLiteDatabase db1 = null;
-        Cursor cursor = null;
-        try {
-            String selectQuery = "SELECT added_on as date,COUNT(id) as count FROM patient WHERE added_on<  DATE('now','-7 days') GROUP BY added_on ORDER BY id DESC limit 7";
-            db1 = dbHelper.getReadableDatabase();
-            cursor = db1.rawQuery(selectQuery, null);
-
-
-            // looping through all rows and adding to list
-            if (cursor.moveToFirst()) {
-                do {
-
-                    Counts ids = new Counts(cursor.getString(0), cursor.getString(1));
-
-                    VisitidList.add(ids);
-
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            throw new ClirNetAppException("Something went wrong while geting countPerDa");
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-            if (db1 != null) {
-                db1.close();
-            }
-        }
-
-        return VisitidList;
-
-    }
 
     public ArrayList<Counts> countPerDay(String fromdate, String todate) throws ClirNetAppException {
 
@@ -1275,15 +1086,15 @@ public class SQLController {
 
         Cursor cursor = null;
         String returnString = ""; // Your default if none is found
-        database = dbHelper.getReadableDatabase();
+        SQLiteDatabase db1 = null;
 
         try {
-
+            db1 = dbHelper.getReadableDatabase();
             // stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
             String query = "select company_id from doctor_perInfo order by company_id desc limit 1";
 
 
-            cursor = database.rawQuery(query, null);
+            cursor = db1.rawQuery(query, null);
 
 
             if (cursor.moveToFirst()) {
@@ -1300,8 +1111,8 @@ public class SQLController {
                 //close statment
                 cursor.close();
             }
-            if (database != null) {
-                database.close();
+            if (db1 != null) {
+                db1.close();
             }
 
         }
@@ -1657,14 +1468,16 @@ public class SQLController {
 
         Cursor cursor = null;
         String returnString = ""; // Your default if none is found
-        database = dbHelper.getReadableDatabase();
+
+        SQLiteDatabase db1 = null;
 
         try {
+           db1=dbHelper.getReadableDatabase();
             // stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
             String query = "select company_id from company_banners order by company_id desc limit 1";
 
 
-            cursor = database.rawQuery(query, null);
+            cursor = db1.rawQuery(query, null);
 
 
             if (cursor.moveToFirst()) {
@@ -1681,8 +1494,8 @@ public class SQLController {
                 //close statment
                 cursor.close();
             }
-            if (database != null) {
-                database.close();
+            if (db1 != null) {
+                db1.close();
             }
 
         }

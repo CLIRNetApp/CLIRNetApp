@@ -1103,7 +1103,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             patientImagePath = uriSavedImage.getPath();
 
             if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
-                setUpGlide(patientImagePath, imageViewprescription);
+               // setUpGlide(patientImagePath, imageViewprescription);
             }
 
         } catch (NullPointerException e) {

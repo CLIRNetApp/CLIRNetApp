@@ -113,8 +113,7 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
                 holder.imgText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        //  Toast.makeText(mContext,"PATH IS: "+imgPath.trim(),Toast.LENGTH_LONG).show();
-                        //  showDialog(imgPath.trim());
+
                         Intent i = new Intent(mContext, ShowPrescriptionImageActivity.class);
                         i.putExtra("PRESCRIPTIONIMAGE", imgPath);
                         mContext.startActivity(i);

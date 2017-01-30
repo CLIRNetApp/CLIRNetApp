@@ -129,8 +129,6 @@ public class BarChartFragment extends Fragment {
                     female.add(v2e1);
                     listSetAgeBound.add(ageBound);
 
-
-
                 }
 
             }

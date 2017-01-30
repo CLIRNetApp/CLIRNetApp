@@ -54,7 +54,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpinnerListener, MultiSpinner2.MultiSpinnerListener {
 
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
+
 
     private OnFragmentInteractionListener mListener;
     private EditText firstName;
@@ -568,7 +568,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
            // final String url = getString(imageArray[n]);
            //  backChangingImages.setImageResource(imageArray[n]);
            final String url = bannerimgNames.get(n);
-           Log.e("nUrl", "" + n + "" + url);
+           //Log.e("nUrl", "" + n + "" + url);
 
            BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
            backChangingImages.setImageDrawable(d);
@@ -752,7 +752,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         phone_no=null;
         genderSpinner=null;
 
-        Log.e("onDetach", "onDetach Po hISTORY fRAGMENT Fragment");
+       // Log.e("onDetach", "onDetach Po hISTORY fRAGMENT Fragment");
     }
 }
 

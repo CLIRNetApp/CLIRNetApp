@@ -58,7 +58,7 @@ public class FollowUpDateSearchAdapter extends RecyclerView.Adapter<FollowUpDate
 
 
         String fod = model.getVisit_date();
-        Log.e("fod", "" + fod);
+
 
         if (fod == null || fod.equals("0000-00-00") || fod.equals("30-11-0002") || fod.equals("")) {
 
@@ -67,10 +67,6 @@ public class FollowUpDateSearchAdapter extends RecyclerView.Adapter<FollowUpDate
         } else {
             holder.follow_up_date.setText(fod);
         }
-
-
-
-
 
         int posi=position+1;
         String id=""+posi;

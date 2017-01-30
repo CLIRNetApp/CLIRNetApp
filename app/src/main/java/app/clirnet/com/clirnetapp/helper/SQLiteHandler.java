@@ -22,7 +22,7 @@ import org.json.JSONObject;
 
 public class SQLiteHandler extends SQLiteOpenHelper {
 
-    private static final String TAG = "SQLHandler";
+    //private static final String TAG = "SQLHandler";
 
 
     private final Context myContext;
@@ -361,7 +361,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-        Log.d("update", " user data updatedinto sqlite: " + id);
+       // Log.d("update", " user data updatedinto sqlite: " + id);
     }
 
 
@@ -381,7 +381,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.delete(TABLE_PATIENTPERSONALINFO_HIOTORY, null, null);
         db.close();
 
-        Log.d(TAG, "Deleted all user info from sqlite");
+       // Log.d(TAG, "Deleted all user info from sqlite");
     }
 
     //add user login credentails into db
@@ -407,7 +407,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-        Log.d(TAG, "New Login Info into sqlite: " + id);
+       // Log.d(TAG, "New Login Info into sqlite: " + id);
 
 
     }
@@ -457,7 +457,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close(); // Closing database connection
             }
 
-            Log.d("update", " user data updatedinto sqlite: " + id);
+         //   Log.d("update", " user data updatedinto sqlite: " + id);
         }
     }
 
@@ -599,7 +599,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-        Log.d(TAG, "New Login Info into sqlite: " + id);
+       // Log.d(TAG, "New Login Info into sqlite: " + id);
 
 
     }
@@ -659,7 +659,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-        Log.d(TAG, "New patient inserted into sqlite: " + id);
+       // Log.d(TAG, "New patient inserted into sqlite: " + id);
 
 
     }
@@ -716,7 +716,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-        Log.d(TAG, "New patient inserted into sqlite: " + id);
+       // Log.d(TAG, "New patient inserted into sqlite: " + id);
     }
 
     //add patient records from add pateint update page
@@ -770,7 +770,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-        Log.d("update", " user Visit data added into sqlite: " + id);
+      //  Log.d("update", " user Visit data added into sqlite: " + id);
     }
 
     //this will give u a json array of patient records where flag =o
@@ -816,7 +816,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
 
 
-            Log.d("TAG_NAME", resultSet.toString());
+       //     Log.d("TAG_NAME", resultSet.toString());
 
             return resultSet;
 
@@ -859,7 +859,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                 rowObject.put(cursor.getColumnName(i), "");
                             }
                         } catch (Exception e) {
-                            Log.d("TAG_NAME", e.getMessage());
+                          //  Log.d("TAG_NAME", e.getMessage());
                         }
 
                     }
@@ -902,7 +902,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-        Log.d("update", "patient data modified into sqlite: " + id);
+      //  Log.d("update", "patient data modified into sqlite: " + id);
     }
 
     //update the flag once data send to server successfully
@@ -926,7 +926,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-        Log.d("update", "patient data modified into sqlite: " + id);
+      //  Log.d("update", "patient data modified into sqlite: " + id);
     }
 
     //add doctor personal info into db
@@ -964,7 +964,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-        Log.d(TAG, "New doctor personal info inserted into sqlite: " + id);
+      //  Log.d(TAG, "New doctor personal info inserted into sqlite: " + id);
 
 
     }
@@ -988,7 +988,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-        Log.d("addedailemnt", "New patient inserted into sqlite: " + id);
+      //  Log.d("addedailemnt", "New patient inserted into sqlite: " + id);
 
     }
 
@@ -1013,7 +1013,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-        Log.d("addedailemnt", "New ailment inserted into sqlite: " + id);
+      //  Log.d("addedailemnt", "New ailment inserted into sqlite: " + id);
 
 
     }
@@ -1039,7 +1039,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-        Log.d("update", "user password changed: " + id);
+      //  Log.d("update", "user password changed: " + id);
     }
     public void addBannerDisplayData(String doc_id,String membership_id ,String company_id, String banner_id, String banner_folder, String banner_image_url,
                               int  banner_image_type, String module, String is_disabled, String is_deleted,  String added_on,String flag) {
@@ -1080,7 +1080,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-        Log.d("ADDED", " user data ADDED into sqlite: " + id);
+      //  Log.d("ADDED", " user data ADDED into sqlite: " + id);
 
 
     }
@@ -1124,7 +1124,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-        Log.d("ADDED", " user data ADDED into sqlite: " + id);
+       // Log.d("ADDED", " user data ADDED into sqlite: " + id);
 
 
     }
@@ -1186,7 +1186,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-        Log.d("ADDED", " user data ADDED into sqlite: " + id);
+      //  Log.d("ADDED", " user data ADDED into sqlite: " + id);
 
     }
     public void FlagupdatePatientVisit(String flag) {
@@ -1209,7 +1209,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-        Log.d("update", "patient data modified into sqlite: " + id);
+     //   Log.d("update", "patient data modified into sqlite: " + id);
     }
     //update the flag once data send to server successfully
     public void FlagupdatePatientPersonal( String flag) {
@@ -1234,7 +1234,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-        Log.d("update", "patient data modified into sqlite: " + id);
+     //   Log.d("update", "patient data modified into sqlite: " + id);
     }
 
     //this will give u a json array of patient records where flag =o
@@ -1337,7 +1337,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
 
 
-            Log.d("TAG_NAME", resultSet.toString());
+        //    Log.d("TAG_NAME", resultSet.toString());
 
             return resultSet;
 
@@ -1374,7 +1374,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-        Log.d("updated", "banner flag data modified into sqlite: " + id);
+        //Log.d("updated", "banner flag data modified into sqlite: " + id);
     }
 
     //update the flag once data send to server successfully
@@ -1400,7 +1400,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-        Log.d("updated", "banner flag data modified into sqlite: " + id);
+        //Log.d("updated", "banner flag data modified into sqlite: " + id);
     }
 
     public void addAsynctascRun_status(String process,String start_time,String end_time,String update_on) {
@@ -1437,7 +1437,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-        Log.d("ADDED", " user data ADDED into sqlite: " + id);
+       // Log.d("ADDED", " user data ADDED into sqlite: " + id);
 
 
     }
@@ -1465,6 +1465,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             if(cursor != null){
                 cursor.close();
             }
+            //Note  I did not close db connection here bcs we r calling this method from another  whr w r closing db, if we
+            //close connection here it will throw excption that we r try to open allready closed connection  30-1-2017
         }
         return false;
     }

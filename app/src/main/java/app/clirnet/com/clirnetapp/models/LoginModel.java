@@ -70,20 +70,13 @@ public class LoginModel {
         return userName;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
+
 
     public String getPassowrd() {
         return passowrd;
     }
 
-    public void setPassowrd(String passowrd) {
-        this.passowrd = passowrd;
-    }
-    public String getPhoneNo() {
-        return phoneNo;
-    }
+
 
     public LoginModel(String name, String password) {
         this.userName = name;

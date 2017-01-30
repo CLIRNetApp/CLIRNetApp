@@ -163,7 +163,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         String strDistrict = getIntent().getStringExtra("DISTRICT");
         String strPinNo = getIntent().getStringExtra("PIN");
         String strState = getIntent().getStringExtra("STATE");
-        Log.e("STATE", "  " + strState);
+
         fromWhere = getIntent().getStringExtra("FROMWHERE");
         String strAlternatenumber = getIntent().getStringExtra("ALTERNATENUMBER");
 
@@ -248,8 +248,8 @@ public class EditPersonalInfo extends AppCompatActivity {
             docId = sqlController.getDoctorId();
             //   Log.e("docId", "" + docId);
             String sbdob;
+            //if we get date in wrong format
             if (strDob.equals("30-11-0002")) {
-
 
                 sbdob = strDob.replace(strDob, "");
                 editdob.setText(sbdob);
@@ -843,10 +843,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         });
 
-
-
     }
-
 
     private void setLastnameSpinner() {
 
@@ -1119,7 +1116,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         strIsd_code = null;
         strAlternateIsd_code = null;
         isd_code = null;
-        Spinner isd_code2 = null;
+
         backChangingImages=null;
         mLastNameList=null;
         phType=null;
@@ -1160,7 +1157,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // TODO Auto-generated method stub
+
             }
         });
         phoneTypeSpinner2 = (Spinner) findViewById(R.id.phoneTypeSpinner2);
@@ -1179,7 +1176,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-                // TODO Auto-generated method stub
+
             }
         });
 

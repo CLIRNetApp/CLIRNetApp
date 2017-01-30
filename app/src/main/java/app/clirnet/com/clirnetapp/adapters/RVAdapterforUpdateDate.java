@@ -78,7 +78,7 @@ public class RVAdapterforUpdateDate extends RecyclerView.Adapter<RVAdapterforUpd
 
     @Override
     public int getItemCount() {
-        //   return bookList.size();
+
         return patientList.size();
     }
     public class PatientViewHolder extends RecyclerView.ViewHolder {

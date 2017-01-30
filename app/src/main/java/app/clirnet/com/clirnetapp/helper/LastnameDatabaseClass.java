@@ -73,10 +73,6 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
 
             }
         }
-
-
-
-
     }
 
 
@@ -220,8 +216,13 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime()+"" +"/"+"LastNamedatabase"+e);
             throw new ClirNetAppException("Error getting last name");
-
-
+        }finally {
+            if(c!=null){
+                c.close();
+            }
+            if(db1!=null){
+                db1.close();
+            }
         }
 
         return c;
@@ -346,7 +347,6 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     String user=cursor.getString(0);
-                    //  AilmentModel user = new AilmentModel(cursor.getString(0), cursor.getString(1) );
 
                     all_symptomsList.add(user);
 
@@ -354,7 +354,6 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             }
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime() + "" + "/" + "LastNamedatabase getSymptoms" + e);
-            //TODO Create cutom exception and throw from here
             throw new ClirNetAppException("Something went wrong while getting getSymptoms records");
         } finally {
             //create method & pass cursor & db1 ref.
@@ -389,7 +388,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             }
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime() + "" + "/" + "LastNamedatabase getSymptoms" + e);
-            //TODO Create cutom exception and throw from here
+
             throw new ClirNetAppException("Something went wrong while getting getSymptoms records");
         } finally {
             //create method & pass cursor & db1 ref.

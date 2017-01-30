@@ -24,7 +24,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -414,8 +413,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             sqlController1.close();
         }
 
-        //setting list to adapter class
-        // sva = new SearchViewdapter(filteredModelList);
         //To check if there is data or not in arraylist in case of no internet connectivity or no data downloads
         recyclerView.addOnItemTouchListener(new RecyclerTouchListener(getContext().getApplicationContext(), recyclerView, new ItemClickListener() {
 
@@ -446,7 +443,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     e.printStackTrace();
                     appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
-
 
             }
 
@@ -584,11 +580,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         i.putExtra("ISDCODE", registrationModel.getIsd_code());
         i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
-        Log.e("odelM"," "+ registrationModel.getIsd_code()+"   "+registrationModel.getAlternate_isd_code());
+
 
 
         startActivity(i);
-//                        Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
+            //       Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
     }
 
     private void afterDateEditPatientUpdate(int position) {
@@ -971,13 +967,12 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         i.putExtra("ISDCODE", registrationModel.getIsd_code());
         i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
-        Log.e("odelM", " " + registrationModel.getIsd_code() + "   " + registrationModel.getAlternate_isd_code());
+
 
         startActivity(i);
     }
 
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -1360,8 +1355,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 params.put("docId", docId);
                 params.put("patient_visits_count", String.valueOf(patient_visits_count));
                 params.put("patient_details_count", String.valueOf(patient_details_count));
-                System.out.println("patient_details_count" + String.valueOf(patient_details_count));
-                System.out.println("patient_visits_count" + String.valueOf(patient_visits_count));
+
                 return params;
 
             }
@@ -1978,7 +1972,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             }
 
         };
-        //todo need to check the retry code for multiple times
+
         //this will retry the request for 2 times
         int socketTimeout = 30000;//30 seconds - change to what you want
         int retryforTimes = 2;
@@ -2056,7 +2050,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             JSONObject jsonProsolveObject = jsonArray.getJSONObject(i);
 
             String banner_id = jsonProsolveObject.getString("banner_id");
-            Log.e("banner_id",""+banner_id);
+           // Log.e("banner_id",""+banner_id);
 
 
             String company_id = jsonProsolveObject.getString("company_id");

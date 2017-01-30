@@ -34,7 +34,6 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
-    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom, R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest, R.drawable.revituz, R.drawable.suprizon};
 
     private SQLController sqlController;
     private ArrayList<RegistrationModel> patientPersonalData;
@@ -184,7 +183,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
                 bannerClass = new BannerClass(ShowPersonalDetailsActivity.this);
             }
             bannerimgNames = bannerClass.getImageName();
-            Log.e("bannerimgNames", "  " + bannerimgNames.size());
+
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
 
@@ -334,7 +333,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             // final String url = getString(imageArray[n]);
             //  backChangingImages.setImageResource(imageArray[n]);
             final String url = bannerimgNames.get(n);
-            Log.e("nUrl", "" + n + "" + url);
+
 
             BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
             backChangingImages.setImageDrawable(d);
@@ -357,25 +356,12 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Show patient Details" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         }
-       /* Runnable runnable = new Runnable() {
-            int i = 0;
 
-            public void run() {
-                backChangingImages.setImageResource(imageArray[i]);
-                i++;
-                if (i > imageArray.length - 1) {
-                    i = 0;
-                }
-                backChangingImages.postDelayed(this, 10000);  //for interval...
-            }
-        };
-        backChangingImages.postDelayed(runnable, 200); //for initial delay..*/
     }
 
     @Override
     public void onStop() {
         super.onStop();
-
 
         if (backChangingImages != null) {
             // backChangingImages=null;

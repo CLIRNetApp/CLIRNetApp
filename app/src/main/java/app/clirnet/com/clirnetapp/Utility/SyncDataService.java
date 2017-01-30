@@ -102,7 +102,7 @@ public class SyncDataService extends Service {
         //get imei no of user ph
         //TelephonyManager mngr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
-        Log.e("Started", "Service Started" + appController.getDateTimenew());
+       // Log.e("Started", "Service Started" + appController.getDateTimenew());
 
         try {
             sqlController = new SQLController(getApplicationContext());
@@ -131,7 +131,7 @@ public class SyncDataService extends Service {
 
         handler.removeCallbacks(sendUpdatesToUI);
 
-        handler.postDelayed(sendUpdatesToUI, 1000); // 2 min  or 120 second 180000
+        handler.postDelayed(sendUpdatesToUI, 12000); // 2 min  or 120 second 180000
 
     }
 
@@ -141,7 +141,7 @@ public class SyncDataService extends Service {
             try {
 
                 sendDataToServerAsyncTask();
-                Log.e("Started", "Service Started1  " + appController.getDateTimenew());
+               // Log.e("Started", "Service Started1  " + appController.getDateTimenew());
 
             } catch (ClirNetAppException e) {
                 e.printStackTrace();
@@ -165,14 +165,14 @@ public class SyncDataService extends Service {
         bannerDisplayIds_List = sqlController.getBannerDisplaysFalg0();
         bannaerClickedIdsList = sqlController.getBannerClickedFalg0();
 
-        Log.e("patientIds_List", "  " + bannerDisplayIds_List.size() + "     " + bannaerClickedIdsList.size());
+       // Log.e("patientIds_List", "  " + bannerDisplayIds_List.size() + "     " + bannaerClickedIdsList.size());
 
         String bannerDisplayArayString = String.valueOf(dbController.getResultsForBannerDisplay());
 
-        Log.e("bannerDisplayArayString", "  " + bannerDisplayArayString);
+        //Log.e("bannerDisplayArayString", "  " + bannerDisplayArayString);
 
         String bannerClickedArayString = String.valueOf(dbController.getResultsForBannerClicked());
-        Log.e("bannerClickedArayString", "  " + bannerClickedArayString);
+     //   Log.e("bannerClickedArayString", "  " + bannerClickedArayString);
 
         boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
         if (isInternetPresent) {
@@ -181,11 +181,10 @@ public class SyncDataService extends Service {
             if (bannaerClickedIdsList.size() > 0 || bannerDisplayIds_List.size() > 0) {
                 new UploadBannerDataAsyncTask(mUserName, mPassword, getApplicationContext(), bannerDisplayArayString, bannerClickedArayString, doctor_membership_number, docId, bannerDisplayIds_List, bannaerClickedIdsList,start_time);
             }
-            String apiKey = getResources().getString(R.string.apikey);
 
             if (mUserName != null && mPassword != null) {
 
-                getBannersData(mUserName, mPassword, apiKey, doctor_membership_number, company_id);
+                getBannersData(mUserName, mPassword, doctor_membership_number, company_id);
             }
 
             if (patientIds_List.size() != 0 || getPatientVisitIdsList.size() != 0) {
@@ -230,7 +229,7 @@ public class SyncDataService extends Service {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Login Response: " + response);
+                //Log.d(TAG, "Login Response: " + response);
 
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -385,7 +384,7 @@ public class SyncDataService extends Service {
 
     }
 
-    private void getBannersData(final String savedUserName, final String savedUserPassword, final String apiKey, final String docMemId, final String companyid) {
+    private void getBannersData(final String savedUserName, final String savedUserPassword,final String docMemId, final String companyid) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
 
@@ -579,8 +578,7 @@ public class SyncDataService extends Service {
                 File file = getImage("/" + product_imagenm + ".png");
                 String path = file.getAbsolutePath();
                 if (path != null) {
-                    /*b = BitmapFactory.decodeFile(path);
-                    imageView.setImageBitmap(b);*/
+
                     //  Log.e("imageExist","imageExist allready");
                     img_download_status  = "downloaded";
                 }
@@ -594,11 +592,9 @@ public class SyncDataService extends Service {
 
             String download_intislizatio_time = appController.getDateTimenew();
 
-
             bannerClass.addBannerData(banner_id, company_id, brand_name, type, banner_image_url, speciality_name,
                     product_image_url, generic_name, manufactured_by, marketed_by, group_name, link_to_page, call_me, meet_me,
-                    priority, status, start_time, end_time,
-                    clinical_trial_source, clinical_trial_identifier, clinical_trial_link, clinical_sponsor, drug_composition, drug_dosing_durability, added_by, added_on, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, banner_image_name, banner_type, product_imagenm, folder_name, status_name, img_download_status, download_intislizatio_time);
+                    priority, status, start_time, end_time,clinical_trial_source, clinical_trial_identifier, clinical_trial_link, clinical_sponsor, drug_composition, drug_dosing_durability, added_by, added_on, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, banner_image_name, banner_type, product_imagenm, folder_name, status_name, img_download_status, download_intislizatio_time);
         }
     }
 

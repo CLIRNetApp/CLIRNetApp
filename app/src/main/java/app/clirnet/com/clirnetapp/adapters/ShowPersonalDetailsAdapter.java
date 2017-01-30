@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +64,7 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
 
         holder.tv_visit_date.setText(model.getVisit_date());
         String strailment=model.getAilments().trim();
-        Log.e("strailment", "  " + strailment);
+
         if(strailment.length()<= 0 || strailment.equals("") && model.getClinicalNotes().trim().length()> 0 && model.getSymptoms().trim().length()>0){
             holder.tv_ailment.setText("--");
         }else {
@@ -75,7 +74,7 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
 
         String actFod = model.getActualFollowupDate();
 
-        if (actFod.equals("30-11-0002") || actFod.equals("0000-00-00")|| actFod.equals("")) {
+        if (actFod == null || actFod.equals("30-11-0002") || actFod.equals("0000-00-00")|| actFod.equals("")) {
 
             holder.tv_fod.setText("--");
 

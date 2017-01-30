@@ -121,7 +121,7 @@ public class SearchViewdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 }
             }catch(Exception e){
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime()+" " +"/ "+"Srach View Adapter"+e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime()+" " +"/ "+"Searach View Adapter"+e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
            /* if (fod.equals("30-11-0002")) {

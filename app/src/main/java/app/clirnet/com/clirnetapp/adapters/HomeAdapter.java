@@ -56,11 +56,7 @@ public class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.PatientViewHol
 
      //   String stringdistance = String.valueOf(model.getLanguage());//Need to convert to string to set into text view Ashish U 21-04-2016
 
-
-
-
         holder.gender.setText(model.getGender());
-
 
     }
 

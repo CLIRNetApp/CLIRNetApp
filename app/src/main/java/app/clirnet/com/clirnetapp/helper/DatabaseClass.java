@@ -7,7 +7,6 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -44,7 +43,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
             database = dbHelper.getWritableDatabase();
             appController = new AppController();
         } else {
-            Log.e("DB Opended1", "Database is allready opened");
+           // Log.e("DB Opended1", "Database is allready opened");
         }
 
     }
@@ -194,7 +193,6 @@ public class DatabaseClass extends SQLiteOpenHelper {
             }
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime()+"" +"/"+"Database"+e);
-            //TODO Create cutom exception and throw from here
             throw new ClirNetAppException("Something went wrong while getting login records");
         } finally {
             //create method & pass cursor & db1 ref.
@@ -222,7 +220,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
             // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
             id = db.insert("ailments", null, values);
         } catch (Exception e) {
-            appController.appendLog("Database"+e);
+            appController.appendLog(appController.getDateTime()+"" +"/"+"Database"+e);
             e.printStackTrace();
         } finally {
             if (db != null) {
@@ -231,7 +229,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
         }
 
 
-        Log.d("addedailemnt", "New ailment inserted into sqlite: " + id);
+     //   Log.d("addedailemnt", "New ailment inserted into sqlite: " + id);
 
 
     }

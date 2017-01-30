@@ -500,7 +500,7 @@ public class AppController extends Application {
             public void onClick(View v) {
 
                 if (finalLink_to_page != null && finalLink_to_page.trim().length() > 0) {
-                    try {
+                  try {
                         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalLink_to_page)));
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -608,8 +608,6 @@ public class AppController extends Application {
 
         final EditText location = (EditText) dialog.findViewById(R.id.location);
         final EditText reason = (EditText) dialog.findViewById(R.id.reason);
-
-
 
 
         try {
@@ -896,8 +894,6 @@ public class AppController extends Application {
     }
     public String CalculateBMI(String strWeight,String strHeight){
 
-        final double KILOGRAMS_PER_POUND = 0.453;
-        final double METERS_PER_INCH = 0.026;
         float bmi = 0;
 
         if(strHeight!= null && strWeight!=null && strHeight.trim().length()>0 && strWeight.trim().length()>0) {
@@ -905,13 +901,9 @@ public class AppController extends Application {
             float weight = Float.parseFloat(strWeight);
             float height = Float.parseFloat(strHeight)/100;
 
-             double weightInKilogram = weight * KILOGRAMS_PER_POUND;
-            double meter = height / 100;
-            double heightInMeters = height * METERS_PER_INCH;
-            Log.e("ashish","   "+weightInKilogram+"   "+heightInMeters);
 
             bmi = weight / (height * height);
-           // bmi=weightInKilogram / Math.pow(heightInMeters, 2) * 703;
+
         }
 
         return String.valueOf(bmi);

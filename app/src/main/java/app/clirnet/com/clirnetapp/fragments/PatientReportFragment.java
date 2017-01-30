@@ -157,7 +157,7 @@ public class PatientReportFragment extends Fragment {
                 for (int im = 0; im < size; im++) {
                     String a = countsNo.get(im).getCount();
                     String b = countsNo.get(im).getDate().trim();
-                   // Log.e("DateandCount", " " + a + " - dateList is  " + b);
+
                     nocountsperday.add(a);
                     dateList.add(b);
 
@@ -178,7 +178,6 @@ public class PatientReportFragment extends Fragment {
                 Date d1=format1.parse(newsd);
                 Date d2=format1.parse(newed);
 
-               // Log.e("stdate",""+newsd + "  "+newed);
 
                 Calendar start = Calendar.getInstance();
                 start.setTime(d1);
@@ -199,18 +198,14 @@ public class PatientReportFragment extends Fragment {
                         String countval =nocountsperday.get(getindex);
 
                         date =sdf.parse(s);
-                        //System.out.println(date);
-                       // System.out.println(sdf.format(date));
-                       // Log.e("sdf.format(date)", "" + sdf.format(date));
+
                         String convertedDate=sdf.format(date);
                         newdate.add(convertedDate);
                         newcount.add(countval);
 
                     } else {
                         date =sdf.parse(s);
-                      //  System.out.println(date);
-                       // System.out.println(sdf.format(date));
-                       // Log.e("sdf.format(date)", "" + sdf.format(date));
+
                         String convertedDate=sdf.format(date);
                         newdate.add(convertedDate);
                         newcount.add("0");
