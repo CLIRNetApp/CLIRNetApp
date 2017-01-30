@@ -61,7 +61,6 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 public class EditPatientUpdate extends AppCompatActivity {
 
-    private final int[] imageArray = {R.drawable.brand, R.drawable.brethnum, R.drawable.deptrim, R.drawable.fenjoy, R.drawable.hapiom, R.drawable.liporev, R.drawable.magnamet, R.drawable.motirest, R.drawable.revituz, R.drawable.suprizon};
     private ImageView backChangingImages;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
     private static final int DATE_DIALOG_ID = 0;
@@ -1207,6 +1206,23 @@ public class EditPatientUpdate extends AppCompatActivity {
             backChangingImages.setImageDrawable(null);
         }
         System.gc();
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Log.d("lifecycle","onResume invoked");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Log.d("lifecycle","onPause invoked");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setupAnimation();
+        // Log.d("lifecycle","onRestart invoked");
     }
 
     @Override

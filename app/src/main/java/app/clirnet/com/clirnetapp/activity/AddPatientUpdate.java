@@ -1220,7 +1220,23 @@ public class AddPatientUpdate extends AppCompatActivity {
             week.setBackground(getResources().getDrawable(R.drawable.circle));
         }
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Log.d("lifecycle","onResume invoked");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Log.d("lifecycle","onPause invoked");
+    }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setupAnimation();
+        // Log.d("lifecycle","onRestart invoked");
+    }
     @Override
     protected void onDestroy() {
         //android.os.Process.killProcess(android.os.Process.myPid());

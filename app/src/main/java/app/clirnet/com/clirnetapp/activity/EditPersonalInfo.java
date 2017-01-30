@@ -1023,6 +1023,23 @@ public class EditPersonalInfo extends AppCompatActivity {
         startActivity(i);
         finish();
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Log.d("lifecycle","onResume invoked");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Log.d("lifecycle","onPause invoked");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setupAnimation();
+        // Log.d("lifecycle","onRestart invoked");
+    }
 
     @Override
     protected void onDestroy() {

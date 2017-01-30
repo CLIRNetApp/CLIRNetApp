@@ -306,9 +306,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                         norecordtv.setVisibility(View.GONE);
 
                         poHistoryAdapter = new PoHistoryAdapter(patientData, queryCount);
-                        // poHistoryAdapter.addAll(patientData);
-                        // adapter = new MultipleFilterPatientAdapter(patientData);
-                        //initListener();
+
                         recyclerView.setHasFixedSize(true);
                         recyclerView.setAdapter(poHistoryAdapter);
                         recyclerView.addOnScrollListener(recyclerViewOnScrollListener);

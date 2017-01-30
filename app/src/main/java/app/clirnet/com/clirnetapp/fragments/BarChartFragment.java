@@ -42,7 +42,7 @@ public class BarChartFragment extends Fragment {
     private AppController appController;
 
 
-    // TODO: Rename and change types and number of parameters
+
     public static BarChartFragment newInstance(String param1, String param2) {
         BarChartFragment fragment = new BarChartFragment();
         Bundle args = new Bundle();
@@ -73,6 +73,7 @@ public class BarChartFragment extends Fragment {
           mToDate = getArguments().getString("TODATE");
 
         //set the data to chart
+        Utils.init(getResources());
         getDataSet();
 
         //////////////////////
@@ -180,9 +181,9 @@ public class BarChartFragment extends Fragment {
             data.setValueFormatter(new LargeValueFormatter());
             data.setValueTextColor(Color.BLACK);
             chart.setDrawValueAboveBar(true);
-             chart.setPinchZoom(false);
+            chart.setPinchZoom(false);
             chart.setTouchEnabled(false);//disable touch gesture on chart view 10-112-2016
-
+            Utils.init(getContext());
             chart.setData(data);
             chart.setDescription(null);//this will not show the chart description
 

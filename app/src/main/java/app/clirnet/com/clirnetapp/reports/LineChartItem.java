@@ -96,6 +96,7 @@ public class LineChartItem extends ChartItem {
       //rightAxis.setAxisMinValue(0f); // this replaces setStartAtZero(true)
 
         // set data
+        Utils.init(mContext);
         holder.chart.setData((LineData) mChartData);
         holder. chart.setDescription(null);//this will not show the chart description
         mChartData.setValueFormatter(new LargeValueFormatter()); //this will change flost vslue 1.00 to 1

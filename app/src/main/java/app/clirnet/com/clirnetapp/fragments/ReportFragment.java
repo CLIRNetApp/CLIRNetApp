@@ -24,6 +24,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.github.mikephil.charting.utils.Utils;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -95,6 +97,8 @@ public class ReportFragment extends Fragment {
 
         viewPager = (ViewPager) rootview.findViewById(R.id.viewpager);
         tabLayout = (TabLayout) rootview.findViewById(R.id.tabLayout);
+
+        Utils.init(getResources());//this is for initialize the graph lib........30-1-2017
 
         setCurrentDateOnView("1");//set dates from todays to -7 days to edit text
         addListenerOnButton();

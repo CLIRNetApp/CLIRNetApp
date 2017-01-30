@@ -12,7 +12,7 @@ import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
-//No  need to add pagination here bcs we did not set any limit to view current date insetred data.
+//No  need to add pagination here bcs we did not set any limit to view current date inserted data.
 public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder> {
 
     private List<RegistrationModel> patientList;
@@ -43,7 +43,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder>
         String middle_name = patientList.get(position).getMiddleName();
         String last_name = patientList.get(position).getLastName();
 
-        String name=appController.toCamelCase(first_name + " " + middle_name + " " + last_name);
+        String name=AppController.toCamelCase(first_name + " " + middle_name + " " + last_name);
 
         holder.name.setText(name);
 

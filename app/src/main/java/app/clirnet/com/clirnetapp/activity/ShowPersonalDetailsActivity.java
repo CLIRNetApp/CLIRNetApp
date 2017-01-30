@@ -386,7 +386,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("OnDestroy", "The onDestroy() event");
+        Log.d("lifecycle", "The onDestroy() event");
         // session.setLogin(false);
         //Close the all database connection opened here 31/10/2008 By. Ashish
 
@@ -455,5 +455,22 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             return true;
         }
         return false;
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Log.d("lifecycle","onResume invoked");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+       // Log.d("lifecycle","onPause invoked");
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setupAnimation();
+       // Log.d("lifecycle","onRestart invoked");
     }
 }

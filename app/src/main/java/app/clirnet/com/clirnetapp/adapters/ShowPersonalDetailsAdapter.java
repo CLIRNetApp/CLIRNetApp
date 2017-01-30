@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,9 +64,10 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
 
 
         holder.tv_visit_date.setText(model.getVisit_date());
-        String strailment=model.getAilments();
-        if(strailment ==  null || strailment.length()== 0 || strailment.equals("") && model.getClinicalNotes().length()> 0 && model.getSymptoms().length()>0){
-            holder.tv_ailment.setVisibility(View.GONE);
+        String strailment=model.getAilments().trim();
+        Log.e("strailment", "  " + strailment);
+        if(strailment.length()<= 0 || strailment.equals("") && model.getClinicalNotes().trim().length()> 0 && model.getSymptoms().trim().length()>0){
+            holder.tv_ailment.setText("--");
         }else {
 
             holder.tv_ailment.setText(strailment);

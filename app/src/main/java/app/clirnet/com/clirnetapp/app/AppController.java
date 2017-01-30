@@ -70,8 +70,6 @@ public class AppController extends Application {
     private String savedUserName;
     private String savedUserPassword;
     private ConnectionDetector connectionDetector;
-   // private RefWatcher refWatcher;
-
 
 
     @Override
@@ -86,28 +84,8 @@ public class AppController extends Application {
         super.onCreate();
         MultiDex.install(this);
         mInstance = this;
-        /*if (LeakCanary.isInAnalyzerProcess(this)) {
-            // This process is dedicated to LeakCanary for heap analysis.
-            // You should not init your app in this process.
-            return;
-        }
-        enabledStrictMode();
-        refWatcher = LeakCanary.install(this);*/
-    }
-   /* public void mustDie(Object object) {
-        if (refWatcher != null)
-            refWatcher.watch(object);
-    }
-    private void enabledStrictMode() {
-        if (SDK_INT >= GINGERBREAD) {
-            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder() //
-                    .detectAll() //
-                    .penaltyLog() //
-                    .penaltyDeath() //
-                    .build());
-        }
-    }*/
 
+    }
     public static synchronized AppController getInstance() {
         return mInstance;
     }
