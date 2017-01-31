@@ -528,7 +528,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                         String apiKey = getResources().getString(R.string.apikey);
                         getBannersData(savedUserName, savedUserPassword, apiKey, doctor_membership_number, company_id);
-
+                        //new GetBannerImageTask(getContext(), savedUserName, savedUserPassword, doctor_membership_number, company_id); //send log file to server
 
                         new LastNameAsynTask(getContext(), savedUserName, savedUserPassword,appController.getDateTime());
                         getPatientRecords(savedUserName, savedUserPassword);
@@ -1064,7 +1064,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             backChangingImages.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getContext(), "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+                   
 
                     String action = "clicked";
 

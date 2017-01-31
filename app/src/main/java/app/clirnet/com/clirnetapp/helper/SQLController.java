@@ -1128,21 +1128,22 @@ public class SQLController {
         Cursor cursor = null;
 
         try {
-            String query = "select marketed_by,manufactured_by,clinical_trial_link,link_to_page,product_image_name,product_image2 from company_banners where image_name='" + imgName + "' order by company_id  desc limit 1  ";
+            String query = "select marketed_by,manufactured_by,clinical_trial_link,link_to_page,product_image_name,product_image2,brand_name,generic_name,type from company_banners where image_name='" + imgName + "' order by company_id  desc limit 1  ";
             db = dbHelper.getReadableDatabase();
             cursor = db.rawQuery(query, null);
 
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
                 do {
-
-
-                    user.put("marketed_by", cursor.getString(0));
-                    user.put("manufactured_by", cursor.getString(1));
+                    user.put("manufactured_by", cursor.getString(0));
+                    user.put("marketed_by", cursor.getString(1));
                     user.put("clinical_trial_link", cursor.getString(2));
                     user.put("link_to_page", cursor.getString(3));
                     user.put("product_image_name",cursor.getString(4));
                     user.put("product_image2",cursor.getString(5));
+                    user.put("brand_name",cursor.getString(6));
+                    user.put("generic_name",cursor.getString(7));
+                    user.put("banner_type",cursor.getString(8));
 
                 } while (cursor.moveToNext());
             }

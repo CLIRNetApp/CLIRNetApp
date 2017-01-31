@@ -3,35 +3,27 @@ package app.clirnet.com.clirnetapp.Utility;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.ProgressDialog;
 import android.app.Service;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.widget.ProgressBar;
 
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
-import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +32,7 @@ import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.activity.LoginActivity;
 import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.app.GetBannerImageTask;
 import app.clirnet.com.clirnetapp.app.UploadBannerDataAsyncTask;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
@@ -184,7 +177,9 @@ public class SyncDataService extends Service {
 
             if (mUserName != null && mPassword != null) {
 
-                getBannersData(mUserName, mPassword, doctor_membership_number, company_id);
+                new GetBannerImageTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, company_id); //send log file to server
+
+               // getBannersData(mUserName, mPassword, doctor_membership_number, company_id);
             }
 
             if (patientIds_List.size() != 0 || getPatientVisitIdsList.size() != 0) {
@@ -382,276 +377,6 @@ public class SyncDataService extends Service {
                 .putString("lastSyncTime", lastSyncTime)
                 .apply();
 
-    }
-
-    private void getBannersData(final String savedUserName, final String savedUserPassword,final String docMemId, final String companyid) {
-        // Tag used to cancel the request
-        String tag_string_req = "req_login";
-
-
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_BANNER_API, new Response.Listener<String>() {
-
-
-            @Override
-            public void onResponse(final String response) {
-
-
-                new getBannerImagesFromServer().execute(response);
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //  Log.e(TAG, "Login Error: Failed To Initalize Data" + error.getMessage()+""+Thread.currentThread().getStackTrace()[2].getLineNumber());
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment getting banners" + error);
-
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to login url
-                Map<String, String> params = new HashMap<>();
-
-                params.put("username", savedUserName);
-                params.put("password", savedUserPassword);
-                params.put("apikey", getResources().getString(R.string.apikey));
-                params.put("membershipid", docMemId);
-                params.put("companyid", companyid);
-                // Log.e("apikey",""+savedUserName + "  "+savedUserPassword + " "+ getResources().getString(R.string.apikey));
-                return params;
-            }
-
-        };
-        //todo need to check the retry code for multiple times
-        //this will retry the request for 2 times
-        int socketTimeout = 30000;//30 seconds - change to what you want
-        int retryforTimes = 2;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, retryforTimes, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        strReq.setRetryPolicy(policy);
-        AppController.getInstance().setPriority(Request.Priority.HIGH);
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-
-    }
-
-    private class getBannerImagesFromServer extends AsyncTask<String, Void, String> {
-
-        ProgressDialog pd;
-
-        @Override
-        protected String doInBackground(String... params) {
-
-
-            try {
-
-                JSONObject jObj = new JSONObject(params[0]);
-
-                JSONObject user = jObj.getJSONObject("data");
-
-
-                String msg = user.getString("msg");
-                String responce = user.getString("response");
-
-                if (msg.equals("OK") && responce.equals("200")) {
-
-                    JSONArray jsonArray = user.getJSONArray("result");
-
-
-                    setBannerImgListList(jsonArray);
-
-                }
-
-            } catch (JSONException e) {
-                // JSON error
-                e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Data Service" + e + "" + Thread.currentThread().getStackTrace()[2].getLineNumber());
-
-            }
-           /* new LastNameAsynTask(getContext(),savedUserName, savedUserPassword);*/
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            //  Log.e("onPostExecute", "onPostExecute");
-
-            //makeToast("Application Initialization Successful");
-
-        }
-
-        @Override
-        protected void onPreExecute() {
-
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-        }
-    }
-
-    private void setBannerImgListList(JSONArray jsonArray) throws JSONException {
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-
-            JSONObject jsonProsolveObject = jsonArray.getJSONObject(i);
-
-            String banner_id = jsonProsolveObject.getString("banner_id");
-           // Log.e("banner_id", "" + banner_id);
-
-            String company_id = jsonProsolveObject.getString("company_id");
-            String brand_name = jsonProsolveObject.getString("brand_name");
-            String folder_name = jsonProsolveObject.getString("folder_name");
-            String banner_image_name = jsonProsolveObject.getString("banner_image1");
-            banner_image_name = banner_image_name.replace(".jpg", "");
-            String type = jsonProsolveObject.getString("type");
-            String banner_image_url = jsonProsolveObject.getString("banner_image_url");
-            //  Log.e("banner_image_urlbefore", "" + banner_image_url);
-            banner_image_url = banner_image_url.replace("://", "http://");
-            banner_image_url = banner_image_url.replace(" ", "%20");
-            //  Log.e("banner_image_urlafter", "" + banner_image_url);
-
-            String speciality_name = jsonProsolveObject.getString("speciality_name");
-            String product_image_url = jsonProsolveObject.getString("product_image_url");
-            product_image_url = product_image_url.replace("://", "http://");
-            product_image_url = product_image_url.replace(" ", "%20");
-            String product_image_name = jsonProsolveObject.getString("product_image2");
-            String product_imagenm = product_image_name.replace(".jpg", "");
-            String banner_type = jsonProsolveObject.getString("banner_type_id");
-
-
-            String generic_name = jsonProsolveObject.getString("generic_name");
-            String manufactured_by = jsonProsolveObject.getString("manufactured_by");
-            String marketed_by = jsonProsolveObject.getString("marketed_by");
-            String group_name = jsonProsolveObject.getString("group_name");
-            String link_to_page = jsonProsolveObject.getString("link_to_page");
-          /*  if(link_to_page.startsWith("www")){
-                link_to_page.replace("http://www", "www");
-            }*/
-            String call_me = jsonProsolveObject.getString("call_me");
-            String meet_me = jsonProsolveObject.getString("meet_me");
-
-            String priority = jsonProsolveObject.getString("priority");
-
-            String status = jsonProsolveObject.getString("status");
-            String status_name = jsonProsolveObject.getString("status_name");
-
-            String start_time = jsonProsolveObject.getString("start_time");
-            String end_time = jsonProsolveObject.getString("end_time");
-            String clinical_trial_source = jsonProsolveObject.getString("clinical_trial_source");
-            String clinical_trial_identifier = jsonProsolveObject.getString("clinical_trial_identifier");
-
-            String clinical_trial_link = jsonProsolveObject.getString("clinical_trial_link");
-            String clinical_sponsor = jsonProsolveObject.getString("clinical_sponsor");
-            String drug_composition = jsonProsolveObject.getString("drug_composition");
-            String drug_dosing_durability = jsonProsolveObject.getString("drug_dosing_durability");
-
-
-            String added_by = jsonProsolveObject.getString("added_by");
-            String added_on = jsonProsolveObject.getString("added_on");
-            String modified_by = jsonProsolveObject.getString("modified_by");
-            String modified_on = jsonProsolveObject.getString("modified_on");
-            String is_disabled = jsonProsolveObject.getString("is_disabled");
-            String disabled_by = jsonProsolveObject.getString("disabled_by");
-            String disabled_on = jsonProsolveObject.getString("disabled_on");
-            String is_deleted = jsonProsolveObject.getString("is_deleted");
-            String deleted_by = jsonProsolveObject.getString("deleted_by");
-            String deleted_on = jsonProsolveObject.getString("deleted_on");
-            String img_download_status=null;
-
-            if (checkifImageExists(banner_image_name)) {
-                File file = getImage("/" + banner_image_name + ".png");
-                String path = file.getAbsolutePath();
-                if (path != null) {
-
-                    // Log.e("imageExist","imageExist allready");
-                    img_download_status  = "downloaded";
-                }
-            } else {
-                // Log.e("imageExist","imageExist not");
-                img_download_status  = "inprogress";
-                downloadImage(banner_image_url, banner_image_name);
-            }
-            if (checkifImageExists(product_imagenm)) {
-                File file = getImage("/" + product_imagenm + ".png");
-                String path = file.getAbsolutePath();
-                if (path != null) {
-
-                    //  Log.e("imageExist","imageExist allready");
-                    img_download_status  = "downloaded";
-                }
-            } else {
-                // Log.e("imageExist","imageExist not");
-                img_download_status  = "inprogress";
-                downloadImage(product_image_url, product_imagenm);
-            }
-
-            //saveImageToSD(banner_image1);
-
-            String download_intislizatio_time = appController.getDateTimenew();
-
-            bannerClass.addBannerData(banner_id, company_id, brand_name, type, banner_image_url, speciality_name,
-                    product_image_url, generic_name, manufactured_by, marketed_by, group_name, link_to_page, call_me, meet_me,
-                    priority, status, start_time, end_time,clinical_trial_source, clinical_trial_identifier, clinical_trial_link, clinical_sponsor, drug_composition, drug_dosing_durability, added_by, added_on, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, banner_image_name, banner_type, product_imagenm, folder_name, status_name, img_download_status, download_intislizatio_time);
-        }
-    }
-
-    private void downloadImage(final String banner_image_url, final String banner_image1) {
-          /*--- check whether there is some Text entered ---*/
-        if (banner_image_url.trim().length() > 0) {
-            /*--- instantiate our downloader passing it required components ---*/
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    mDownloader = new ImageDownloader(banner_image_url
-                            .trim(), banner_image1.trim(), pb, getApplicationContext(), bmp, new ImageDownloader.ImageLoaderListener() {
-                        @Override
-                        public void onImageDownloaded(Bitmap bmp) {
-                            //  bmp = bmp;
-         /*--- here we assign the value of bmp field in our Loader class
-                   * to the bmp field of the current class ---*/
-                        }
-                    });
-                    mDownloader.execute();
-                    String img_download_status = "downloading";
-                    String download_start_time = appController.getDateTimenew();
-                    bannerClass.updateBannerImgDownloadStatus(banner_image1,banner_image_url,img_download_status,download_start_time);
-                }
-
-
-            });
-
-        }
-    }
-
-
-    public static boolean checkifImageExists(String imagename) {
-        Bitmap b = null;
-        File file = getImage("/" + imagename + ".png");
-        String path = file.getAbsolutePath();
-
-        if (path != null)
-            b = BitmapFactory.decodeFile(path);
-
-        return !(b == null || b.equals(""));
-    }
-
-    public static File getImage(String imagename) {
-
-        File mediaImage = null;
-        try {
-            String root = Environment.getExternalStorageDirectory().toString();
-            File myDir = new File(root);
-            if (!myDir.exists())
-                return null;
-
-            mediaImage = new File("sdcard/BannerImages/" + imagename);
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-        return mediaImage;
     }
 
 }

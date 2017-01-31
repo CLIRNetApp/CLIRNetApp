@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -26,7 +25,6 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
-
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -49,12 +47,14 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 
+import static app.clirnet.com.clirnetapp.R.id.produced_bytxt;
+
 public class AppController extends Application {
 
-  /*  public static RefWatcher getRefWatcher(Context context) {
-        AppController application = (AppController) context.getApplicationContext();
-        return application.refWatcher;
-    }*/
+    /*  public static RefWatcher getRefWatcher(Context context) {
+          AppController application = (AppController) context.getApplicationContext();
+          return application.refWatcher;
+      }*/
     private static final String TAG = AppController.class.getSimpleName();
 
     public static final String PREFS_NAME = "savedViewValue";
@@ -72,6 +72,7 @@ public class AppController extends Application {
     private ConnectionDetector connectionDetector;
 
 
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -86,6 +87,7 @@ public class AppController extends Application {
         mInstance = this;
 
     }
+
     public static synchronized AppController getInstance() {
         return mInstance;
     }
@@ -325,18 +327,18 @@ public class AppController extends Application {
 
     public boolean PhoneNumberValidation(String value) {
 
-            boolean result = true;
-            try {
-                if(!value.equals("") || value!= null) {
-                    long val = Long.parseLong((value.trim()));
-                    result = val >= 1000000000;
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
+        boolean result = true;
+        try {
+            if (!value.equals("") || value != null) {
+                long val = Long.parseLong((value.trim()));
+                result = val >= 1000000000;
             }
 
-            return result;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return result;
 
     }
 
@@ -407,6 +409,9 @@ public class AppController extends Application {
         String link_to_page = null;
         String product_image_name = null;
         String product_image_url = null;
+        String brand_name = null;
+        String prdctgeneric_name = null;
+        String banner_type = null;
 
         SQLController sqlController = new SQLController(context);
         try {
@@ -420,12 +425,14 @@ public class AppController extends Application {
                 link_to_page = list.get("link_to_page");
                 product_image_name = list.get("product_image_name");
                 product_image_url = list.get("product_image2");
+                brand_name = list.get("brand_name");
+                prdctgeneric_name = list.get("generic_name");
+                banner_type=list.get("banner_type");
                 Log.e("Banner Info ", " Banner Info   " + list.size() + " " + manufactured_by + "   " + marketed_by + " product_image_name " + product_image_name);
                 listBannerInformation = sqlController.getBannerInformation(img_name);
-                String brand_name = listBannerInformation.get("brand_name");
-                String generic_name = listBannerInformation.get("generic_name");
-               // Log.e("brand_namegeneric_name ", " Banner Info   " + listBannerInformation.size() + " " + brand_name + "   " + generic_name);
+
                 getUsernamePasswordFromDatabase(context);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -435,32 +442,76 @@ public class AppController extends Application {
 
         final Dialog dialog = new Dialog(context);
         dialog.setContentView(R.layout.ad_dialog);
+
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle("Banner Info");
+        dialog.setTitle("Product Details");
 
         TextView mktcmpny_name = (TextView) dialog.findViewById(R.id.mktcmpny_name);
         TextView maketed_by = (TextView) dialog.findViewById(R.id.produced_by);
+        TextView txtbrand_name = (TextView) dialog.findViewById(R.id.txtbrand_name);
+        TextView txtgeneric_name = (TextView) dialog.findViewById(R.id.txtgeneric_name);
         ImageView productImage = (ImageView) dialog.findViewById(R.id.productImage);
+
+        /////////////////////////////////////
+        TextView mktByText=(TextView)dialog.findViewById(R.id.mktByText);
+        TextView brand_nameText=(TextView)dialog.findViewById(R.id.brand_name);
+        TextView produced_byText=(TextView)dialog.findViewById(produced_bytxt);
+        TextView generic_nameText=(TextView)dialog.findViewById(R.id.generic_name);
+
+        Button btnrequest_sample = (Button) dialog.findViewById(R.id.request_sample);
+
+
 
         if (!product_image_name.equals("") && product_image_url != null && product_image_url.trim().length() > 0 && product_image_name != null && product_image_name.trim().length() > 0) {
 
             BitmapDrawable d = new BitmapDrawable(context.getResources(), "sdcard/BannerImages/" + product_image_name + ".png"); // path is ur resultant //image
 
-            Log.e("BitmapDrawable", "" + d + " ////  " + product_image_name);
             if (d != null) {
                 productImage.setImageDrawable(d);
             }
         } else {
             productImage.setImageResource(R.drawable.brand);
         }
-        if (manufactured_by != null && manufactured_by.length() > 0) {
+        if(banner_type.equals("product")) {
+            mktByText.setVisibility(View.VISIBLE);
+            brand_nameText.setVisibility(View.VISIBLE);
+            produced_byText.setVisibility(View.VISIBLE);
+            generic_nameText.setVisibility(View.VISIBLE);
 
-            mktcmpny_name.setText(manufactured_by);
-        }
+            mktcmpny_name.setVisibility(View.VISIBLE);
+            maketed_by.setVisibility(View.VISIBLE);
+            txtbrand_name.setVisibility(View.VISIBLE);
+            txtgeneric_name.setVisibility(View.VISIBLE);
+            if (manufactured_by != null && manufactured_by.length() > 0) {
 
-        if (marketed_by != null && marketed_by.length() > 0) {
+                mktcmpny_name.setText(manufactured_by);
+            }
 
-            maketed_by.setText(marketed_by);
+            if (marketed_by != null && marketed_by.length() > 0) {
+
+                maketed_by.setText(marketed_by);
+            }
+            if (brand_name != null && brand_name.length() > 0) {
+
+                txtbrand_name.setText(brand_name);
+            }
+            if (prdctgeneric_name != null && prdctgeneric_name.length() > 0) {
+
+                txtgeneric_name.setText(prdctgeneric_name);
+            }
+        }else{
+
+            mktByText.setVisibility(View.GONE);
+            brand_nameText.setVisibility(View.GONE);
+            produced_byText.setVisibility(View.GONE);
+            generic_nameText.setVisibility(View.GONE);
+
+            mktcmpny_name.setVisibility(View.GONE);
+            maketed_by.setVisibility(View.GONE);
+            txtbrand_name.setVisibility(View.GONE);
+            txtgeneric_name.setVisibility(View.GONE);
+
+            btnrequest_sample.setVisibility(View.INVISIBLE);
         }
 
         //  dialog.setCancelable(false);
@@ -474,21 +525,45 @@ public class AppController extends Application {
         });
 
         Button call_me = (Button) dialog.findViewById(R.id.call_me);
-
+        if(connectionDetector ==null) {
+            connectionDetector = new ConnectionDetector(context);
+        }
         call_me.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                creteCallMeDialog(context, "call_me");
+
+                boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
+                if (isInternetPresent) {
+                    creteCallMeDialog(context, "call_me");
+                }
+                else {
+
+                    // Toast.makeText(context1, "Please Connect to Internet and try again", Toast.LENGTH_LONG).show();
+                    callNoInternetDialog(context);
+                }
+
+
             }
         });
 
+
         Button meet_me = (Button) dialog.findViewById(R.id.meet_me);
+
         meet_me.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                creteCallMeDialog(context, "meet_me");
+                boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
+                if (isInternetPresent) {
+                    creteCallMeDialog(context, "meet_me");
+                }
+                else {
+
+                    // Toast.makeText(context1, "Please Connect to Internet and try again", Toast.LENGTH_LONG).show();
+                    callNoInternetDialog(context);
+                }
+
             }
         });
 
@@ -500,7 +575,7 @@ public class AppController extends Application {
             public void onClick(View v) {
 
                 if (finalLink_to_page != null && finalLink_to_page.trim().length() > 0) {
-                  try {
+                    try {
                         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalLink_to_page)));
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -527,13 +602,54 @@ public class AppController extends Application {
                 }
             }
         });
-        Button btnrequest_sample = (Button) dialog.findViewById(R.id.request_sample);
-        String brand_name = listBannerInformation.get("brand_name");
+
+        String brand_name2 = listBannerInformation.get("brand_name");
         btnrequest_sample.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 creteSampleRequestDialog(context, listBannerInformation.get("brand_name"));
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void callNoInternetDialog(final Context context) {
+
+        final Dialog dialog = new Dialog(context);
+
+        dialog.setContentView(R.layout.no_inetrnet_login_dialog);
+
+        dialog.setTitle("Please Connect to Internet");
+        //  dialog.setCancelable(false);
+        TextView msgTxt=(TextView)dialog.findViewById(R.id.msgTxt);
+        msgTxt.setText("Please Connect to Internet and try again");
+
+        Button dialogButtonCancel = (Button) dialog.findViewById(R.id.customDialogCancel);
+        Button dialogButtonOk = (Button) dialog.findViewById(R.id.customDialogOk);
+        // Click cancel to dismiss android custom dialog box
+        dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+            }
+        });
+
+        // Your android custom dialog ok action
+        // Action for custom dialog ok button click
+        dialogButtonOk.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(intent);
+
+                dialog.dismiss();
+
             }
         });
 
@@ -553,7 +669,18 @@ public class AppController extends Application {
         TextView textbrandname = (TextView) dialog.findViewById(R.id.textbrandname);
         textbrandname.setText(brand_name);
 
-        connectionDetector = new ConnectionDetector(context1);
+        if (connectionDetector == null) {
+            connectionDetector = new ConnectionDetector(context1);
+        }
+        //  dialog.setCancelable(false);
+        Button close = (Button) dialog.findViewById(R.id.close);
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
 
         Button send = (Button) dialog.findViewById(R.id.send);
         send.setOnClickListener(new View.OnClickListener() {
@@ -565,11 +692,9 @@ public class AppController extends Application {
                 String generic_name = null;
                 String company_id = null;
                 String doc_mem_id = null;
-                // find the radiobutton by returned id
-                //RadioButton radioSexButton = (RadioButton) dialog.findViewById(selectedId);
-               // String selectedOtherValue = radioSexButton.getText().toString();
+
                 int index = radioreasonGroup.indexOfChild(dialog.findViewById(radioreasonGroup.getCheckedRadioButtonId()));
-                Log.e("selectedId ",""+index);
+                Log.e("selectedId ", "" + index);
                 String selected_id = String.valueOf(index);
 
                 if (index == 3) {
@@ -584,9 +709,9 @@ public class AppController extends Application {
                 boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
                 if (isInternetPresent) {
                     new AskforSampleAsyncTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, doc_mem_id, selected_id, strQty, strother);
-                }else{
+                } else {
 
-                    Toast.makeText(context1,"Please Connect to Internet and try again",Toast.LENGTH_LONG).show();
+                    Toast.makeText(context1, "Please Connect to Internet and try again", Toast.LENGTH_LONG).show();
                 }
 
                 dialog.dismiss();
@@ -600,7 +725,7 @@ public class AppController extends Application {
         final Dialog dialog = new Dialog(context1);
         dialog.setContentView(R.layout.callme_dialog);
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle(called_from);
+        dialog.setTitle("Appoinment Details");
         final TextView date = (TextView) dialog.findViewById(R.id.date);
         final TextView fromtime = (TextView) dialog.findViewById(R.id.fromtime);
 
@@ -613,7 +738,7 @@ public class AppController extends Application {
         try {
             SQLController sqlController = new SQLController(context1);
             sqlController.open();
-            if(connectionDetector == null) {
+            if (connectionDetector == null) {
                 connectionDetector = new ConnectionDetector(context1);
             }
 
@@ -649,6 +774,13 @@ public class AppController extends Application {
         getCurrentTime(fromtime);
         getCurrentTime(totime);
 
+        Button close = (Button) dialog.findViewById(R.id.close);
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
 
         send.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -675,12 +807,6 @@ public class AppController extends Application {
                     return;
                 }
 
-                if (strreason.trim().length() > 0) {
-                    reason.setError("");
-                } else {
-                    reason.setError("Please Enter Value");
-                    return;
-                }
                 String from_time = fromtime.getText().toString();
                 String to_time = totime.getText().toString();
                 String reqest_fullfilled = null;
@@ -701,15 +827,14 @@ public class AppController extends Application {
                 boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
                 if (isInternetPresent) {
                     new CallMeMeetMeAsynTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, called_from, strDate, from_time, to_time, address, strreason, doc_mem_id);
-                }else{
 
-                    Toast.makeText(context1,"Please Connect to Internet and try again",Toast.LENGTH_LONG).show();
                 }
                  /* dbController.addCallMeetMeData(brand_name, company_id, generic_name, called_from, strDate, from_time, to_time,
                         address, strreason, doctor_id, doc_mem_id, request_on, reqest_fullfilled, modified_on, modified_by, is_deleted, is_disabled, disabled_by, disabled_on,deleted_on,flag,added_on,added_by);*/
                 //Toast.makeText(context1,"Message send  you will recieve responce soon",Toast.LENGTH_LONG).show();
                 dialog.dismiss();
             }
+
         });
 
         dialog.show();
@@ -822,11 +947,11 @@ public class AppController extends Application {
             sqlController.open();
             dbController = new SQLiteHandler(context);
             docId = sqlController.getDoctorId();
-            banner_id=sqlController.getBannerId(banner_image);
-            banner_folder=sqlController.getFolderName(banner_image);
+            banner_id = sqlController.getBannerId(banner_image);
+            banner_folder = sqlController.getFolderName(banner_image);
             company_id = sqlController.getBannerCompany_id();
-            banner_type_id=sqlController.getBannerTypeId(banner_image);
-            Log.e("banner_id", "  " + banner_id+""+banner_folder);
+            banner_type_id = sqlController.getBannerTypeId(banner_image);
+            //Log.e("banner_id", "  " + banner_id+""+banner_folder);
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
             appendLog(getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -835,11 +960,11 @@ public class AppController extends Application {
             if (dbController != null)
                 if (action.equals("display")) {
 
-                    dbController.addBannerDisplayData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time,flag);
+                    dbController.addBannerDisplayData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time, flag);
 
                 } else {
 
-                    dbController.addBannerClickedData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time,flag);
+                    dbController.addBannerClickedData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time, flag);
 
                 }
         } catch (NullPointerException e) {
@@ -848,19 +973,6 @@ public class AppController extends Application {
         }
     }
 
-    public boolean getFirstTimeLoginStatus() {
-        SharedPreferences pref = getSharedPreferences(PREFS_NAMEsavedCredit, Context.MODE_PRIVATE);
-        String firstTimeLogin = pref.getString(FISRT_TIME_LOGIN
-                , null);
-       // Log.e("firstTimeLogin", "" + firstTimeLogin);
-        if (firstTimeLogin == null) {
-            return false;
-        } else if (firstTimeLogin.equals("false")) {
-
-            return false;
-        }
-        return true;
-    }
 
     private void getUsernamePasswordFromDatabase(Context context) {
         Cursor cursor = null;
@@ -892,14 +1004,15 @@ public class AppController extends Application {
             }
         }
     }
-    public String CalculateBMI(String strWeight,String strHeight){
+
+    public String CalculateBMI(String strWeight, String strHeight) {
 
         float bmi = 0;
 
-        if(strHeight!= null && strWeight!=null && strHeight.trim().length()>0 && strWeight.trim().length()>0) {
+        if (strHeight != null && strWeight != null && strHeight.trim().length() > 0 && strWeight.trim().length() > 0) {
 
             float weight = Float.parseFloat(strWeight);
-            float height = Float.parseFloat(strHeight)/100;
+            float height = Float.parseFloat(strHeight) / 100;
 
 
             bmi = weight / (height * height);

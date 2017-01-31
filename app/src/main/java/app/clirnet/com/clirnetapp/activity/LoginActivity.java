@@ -531,8 +531,8 @@ public class LoginActivity extends Activity {
 
     private void showCreatePatientAlertDialog() {
         final Dialog dialog = new Dialog(this);
-        dialog.setContentView(R.layout.no_inetrnet_login_dialog);
 
+        dialog.setContentView(R.layout.no_inetrnet_login_dialog);
 
         dialog.setTitle("Please Login Via Internet");
         //  dialog.setCancelable(false);

@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "24.0.1"
+    buildToolsVersion '24.0.3'
     android {
         useLibrary 'org.apache.http.legacy'
     }
@@ -23,7 +23,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            shrinkResources false
+            shrinkResources true
             zipAlignEnabled true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
