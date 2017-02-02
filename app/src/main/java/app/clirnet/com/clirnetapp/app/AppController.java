@@ -58,8 +58,7 @@ public class AppController extends Application {
     private static final String TAG = AppController.class.getSimpleName();
 
     public static final String PREFS_NAME = "savedViewValue";
-    private static final String PREFS_NAMEsavedCredit = "savedCredit";
-    private static final String FISRT_TIME_LOGIN = "firstTimeLogin";
+
 
     private RequestQueue mRequestQueue;
     Request.Priority priority = Request.Priority.HIGH;
@@ -218,7 +217,7 @@ public class AppController extends Application {
 
         str = sb.toString();
         str = str.startsWith(",") ? str.substring(1) : str; //this will remove , from start of the filtered string after removing middle commas from string
-        //System.out.println(str);
+
         return str;
 
     }
@@ -428,7 +427,7 @@ public class AppController extends Application {
                 brand_name = list.get("brand_name");
                 prdctgeneric_name = list.get("generic_name");
                 banner_type=list.get("banner_type");
-                Log.e("Banner Info ", " Banner Info   " + list.size() + " " + manufactured_by + "   " + marketed_by + " product_image_name " + product_image_name);
+
                 listBannerInformation = sqlController.getBannerInformation(img_name);
 
                 getUsernamePasswordFromDatabase(context);
@@ -694,7 +693,6 @@ public class AppController extends Application {
                 String doc_mem_id = null;
 
                 int index = radioreasonGroup.indexOfChild(dialog.findViewById(radioreasonGroup.getCheckedRadioButtonId()));
-                Log.e("selectedId ", "" + index);
                 String selected_id = String.valueOf(index);
 
                 if (index == 3) {

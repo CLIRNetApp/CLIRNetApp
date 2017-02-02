@@ -4,7 +4,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -449,12 +448,12 @@ public class SQLController {
         int numRows = 0;
         try {
             String countQuery = new Counts().getCountQuery();
-            Log.d("count", "" + countQuery);
+           // Log.d("count", "" + countQuery);
 
             if (countQuery != null && countQuery.length() > 10) {
 
                 numRows = (int) DatabaseUtils.longForQuery(db1, countQuery, null);
-                Log.d("count", "" + countQuery + "  " + numRows);
+             //   Log.d("count", "" + countQuery + "  " + numRows);
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -991,7 +990,7 @@ public class SQLController {
         Cursor cursor = null;
         try {
             // String selectQuery = "SELECT pvd.ailment as ailment FROM patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0 AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2))  Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date LIMIT 0 , 30";
-            String selectQuery = "SELECT pvd.ailment as ailment FROM \n" +
+            String selectQuery = "SELECT pvd.symptoms as symptoms FROM \n" +
                     "patient dpr , patient_history pvd \n" +
                     "WHERE dpr.patient_id = pvd.patient_id \n" +
                     "AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) \n" +
@@ -1005,7 +1004,7 @@ public class SQLController {
             if (cursor.moveToFirst()) {
                 do {
 
-                    String value = cursor.getString(cursor.getColumnIndex("ailment"));
+                    String value = cursor.getString(cursor.getColumnIndex("symptoms"));
                     ailmnetList.add(value);
 
                 } while (cursor.moveToNext());
@@ -1024,6 +1023,48 @@ public class SQLController {
         return ailmnetList;
 
     }
+
+    public ArrayList<String> getCountTopTenDiagnosis(String fromdate, String todate) throws ClirNetAppException {
+
+        ArrayList<String> ailmnetList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+            // String selectQuery = "SELECT pvd.ailment as ailment FROM patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0 AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2))  Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date LIMIT 0 , 30";
+            String selectQuery = "SELECT pvd.diagnosis as diagnosis FROM \n" +
+                    "patient dpr , patient_history pvd \n" +
+                    "WHERE dpr.patient_id = pvd.patient_id \n" +
+                    "AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) \n" +
+                    "Between Date('" + fromdate + "') AND Date('" + todate + "')\n";
+
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    String value = cursor.getString(cursor.getColumnIndex("diagnosis"));
+                    ailmnetList.add(value);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while geting getCountTopTenAilment");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return ailmnetList;
+
+    }
+
 
     public ArrayList<GenderWiseDataModel> genderWiseData(String fromdate, String todate) throws ClirNetAppException {
 

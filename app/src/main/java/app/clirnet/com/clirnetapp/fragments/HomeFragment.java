@@ -48,8 +48,6 @@ import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
-import com.gitonway.lee.niftymodaldialogeffects.lib.Effectstype;
-import com.gitonway.lee.niftymodaldialogeffects.lib.NiftyDialogBuilder;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -104,8 +102,6 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchListener {
 
     private OnFragmentInteractionListener mListener;
-
-
 
     private SearchView searchView;
 
@@ -313,8 +309,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     sqlController.open();
                     patientIds_List = sqlController.getPatientIdsFalg0();
                     getPatientVisitIdsList = sqlController.getPatientVisitIdsFalg0();
-                    System.out.println(""+patientIds_List.size());
-                  //  Log.e("getPatientVisitIdsList", " getPatientVisitIdsList " + getPatientVisitIdsList.size() + " patientIds_List " + patientIds_List.size());
+
                     docId = sqlController.getDoctorId();
 
 
@@ -322,15 +317,23 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                     int getPatientVisitIdsListSize = getPatientVisitIdsList.size();
 
-                    if (patientIds_ListSize != 0 || getPatientVisitIdsListSize != 0) {
+                    boolean isInternetPresent = connectionDetector.isConnectingToInternet();
 
-                        sendDataToServer();
+                    if (isInternetPresent) {
+                        if (patientIds_ListSize != 0 || getPatientVisitIdsListSize != 0) {
 
-                    } else {
-                        //Log.e("nodata","no data to send");
-                        //makeToast("No Data to Send");
+                            sendDataToServer();
 
-                        showAnotherAlert("Data Sychronization", "                        No Data to Send ");
+                        } else {
+                            //Log.e("nodata","no data to send");
+                            //makeToast("No Data to Send");
+
+                            showAnotherAlert2("Data Sychronization", "No Data to Send");
+                        }
+
+
+                    }else{
+                        showAnotherAlert2("No Internet", "No Internet Connectivity.");
                     }
 
                 } catch (Exception e) {
@@ -512,11 +515,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         CallAsynOnce cao = new CallAsynOnce();
         String asynTaskValue = cao.getValue();
         boolean isInternetPresent = connectionDetector.isConnectingToInternet();
-        /*if (isInternetPresent) {
-            String apiKey = getResources().getString(R.string.apikey);
-            getBannersData(savedUserName, savedUserPassword, apiKey, doctor_membership_number, company_id);
-        }*/
-
 
         //used to fetch patient data only once in lifetime of app from server
         if (asyn_value == null) {
@@ -530,17 +528,14 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         getBannersData(savedUserName, savedUserPassword, apiKey, doctor_membership_number, company_id);
                         //new GetBannerImageTask(getContext(), savedUserName, savedUserPassword, doctor_membership_number, company_id); //send log file to server
 
-                        new LastNameAsynTask(getContext(), savedUserName, savedUserPassword,appController.getDateTime());
+                         new LastNameAsynTask(getContext(), savedUserName, savedUserPassword,appController.getDateTime());
                         getPatientRecords(savedUserName, savedUserPassword);
 
                     }
                 }
             }
         }
-        /*boolean chkStatus= getFirstTimeLoginStatus();
-        if(chkStatus){
-            showChangePassDialog();
-        }*/
+
     }
 
     private void beforeDateAddPatientUpdate(int position) {
@@ -680,9 +675,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             }
 
-        } else {
+        }
+        if(!isInternetPresent) {
 
-            showAnotherAlert("No Internet", "                        No Internet Connectivity. ");
+            showAnotherAlert2("No Internet", "No Internet Connectivity.");
         }
 
     }
@@ -783,11 +779,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         loadLimit = 15;
 
                         filteredModelList = sqlController.getPatientListForPhoneNumberFilter(searchNumber, ival, loadLimit);
-                        //   filteredModelList = sqlController.getPatientListForPhoneNumberFilter(searchNumber);
 
                         queryCountforTotalPatient = sqlController.getCountResultforgetPatientListForPhoneNumberFilter();
 
-                      //  Log.e("queryCount1", "  " + queryCountforTotalPatient + "  filteredModelList  " + filteredModelList.size()+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                         if (filteredModelList.size() <= 0) {
 
@@ -819,9 +813,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             @Override
             public boolean onQueryTextChange(String newText) {
-
-                /// System.out.println("on query submit: " + newText);
-
 
                 return false;
             }
@@ -1064,7 +1055,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             backChangingImages.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                   
+
 
                     String action = "clicked";
 
@@ -1648,37 +1639,51 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     }
 
     //custom dialog  for the sync button result
-    private void showAnotherAlert(String title, String message) {
-        Effectstype effect;
-        effect = Effectstype.Fadein;
-        final NiftyDialogBuilder dialogBuilder = NiftyDialogBuilder.getInstance(getContext());
-        dialogBuilder.setCancelable(false);
+    private void showAnotherAlert2(String title, String message) {
+        final Dialog dialog = new Dialog(getContext());
 
-        dialogBuilder
-                .withTitle(title)                                  //.withTitle(null)  no title
-                .withTitleColor("#FFFFFF")                                  //def
-                .withDividerColor("#26ae90")                              //def
-                .withMessage("             " + message)                     //.withMessage(null)  no Msg  "      " is for the set the mesage to center of dialog
-                .withMessageColor("#FFFFFF")                              //def  | withMessageColor(int resid)
-                .withDialogColor("#0a599d")                               //def  | withDialogColor(int resid)                               //def
-                .withIcon(getResources().getDrawable(R.drawable.info))
-                .isCancelableOnTouchOutside(false)                           //def    | isCancelable(true)
-                .withDuration(700)                                          //def
-                .withEffect(effect)                                         //def Effectstype.Slidetop
-                .withButton1Text("OK")
+        dialog.setContentView(R.layout.no_inetrnet_login_dialog);
 
+        dialog.setTitle(title);
+        //  dialog.setCancelable(false);
+        TextView msgTxt=(TextView)dialog.findViewById(R.id.msgTxt);
+        msgTxt.setText(message);
 
-                        //.withButtonDrawable(Integer.parseInt("#FFFFFF"))
-                .setCustomView(R.layout.custom_dialog_view, getContext())         //.setCustomView(View or ResId,context)
-                .setButton1Click(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //  Toast.makeText(v.getContext(), "i'm btn1", Toast.LENGTH_SHORT).show();
-                        dialogBuilder.dismiss();
-                    }
-                })
+        Button dialogButtonCancel = (Button) dialog.findViewById(R.id.customDialogCancel);
+        Button dialogButtonOk = (Button) dialog.findViewById(R.id.customDialogOk);
+        // Click cancel to dismiss android custom dialog box
+        dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-                .show();
+                dialog.dismiss();
+
+            }
+        });
+
+        // Your android custom dialog ok action
+        // Action for custom dialog ok button click
+        if(message.equals("No Data to Send")) {
+            dialogButtonOk.setVisibility(View.GONE);
+            dialogButtonCancel.setText("OK");
+
+        }else{
+            dialogButtonOk.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View v) {
+
+                    Intent intent = new Intent(android.provider.Settings.ACTION_SETTINGS);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+
+                    dialog.dismiss();
+                }
+            });
+
+        }
+
+        dialog.show();
     }
 
     @Override
@@ -1714,8 +1719,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         }
         bannerimgNames=null;
 
-        //recyclerView.setOnClickListener(null);
-        //  searchView.setOnClickListener(null);
         Searchrecycler_view.addOnScrollListener(null);
         norecordtv = null;
         addaNewPatient = null;
@@ -1734,8 +1737,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         pateintrecordasync_start_time=null;
         banner_downloadstart_time=null;
         backChangingImages=null;
-      //  Log.e("onDetach", "onDetach Home Fragment");
-
     }
 
     @Override
@@ -1832,9 +1833,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 // JSON error
                 e.printStackTrace();
                 appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
-                //Toast.makeText(getContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+
             }
-           /* new LastNameAsynTask(getContext(),savedUserName, savedUserPassword);*/
             return null;
         }
 

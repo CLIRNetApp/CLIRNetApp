@@ -1185,7 +1185,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                             @Override
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
-                                SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+
 
 
                                 fodtextshow.setText(dayOfMonth + "-"

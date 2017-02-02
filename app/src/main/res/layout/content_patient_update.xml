@@ -1054,6 +1054,33 @@
                     android:src="@drawable/emp_img"
                     android:visibility="gone"/>
 
+                <TextView
+                    android:id="@+id/sendreminder"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:gravity="center"
+                    android:text="@string/visitDate"
+                    android:textColor="@color/colorPrimary"
+                    android:paddingLeft="20dp"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/visitDate"
+                    android:layout_width="300dp"
+                    android:layout_height="45dp"
+                    android:background="@drawable/rectangle_corner"
+                    android:drawableRight="@android:drawable/ic_menu_my_calendar"
+                    android:layout_marginLeft="5dp"
+                    android:inputType="date"
+                    android:gravity="center"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:text="@string/visitDate"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textSize="14sp"
+                    android:textColor="@color/black" />
+
             </LinearLayout>
 
 

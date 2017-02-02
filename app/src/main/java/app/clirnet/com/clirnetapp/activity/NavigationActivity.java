@@ -69,9 +69,7 @@ public class NavigationActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //  SharedPreferences pref = getApplicationContext().getSharedPreferences(MyPREFERENCES, MODE_PRIVATE);
 
-        //set username and mail id to header view of navigation drawer
         View hView = navigationView.getHeaderView(0);
         ImageView imgvw = (ImageView) hView.findViewById(R.id.imageView);
         TextView u_name = (TextView) hView.findViewById(R.id.user_name);
@@ -81,9 +79,7 @@ public class NavigationActivity extends AppCompatActivity
 
         dbController = new SQLiteHandler(getApplicationContext());
 
-        //this will start the background service which sends data to server on 30 min interval
-        /* Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
-        startService(serviceIntent);*/
+
 
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
@@ -111,7 +107,7 @@ public class NavigationActivity extends AppCompatActivity
 
 
         String fromWhere = getIntent().getStringExtra("FROMWHERE");//check from which fragment call came and redirect to that fragment
-        // Log.e("fromWhereNavigation", "" + fromWhere);
+
 
         Fragment fragment = getSupportFragmentManager().
                 findFragmentById(R.id.flContent);
@@ -121,8 +117,6 @@ public class NavigationActivity extends AppCompatActivity
 
         } else if (fromWhere.equals("2")) {
             fragment = new ConsultationLogFragment();
-
-            //  Log.e("fragment", "Fragment is already open");
 
         } else if (fromWhere.equals("3")) {
             fragment = new PoHistoryFragment();
@@ -136,11 +130,11 @@ public class NavigationActivity extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
 
-        // Highlight the selected item, update the title, and close the drawer
+
 
     }
 
-    //this will prevent user to access back press from tab
+
 
     @Override
     public void onBackPressed() {
@@ -197,8 +191,6 @@ public class NavigationActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_logout:
-
-                //  db.deleteUsers();
 
                 // Launching the login activity
                 goToLoginActivity();

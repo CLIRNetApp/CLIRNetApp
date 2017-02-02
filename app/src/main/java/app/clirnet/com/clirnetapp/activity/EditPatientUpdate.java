@@ -38,6 +38,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -64,6 +65,7 @@ public class EditPatientUpdate extends AppCompatActivity {
     private ImageView backChangingImages;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
     private static final int DATE_DIALOG_ID = 0;
+    private static final int DATE_DIALOG_ID1 = 1;
 
     private String strPhone;
     private String strAge;
@@ -153,6 +155,7 @@ public class EditPatientUpdate extends AppCompatActivity {
     private String strPhoneTpe;
     private String strIsd_code;
     private String strAlternateIsd_code;
+    private EditText visitDate;
 
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -276,6 +279,8 @@ public class EditPatientUpdate extends AppCompatActivity {
         editUpdate = (Button) findViewById(R.id.editUpdate);
         imageViewprescription = (ImageView) findViewById(R.id.imageViewprescription);
 
+        visitDate=(EditText)findViewById(R.id.visitDate);
+
         addFollowupdateButtonListner();
         addArrowUpDownListner();
 
@@ -312,7 +317,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         int day1 = c.get(Calendar.DAY_OF_MONTH);
 
         sysdate = String.valueOf(new StringBuilder().append(day1).append("-").append(month1 + 1).append("-").append(year1).append(""));
-
+        visitDate.setText(sysdate);
 
         SimpleDateFormat sdf0 = new SimpleDateFormat("dd-M-yyyy",Locale.ENGLISH);
 
@@ -683,6 +688,7 @@ public class EditPatientUpdate extends AppCompatActivity {
     }
 
     private void addArrowUpDownListner() {
+
         txtRecord = (TextView) findViewById(R.id.txtRecord);
         txtsymtomsanddignost = (TextView) findViewById(R.id.txtsymptomsanddignost);
         presciptiontext = (TextView) findViewById(R.id.presciptiontext);
@@ -744,7 +750,7 @@ public class EditPatientUpdate extends AppCompatActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                // TODO Auto-generated method stub
+
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     days.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
                     week.setTextColor(getResources().getColor(R.color.black));
@@ -927,6 +933,17 @@ public class EditPatientUpdate extends AppCompatActivity {
             }
         });
 
+        visitDate.setOnClickListener(new View.OnClickListener() {
+
+
+            @Override
+            public void onClick(View v) {
+
+                shpwDialog(DATE_DIALOG_ID1);
+
+            }
+        });
+
     }
     private void CleanFollowup(){
 
@@ -1015,6 +1032,20 @@ public class EditPatientUpdate extends AppCompatActivity {
                 maxid = maxid + 1;
             }
         }
+        String added_on = visitDate.getText().toString();
+        String visit_date = sysdate;
+        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+        try {
+            //convert visit date from 2016-11-1 to 2016-11-01
+            visit_date = myFormat.format(fromUser.parse(added_on));
+            added_on = myFormat.format(fromUser.parse(sysdate));
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
 
         String modified_by = docId;//INSERTING DOC ID IN ADDED BY COLUMN AS PER PUSHPAL SAID
         String flag = "0";
@@ -1023,7 +1054,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         String action = "updated";
         try {
             dbController.updatePatientOtherInfo(strId, strVisitId, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, clinical_note, patientImagePath, ailments, sysdate, updatedTime, modified_by, action, patientInfoType, flag,
-                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs,strHeight,strbmi,strSugarFasting);
+                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs,strHeight,strbmi,strSugarFasting,visit_date);
         } catch (ClirNetAppException e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1125,7 +1156,8 @@ public class EditPatientUpdate extends AppCompatActivity {
     //show date sellector dialog box
     private void shpwDialog(int id) {
 
-        switch (EditPatientUpdate.DATE_DIALOG_ID) {
+        switch (id) {
+
             case DATE_DIALOG_ID:
 
                 final Calendar c2 = Calendar.getInstance();
@@ -1156,6 +1188,37 @@ public class EditPatientUpdate extends AppCompatActivity {
                 dpd1.getDatePicker().setMinDate(newDate.getTime());
                 dpd1.show();
                 //show age of pateint
+
+                break;
+
+            case DATE_DIALOG_ID1: //for visit date
+
+                final Calendar c1 = Calendar.getInstance();
+                int mYear1 = c1.get(Calendar.YEAR);
+                int mMonth1 = c1.get(Calendar.MONTH);
+                int mDay1 = c1.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dpd2 = new DatePickerDialog(EditPatientUpdate.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+
+
+
+                                visitDate.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);
+
+
+                            }
+                        }, mYear1, mMonth1, mDay1);
+                c1.add(Calendar.DATE, 0);
+
+                Date newDate2 = c1.getTime();
+                dpd2.getDatePicker().setMaxDate(newDate2.getTime());
+
+                dpd2.show();
 
                 break;
         }
@@ -1321,6 +1384,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         edtInput_sugarfasting=null;
         edtInput_bmi=null;
         btnclear=null;
+        visitDate=null;
 
     }
 

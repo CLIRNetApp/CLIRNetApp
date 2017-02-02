@@ -53,8 +53,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String TABLE_BANNER_CLICKED = "banner_clicked";
     private static final String TABLE_BANNER_DISPLAY = "banner_display";
     private static final String TABLE_CALLMEET_REASON = "sample_call_meet_reasons";
-    private static final String TABLE_REQUEST_REASON =  "sample_request_reasons";
-    private static final String TABLE_SAMPLE_REQUEST=  "samples_requested";
+    private static final String TABLE_REQUEST_REASON = "sample_request_reasons";
+    private static final String TABLE_SAMPLE_REQUEST = "samples_requested";
 
     // Login Table Columns names
     private static final String KEY_ID = "id";
@@ -135,13 +135,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String PHONE_TYPE = "phone_type";
 
     private static final String ALTERNATE_PHONE_TYPE = "alternate_phone_type";
-    private static final String ISD_CODE= "isd_code";
+    private static final String ISD_CODE = "isd_code";
     private static final String ATERNATE_NO_ISD_CODE = "alternate_no_isd";
 
     private static final String CALLED_FROM = "called_from";
     private static final String PREFERED_TIME = "preferred_time";
     private static final String LOCATION = "location";
-    private static String REASON="reason";
+    private static String REASON = "reason";
     private static final String REQUEST_ON = "requested_on";
     private static final String REQUEST_FULLFILLED = "request_fullfilled";
     private static final String FLAG = "flag";
@@ -152,7 +152,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
     private static final String TABLE_ASYNC = "async";
-    private String MEMBERSHIP_ID="membershipid";
+    private String MEMBERSHIP_ID = "membershipid";
 
 
     public SQLiteHandler(Context context) {
@@ -173,10 +173,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     private static final String TABLE_COMPANY_BANNER = "company_banners";
 
-   // private static final String CREATE_COMPANY_BANNERS ="CREATE TABLE `company_banners` ( `banner_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `company_id` INTEGER, `type` TEXT, `brand_name` TEXT, `folder_name` TEXT, `banner_image1` TEXT, `product_image2` TEXT, `banner_type` TEXT, `status` TEXT, `speciality` TEXT, `generic_name` TEXT, `manufactured_by` TEXT, `marketed_by` TEXT, `group_name` TEXT, `link_to_page` TEXT, `call_me` TEXT, `meet_me` TEXT, `priority` INTEGER, `start_time` TEXT, `end_time` TEXT, `clinical_trial_source` TEXT, `clinical_trial_identifier` TEXT, `clinical_trial_link` TEXT, `clinical_sponsor` TEXT, `drug_composition` TEXT, `drug_dosing_durability` TEXT, `added_by` INTEGER NOT NULL, `added_on` TEXT NOT NULL, `modified_on` INTEGER, `modified_by` TEXT, `is_disabled` TEXT NOT NULL, `disabled_by` INTEGER, `is_deleted` INTEGER, `deleted_on` TEXT, `deleted_by` INTEGER, `disabled_on` TEXT )";
+    // private static final String CREATE_COMPANY_BANNERS ="CREATE TABLE `company_banners` ( `banner_id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, `company_id` INTEGER, `type` TEXT, `brand_name` TEXT, `folder_name` TEXT, `banner_image1` TEXT, `product_image2` TEXT, `banner_type` TEXT, `status` TEXT, `speciality` TEXT, `generic_name` TEXT, `manufactured_by` TEXT, `marketed_by` TEXT, `group_name` TEXT, `link_to_page` TEXT, `call_me` TEXT, `meet_me` TEXT, `priority` INTEGER, `start_time` TEXT, `end_time` TEXT, `clinical_trial_source` TEXT, `clinical_trial_identifier` TEXT, `clinical_trial_link` TEXT, `clinical_sponsor` TEXT, `drug_composition` TEXT, `drug_dosing_durability` TEXT, `added_by` INTEGER NOT NULL, `added_on` TEXT NOT NULL, `modified_on` INTEGER, `modified_by` TEXT, `is_disabled` TEXT NOT NULL, `disabled_by` INTEGER, `is_deleted` INTEGER, `deleted_on` TEXT, `deleted_by` INTEGER, `disabled_on` TEXT )";
 
     private static final String BANNER_ID = " banner_id";
-    private static String COMPANY_ID="company_id";
+    private static String COMPANY_ID = "company_id";
     private static final String TYPE = "type";
     private static final String BRAND_NAME = "brand_name";
     private static final String FOLDER_NAME = "banner_folder";
@@ -248,9 +248,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             + " ADD COLUMN isd_code text;";
 
 
-
     private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_WEIGHT = " ALTER TABLE patient_history" + " ADD COLUMN weight text;";
-
 
 
     private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_PULSE = " ALTER TABLE patient_history" + " ADD COLUMN pulse text;";
@@ -273,7 +271,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_DRUGS = " ALTER TABLE patient_history" + " ADD COLUMN drugs text;";
 
     private static final String DATABASE_ALTER_TABLE_DOCTORINFO = " ALTER TABLE doctor_perInfo" + " ADD COLUMN company_id text;";
-
 
 
     // Upgrading database
@@ -311,7 +308,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
      * Updating Patient Personal details in database
      */
     public void updatePatientPersonalInfo(String keyid, String firstname, String middlename, String lastname, String gender, String dateofbirth, String age, String phNo, String language, String imgPath, String modified_on_date, String modified_by, String modifiedTime, String action, String flag, String docId,
-                                          String address, String cityortown, String district, String pin, String state,String phoneType,String alternatephoneType,String alternatePhoneNumber,String uid,String uidType,String isd_code,String alternateisd_code) throws ClirNetAppException {
+                                          String address, String cityortown, String district, String pin, String state, String phoneType, String alternatephoneType, String alternatePhoneNumber, String uid, String uidType, String isd_code, String alternateisd_code) throws ClirNetAppException {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -339,9 +336,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(DISTRICT, district);
             values.put(PIN_CODE, pin);
             values.put(PATIENT_STATE, state);
-            values.put(PHONE_TYPE,phoneType);
-            values.put(ALTERNATE_PHONE_NO,alternatePhoneNumber);
-            values.put(ALTERNATE_PHONE_TYPE,alternatephoneType);
+            values.put(PHONE_TYPE, phoneType);
+            values.put(ALTERNATE_PHONE_NO, alternatePhoneNumber);
+            values.put(ALTERNATE_PHONE_TYPE, alternatephoneType);
             values.put(UID, uid);
             values.put(UIDTYPE, uidType);
             values.put(ISD_CODE, isd_code);
@@ -361,7 +358,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-       // Log.d("update", " user data updatedinto sqlite: " + id);
+        // Log.d("update", " user data updatedinto sqlite: " + id);
     }
 
 
@@ -381,7 +378,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.delete(TABLE_PATIENTPERSONALINFO_HIOTORY, null, null);
         db.close();
 
-       // Log.d(TAG, "Deleted all user info from sqlite");
+        // Log.d(TAG, "Deleted all user info from sqlite");
     }
 
     //add user login credentails into db
@@ -407,7 +404,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-       // Log.d(TAG, "New Login Info into sqlite: " + id);
+        // Log.d(TAG, "New Login Info into sqlite: " + id);
 
 
     }
@@ -415,7 +412,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     //update the patient visit records into db
     public void updatePatientOtherInfo(String strId, String visitId, String usersellectedDate, String strfollow_up_date, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String modified_dateon, String modified_time, String modified_by, String action, String patInfoType, String flag,
-                                       String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs,String strHeight,String strbmi,String strSugarFasting) throws ClirNetAppException {
+                                       String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String strbmi, String strSugarFasting, String visit_date) throws ClirNetAppException {
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
         try {
@@ -447,6 +444,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(HEIGHT, strHeight);
             values.put(BMI, strbmi);
             values.put(SUGAR_FASTING, strSugarFasting);
+            values.put(VISIT_DATE, visit_date);
 
             // Inserting Row
             id = db.update(TABLE_PATIENT_HISTORY, values, KEY_PATIENT_ID + "=" + strId + " AND " + KEY_VISIT_ID + "=" + visitId, null);
@@ -457,7 +455,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close(); // Closing database connection
             }
 
-         //   Log.d("update", " user data updatedinto sqlite: " + id);
+            //   Log.d("update", " user data updatedinto sqlite: " + id);
         }
     }
 
@@ -540,7 +538,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                          String act_follow_up_date, String notes, String added_by, String added_on, String addedTime,
                                          String modified_by, String modified_on, String is_disabled, String disabled_by,
                                          String disabled_on, String is_deleted, String deleted_by, String deleted_on, String flag, String patient_info_type_form,
-                                         String precription,String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs) {
+                                         String precription, String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -575,7 +573,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             contentValue.put(SYCHRONIZED, flag);
             contentValue.put(PATIENT_INFO_TYPE_FORM, patient_info_type_form);
             contentValue.put(WEIGHT, weight);
-            contentValue.put(PRESCRIPTION,precription);
+            contentValue.put(PRESCRIPTION, precription);
             contentValue.put(PULSE, pulse);
             contentValue.put(BP, bphigh);
             contentValue.put(BP_LOW, bplow);
@@ -599,14 +597,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-       // Log.d(TAG, "New Login Info into sqlite: " + id);
+        // Log.d(TAG, "New Login Info into sqlite: " + id);
 
 
     }
 
     //This will add records from registration page into patient table  28/8/2016 ashish u
     public void addPatientPersonalfromLocal(int patient_id, String doctor_id, String first_name, String middle_name, String last_name, String sex, String strdate_of_birth, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String create_date, String doctor_membership_number, String flag, String patientInfoType, String addedTime, String added_by, String action,
-                                            String address, String city, String district, String pinno, String state,String phoneType,String alternatePhone_no,String selectedPhoneTypealternate_no,String uid,String uidType,String selectedIsd_codeType,String alternate_no_isdcode) {
+                                            String address, String city, String district, String pinno, String state, String phoneType, String alternatePhone_no, String selectedPhoneTypealternate_no, String uid, String uidType, String selectedIsd_codeType, String alternate_no_isdcode) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -639,12 +637,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(DISTRICT, district);
             values.put(PIN_CODE, pinno);
             values.put(PATIENT_STATE, state);
-            values.put(PHONE_TYPE,phoneType);
-            values.put(ALTERNATE_PHONE_NO,alternatePhone_no);
+            values.put(PHONE_TYPE, phoneType);
+            values.put(ALTERNATE_PHONE_NO, alternatePhone_no);
             values.put(ALTERNATE_PHONE_TYPE, selectedPhoneTypealternate_no);
             values.put(UID, uid);
             values.put(UIDTYPE, uidType);
-            values.put(ISD_CODE,selectedIsd_codeType);
+            values.put(ISD_CODE, selectedIsd_codeType);
             values.put(ATERNATE_NO_ISD_CODE, alternate_no_isdcode);
 
             // Inserting Row
@@ -659,14 +657,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-       // Log.d(TAG, "New patient inserted into sqlite: " + id);
+        // Log.d(TAG, "New patient inserted into sqlite: " + id);
 
 
     }
 
     //add  new patient records into db from registration page
     public void addHistoryPatientRecords(int visit_id, int patient_id, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String ailments, String prescriptionImgPath, String clinical_note, String added_on_date, String visit_date, String doc_id, String doc_mem_id, String flag, String addedTime, String patientInfoType, String added_by, String action,
-                                         String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs,String strHeight ,String bmi,String strSugarFasting) {
+                                         String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String bmi, String strSugarFasting) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -716,12 +714,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-       // Log.d(TAG, "New patient inserted into sqlite: " + id);
+        // Log.d(TAG, "New patient inserted into sqlite: " + id);
     }
 
     //add patient records from add pateint update page
     public void addPatientNextVisitRecord(String visit_id, String strPatientId, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String visit_date, String doc_id, String doc_mem_id, String addedOnDate, String addedTime, String flag, String added_by, String action, String patInfoType,
-                                          String weight, String pulse, String bp, String mmhg, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs,String strHeight,String strbmi,String strSugarFasting) {
+                                          String weight, String pulse, String bp, String mmhg, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String strbmi, String strSugarFasting) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -770,7 +768,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-      //  Log.d("update", " user Visit data added into sqlite: " + id);
+        //  Log.d("update", " user Visit data added into sqlite: " + id);
     }
 
     //this will give u a json array of patient records where flag =o
@@ -816,7 +814,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
 
 
-       //     Log.d("TAG_NAME", resultSet.toString());
+            //     Log.d("TAG_NAME", resultSet.toString());
 
             return resultSet;
 
@@ -859,7 +857,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                 rowObject.put(cursor.getColumnName(i), "");
                             }
                         } catch (Exception e) {
-                          //  Log.d("TAG_NAME", e.getMessage());
+                            //  Log.d("TAG_NAME", e.getMessage());
                         }
 
                     }
@@ -902,7 +900,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-      //  Log.d("update", "patient data modified into sqlite: " + id);
+        //  Log.d("update", "patient data modified into sqlite: " + id);
     }
 
     //update the flag once data send to server successfully
@@ -926,11 +924,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-      //  Log.d("update", "patient data modified into sqlite: " + id);
+        //  Log.d("update", "patient data modified into sqlite: " + id);
     }
 
     //add doctor personal info into db
-    public void addDoctorPerInfo(String doc_id, String doctor_login_id, String membership_id, String first_name, String middle_name, String last_name, String email_id, String phone_no,String company_id) {
+    public void addDoctorPerInfo(String doc_id, String doctor_login_id, String membership_id, String first_name, String middle_name, String last_name, String email_id, String phone_no, String company_id) {
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
         try {
@@ -964,7 +962,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-      //  Log.d(TAG, "New doctor personal info inserted into sqlite: " + id);
+        //  Log.d(TAG, "New doctor personal info inserted into sqlite: " + id);
 
 
     }
@@ -988,7 +986,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-      //  Log.d("addedailemnt", "New patient inserted into sqlite: " + id);
+        //  Log.d("addedailemnt", "New patient inserted into sqlite: " + id);
 
     }
 
@@ -1013,7 +1011,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-      //  Log.d("addedailemnt", "New ailment inserted into sqlite: " + id);
+        //  Log.d("addedailemnt", "New ailment inserted into sqlite: " + id);
 
 
     }
@@ -1039,10 +1037,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-      //  Log.d("update", "user password changed: " + id);
+        //  Log.d("update", "user password changed: " + id);
     }
-    public void addBannerDisplayData(String doc_id,String membership_id ,String company_id, String banner_id, String banner_folder, String banner_image_url,
-                              int  banner_image_type, String module, String is_disabled, String is_deleted,  String added_on,String flag) {
+
+    public void addBannerDisplayData(String doc_id, String membership_id, String company_id, String banner_id, String banner_folder, String banner_image_url,
+                                     int banner_image_type, String module, String is_disabled, String is_deleted, String added_on, String flag) {
 
         SQLiteDatabase db = null;
         long id = 0;
@@ -1065,7 +1064,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(IS_DISABLED, is_disabled);
             values.put(IS_DELETED, is_deleted);
             values.put(ADDED_ON, added_on);
-            values.put(FLAG,flag);
+            values.put(FLAG, flag);
 
             // int rows = db.update("last_name_master", values, "last_name" + "= ?", new String[]{lastName});
             //id =db.insertWithOnConflict("table_LastNames", null, values, SQLiteDatabase.CONFLICT_REPLACE);
@@ -1080,13 +1079,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-      //  Log.d("ADDED", " user data ADDED into sqlite: " + id);
+        //  Log.d("ADDED", " user data ADDED into sqlite: " + id);
 
 
     }
 
-    public void addBannerClickedData(String doc_id,String membership_id ,String company_id, String banner_id, String banner_folder, String banner_image_url,
-                                     int  banner_image_type, String module, String is_disabled, String is_deleted,  String added_on,String flag) {
+    public void addBannerClickedData(String doc_id, String membership_id, String company_id, String banner_id, String banner_folder, String banner_image_url,
+                                     int banner_image_type, String module, String is_disabled, String is_deleted, String added_on, String flag) {
 
         SQLiteDatabase db = null;
         long id = 0;
@@ -1124,16 +1123,16 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-       // Log.d("ADDED", " user data ADDED into sqlite: " + id);
+        // Log.d("ADDED", " user data ADDED into sqlite: " + id);
 
 
     }
 
 
     public void addCallMeetMeData(String brand_name, String company_id, String generic_name,
-     String called_from, String strDate, String from_time, String to_time, String location, String strreason, String doctor_id,
-    String doc_mem_id, String request_on, String reqest_fullfilled, String modified_on, String modified_by, String is_deleted,
-      String is_disabled, String disabled_by, String disabled_on, String deleted_on, String flag,String added_on,String added_by){
+                                  String called_from, String strDate, String from_time, String to_time, String location, String strreason, String doctor_id,
+                                  String doc_mem_id, String request_on, String reqest_fullfilled, String modified_on, String modified_by, String is_deleted,
+                                  String is_disabled, String disabled_by, String disabled_on, String deleted_on, String flag, String added_on, String added_by) {
 
         SQLiteDatabase db = null;
         long id = 0;
@@ -1149,7 +1148,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
             values.put(GENERIC_NAME, generic_name);
             values.put(CALLED_FROM, called_from);
-            values.put(PREFERED_TIME,strDate);
+            values.put(PREFERED_TIME, strDate);
             values.put(START_TIME, from_time);
             values.put(END_TIME, to_time);
 
@@ -1167,10 +1166,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
             values.put(DISABLED_ON, disabled_on);
             values.put(DELETED_ON, deleted_on);
-             values.put(ADDED_ON, added_on);
-            values.put(ADDED_BY,added_by);
-            values.put(FLAG,flag);
-
+            values.put(ADDED_ON, added_on);
+            values.put(ADDED_BY, added_by);
+            values.put(FLAG, flag);
 
 
             // int rows = db.update("last_name_master", values, "last_name" + "= ?", new String[]{lastName});
@@ -1186,9 +1184,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-      //  Log.d("ADDED", " user data ADDED into sqlite: " + id);
+        //  Log.d("ADDED", " user data ADDED into sqlite: " + id);
 
     }
+
     public void FlagupdatePatientVisit(String flag) {
         long id = 0;
         SQLiteDatabase db = null;
@@ -1209,10 +1208,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-     //   Log.d("update", "patient data modified into sqlite: " + id);
+        //   Log.d("update", "patient data modified into sqlite: " + id);
     }
+
     //update the flag once data send to server successfully
-    public void FlagupdatePatientPersonal( String flag) {
+    public void FlagupdatePatientPersonal(String flag) {
         SQLiteDatabase db = null;
         long id = 0;
         try {
@@ -1234,7 +1234,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-     //   Log.d("update", "patient data modified into sqlite: " + id);
+        //   Log.d("update", "patient data modified into sqlite: " + id);
     }
 
     //this will give u a json array of patient records where flag =o
@@ -1337,7 +1337,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
 
 
-        //    Log.d("TAG_NAME", resultSet.toString());
+            //    Log.d("TAG_NAME", resultSet.toString());
 
             return resultSet;
 
@@ -1403,7 +1403,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         //Log.d("updated", "banner flag data modified into sqlite: " + id);
     }
 
-    public void addAsynctascRun_status(String process,String start_time,String end_time,String update_on) {
+    public void addAsynctascRun_status(String process, String start_time, String end_time, String update_on) {
 
         SQLiteDatabase db = null;
         long id = 0;
@@ -1437,7 +1437,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-       // Log.d("ADDED", " user data ADDED into sqlite: " + id);
+        // Log.d("ADDED", " user data ADDED into sqlite: " + id);
 
 
     }
@@ -1447,7 +1447,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = null;
         this.getReadableDatabase();
 
-        Cursor cursor=null;
+        Cursor cursor = null;
         try {
             db = this.getReadableDatabase();
             cursor = null;
@@ -1459,10 +1459,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             if (cursor != null && cursor.getCount() > 0) {
                 return true;
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            if(cursor != null){
+        } finally {
+            if (cursor != null) {
                 cursor.close();
             }
             //Note  I did not close db connection here bcs we r calling this method from another  whr w r closing db, if we

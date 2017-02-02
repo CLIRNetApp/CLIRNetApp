@@ -26,6 +26,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import app.clirnet.com.clirnetapp.R;
@@ -84,18 +85,13 @@ public class SyncDataService extends Service {
 
     }
 
-    private void runOnUiThread(Runnable runnable) {
-        handler.post(runnable);
-    }
+
 
     @Override
     public void onStart(Intent intent, int startId) {
 
         nMn = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        //get imei no of user ph
-        //TelephonyManager mngr = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
 
-       // Log.e("Started", "Service Started" + appController.getDateTimenew());
 
         try {
             sqlController = new SQLController(getApplicationContext());
@@ -158,20 +154,17 @@ public class SyncDataService extends Service {
         bannerDisplayIds_List = sqlController.getBannerDisplaysFalg0();
         bannaerClickedIdsList = sqlController.getBannerClickedFalg0();
 
-       // Log.e("patientIds_List", "  " + bannerDisplayIds_List.size() + "     " + bannaerClickedIdsList.size());
 
         String bannerDisplayArayString = String.valueOf(dbController.getResultsForBannerDisplay());
 
-        //Log.e("bannerDisplayArayString", "  " + bannerDisplayArayString);
 
         String bannerClickedArayString = String.valueOf(dbController.getResultsForBannerClicked());
-     //   Log.e("bannerClickedArayString", "  " + bannerClickedArayString);
 
         boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
         if (isInternetPresent) {
             String start_time=appController.getDateTimenew();
 
-            if (bannaerClickedIdsList.size() > 0 || bannerDisplayIds_List.size() > 0) {
+            if (bannaerClickedIdsList.size() > 0 & bannerDisplayIds_List.size() > 0) {
                 new UploadBannerDataAsyncTask(mUserName, mPassword, getApplicationContext(), bannerDisplayArayString, bannerClickedArayString, doctor_membership_number, docId, bannerDisplayIds_List, bannaerClickedIdsList,start_time);
             }
 
@@ -308,11 +301,20 @@ public class SyncDataService extends Service {
                 params.put("docId", docId);
                 params.put("patient_visits_count", String.valueOf(patient_visits_count));
                 params.put("patient_details_count", String.valueOf(patient_details_count));
+                return checkParams(params);
 
 
-                return params;
             }
-
+            private Map<String, String> checkParams(Map<String, String> map){
+                Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
+                while (it.hasNext()) {
+                    Map.Entry<String, String> pairs = it.next();
+                    if(pairs.getValue()==null){
+                        map.put(pairs.getKey(), "");
+                    }
+                }
+                return map;
+            }
         };
 
         // Adding request to request queue

@@ -9,7 +9,6 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.app.AppController;
 
 public class MailActivity extends AppCompatActivity {
 
@@ -25,7 +24,6 @@ public class MailActivity extends AppCompatActivity {
         textTo = (EditText) findViewById(R.id.editTextTo);
         textSubject = (EditText) findViewById(R.id.editTextSubject);
         textMessage = (EditText) findViewById(R.id.editTextMessage);
-        AppController appController = new AppController();
 
         buttonSend.setOnClickListener(new View.OnClickListener() {
 
