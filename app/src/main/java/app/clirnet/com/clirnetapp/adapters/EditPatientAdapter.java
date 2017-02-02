@@ -130,14 +130,11 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
 
     private void showDialog(String imgPath) {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-
-
         //Yes Button
         builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 Toast.makeText(mContext, "Yes button Clicked", Toast.LENGTH_LONG).show();
-                Log.i("Code2care ", "Yes button Clicked!");
                 dialog.dismiss();
             }
         });

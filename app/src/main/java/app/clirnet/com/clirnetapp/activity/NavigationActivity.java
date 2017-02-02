@@ -105,28 +105,10 @@ public class NavigationActivity extends AppCompatActivity
             }
         }
 
-
-        String fromWhere = getIntent().getStringExtra("FROMWHERE");//check from which fragment call came and redirect to that fragment
-
-
-        Fragment fragment = getSupportFragmentManager().
-                findFragmentById(R.id.flContent);
-        if (fromWhere == null) {
+        Fragment fragment;
 
             fragment = new HomeFragment();
 
-        } else if (fromWhere.equals("2")) {
-            fragment = new ConsultationLogFragment();
-
-        } else if (fromWhere.equals("3")) {
-            fragment = new PoHistoryFragment();
-
-        }
-        //for any other values
-        else {
-
-            fragment = new HomeFragment();
-        }
         fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
 

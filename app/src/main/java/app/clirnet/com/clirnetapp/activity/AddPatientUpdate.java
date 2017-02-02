@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -358,7 +357,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         }
 
-        Cursor cursor = null;
+
         try {
 
             databaseClass.openDataBase();
@@ -384,9 +383,6 @@ public class AddPatientUpdate extends AppCompatActivity {
             appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
 
-            if (cursor != null) {
-                cursor.close();
-            }
             if (databaseClass != null) {
                 databaseClass.close();
             }
@@ -931,8 +927,6 @@ public class AddPatientUpdate extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),"Please enter any of Ailemnt,Symptoms or Diagnosis ",Toast.LENGTH_LONG).show();
             // ailment.setError("Please enter Ailment");
             return;
-        } else {
-            //  ailment.setError(null);
         }
 
         /*if (TextUtils.isEmpty(ailments)) {
@@ -961,7 +955,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         ailments = ailments.replaceAll("\\s+", " ");
 
 
-        Boolean ailmentValue = false;
+        Boolean ailmentValue;
 
         if (ailments.length() > 0) {
             ailmentValue = appController.findNumbersAilment(ailments);
@@ -997,16 +991,13 @@ public class AddPatientUpdate extends AppCompatActivity {
 
 
         //here we need to convert date it to 1-09-2016 date format to get records in sys date filter list
-        sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+        sdf1 = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
         final Calendar c = Calendar.getInstance();
-        int year1 = c.get(Calendar.YEAR);
-        int month1 = c.get(Calendar.MONTH);
-        int day1 = c.get(Calendar.DAY_OF_MONTH);
 
-        StringBuilder modified_on = new StringBuilder().append(day1).append("-").append(month1 + 1).append("-").append(year1).append("");
 
-        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy");
-        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+
+        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
        // String visit_date1 = addedOnDate.toString();
         String added_on = visitDate.getText().toString();
 
@@ -1090,12 +1081,6 @@ public class AddPatientUpdate extends AppCompatActivity {
 
                     previewCapturedImage(); //
 
-                } else if (resultCode == Activity.RESULT_CANCELED) {
-                    // user cancelled Image capture
-                   /* new RegistrationActivity().customToast("User cancelled image capture");*/
-                } else {
-                    // failed to capture image
-                   /* new RegistrationActivity().customToast("Sorry! Failed to capture image");*/
                 }
             }
         } catch (Exception e) {
@@ -1154,7 +1139,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                             @Override
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
-                                SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
+
 
 
                                 visitDate.setText(dayOfMonth + "-"
@@ -1338,7 +1323,6 @@ public class AddPatientUpdate extends AppCompatActivity {
         inputnumber=null;
         value=null;
         daysSel=null;
-        TextView txtaddress = null;
         txtRecord=null;
         txtsymtomsanddignost=null;
         presciptiontext=null;

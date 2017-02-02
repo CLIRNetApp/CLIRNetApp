@@ -23,7 +23,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
 
     private final List<RegistrationModel> patientList;
     private final AppController appController=new AppController();
-    private Context mContext;
+    private final Context mContext;
 
     public AddPatientUpdateAdapter(Context context,List<RegistrationModel> patientList) {
         this.patientList = patientList;

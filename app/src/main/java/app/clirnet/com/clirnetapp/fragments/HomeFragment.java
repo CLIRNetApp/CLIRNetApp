@@ -159,7 +159,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private String company_id;
     private ImageDownloader mDownloader;
 
-    private FileOutputStream fos;  private  Bitmap bmp;
+    private FileOutputStream fos;
+    private Bitmap bmp;
     private ProgressBar pb;
 
     private EditText oldPassword;
@@ -214,11 +215,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             filteredModelList.clear();
         }
 
-       // getFlagStatus();
+        // getFlagStatus();
         checkLastLoginTime();
 
         appController = new AppController();
-        bannerClass=new BannerClass(getContext());
+        bannerClass = new BannerClass(getContext());
 
         sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         pDialog = new ProgressDialog(getContext());
@@ -264,13 +265,13 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             patientInfoArayString = String.valueOf(dbController.getResultsForPatientInformation());
 
             patientVisitHistorArayString = String.valueOf(dbController.getResultsForPatientHistory());
-            bannerimgNames= bannerClass.getImageName();
-            company_id=sqlController.getCompany_id();
+            bannerimgNames = bannerClass.getImageName();
+            company_id = sqlController.getCompany_id();
             //Log.e("current Time", "" + company_id);
 
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment " + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
             if (sqlController != null) {
                 sqlController.close();
@@ -300,7 +301,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             }
 
         });
-          //send the data to server when sync botton pressed
+        //send the data to server when sync botton pressed
         sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -332,7 +333,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         }
 
 
-                    }else{
+                    } else {
                         showAnotherAlert2("No Internet", "No Internet Connectivity.");
                     }
 
@@ -410,7 +411,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         if (sqlController1 != null) {
             sqlController1.close();
@@ -431,7 +432,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     Date currentdate = sdf1.parse(String.valueOf(sysdate));
 
                     if (date1.after(currentdate) || date1.equals(currentdate)) {
-                       // System.out.println("Date1 is after sysdate");
+                        // System.out.println("Date1 is after sysdate");
 
 
                         afterDateEditPatientUpdate(position);
@@ -444,7 +445,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
 
             }
@@ -498,7 +499,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
 
             if (cursor != null) {
@@ -528,7 +529,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         getBannersData(savedUserName, savedUserPassword, apiKey, doctor_membership_number, company_id);
                         //new GetBannerImageTask(getContext(), savedUserName, savedUserPassword, doctor_membership_number, company_id); //send log file to server
 
-                         new LastNameAsynTask(getContext(), savedUserName, savedUserPassword,appController.getDateTime());
+                        new LastNameAsynTask(getContext(), savedUserName, savedUserPassword, appController.getDateTime());
                         getPatientRecords(savedUserName, savedUserPassword);
 
                     }
@@ -577,9 +578,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
 
 
-
         startActivity(i);
-            //       Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
+        //       Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
     }
 
     private void afterDateEditPatientUpdate(int position) {
@@ -654,7 +654,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             Toast.makeText(getContext(), "DB Exported!", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 
@@ -668,7 +668,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             if (patientIds_List != null && !patientIds_List.isEmpty() || getPatientVisitIdsList != null && !getPatientVisitIdsList.isEmpty()) {
                 // Log.e("senddata", "data is sending");
-                sendDataToServer(patientInfoArayString, patientVisitHistorArayString,doctor_membership_number,docId,getPatientVisitIdsList.size(),patientIds_List.size());
+                sendDataToServer(patientInfoArayString, patientVisitHistorArayString, doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size());
 
             } else {
                 makeToast("Server is already up to date");
@@ -676,7 +676,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             }
 
         }
-        if(!isInternetPresent) {
+        if (!isInternetPresent) {
 
             showAnotherAlert2("No Internet", "No Internet Connectivity.");
         }
@@ -718,14 +718,14 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         try {
             if (searchView == null)
                 //no inspection Constant Conditions
-            searchView = new SearchView(((NavigationActivity) getActivity()).getSupportActionBar().getThemedContext());
+                searchView = new SearchView(((NavigationActivity) getActivity()).getSupportActionBar().getThemedContext());
             searchView.setIconifiedByDefault(false);
             searchView.setInputType(InputType.TYPE_CLASS_NUMBER);//this will do not let user to enter any other text than digit 0-9 only
             searchView.setQueryHint(getResources().getString(R.string.hint_search));
 
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -804,7 +804,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment Search View " + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment Search View " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
 
 
@@ -848,7 +848,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
             }
 
@@ -1036,35 +1036,41 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     }
 
     //this will used to change banner image after some time interval
-    private void setupAnimation()  {
+    private void setupAnimation() {
 
-        if(bannerimgNames.size()>0) {
+        if (bannerimgNames != null) {
             Random r = new Random();
-            int n = r.nextInt(bannerimgNames.size());
+            try {
+                if (bannerimgNames.size() > 0) {
+                    int n = r.nextInt(bannerimgNames.size());
 
-            // final String url = getString(imageArray[n]);
-            //  backChangingImages.setImageResource(imageArray[n]);
-            final String url = bannerimgNames.get(n);
-            //  Log.e("nUrl", "" + n + "" + url);
+                    // final String url = getString(imageArray[n]);
+                    //  backChangingImages.setImageResource(imageArray[n]);
+                    final String url = bannerimgNames.get(n);
+                    //  Log.e("nUrl", "" + n + "" + url);
 
-            BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
+                    BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
 
-            //Log.e("BitmapDrawable", "" + d);
-            backChangingImages.setImageDrawable(d);
+                    //Log.e("BitmapDrawable", "" + d);
+                    backChangingImages.setImageDrawable(d);
 
-            backChangingImages.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+                    backChangingImages.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
 
-                    String action = "clicked";
+                            String action = "clicked";
 
-                    appController.showAdDialog(getContext(), url);
+                            appController.showAdDialog(getContext(), url);
+                            appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+                        }
+                    });
+                    String action = "display";
                     appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
                 }
-            });
-            String action = "display";
-            appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -1249,21 +1255,18 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         });
 
 
-
         dialog.show();
     }
 
 
-
     //sync data to server
-    private void sendDataToServer(final String patient_details, final String patient_visits ,final String docMemId,final String docId, final int patient_visits_count, final int patient_details_count  ) {
+    private void sendDataToServer(final String patient_details, final String patient_visits, final String docMemId, final String docId, final int patient_visits_count, final int patient_details_count) {
 
         String tag_string_req = "req_login";
 
 
         pDialog.setMessage("Syncing Data");
         pDialog.setCancelable(false);
-
 
 
         showDialog();
@@ -1288,7 +1291,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     if (msg.equals("OK")) {
 
                         //  Log.e("ashish", "" + patientIds_List.size());
-                       int patientIds_Listsize = patientIds_List.size();
+                        int patientIds_Listsize = patientIds_List.size();
                         for (int i = 0; i < patientIds_Listsize; i++) {
                             String patientId = patientIds_List.get(i).getPat_id();
                             String flag = "1";
@@ -1296,7 +1299,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                             dbController.FlagupdatePatientPersonal(patientId, flag);
                         }
 
-                      int  patientVisitIdsList = getPatientVisitIdsList.size();
+                        int patientVisitIdsList = getPatientVisitIdsList.size();
                         for (int i = 0; i < patientVisitIdsList; i++) {
                             // String patientId = getPatientVisitIdsList.get(i).getPat_id();
                             String patientVisitId = getPatientVisitIdsList.get(i).getKey_visit_id();
@@ -1307,7 +1310,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                         String time = appController.getDateTimenew();
                         appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Activity data is sync to server : patient Visit Count : " + patientVisitIdsList + " patient Count : " + patientIds_List);
-                    //    Log.e("senddata", "data is sent " + time);
+                        //    Log.e("senddata", "data is sent " + time);
                         lastSyncTime(time);
                         toast = Toast.makeText(getContext().getApplicationContext(), "Data Send Successfully to Server", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
@@ -1317,7 +1320,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                     Toast.makeText(getContext().getApplicationContext(), "Json error: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }
@@ -1326,7 +1329,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment Error while sending data to server " + error+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment Error while sending data to server " + error + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                 Toast.makeText(getContext(),
                         error.getMessage(), Toast.LENGTH_LONG).show();
@@ -1382,7 +1385,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         pDialog.setMessage("Initializing Application.Getting patient records, Please Wait...");
         pDialog.setCancelable(false);
         showDialog();
-        pateintrecordasync_start_time=appController.getDateTimenew();
+        pateintrecordasync_start_time = appController.getDateTimenew();
 
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
@@ -1391,8 +1394,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             @Override
             public void onResponse(String response) {
-              //  Log.d(TAG, "Sync Response: " + response);
-              //  Log.e("responseresponse", "" + response);
+                //  Log.d(TAG, "Sync Response: " + response);
+                //  Log.e("responseresponse", "" + response);
 
                 new getPatientRecordsFromServer().execute(response);
 
@@ -1402,7 +1405,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             @Override
             public void onErrorResponse(VolleyError error) {
-            //    Log.e(TAG, "Login Error: Failed To Initalize Data" + error.getMessage()+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                //    Log.e(TAG, "Login Error: Failed To Initalize Data" + error.getMessage()+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
                 Toast.makeText(getContext(),
                         "Failed To Initalize Data" + error.getMessage(), Toast.LENGTH_LONG).show();
                 hideDialog();
@@ -1498,7 +1501,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             } catch (ParseException e) {
                 e.printStackTrace();
-                appController.appendLog(" Home Fragment" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(" Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
             dbController.addPatientPersoanlRecords(pat_id, doctor_id, doc_membership_id, patient_info_type_form, pat_first_name, pat_middle_name, pat_last_name,
@@ -1583,7 +1586,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             } catch (ParseException e) {
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + " Home Fragment " + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + " Home Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
             String convertedAddedonDate = null;
             String convertedAddedonTime = null;
@@ -1599,7 +1602,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             } catch (ParseException e) {
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
             //This will convert visit date format into dd-MM-yyyy format 17-9-2016
@@ -1615,7 +1618,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             } catch (ParseException e) {
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
 
@@ -1628,9 +1631,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         }
 
         dbController.addAsync();
-        String end_time=appController.getDateTimenew();
+        String end_time = appController.getDateTimenew();
 
-        dbController.addAsynctascRun_status("getPatientRecords",pateintrecordasync_start_time,end_time,"");//last parameter is update on which is blank right now
+        dbController.addAsynctascRun_status("getPatientRecords", pateintrecordasync_start_time, end_time, "");//last parameter is update on which is blank right now
 
         Intent i = new Intent(getContext(), NavigationActivity.class);
         startActivity(i);
@@ -1646,7 +1649,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         dialog.setTitle(title);
         //  dialog.setCancelable(false);
-        TextView msgTxt=(TextView)dialog.findViewById(R.id.msgTxt);
+        TextView msgTxt = (TextView) dialog.findViewById(R.id.msgTxt);
         msgTxt.setText(message);
 
         Button dialogButtonCancel = (Button) dialog.findViewById(R.id.customDialogCancel);
@@ -1663,11 +1666,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         // Your android custom dialog ok action
         // Action for custom dialog ok button click
-        if(message.equals("No Data to Send")) {
+        if (message.equals("No Data to Send")) {
             dialogButtonOk.setVisibility(View.GONE);
             dialogButtonCancel.setText("OK");
 
-        }else{
+        } else {
             dialogButtonOk.setOnClickListener(new View.OnClickListener() {
 
                 @Override
@@ -1714,10 +1717,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         if (addaNewPatient != null) {
             addaNewPatient.setOnClickListener(null);
         }
-        if(bannerClass != null){
-            bannerClass= null;
+        if (bannerClass != null) {
+            bannerClass = null;
         }
-        bannerimgNames=null;
+        bannerimgNames = null;
 
         Searchrecycler_view.addOnScrollListener(null);
         norecordtv = null;
@@ -1733,15 +1736,15 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         savedUserName = null;
         savedUserPassword = null;
         patientInfoArayString = null;
-        doctor_membership_number=null;
-        pateintrecordasync_start_time=null;
-        banner_downloadstart_time=null;
-        backChangingImages=null;
+        doctor_membership_number = null;
+        pateintrecordasync_start_time = null;
+        banner_downloadstart_time = null;
+        backChangingImages = null;
     }
 
     @Override
     public void onPause() {
-       // Log.e("DEBUG", "OnPause of HomeFragment");
+        // Log.e("DEBUG", "OnPause of HomeFragment");
 
         super.onPause();
     }
@@ -1787,7 +1790,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         String loginTime = pref.getString("loginTime", null);
 
         int hrs = AppController.hoursAgo(loginTime);
-    //    Log.e("loginTime", "" + loginTime + " hours " + hrs);
+        //    Log.e("loginTime", "" + loginTime + " hours " + hrs);
 
         if (hrs >= 8) {
             Intent i = new Intent(getContext().getApplicationContext(), LoginActivity.class);
@@ -1832,7 +1835,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             } catch (JSONException e) {
                 // JSON error
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             }
             return null;
@@ -1840,20 +1843,20 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         @Override
         protected void onPostExecute(String result) {
-           // Log.e("onPostExecute", "onPostExecute");
+            // Log.e("onPostExecute", "onPostExecute");
             //  pDialog.dismiss();
-           // hideDialog();
+            // hideDialog();
 
-           // makeToast("Application Initialization Successful");
+            // makeToast("Application Initialization Successful");
         }
 
         @Override
         protected void onPreExecute() {
-           // Log.e("onPreExecute", "onPreExecute");
-              pd = new ProgressDialog(getContext());
-              pd.setMessage("Initializing Application. Please Wait...2");
-              pDialog.show();
-              showDialog();
+            // Log.e("onPreExecute", "onPreExecute");
+            pd = new ProgressDialog(getContext());
+            pd.setMessage("Initializing Application. Please Wait...2");
+            pDialog.show();
+            showDialog();
         }
 
         @Override
@@ -1873,7 +1876,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             int visibleItemCount = mLayoutManager.getChildCount();
             int totalItemCount = mLayoutManager.getItemCount();
             int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
-           // Log.e("visibleItemCount", "" + visibleItemCount + " totalItemCount  " + totalItemCount + " firstVisibleItemPosition " + firstVisibleItemPosition);
+            // Log.e("visibleItemCount", "" + visibleItemCount + " totalItemCount  " + totalItemCount + " firstVisibleItemPosition " + firstVisibleItemPosition);
 
             if (!isLoading && !isLastPage) {
                 if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
@@ -1902,7 +1905,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         int index = sva.getItemCount() - 1;
         int end = index + PAGE_SIZE;
-      //  Log.e("index", "" + index + " " + end + " size is " + queryCount);
+        //  Log.e("index", "" + index + " " + end + " size is " + queryCount);
 
         if (end <= queryCountforTotalPatient) {
             try {
@@ -1922,6 +1925,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         }
     }
+
     private void getBannersData(final String savedUserName, final String savedUserPassword, final String apiKey, final String docMemId, final String companyid) {
         // Tag used to cancel the request
         String tag_string_req = "req_login";
@@ -1930,7 +1934,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         pDialog.setMessage("Initializing Application.Getting Banner data Please Wait...");
         pDialog.setCancelable(false);
         showDialog();
-         banner_downloadstart_time=appController.getDateTimenew();
+        banner_downloadstart_time = appController.getDateTimenew();
 
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 AppConfig.URL_BANNER_API, new Response.Listener<String>() {
@@ -1938,8 +1942,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             @Override
             public void onResponse(String response) {
-              //  Log.d(TAG, "Sync Response: " + response);
-               // Log.e("getBannersData", "" + response);
+                //  Log.d(TAG, "Sync Response: " + response);
+                // Log.e("getBannersData", "" + response);
                 // new getPatientRecordsFromServer().execute(response);
                 hideDialog();
                 pDialog.dismiss();
@@ -1951,9 +1955,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             @Override
             public void onErrorResponse(VolleyError error) {
-              //  Log.e(TAG, "Login Error: Failed To Initalize Data" + error.getMessage()+""+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                //  Log.e(TAG, "Login Error: Failed To Initalize Data" + error.getMessage()+""+Thread.currentThread().getStackTrace()[2].getLineNumber());
                 appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment getting banners" + error);
-                 hideDialog();
+                hideDialog();
             }
         }) {
 
@@ -2013,7 +2017,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             } catch (JSONException e) {
                 // JSON error
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e +""+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + "" + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             }
            /* new LastNameAsynTask(getContext(),savedUserName, savedUserPassword);*/
@@ -2022,19 +2026,20 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         @Override
         protected void onPostExecute(String result) {
-          //  Log.e("onPostExecute", "onPostExecute");
-             pd.dismiss();
-             hideDialog();
+            //  Log.e("onPostExecute", "onPostExecute");
+            pd.dismiss();
+            hideDialog();
             //makeToast("Application Initialization Successful");
 
         }
+
         @Override
         protected void onPreExecute() {
-          //  Log.e("onPreExecute", "onPreExecute");
+            //  Log.e("onPreExecute", "onPreExecute");
             pd = new ProgressDialog(getContext());
             pd.setMessage("Initializing Application. Downloading Images,Please Wait...2");
             pd.show();
-          //  showDialog();
+            //  showDialog();
         }
 
         @Override
@@ -2050,21 +2055,21 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             JSONObject jsonProsolveObject = jsonArray.getJSONObject(i);
 
             String banner_id = jsonProsolveObject.getString("banner_id");
-           // Log.e("banner_id",""+banner_id);
+            // Log.e("banner_id",""+banner_id);
 
 
             String company_id = jsonProsolveObject.getString("company_id");
             String brand_name = jsonProsolveObject.getString("brand_name");
-            String folder_name=jsonProsolveObject.getString("folder_name");
+            String folder_name = jsonProsolveObject.getString("folder_name");
             String banner_image_name = jsonProsolveObject.getString("banner_image1");
             banner_image_name = banner_image_name.replace(".jpg", "");
 
             String type = jsonProsolveObject.getString("type");
             String banner_image_url = jsonProsolveObject.getString("banner_image_url");
-          //  Log.e("banner_image_urlbefore", "" + banner_image_url);
+            //  Log.e("banner_image_urlbefore", "" + banner_image_url);
             banner_image_url = banner_image_url.replace("://", "http://");
             banner_image_url = banner_image_url.replace(" ", "%20");
-          //  Log.e("banner_image_urlafter", "" + banner_image_url);
+            //  Log.e("banner_image_urlafter", "" + banner_image_url);
 
             String speciality_name = jsonProsolveObject.getString("speciality_name");
             String product_image_url = jsonProsolveObject.getString("product_image_url");
@@ -2072,7 +2077,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             product_image_url = product_image_url.replace(" ", "%20");
             String product_image_name = jsonProsolveObject.getString("product_image2");
             String product_imagenm = product_image_name.replace(".jpg", "");
-            String banner_type=jsonProsolveObject.getString("banner_type_id");
+            String banner_type = jsonProsolveObject.getString("banner_type_id");
 
 
             String generic_name = jsonProsolveObject.getString("generic_name");
@@ -2111,11 +2116,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String deleted_by = jsonProsolveObject.getString("deleted_by");
             String deleted_on = jsonProsolveObject.getString("deleted_on");
 
-            if(checkifImageExists(banner_id))
-            {
-                File file = getImage("/"+banner_image_name+".png");
+            if (checkifImageExists(banner_id)) {
+                File file = getImage("/" + banner_image_name + ".png");
                 String path = file.getAbsolutePath();
-                if (path != null){
+                if (path != null) {
 
                     // Log.e("imageExist","imageExist allready");
                 }
@@ -2123,11 +2127,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 // Log.e("imageExist","imageExist not");
                 downloadImage(banner_image_url, banner_image_name);
             }
-            if(checkifImageExists(product_imagenm))
-            {
-                File file = getImage("/"+product_imagenm+".png");
+            if (checkifImageExists(product_imagenm)) {
+                File file = getImage("/" + product_imagenm + ".png");
                 String path = file.getAbsolutePath();
-                if (path != null){
+                if (path != null) {
 
                     //  Log.e("imageExist","imageExist allready");
                 }
@@ -2137,8 +2140,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             }
 
             //saveImageToSD(banner_image1);
-            String img_download_status="inprogress";
-            String download_initialization_time=appController.getDateTimenew();
+            String img_download_status = "inprogress";
+            String download_initialization_time = appController.getDateTimenew();
 
 
             bannerClass.addBannerData(banner_id, company_id, brand_name, type, banner_image_url, speciality_name,
@@ -2147,8 +2150,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     clinical_trial_source, clinical_trial_identifier, clinical_trial_link, clinical_sponsor, drug_composition, drug_dosing_durability, added_by, added_on, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, banner_image_name, banner_type, product_imagenm, folder_name, status_name, img_download_status, download_initialization_time);
 
         }
-        String processend_time=appController.getDateTimenew();
-        dbController.addAsynctascRun_status("Banner Downloads",banner_downloadstart_time,processend_time,"");
+        String processend_time = appController.getDateTimenew();
+        dbController.addAsynctascRun_status("Banner Downloads", banner_downloadstart_time, processend_time, "");
     }
 
     private void downloadImage(final String banner_image_url, final String banner_image1) {
@@ -2161,28 +2164,28 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                             .trim(), banner_image1.trim(), pb, getContext(), bmp, new ImageDownloader.ImageLoaderListener() {
                         @Override
                         public void onImageDownloaded(Bitmap bmp) {
-                          bmp = bmp;
+                            bmp = bmp;
                     /*--- here we assign the value of bmp field in our Loader class
                      * to the bmp field of the current class ---*/
                         }
                     });
                     mDownloader.execute();
-                    String img_download_status="downloading";
-                 //   String download_start_time=appController.getDateTimenew();
+                    String img_download_status = "downloading";
+                    //   String download_start_time=appController.getDateTimenew();
 
-                   // bannerClass.updateBannerImgDownloadStatus(banner_image1, banner_image_url, img_download_status,download_start_time);
+                    // bannerClass.updateBannerImgDownloadStatus(banner_image1, banner_image_url, img_download_status,download_start_time);
 
-                    String download_start_time=appController.getDateTimenew();
-                    bannerClass.updateBannerImgDownloadStatus(banner_image1, banner_image_url, img_download_status,download_start_time);
+                    String download_start_time = appController.getDateTimenew();
+                    bannerClass.updateBannerImgDownloadStatus(banner_image1, banner_image_url, img_download_status, download_start_time);
                 }
 
             });
         }
     }
-    public static boolean checkifImageExists(String imagename)
-    {
-        Bitmap b = null ;
-        File file = getImage("/"+imagename+".png");
+
+    public static boolean checkifImageExists(String imagename) {
+        Bitmap b = null;
+        File file = getImage("/" + imagename + ".png");
         String path = file.getAbsolutePath();
 
         if (path != null)
@@ -2190,6 +2193,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         return !(b == null || b.equals(""));
     }
+
     public static File getImage(String imagename) {
 
         File mediaImage = null;
@@ -2199,7 +2203,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             if (!myDir.exists())
                 return null;
 
-            mediaImage = new File("sdcard/BannerImages/"+imagename);
+            mediaImage = new File("sdcard/BannerImages/" + imagename);
         } catch (Exception e) {
 
             e.printStackTrace();

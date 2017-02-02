@@ -61,9 +61,9 @@ public class AppController extends Application {
 
 
     private RequestQueue mRequestQueue;
-    Request.Priority priority = Request.Priority.HIGH;
+    private Request.Priority priority = Request.Priority.HIGH;
 
-    public static AppController mInstance;
+    private static AppController mInstance;
 
     private HashMap<String, String> listBannerInformation;
     private String savedUserName;
@@ -151,7 +151,7 @@ public class AppController extends Application {
         String val = null;
         if (value.trim() != null) {
             try {
-                val = new Integer(value).toString();
+                val = Integer.valueOf(value).toString();
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new ClirNetAppException("Remove leading zeros");
@@ -320,10 +320,6 @@ public class AppController extends Application {
         return frmtedDate;
     }
 
-    public boolean emptyDataValidation(String value) {
-        return !(value.trim().equals("") || value.equals(null));
-    }
-
     public boolean PhoneNumberValidation(String value) {
 
         boolean result = true;
@@ -383,7 +379,7 @@ public class AppController extends Application {
 
     //get the hours between two dates
     public static int hoursAgo(String datetime) {
-        Date date = null; // Parse into Date object
+        Date date; // Parse into Date object
         long differenceInHours = 0;
         try {
             if (datetime != null) {

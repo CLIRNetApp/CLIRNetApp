@@ -156,7 +156,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         strLanguage = getIntent().getStringExtra("LANGUAGE");
         String strgender = getIntent().getStringExtra("GENDER");
 
-        String strVisitId = getIntent().getStringExtra("VISITID");
+        //String strVisitId = getIntent().getStringExtra("VISITID");
         String strAddress = getIntent().getStringExtra("ADDRESS");
 
         String strCityorTown = getIntent().getStringExtra("CITYORTOWN");
@@ -900,10 +900,6 @@ public class EditPersonalInfo extends AppCompatActivity {
                     // successfully captured the image
                     // display it in image view
                     previewCapturedImage();
-
-                } else if (resultCode == Activity.RESULT_CANCELED) {
-
-                } else {
 
                 }
             }

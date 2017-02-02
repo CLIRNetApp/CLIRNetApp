@@ -7,7 +7,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MotionEvent;
@@ -15,16 +14,13 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
-import app.clirnet.com.clirnetapp.Utility.ImageDownloader;
 import app.clirnet.com.clirnetapp.Utility.MD5;
 import app.clirnet.com.clirnetapp.Utility.SyncDataService;
 import app.clirnet.com.clirnetapp.app.AppController;
@@ -69,11 +65,6 @@ public class LoginActivity extends Activity {
 
     private BannerClass bannerClass;
 
-    private ImageDownloader mDownloader;
-    private  Bitmap bmp;
-    private FileOutputStream fos;
-    private ProgressBar pb;
-    private SharedPreferences.Editor editor;
     private Dialog dialog;
 
 
@@ -520,7 +511,7 @@ public class LoginActivity extends Activity {
 
 
     //store last sync time in prefrence
-    public void lastSyncTime(String lastSyncTime) {
+    private void lastSyncTime(String lastSyncTime) {
 
         getSharedPreferences("SyncFlag", MODE_PRIVATE)
                 .edit()
@@ -569,7 +560,7 @@ public class LoginActivity extends Activity {
 
     }
 
-    public boolean getFirstTimeLoginStatus(){
+    private boolean getFirstTimeLoginStatus(){
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String firstTimeLogin = pref.getString(LOGIN_COUNT
                 , null);
@@ -587,7 +578,7 @@ public class LoginActivity extends Activity {
 
         getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .edit()
-                .putString(LOGIN_COUNT, answer)
+                .putString(LOGIN_COUNT, "true")
                 .apply();
 
     }

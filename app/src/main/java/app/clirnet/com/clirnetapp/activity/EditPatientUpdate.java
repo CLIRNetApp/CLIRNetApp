@@ -25,7 +25,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
@@ -91,7 +90,6 @@ public class EditPatientUpdate extends AppCompatActivity {
 
     private ArrayList<String> mAilmemtArrayList;
 
-    private ImageView imageViewprescription;
     private String imageName;
     private Intent imageIntent;
     private File imagesFolder;
@@ -253,7 +251,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         btnclear=(Button)findViewById(R.id.btnclear);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
-        ExpandableListView expListView = (ExpandableListView) findViewById(R.id.lvExp);
+
 
         edtInput_weight = (EditText) findViewById(R.id.input_weight);
         edtInput_height=(EditText)findViewById(R.id.input_height);
@@ -277,7 +275,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         ImageView imgEdit = (ImageView) findViewById(R.id.editPersonalInfo);
         cancel = (Button) findViewById(R.id.cancel);
         editUpdate = (Button) findViewById(R.id.editUpdate);
-        imageViewprescription = (ImageView) findViewById(R.id.imageViewprescription);
+        ImageView imageViewprescription = (ImageView) findViewById(R.id.imageViewprescription);
 
         visitDate=(EditText)findViewById(R.id.visitDate);
 
@@ -782,7 +780,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                         inputnumber.setError(null);
                     }
                     buttonSelected = "days";
-                    String dateis = sdf1.format(appController.addDay1(new Date(), val));
+                    String dateis = sdf1.format(AppController.addDay1(new Date(), val));
                     fodtextshow.setText(dateis);
                     daysSel = value;
                     monthSel=null;
@@ -836,7 +834,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                 }
                 int fVal = (int) (val * 7);
                 buttonSelected = "week";
-                String dateis = sdf1.format(appController.addDay1(new Date(), fVal));
+                String dateis = sdf1.format(AppController.addDay1(new Date(), fVal));
                 usersellectedDate = dateis;
                 fowSel = value;
                 daysSel = null;
@@ -873,7 +871,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                     inputnumber.setError(null);
                 }
                 buttonSelected = "month";
-                String dateis = sdf1.format(appController.addMonth(new Date(), Integer.parseInt(value)));
+                String dateis = sdf1.format(AppController.addMonth(new Date(), Integer.parseInt(value)));
                 usersellectedDate = dateis;
                 monthSel = value;
                 daysSel=null;
@@ -1009,7 +1007,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         //Remove spaces between text if more than 2 white spaces found 12-12-2016
         ailments = ailments.replaceAll("\\s+", " ");
 
-        Boolean ailmentValue = false;
+        Boolean ailmentValue;
         if (ailments.length() > 0) {
             ailmentValue = appController.findNumbersAilment(ailments);
             Log.e("ailmentValue", "" + ailmentValue);
@@ -1034,8 +1032,8 @@ public class EditPatientUpdate extends AppCompatActivity {
         }
         String added_on = visitDate.getText().toString();
         String visit_date = sysdate;
-        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy");
-        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
         try {
             //convert visit date from 2016-11-1 to 2016-11-01
             visit_date = myFormat.format(fromUser.parse(added_on));
@@ -1113,12 +1111,6 @@ public class EditPatientUpdate extends AppCompatActivity {
                     // successfully captured the image
                     // display it in image view
                     previewCapturedImage();
-                } else if (resultCode == Activity.RESULT_CANCELED) {
-                    // user cancelled Image capture
-                    /*new RegistrationActivity().customToast("User cancelled image capture");*/
-                } else {
-                    // failed to capture image
-                   /* new RegistrationActivity().customToast("Sorry! Failed to capture image");*/
                 }
             }
         } catch (Exception e) {
@@ -1144,14 +1136,16 @@ public class EditPatientUpdate extends AppCompatActivity {
 
     }
 
-    private void setUpGlide(String patientImagePath, ImageView img) {
-        Glide.with(EditPatientUpdate.this)
-                .load(patientImagePath)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .into(img);
-    }
+// --Commented out by Inspection START (2/2/2017 5:22 PM):
+//    private void setUpGlide(String patientImagePath, ImageView img) {
+//        Glide.with(EditPatientUpdate.this)
+//                .load(patientImagePath)
+//                .crossFade()
+//                .diskCacheStrategy(DiskCacheStrategy.NONE)
+//                .skipMemoryCache(true)
+//                .into(img);
+//    }
+// --Commented out by Inspection STOP (2/2/2017 5:22 PM)
 
     //show date sellector dialog box
     private void shpwDialog(int id) {
@@ -1316,12 +1310,9 @@ public class EditPatientUpdate extends AppCompatActivity {
         if(mSymptomsList!= null){
             mSymptomsList=null;
         }
-        if(mSymptomsList != null){
-            mSymptomsList =null;
-        }
-        if(lastNamedb != null){
-            lastNamedb=null;
-        }
+
+        lastNamedb=null;
+
         doctor_membership_number=null;
         bannerimgNames=null;
 
@@ -1339,7 +1330,6 @@ public class EditPatientUpdate extends AppCompatActivity {
         strLanguage = null;
         strgender = null;
         strPatientPhoto = null;
-        TextView txtfollow_up_date = null;
 
         clinicalNotes = null;
         strFirstName = null;
@@ -1347,8 +1337,6 @@ public class EditPatientUpdate extends AppCompatActivity {
         strLastName = null;
         strDob = null;
         strId = null;
-        txtfollow_up_date = null;
-        fowSel = null;
         usersellectedDate = null;
         monthSel = null;
         imageName = null;
@@ -1359,7 +1347,6 @@ public class EditPatientUpdate extends AppCompatActivity {
         sdf1 = null;
         updatedTime = null;
         sysdate = null;
-        TextView noRecordsText = null;
         docId = null;
         strVisitId = null;
         strAddress = null;
