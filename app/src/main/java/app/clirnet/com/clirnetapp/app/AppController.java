@@ -439,7 +439,7 @@ public class AppController extends Application {
         dialog.setContentView(R.layout.ad_dialog);
 
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setTitle("Product Details");
+
 
         TextView mktcmpny_name = (TextView) dialog.findViewById(R.id.mktcmpny_name);
         TextView maketed_by = (TextView) dialog.findViewById(R.id.produced_by);
@@ -468,6 +468,7 @@ public class AppController extends Application {
             productImage.setImageResource(R.drawable.brand);
         }
         if(banner_type.equals("product")) {
+            dialog.setTitle("Product Details");
             mktByText.setVisibility(View.VISIBLE);
             brand_nameText.setVisibility(View.VISIBLE);
             produced_byText.setVisibility(View.VISIBLE);
@@ -495,7 +496,7 @@ public class AppController extends Application {
                 txtgeneric_name.setText(prdctgeneric_name);
             }
         }else{
-
+            dialog.setTitle("Company Details");
             mktByText.setVisibility(View.GONE);
             brand_nameText.setVisibility(View.GONE);
             produced_byText.setVisibility(View.GONE);

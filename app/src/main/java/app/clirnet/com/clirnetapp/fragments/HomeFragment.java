@@ -329,12 +329,12 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                             //Log.e("nodata","no data to send");
                             //makeToast("No Data to Send");
 
-                            showAnotherAlert2("Data Sychronization", "No Data to Send");
+                            showNoDataToSendAlert("Data Sychronization", "No Data to Send");
                         }
 
 
                     } else {
-                        showAnotherAlert2("No Internet", "No Internet Connectivity.");
+                        showNoInternetAlert("No Internet", "No Internet Connectivity.");
                     }
 
                 } catch (Exception e) {
@@ -678,7 +678,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         }
         if (!isInternetPresent) {
 
-            showAnotherAlert2("No Internet", "No Internet Connectivity.");
+            showNoInternetAlert("No Internet", "No Internet Connectivity.");
         }
 
     }
@@ -1642,7 +1642,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     }
 
     //custom dialog  for the sync button result
-    private void showAnotherAlert2(String title, String message) {
+    private void showNoInternetAlert(String title, String message) {
         final Dialog dialog = new Dialog(getContext());
 
         dialog.setContentView(R.layout.no_inetrnet_login_dialog);
@@ -1664,14 +1664,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             }
         });
 
-        // Your android custom dialog ok action
-        // Action for custom dialog ok button click
-        if (message.equals("No Data to Send")) {
-            dialogButtonOk.setVisibility(View.GONE);
-            dialogButtonCancel.setText("OK");
 
-        } else {
-            dialogButtonOk.setOnClickListener(new View.OnClickListener() {
+        dialogButtonOk.setOnClickListener(new View.OnClickListener() {
 
                 @Override
                 public void onClick(View v) {
@@ -1684,8 +1678,34 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 }
             });
 
-        }
 
+        dialog.show();
+    }
+
+    //custom dialog  for the sync button result
+    private void showNoDataToSendAlert(String title, String message) {
+        final Dialog dialog = new Dialog(getContext());
+
+        dialog.setContentView(R.layout.no_datatosend_dialog);
+
+        dialog.setTitle(title);
+        //  dialog.setCancelable(false);
+        TextView msgTxt = (TextView) dialog.findViewById(R.id.msgTxt);
+        msgTxt.setText(message);
+
+        Button dialogButtonCancel = (Button) dialog.findViewById(R.id.customDialogCancel);
+        // Click cancel to dismiss android custom dialog box
+        dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+            }
+        });
+
+        // Your android custom dialog ok action
+        // Action for custom dialog ok button click
         dialog.show();
     }
 
