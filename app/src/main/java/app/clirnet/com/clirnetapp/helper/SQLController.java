@@ -51,8 +51,6 @@ public class SQLController {
     }
 
 
-
-
     //method to fetch user name and password
     public ArrayList<LoginModel> getUserLoginRecrodsNew() throws ClirNetAppException {
         ArrayList<LoginModel> loginList = new ArrayList<>();
@@ -145,7 +143,7 @@ public class SQLController {
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
-                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36),cursor.getString(37),cursor.getString(38),cursor.getString(39),cursor.getString(40),cursor.getString(41),cursor.getString(42),cursor.getString(43),cursor.getString(44));
+                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44));
 
                     hotelList.add(user);
 
@@ -178,7 +176,7 @@ public class SQLController {
         try {
 
             // String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.actual_follow_up_date = '" + date + "' order by ph.key_visit_id  desc";
-            String selectQuery="SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.actual_follow_up_date = '" + date + "' order by ph.key_visit_id  desc ";
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.actual_follow_up_date = '" + date + "' order by ph.key_visit_id  desc ";
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
 
@@ -194,7 +192,7 @@ public class SQLController {
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
-                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36),cursor.getString(37),cursor.getString(38),cursor.getString(39),cursor.getString(40),cursor.getString(41),cursor.getString(42),cursor.getString(43),cursor.getString(44));
+                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44));
 
                     hotelList.add(user);
 
@@ -226,7 +224,7 @@ public class SQLController {
         try {
             //  String selectQuery ="SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date like '"+ "%" + date +"'order by ph.key_visit_id  desc limit 25";
             //  String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' order by ph.key_visit_id  desc";
-            String selectQuery =  "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' order by ph.key_visit_id  desc ";
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' order by ph.key_visit_id  desc ";
 
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
@@ -242,7 +240,7 @@ public class SQLController {
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
-                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36),cursor.getString(37),cursor.getString(38),cursor.getString(39),cursor.getString(40),cursor.getString(41),cursor.getString(42),cursor.getString(43),cursor.getString(44));
+                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44));
 
                     hotelList.add(user);
 
@@ -328,18 +326,18 @@ public class SQLController {
         Set<RegistrationModel> pList1 = new LinkedHashSet<>();
         try {
             open();
-            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,p.alternate_no,p.alternate_phone_type,p.phone_type  from patient p,patient_history ph   where p.patient_id=ph.patient_id" ;//and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
+            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,p.alternate_no,p.alternate_phone_type,p.phone_type  from patient p,patient_history ph   where p.patient_id=ph.patient_id";//and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
 
             String countQuery = "select  COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id ";
 
             //  String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%' and ( p.gender like '%" + male + "%' or p.gender like '%" + female + "%' and p.gender like '%" + other + "%' or p.gender like '%" + na + "%' )and p.phonenumber like '%" + phoneno + "%' and p.age like '%" + age + "%'  order by ph.key_visit_id desc limit 30;";
-            if(fname != null){
-                selectQuery=selectQuery.concat(" and p.first_name like '%" + fname + "%'");
+            if (fname != null) {
+                selectQuery = selectQuery.concat(" and p.first_name like '%" + fname + "%'");
                 countQuery = countQuery.concat(" and p.first_name like '%" + fname + "%'");
             }
 
-            if(lname != null){
-                selectQuery=selectQuery.concat(" and p.last_name like '%" + lname + "%'");
+            if (lname != null) {
+                selectQuery = selectQuery.concat(" and p.last_name like '%" + lname + "%'");
                 countQuery = countQuery.concat(" and p.last_name like '%" + lname + "%'");
             }
 
@@ -389,15 +387,15 @@ public class SQLController {
                 for (int i = 0; i < ailment.size(); i++) {
                     String value = ailment.get(i).toString();
                     if (i != 0) {
-                        selectQuery = selectQuery.concat(" OR  ph.ailment like '%" + value + "%'"+" OR  ph.symptoms like '%" + value + "%'"+" OR  ph.diagnosis like '%" + value + "%'");
+                        selectQuery = selectQuery.concat(" OR  ph.ailment like '%" + value + "%'" + " OR  ph.symptoms like '%" + value + "%'" + " OR  ph.diagnosis like '%" + value + "%'");
 
-                        countQuery = countQuery.concat(" OR  ph.ailment like '%" + value + "%'" + " OR  ph.symptoms like '%" + value + "%'"+" OR  ph.diagnosis like '%" + value + "%'");
+                        countQuery = countQuery.concat(" OR  ph.ailment like '%" + value + "%'" + " OR  ph.symptoms like '%" + value + "%'" + " OR  ph.diagnosis like '%" + value + "%'");
                         //countQuery = countQuery.concat(" OR  ph.symptoms like '%" + value + "%'");
                         // countQuery = countQuery.concat(" OR  ph.diagnosis like '%" + value + "%'");
                     } else {
-                        selectQuery = selectQuery.concat(" AND ( ph.ailment like '%" + value + "%'"+" OR  ph.symptoms like '%" + value + "%'"+" OR  ph.diagnosis like '%" + value + "%'");
+                        selectQuery = selectQuery.concat(" AND ( ph.ailment like '%" + value + "%'" + " OR  ph.symptoms like '%" + value + "%'" + " OR  ph.diagnosis like '%" + value + "%'");
 
-                        countQuery = countQuery.concat(" AND ( ph.ailment like '%" + value + "%'" + " OR  ph.symptoms like '%" + value + "%'"+" OR  ph.diagnosis like '%" + value + "%'");
+                        countQuery = countQuery.concat(" AND ( ph.ailment like '%" + value + "%'" + " OR  ph.symptoms like '%" + value + "%'" + " OR  ph.diagnosis like '%" + value + "%'");
                     }
                 }
 
@@ -412,8 +410,8 @@ public class SQLController {
 
             new Counts().setCountQuery(countQuery);
 
-          //  Log.e("selectQuery", "" + selectQuery);
-           // Log.e("countQueryQuery", "" + countQuery);
+            //  Log.e("selectQuery", "" + selectQuery);
+            // Log.e("countQueryQuery", "" + countQuery);
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
 
@@ -423,8 +421,8 @@ public class SQLController {
                     RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
                             cursor.getString(7), cursor.getString(8),
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
-                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20),cursor.getString(21),cursor.getString(22),cursor.getString(23),
-                            cursor.getString(24),cursor.getString(25),cursor.getString(26),cursor.getString(27),cursor.getString(28));
+                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21), cursor.getString(22), cursor.getString(23),
+                            cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28));
 
                     pList1.add(user);
 
@@ -448,17 +446,17 @@ public class SQLController {
         int numRows = 0;
         try {
             String countQuery = new Counts().getCountQuery();
-           // Log.d("count", "" + countQuery);
+            // Log.d("count", "" + countQuery);
 
             if (countQuery != null && countQuery.length() > 10) {
 
                 numRows = (int) DatabaseUtils.longForQuery(db1, countQuery, null);
-             //   Log.d("count", "" + countQuery + "  " + numRows);
+                //   Log.d("count", "" + countQuery + "  " + numRows);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            if(db1!= null){
+        } finally {
+            if (db1 != null) {
                 db1.close();
 
             }
@@ -495,7 +493,7 @@ public class SQLController {
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
-                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36),cursor.getString(37),cursor.getString(38),cursor.getString(39),cursor.getString(40),cursor.getString(41),cursor.getString(42),cursor.getString(45),cursor.getString(46));
+                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(45), cursor.getString(46));
 
                     hotelList.add(user);
 
@@ -521,17 +519,17 @@ public class SQLController {
         int numRows = 0;
         try {
             String countQuery = new Counts().getCountQueryforHomeFragmentNoFilter();
-           // Log.d("count", "" + countQuery);
+            // Log.d("count", "" + countQuery);
 
             if (countQuery.length() > 1) {
 
                 numRows = (int) DatabaseUtils.longForQuery(db1, countQuery, null);
-               /// Log.d("count", "" + countQuery + "  " + numRows);
+                /// Log.d("count", "" + countQuery + "  " + numRows);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
-        }finally {
-            if(db1!=null){
+        } finally {
+            if (db1 != null) {
                 db1.close();
             }
         }
@@ -559,7 +557,7 @@ public class SQLController {
                     RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
                             cursor.getString(7), cursor.getString(8),
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
-                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),cursor.getString(22),cursor.getString(23));
+                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21), cursor.getString(22), cursor.getString(23));
                     hotelList.add(user);
 
                 } while (cursor.moveToNext());
@@ -592,7 +590,7 @@ public class SQLController {
             String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms, ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd from patient_history  ph, patient p where p.patient_id=" + patient_id + " and  p.patient_id=ph.patient_id order by ph.key_visit_id desc ";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-           // Log.d("cursor", "" + cursor.getCount());
+            // Log.d("cursor", "" + cursor.getCount());
 
             // looping through all rows and adding to list
 
@@ -607,7 +605,7 @@ public class SQLController {
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
-                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36),cursor.getString(37),cursor.getString(38),cursor.getString(39),cursor.getString(40),cursor.getString(41),cursor.getString(42),cursor.getString(43),cursor.getString(44));
+                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44));
                     hotelList.add(user);
 
                 } while (cursor.moveToNext());
@@ -842,7 +840,7 @@ public class SQLController {
 
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
-        String returnString = "" ; // Your default if none is found
+        String returnString = ""; // Your default if none is found
         try {
             db1 = dbHelper.getReadableDatabase();
 
@@ -945,7 +943,6 @@ public class SQLController {
     }
 
 
-
     public ArrayList<Counts> countPerDay(String fromdate, String todate) throws ClirNetAppException {
 
         ArrayList<Counts> VisitidList = new ArrayList<>();
@@ -983,7 +980,7 @@ public class SQLController {
 
     }
 
-    public ArrayList<String> getCountTopTenAilment(String fromdate, String todate) throws ClirNetAppException {
+    public ArrayList<String> getCountTopTenSymptoms(String fromdate, String todate) throws ClirNetAppException {
 
         ArrayList<String> ailmnetList = new ArrayList<>();
         SQLiteDatabase db1 = null;
@@ -1065,6 +1062,45 @@ public class SQLController {
 
     }
 
+    public ArrayList<String> getCountTopTenAilments(String fromdate, String todate) throws ClirNetAppException {
+
+        ArrayList<String> ailmentList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+            // String selectQuery = "SELECT pvd.ailment as ailment FROM patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0 AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2))  Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date LIMIT 0 , 30";
+            String selectQuery = "SELECT pvd.ailment as ailment FROM \n" +
+                    "patient dpr , patient_history pvd \n" +
+                    "WHERE dpr.patient_id = pvd.patient_id \n" +
+                    "AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) \n" +
+                    "Between Date('" + fromdate + "') AND Date('" + todate + "')\n";
+
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    String value = cursor.getString(cursor.getColumnIndex("ailment"));
+                    ailmentList.add(value);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while geting getCountTopTenAilment");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return ailmentList;
+
+    }
+
 
     public ArrayList<GenderWiseDataModel> genderWiseData(String fromdate, String todate) throws ClirNetAppException {
 
@@ -1108,7 +1144,6 @@ public class SQLController {
             }
         } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong while geting genderWiseData");
-
 
         } finally {
             if (cursor != null) {
@@ -1180,11 +1215,11 @@ public class SQLController {
                     user.put("marketed_by", cursor.getString(1));
                     user.put("clinical_trial_link", cursor.getString(2));
                     user.put("link_to_page", cursor.getString(3));
-                    user.put("product_image_name",cursor.getString(4));
-                    user.put("product_image2",cursor.getString(5));
-                    user.put("brand_name",cursor.getString(6));
-                    user.put("generic_name",cursor.getString(7));
-                    user.put("banner_type",cursor.getString(8));
+                    user.put("product_image_name", cursor.getString(4));
+                    user.put("product_image2", cursor.getString(5));
+                    user.put("brand_name", cursor.getString(6));
+                    user.put("generic_name", cursor.getString(7));
+                    user.put("banner_type", cursor.getString(8));
 
                 } while (cursor.moveToNext());
             }
@@ -1330,6 +1365,7 @@ public class SQLController {
 
         return user;
     }
+
     public void updatePatient() throws ClirNetAppException {
 
         ArrayList<RegistrationModel> hotelList = new ArrayList<>();
@@ -1337,7 +1373,7 @@ public class SQLController {
         Cursor cursor = null;
         try {
 
-            String selectQuery ="update patient set flag=0;";
+            String selectQuery = "update patient set flag=0;";
 
             database1 = dbHelper.getWritableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
@@ -1365,11 +1401,10 @@ public class SQLController {
         Cursor cursor = null;
         try {
 
-            String selectQuery ="update patient_history set flag = 0;";
+            String selectQuery = "update patient_history set flag = 0;";
 
             database1 = dbHelper.getWritableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
-
 
 
         } catch (Exception e) {
@@ -1394,7 +1429,7 @@ public class SQLController {
         try {
             db1 = dbHelper.getReadableDatabase();
             //stmt = db1.compileStatement("select max(patient_id) from patient");
-            cursor = db1.rawQuery("select banner_id from company_banners where image_name ='"+banner_image+"'", null);
+            cursor = db1.rawQuery("select banner_id from company_banners where image_name ='" + banner_image + "'", null);
             if (cursor.moveToFirst()) {
                 returnValue = cursor.getInt(0);
             }
@@ -1419,7 +1454,7 @@ public class SQLController {
         try {
             db1 = dbHelper.getReadableDatabase();
             //stmt = db1.compileStatement("select max(patient_id) from patient");
-            cursor = db1.rawQuery("select folder_name from company_banners where image_name ='"+banner_image+"'", null);
+            cursor = db1.rawQuery("select folder_name from company_banners where image_name ='" + banner_image + "'", null);
             if (cursor.moveToFirst()) {
                 returnValue = cursor.getString(0);
             }
@@ -1450,7 +1485,7 @@ public class SQLController {
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
                 do {
-                    String ids =cursor.getString(0);
+                    String ids = cursor.getString(0);
 
                     idList.add(ids);
 
@@ -1484,7 +1519,7 @@ public class SQLController {
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
                 do {
-                    String ids =cursor.getString(0);
+                    String ids = cursor.getString(0);
 
                     idList.add(ids);
 
@@ -1514,7 +1549,7 @@ public class SQLController {
         SQLiteDatabase db1 = null;
 
         try {
-           db1=dbHelper.getReadableDatabase();
+            db1 = dbHelper.getReadableDatabase();
             // stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
             String query = "select company_id from company_banners order by company_id desc limit 1";
 
@@ -1544,6 +1579,7 @@ public class SQLController {
 
         return returnString;
     }
+
     //get company id from banner table to store in bannder display and clicked table
     public int getBannerTypeId(String banner_image) throws ClirNetAppException {
 
@@ -1554,7 +1590,7 @@ public class SQLController {
         try {
             db1 = dbHelper.getReadableDatabase();
             //stmt = db1.compileStatement("select max(patient_id) from patient");
-            cursor = db1.rawQuery("select banner_type from company_banners where image_name ='"+banner_image+"'", null);
+            cursor = db1.rawQuery("select banner_type from company_banners where image_name ='" + banner_image + "'", null);
             if (cursor.moveToFirst()) {
                 returnValue = cursor.getInt(0);
             }
@@ -1624,6 +1660,7 @@ public class SQLController {
         }
         return returnValue;
     }
+
     //get all patients  visits data which is yet to send to server
     public ArrayList<RegistrationModel> getAsynTaskStatus() throws ClirNetAppException {
 
@@ -1640,7 +1677,7 @@ public class SQLController {
             if (cursor.moveToFirst()) {
                 do {
 
-                    RegistrationModel ids = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2));
+                    RegistrationModel ids = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2));
 
                     VisitidList.add(ids);
 
@@ -1677,7 +1714,7 @@ public class SQLController {
             if (cursor.moveToFirst()) {
                 do {
 
-                    RegistrationModel ids = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3));
+                    RegistrationModel ids = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
 
                     VisitidList.add(ids);
 

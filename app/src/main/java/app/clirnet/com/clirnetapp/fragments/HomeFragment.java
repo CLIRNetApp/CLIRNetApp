@@ -1047,7 +1047,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     // final String url = getString(imageArray[n]);
                     //  backChangingImages.setImageResource(imageArray[n]);
                     final String url = bannerimgNames.get(n);
-                    //  Log.e("nUrl", "" + n + "" + url);
 
                     BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
 

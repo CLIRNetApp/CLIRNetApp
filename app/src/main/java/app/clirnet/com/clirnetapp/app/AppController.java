@@ -301,8 +301,8 @@ public class AppController extends Application {
     }
 
     public String ConvertDateFormat(String date) {
-        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy");
-        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
 
 
         String frmtedDate = "";
@@ -324,7 +324,7 @@ public class AppController extends Application {
 
         boolean result = true;
         try {
-            if (!value.equals("") || value != null) {
+            if(value!=null && !value.equals("")) {
                 long val = Long.parseLong((value.trim()));
                 result = val >= 1000000000;
             }
@@ -455,7 +455,8 @@ public class AppController extends Application {
 
         Button btnrequest_sample = (Button) dialog.findViewById(R.id.request_sample);
 
-
+        Button btnseedrugProfile = (Button) dialog.findViewById(R.id.seedrugProfile);
+        Button btnseeclinical_trial = (Button) dialog.findViewById(R.id.seeclinical_trial);
 
         if (!product_image_name.equals("") && product_image_url != null && product_image_url.trim().length() > 0 && product_image_name != null && product_image_name.trim().length() > 0) {
 
@@ -478,6 +479,7 @@ public class AppController extends Application {
             maketed_by.setVisibility(View.VISIBLE);
             txtbrand_name.setVisibility(View.VISIBLE);
             txtgeneric_name.setVisibility(View.VISIBLE);
+            btnseeclinical_trial.setVisibility(View.VISIBLE);
             if (manufactured_by != null && manufactured_by.length() > 0) {
 
                 mktcmpny_name.setText(manufactured_by);
@@ -497,6 +499,7 @@ public class AppController extends Application {
             }
         }else{
             dialog.setTitle("Company Details");
+            btnseedrugProfile.setText("Visit Company Website");
             mktByText.setVisibility(View.GONE);
             brand_nameText.setVisibility(View.GONE);
             produced_byText.setVisibility(View.GONE);
@@ -506,7 +509,7 @@ public class AppController extends Application {
             maketed_by.setVisibility(View.GONE);
             txtbrand_name.setVisibility(View.GONE);
             txtgeneric_name.setVisibility(View.GONE);
-
+            btnseeclinical_trial.setVisibility(View.INVISIBLE);
             btnrequest_sample.setVisibility(View.INVISIBLE);
         }
 
@@ -563,7 +566,7 @@ public class AppController extends Application {
             }
         });
 
-        Button btnseedrugProfile = (Button) dialog.findViewById(R.id.seedrugProfile);
+
         final String finalLink_to_page = link_to_page;
 
         btnseedrugProfile.setOnClickListener(new View.OnClickListener() {
@@ -572,7 +575,12 @@ public class AppController extends Application {
 
                 if (finalLink_to_page != null && finalLink_to_page.trim().length() > 0) {
                     try {
-                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(finalLink_to_page)));
+                        String updatedUrl=finalLink_to_page;
+                        if (!updatedUrl.startsWith("http://") && !updatedUrl.startsWith("https://")){
+
+                            updatedUrl = "http://" + updatedUrl;
+                        }
+                        context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(updatedUrl)));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -584,7 +592,7 @@ public class AppController extends Application {
             }
         });
 
-        Button btnseeclinical_trial = (Button) dialog.findViewById(R.id.seeclinical_trial);
+
         final String finalClinical_trial_link = clinical_trial_link;
         btnseeclinical_trial.setOnClickListener(new View.OnClickListener() {
             @Override

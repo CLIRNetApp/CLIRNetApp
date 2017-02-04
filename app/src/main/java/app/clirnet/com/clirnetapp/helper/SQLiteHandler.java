@@ -525,7 +525,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close(); // Closing database connection
             }
 
-            Log.d("update", " user data updatedinto sqlite: " + id);
+
 
 
         }
@@ -798,13 +798,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     if (cursor.getColumnName(i) != null) {
                         try {
                             if (cursor.getString(i) != null) {
-                                Log.d("TAG_NAME", cursor.getString(i));
+
                                 rowObject.put(cursor.getColumnName(i), cursor.getString(i));
                             } else {
                                 rowObject.put(cursor.getColumnName(i), "");
                             }
                         } catch (Exception e) {
-                            Log.d("TAG_NAME", e.getMessage());
+
                         }
 
                     }
@@ -851,7 +851,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     if (cursor.getColumnName(i) != null) {
                         try {
                             if (cursor.getString(i) != null) {
-                                Log.d("TAG_NAME", cursor.getString(i));
+
                                 rowObject.put(cursor.getColumnName(i), cursor.getString(i));
                             } else {
                                 rowObject.put(cursor.getColumnName(i), "");
@@ -1264,7 +1264,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     if (cursor.getColumnName(i) != null) {
                         try {
                             if (cursor.getString(i) != null) {
-                                Log.d("TAG_NAME", cursor.getString(i));
                                 rowObject.put(cursor.getColumnName(i), cursor.getString(i));
                             } else {
                                 rowObject.put(cursor.getColumnName(i), "");
@@ -1280,7 +1279,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
 
 
-            Log.d("TAG_NAME", resultSet.toString());
+
 
             return resultSet;
 
@@ -1321,13 +1320,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     if (cursor.getColumnName(i) != null) {
                         try {
                             if (cursor.getString(i) != null) {
-                                Log.d("TAG_NAME", cursor.getString(i));
+
                                 rowObject.put(cursor.getColumnName(i), cursor.getString(i));
                             } else {
                                 rowObject.put(cursor.getColumnName(i), "");
                             }
                         } catch (Exception e) {
-                            Log.d("TAG_NAME", e.getMessage());
+
                         }
 
                     }
@@ -1443,7 +1442,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     //checking if record exist in db  or not if not add it
-    public boolean isProcessExists(String process) {
+    private boolean isProcessExists(String process) {
         SQLiteDatabase db = null;
         this.getReadableDatabase();
 

@@ -67,7 +67,6 @@
                             android:padding="15dp"
                             android:scaleType="centerCrop"
                             android:src="@drawable/history_bar"
-                            android:text="14 Feb"
                             android:textColor="@color/grey"
                             android:gravity="center"
                             android:textSize="20sp"

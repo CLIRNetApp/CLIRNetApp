@@ -88,6 +88,7 @@ public class LoginActivity extends Activity {
         appController = new AppController();
 
 
+
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
