@@ -1416,9 +1416,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put("update_on", update_on);
 
 
-            boolean isImageUrlExistsboolean = isProcessExists(process);
+            boolean isProcessExistsboolean = isProcessExists(process);
 
-            if (!isImageUrlExistsboolean) {
+            if (!isProcessExistsboolean) {
                 id = db.insert("asynctascrun_status", null, values);
             } else {
                 //  Log.e("allreadyExist", "  " + isImageUrlExistsboolean);

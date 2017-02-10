@@ -97,6 +97,8 @@ import app.clirnet.com.clirnetapp.models.CallAsynOnce;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
+import static android.content.Context.MODE_PRIVATE;
+
 
 @SuppressWarnings("ConstantConditions")
 public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchListener {
@@ -170,6 +172,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private String docId;
     private String pateintrecordasync_start_time;
     private String banner_downloadstart_time;
+    private String send_data_start_time;
 
 
     public HomeFragment() {
@@ -329,7 +332,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                             //Log.e("nodata","no data to send");
                             //makeToast("No Data to Send");
 
-                            showNoDataToSendAlert("Data Sychronization", "No Data to Send");
+                            showNoDataToSendAlert("Data Sychronization", "Data Already Synced.");
                         }
 
 
@@ -373,7 +376,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         Date todayDate = new Date();
 
 
-        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMMM,yyyy");
+        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMMM,yyyy",Locale.ENGLISH);
         String dd = DATE_FORMAT.format(todayDate);
         date.setText("Today's Date: " + dd);
 
@@ -398,10 +401,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             filteredModelList = sqlController1.getPatientList(formatedDate);
 
-            if (filteredModelList.size() <= 0) {
+            if (filteredModelList.size() > 0) {
                 //do nothing
-            } else {
-
                 norecordtv.setVisibility(View.GONE);
                 RVAdapter rvadapter = new RVAdapter(filteredModelList);
                 recyclerView.setAdapter(rvadapter);
@@ -660,6 +661,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     //send data to server
     private void sendDataToServer() throws ClirNetAppException {
+
 
 
         boolean isInternetPresent = connectionDetector.isConnectingToInternet();
@@ -1263,9 +1265,12 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         String tag_string_req = "req_login";
 
+       send_data_start_time=appController.getDateTimenew();
 
         pDialog.setMessage("Syncing Data");
         pDialog.setCancelable(false);
+
+
 
 
         showDialog();
@@ -1311,6 +1316,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Activity data is sync to server : patient Visit Count : " + patientVisitIdsList + " patient Count : " + patientIds_List);
                         //    Log.e("senddata", "data is sent " + time);
                         lastSyncTime(time);
+                        dbController.addAsynctascRun_status("Data Synced",send_data_start_time,time,"");
                         toast = Toast.makeText(getContext().getApplicationContext(), "Data Send Successfully to Server", Toast.LENGTH_LONG);
                         toast.setGravity(Gravity.CENTER, 0, 0);
                         toast.show();
@@ -1484,18 +1490,18 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String convertedDate = null;
             String convertedTime = null;
             String converteddobDate = null;
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            SimpleDateFormat dobsdf = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.ENGLISH);
+            SimpleDateFormat dobsdf = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
 
             try {
                 Date formatDate = sdf.parse(added_on);
                 Date formatDateOB = dobsdf.parse(pat_date_of_birth);
 
-                SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
                 convertedDate = sd1.format(formatDate);
                 converteddobDate = sd1.format(formatDateOB);
 
-                SimpleDateFormat sd2 = new SimpleDateFormat("HH:mm:ss");
+                SimpleDateFormat sd2 = new SimpleDateFormat("HH:mm:ss",Locale.ENGLISH);
                 convertedTime = sd2.format(formatDate);
 
             } catch (ParseException e) {
@@ -1575,11 +1581,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             String convertedActualfodDate = null;
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",Locale.ENGLISH);
             try {
                 Date formatDate = sdf.parse(act_follow_up_date);
 
-                SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
                 convertedActualfodDate = sd1.format(formatDate);
 
 
@@ -1593,10 +1599,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             try {
                 Date formatDate = sdf.parse(added_on);
 
-                SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
                 convertedAddedonDate = sd1.format(formatDate);
 
-                SimpleDateFormat sd2 = new SimpleDateFormat("HH:mm:ss");
+                SimpleDateFormat sd2 = new SimpleDateFormat("HH:mm:ss",Locale.ENGLISH);
                 convertedAddedonTime = sd2.format(formatDate);
 
             } catch (ParseException e) {
@@ -1607,12 +1613,12 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             //This will convert visit date format into dd-MM-yyyy format 17-9-2016
 
             String convertedVisitDate = null;
-            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd");
+            SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
 
             try {
                 Date formatDate = sdf1.parse(visit_date);
 
-                SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy");
+                SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
                 convertedVisitDate = sd1.format(formatDate);
 
             } catch (ParseException e) {
@@ -1690,7 +1696,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         dialog.setTitle(title);
         //  dialog.setCancelable(false);
         TextView msgTxt = (TextView) dialog.findViewById(R.id.msgTxt);
+        TextView last_sync_time = (TextView) dialog.findViewById(R.id.last_sync_time);
         msgTxt.setText(message);
+        String strlast_syncTime= getLastSyncTime();
+        last_sync_time.setText(strlast_syncTime);
 
         Button dialogButtonCancel = (Button) dialog.findViewById(R.id.customDialogCancel);
         // Click cancel to dismiss android custom dialog box
@@ -1744,10 +1753,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         Searchrecycler_view.addOnScrollListener(null);
         norecordtv = null;
         addaNewPatient = null;
-        view = null; // now cleaning up view!
+        view = null;
         date1 = null;
         toast = null;
-        asyn_value = null;//
+        asyn_value = null;
         searchNumber = null;
         patientVisitHistorArayString = null;
         Searchrecycler_view = null;
@@ -1759,6 +1768,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         pateintrecordasync_start_time = null;
         banner_downloadstart_time = null;
         backChangingImages = null;
+        send_data_start_time=null;
     }
 
     @Override
@@ -2086,14 +2096,16 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String type = jsonProsolveObject.getString("type");
             String banner_image_url = jsonProsolveObject.getString("banner_image_url");
             //  Log.e("banner_image_urlbefore", "" + banner_image_url);
-            banner_image_url = banner_image_url.replace("://", "http://");
+
             banner_image_url = banner_image_url.replace(" ", "%20");
             //  Log.e("banner_image_urlafter", "" + banner_image_url);
 
+
             String speciality_name = jsonProsolveObject.getString("speciality_name");
             String product_image_url = jsonProsolveObject.getString("product_image_url");
-            product_image_url = product_image_url.replace("://", "http://");
+
             product_image_url = product_image_url.replace(" ", "%20");
+
             String product_image_name = jsonProsolveObject.getString("product_image2");
             String product_imagenm = product_image_name.replace(".jpg", "");
             String banner_type = jsonProsolveObject.getString("banner_type_id");
@@ -2228,6 +2240,13 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             e.printStackTrace();
         }
         return mediaImage;
+    }
+    private String getLastSyncTime() {
+
+        SharedPreferences pref1 = getContext().getSharedPreferences("SyncFlag", MODE_PRIVATE);
+        String lastSyncTime = pref1.getString("lastSyncTime", null);
+
+        return lastSyncTime;
     }
 
 }

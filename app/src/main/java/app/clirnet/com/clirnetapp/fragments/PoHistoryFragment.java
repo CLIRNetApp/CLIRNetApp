@@ -9,7 +9,6 @@ import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -199,7 +198,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 appController = new AppController();
             }
             bannerimgNames= bannerClass.getImageName();
-          //  Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1));
+
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
         } catch (Exception e) {
@@ -257,10 +256,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 selectedAilmentList = new ArrayList();
              /* print substrings */
                 Collections.addAll(selectedAilmentList, temp);
-                int sizegender = selectedListGender.size();
-                int sizeage = selectedAgeList.size();
-                int sizeailment = selectedAilmentList.size();
-                Log.e("sizegender", "" + sizegender + " " + sizeage + " ==" + sizeailment);
+
+
                 try {
 
                     ival = 0;
@@ -275,7 +272,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     if (patientData.size() > 0) {
                         removeDuplicate(patientData);
                     }
-                   // Log.e("queryCountafterFilter", "" + patientData.size() );
+
 
                     int afterFilterCount = patientData.size();
 
@@ -297,11 +294,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 try {
                     if (count > 0) {
 
-                        /*final LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
-                        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                        recyclerView.setLayoutManager(layoutManager);*/
-
-                        //  recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
                         recyclerView.setVisibility(View.VISIBLE);
                         norecordtv.setVisibility(View.GONE);
 
@@ -420,7 +412,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int position, long arg3) {
 
-                Log.e("", "" + (ageList.get(position).toString()));
+                //Log.e("", "" + (ageList.get(position).toString()));
 
             }
 

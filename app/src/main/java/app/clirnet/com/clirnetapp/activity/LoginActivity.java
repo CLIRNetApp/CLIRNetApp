@@ -244,7 +244,18 @@ public class LoginActivity extends Activity {
 
             }
         });
+        /*if (getIntent().getExtras() != null) {
 
+            for (String key : getIntent().getExtras().keySet()) {
+                String value = getIntent().getExtras().getString(key);
+                Log.e("value","  "+getIntent().getExtras().getString(key));
+                    Intent intent = new Intent(this, NavigationActivity.class);
+                    intent.putExtra("value", value);
+                    startActivity(intent);
+                    finish();
+
+            }
+        }*/
 
     }
 
@@ -290,6 +301,7 @@ public class LoginActivity extends Activity {
 
                 //update last login time
                 lastSyncTime(start_time);
+                //lastSyncTime("05-02-2017 02:12:25");
                 // hideDialog();
 
             } else {

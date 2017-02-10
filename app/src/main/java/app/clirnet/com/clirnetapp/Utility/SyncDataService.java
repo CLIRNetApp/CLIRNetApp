@@ -1,19 +1,12 @@
 package app.clirnet.com.clirnetapp.Utility;
 
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.Color;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Handler;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
-import android.util.Log;
 import android.widget.ProgressBar;
 
 import com.android.volley.Request;
@@ -30,7 +23,6 @@ import java.util.Iterator;
 import java.util.Map;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.activity.LoginActivity;
 import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.app.GetBannerImageTask;
@@ -75,6 +67,7 @@ public class SyncDataService extends Service {
     private ProgressBar pb;
     private Bitmap bmp;
     private ImageDownloader mDownloader;
+    private String start_time1;
 
     @Override
     public void onCreate() {
@@ -102,15 +95,16 @@ public class SyncDataService extends Service {
             }
 
             patientInfoArayString = String.valueOf(dbController.getResultsForPatientInformation());
+           // Log.e("patientInfoArayString"," "+patientInfoArayString);
 
             patientVisitHistorArayString = String.valueOf(dbController.getResultsForPatientHistory());
 
             mPhoneNumber = sqlController.getPhoneNumber();
             mEmailId = sqlController.getDocdoctorEmail();
             docId = sqlController.getDoctorId();
+
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
             company_id = sqlController.getCompany_id();
-
             getUsernamePasswordFromDatabase();
 
         } catch (Exception e) {
@@ -120,17 +114,20 @@ public class SyncDataService extends Service {
 
         handler.removeCallbacks(sendUpdatesToUI);
 
-        handler.postDelayed(sendUpdatesToUI, 12000); // 2 min  or 120 second 180000
+        handler.postDelayed(sendUpdatesToUI,50000); // 2 min  or 120 second 180000
 
     }
 
     private final Runnable sendUpdatesToUI = new Runnable() {
         public void run() {
+
+
             //DisplayLoggingInfo();   //this used to test the service weather it is sending data to activity or not 29/8/2016 Ashish
             try {
 
                 sendDataToServerAsyncTask();
                // Log.e("Started", "Service Started1  " + appController.getDateTimenew());
+
 
             } catch (ClirNetAppException e) {
                 e.printStackTrace();
@@ -149,6 +146,8 @@ public class SyncDataService extends Service {
         patientIds_List = sqlController.getPatientIdsFalg0();
         getPatientVisitIdsList = sqlController.getPatientVisitIdsFalg0();
 
+        doctor_membership_number = sqlController.getDoctorMembershipIdNew();
+        company_id = sqlController.getCompany_id();
 
         //banner click and display data count
         bannerDisplayIds_List = sqlController.getBannerDisplaysFalg0();
@@ -158,21 +157,24 @@ public class SyncDataService extends Service {
         String bannerDisplayArayString = String.valueOf(dbController.getResultsForBannerDisplay());
 
 
+
         String bannerClickedArayString = String.valueOf(dbController.getResultsForBannerClicked());
+
 
         boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
         if (isInternetPresent) {
+
             String start_time=appController.getDateTimenew();
 
             if (bannaerClickedIdsList.size() > 0 & bannerDisplayIds_List.size() > 0) {
-                new UploadBannerDataAsyncTask(mUserName, mPassword, getApplicationContext(), bannerDisplayArayString, bannerClickedArayString, doctor_membership_number, docId, bannerDisplayIds_List, bannaerClickedIdsList,start_time);
+              new UploadBannerDataAsyncTask(mUserName, mPassword, getApplicationContext(), bannerDisplayArayString, bannerClickedArayString, doctor_membership_number, docId, bannerDisplayIds_List, bannaerClickedIdsList,start_time);
             }
 
             if (mUserName != null && mPassword != null) {
 
                 new GetBannerImageTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, company_id); //send log file to server
 
-               // getBannersData(mUserName, mPassword, doctor_membership_number, company_id);
+
             }
 
             if (patientIds_List.size() != 0 || getPatientVisitIdsList.size() != 0) {
@@ -185,11 +187,10 @@ public class SyncDataService extends Service {
                         .putString(PREF_VALUE, "1")
                         .apply();
 
-                String start_time1=appController.getDateTimenew();
+                 start_time1=appController.getDateTimenew();
                 sendDataToServer(patientInfoArayString, patientVisitHistorArayString, doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size());
 
                 new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword,start_time1); //send log file to server
-                //   new  UploadBannerDataAsyncTask(getApplicationContext(),bannerDisplayArayString,bannerClickedArayString,doctor_membership_number,docId,bannerDisplayIds_List,bannaerClickedIdsList);
             }
         }
     }
@@ -239,7 +240,6 @@ public class SyncDataService extends Service {
                         }
 
 
-                        // Log.e("TAG", "" + getPatientVisitIdsList.size());
                         int listsize = getPatientVisitIdsList.size();
                         for (int i = 0; i < listsize; i++) {
 
@@ -247,7 +247,6 @@ public class SyncDataService extends Service {
                             String flag = "1";
 
                             //saved last updated sync time in shared prefrence
-
                             //update flag after success
                             dbController.FlagupdatePatientVisit(patientVisitId, flag);
                         }
@@ -261,10 +260,10 @@ public class SyncDataService extends Service {
                         lastSyncTime(time);
 
                         appController.appendLog(appController.getDateTime() + " " + "/ " + "data is sync to server from sync service  : patient Visit Count :" + listsize + " patient Count  :" + size);
-
+                        dbController.addAsynctascRun_status("Data Synced",start_time1,time,"");
 
                     } else if (msg.equals("Credentials Mismatch or Not Found")) {
-                        Log.e("TAG", "" + msg);
+
                         appController.appendLog(appController.getDateTime() + " " + "/ " + "data is sync to server from sync service  : patient Visit Count :" + msg);
 
                         // showNotification();
@@ -275,7 +274,6 @@ public class SyncDataService extends Service {
                     e.printStackTrace();
                     appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
-                    // Log.e("Json error", "Json error: " + e.getMessage());
 
                 }
             }
@@ -303,7 +301,6 @@ public class SyncDataService extends Service {
                 params.put("patient_details_count", String.valueOf(patient_details_count));
                 return checkParams(params);
 
-
             }
             private Map<String, String> checkParams(Map<String, String> map){
                 Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
@@ -321,25 +318,6 @@ public class SyncDataService extends Service {
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
 
-    public void showNotification() {
-        CharSequence text = "Login with new Password";
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, LoginActivity.class), 0);
-        Uri uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(getBaseContext())
-                .setContentTitle("Password Changed")
-                .setContentText(text)
-                .setSmallIcon(R.drawable.cliricon)
-                .setContentIntent(contentIntent)
-                        //.setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
-                .setSound(uri)
-                .setLights(Color.RED, 3000, 3000)
-                .setOngoing(false);
-
-        Notification notification = builder.getNotification();
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        nMn.notify(MY_NOTIFICATION_ID, notification);
-
-    }
 
     private void getUsernamePasswordFromDatabase() {
         Cursor cursor = null;

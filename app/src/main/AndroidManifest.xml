@@ -71,7 +71,17 @@
         <activity android:name=".activity.ShowPrescriptionImageActivity" />
 
         <activity android:name=".activity.ServiceArea"/>
-
+                 <!--Commented this service for test build -->
+       <!-- <service android:name=".fcm.MyFirebaseMessagingService" >
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".fcm.MyFirebaseInstanceIDService" >
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>-->
     </application>
 
 </manifest>
