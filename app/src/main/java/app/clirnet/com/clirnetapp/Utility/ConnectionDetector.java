@@ -1,4 +1,4 @@
-package app.clirnet.com.clirnetapp.Utility;
+package app.clirnet.com.clirnetapp.utility;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

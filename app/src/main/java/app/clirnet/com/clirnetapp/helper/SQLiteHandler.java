@@ -19,6 +19,8 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
+
 
 public class SQLiteHandler extends SQLiteOpenHelper {
 
@@ -150,7 +152,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String UID = "uid";
     private static final String UIDTYPE = "uid_type";
 
-
+    private static final String STATUS = "status";
     private static final String TABLE_ASYNC = "async";
     private String MEMBERSHIP_ID = "membershipid";
 
@@ -308,7 +310,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
      * Updating Patient Personal details in database
      */
     public void updatePatientPersonalInfo(String keyid, String firstname, String middlename, String lastname, String gender, String dateofbirth, String age, String phNo, String language, String imgPath, String modified_on_date, String modified_by, String modifiedTime, String action, String flag, String docId,
-                                          String address, String cityortown, String district, String pin, String state, String phoneType, String alternatephoneType, String alternatePhoneNumber, String uid, String uidType, String isd_code, String alternateisd_code) throws ClirNetAppException {
+                                          String address, String cityortown, String district, String pin, String state, String phoneType, String alternatephoneType, String alternatePhoneNumber, String uid, String uidType, String isd_code, String alternateisd_code,String status) throws ClirNetAppException {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -343,6 +345,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(UIDTYPE, uidType);
             values.put(ISD_CODE, isd_code);
             values.put(ATERNATE_NO_ISD_CODE, alternateisd_code);
+            values.put(STATUS, status);
 
 
             // Inserting Row
@@ -412,7 +415,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     //update the patient visit records into db
     public void updatePatientOtherInfo(String strId, String visitId, String usersellectedDate, String strfollow_up_date, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String modified_dateon, String modified_time, String modified_by, String action, String patInfoType, String flag,
-                                       String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String strbmi, String strSugarFasting, String visit_date) throws ClirNetAppException {
+                                       String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String strbmi, String strSugarFasting, String visit_date,String status) throws ClirNetAppException {
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
         try {
@@ -445,6 +448,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(BMI, strbmi);
             values.put(SUGAR_FASTING, strSugarFasting);
             values.put(VISIT_DATE, visit_date);
+            values.put(STATUS, status);
+
 
             // Inserting Row
             id = db.update(TABLE_PATIENT_HISTORY, values, KEY_PATIENT_ID + "=" + strId + " AND " + KEY_VISIT_ID + "=" + visitId, null);
@@ -1469,5 +1474,77 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
         return false;
     }
+    //This will add records from registration page into patient table  28/8/2016 ashish u
+    public void addQuickAddPatientPersonalfromLocal(int patient_id, String doctor_id, String first_name,  String last_name, String create_date, String doctor_membership_number, String flag, String patientInfoType, String addedTime, String added_by, String action,String status) {
 
+        SQLiteDatabase db = this.getWritableDatabase();
+        long id = 0;
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_PATIENT_ID, patient_id);
+            values.put(DOCTOR_ID, doctor_id);
+            values.put(FIRST_NAME, first_name); // Name
+
+            values.put(LAST_NAME, last_name); // Email
+
+            values.put(ADDED_ON, create_date);
+
+            values.put(DOCTOR_MEMBERSHIP_ID, doctor_membership_number);
+            values.put(SYCHRONIZED, flag);
+            values.put(PATIENT_INFO_TYPE_FORM, patientInfoType);
+            values.put(ADDED_TIME, addedTime);
+            values.put(ADDED_BY, added_by);
+            values.put(ACTION, action);
+            values.put(STATUS, status);
+
+
+            // Inserting Row
+            id = db.insert(TABLE_PATIENT, null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+
+        Log.d(TAG, "New patient inserted into sqlite: " + id);
+    }
+
+
+    //add  new patient records into db from registration page
+    public void addQuickHistoryPatientRecords(int visit_id, int patient_id, String prescriptionImgPath, String added_on_date, String visit_date, String doc_id, String doc_mem_id, String flag, String addedTime, String patientInfoType, String added_by, String action,String status) {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        long id = 0;
+        try {
+            ContentValues values = new ContentValues();
+            values.put(KEY_VISIT_ID, visit_id);
+            values.put(KEY_PATIENT_ID, patient_id);
+
+            values.put(PRESCRIPTION, prescriptionImgPath);
+            values.put(ADDED_ON, added_on_date);
+            values.put(VISIT_DATE, visit_date);
+            values.put(DOCTOR_ID, doc_id);
+            values.put(DOCTOR_MEMBERSHIP_ID, doc_mem_id);
+            values.put(SYCHRONIZED, flag);
+            values.put(ADDED_TIME, addedTime);
+            values.put(PATIENT_INFO_TYPE_FORM, patientInfoType);
+            values.put(ACTION, action);
+            values.put(ADDED_BY, added_by);
+            values.put(STATUS, status);
+
+            id = db.insert(TABLE_PATIENT_HISTORY, null, values);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+
+
+        Log.d(TAG, "New patient inserted into sqlite: " + id);
+    }
 }

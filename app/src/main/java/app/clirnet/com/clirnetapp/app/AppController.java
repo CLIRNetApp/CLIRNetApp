@@ -41,7 +41,7 @@ import java.util.List;
 import java.util.Locale;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
+import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;

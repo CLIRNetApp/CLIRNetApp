@@ -205,6 +205,8 @@
     <string name="uidtype">Uid Type</string>
     <string name="reset">Reset</string>
     <string name="updateDate">Last Updated Date 08-02-2017</string>
+    <string name="quickadd">Quick Add</string>
+    <string name="title_edit_quick_add">Edit Quick Patient</string>
 
 
 </resources>

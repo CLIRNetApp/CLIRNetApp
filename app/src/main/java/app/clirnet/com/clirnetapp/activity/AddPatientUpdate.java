@@ -47,7 +47,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.Utility.Validator;
+import app.clirnet.com.clirnetapp.utility.Validator;
 import app.clirnet.com.clirnetapp.adapters.AddPatientUpdateAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.BannerClass;

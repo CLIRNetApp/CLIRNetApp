@@ -48,7 +48,7 @@ import java.util.Objects;
 import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.Utility.Validator;
+import app.clirnet.com.clirnetapp.utility.Validator;
 import app.clirnet.com.clirnetapp.adapters.EditPatientAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
@@ -1050,9 +1050,10 @@ public class EditPatientUpdate extends AppCompatActivity {
 
         String patientInfoType = "App";
         String action = "updated";
+        String status=null;
         try {
             dbController.updatePatientOtherInfo(strId, strVisitId, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, clinical_note, patientImagePath, ailments, sysdate, updatedTime, modified_by, action, patientInfoType, flag,
-                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs,strHeight,strbmi,strSugarFasting,visit_date);
+                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs,strHeight,strbmi,strSugarFasting,visit_date,status);
         } catch (ClirNetAppException e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());

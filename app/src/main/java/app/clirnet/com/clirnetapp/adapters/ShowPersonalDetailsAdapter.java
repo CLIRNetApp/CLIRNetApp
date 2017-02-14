@@ -63,9 +63,9 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
 
 
         holder.tv_visit_date.setText(model.getVisit_date());
-        String strailment=model.getAilments().trim();
+        String strailment=model.getAilments();
 
-        if(strailment.length()<= 0 || strailment.equals("") && model.getClinicalNotes().trim().length()> 0 && model.getSymptoms().trim().length()>0){
+        if(strailment == null && strailment.length()<= 0 || strailment.equals("") && model.getClinicalNotes().trim().length()> 0 && model.getSymptoms().trim().length()>0){
             holder.tv_ailment.setText("--");
         }else {
 
@@ -134,10 +134,10 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
 
     public class HistoryViewHolder extends RecyclerView.ViewHolder {
 
-        public final TextView tv_ailment;
-        public final TextView tv_fod;
+        private final TextView tv_ailment;
+        private final TextView tv_fod;
         private final TextView tv_visit_date;
-        public final TextView tv_clinical_notes;
+        private final TextView tv_clinical_notes;
         private final TextView imgText;
         private final LinearLayout linearlayoutSymptoms;
         private final LinearLayout linearlayoutDiagnosis;

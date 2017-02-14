@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -72,9 +73,9 @@ import java.util.Objects;
 import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
-import app.clirnet.com.clirnetapp.Utility.ImageDownloader;
-import app.clirnet.com.clirnetapp.Utility.ItemClickListener;
+import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
+import app.clirnet.com.clirnetapp.utility.ImageDownloader;
+import app.clirnet.com.clirnetapp.utility.ItemClickListener;
 import app.clirnet.com.clirnetapp.activity.AddPatientUpdate;
 import app.clirnet.com.clirnetapp.activity.EditPatientUpdate;
 import app.clirnet.com.clirnetapp.activity.LoginActivity;
@@ -96,6 +97,8 @@ import app.clirnet.com.clirnetapp.helper.SessionManager;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
+import app.clirnet.com.clirnetapp.quickAdd.EditIncompleteRecordsActivity;
+import app.clirnet.com.clirnetapp.quickAdd.QuickAddActivity;
 
 import static android.content.Context.MODE_PRIVATE;
 
@@ -256,7 +259,16 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             }
         });
-
+        FloatingActionButton fab = (FloatingActionButton)view. findViewById(R.id.fab);
+        fab.setVisibility(View.VISIBLE);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Click action
+                Intent intent = new Intent(getActivity().getApplicationContext(), QuickAddActivity.class);
+                startActivity(intent);
+            }
+        });
         //open database for further interaction with database
 
         try {
@@ -585,54 +597,68 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     private void afterDateEditPatientUpdate(int position) {
         RegistrationModel registrationModel = filteredModelList.get(position);
-        Intent i = new Intent(getContext().getApplicationContext(), EditPatientUpdate.class);
+        String strStatus=registrationModel.getStatus();
 
-        i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
-        i.putExtra("ID", registrationModel.getPat_id());
-        i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
-        i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
-        i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
-        i.putExtra("LASTNAME", registrationModel.getLastName());
-        i.putExtra("DOB", registrationModel.getDob());
-        i.putExtra("PHONE", registrationModel.getMobileNumber());
-        i.putExtra("PHONETYPE", registrationModel.getPhone_type());
-        i.putExtra("AGE", registrationModel.getAge());
-        i.putExtra("LANGUAGE", registrationModel.getLanguage());
-        i.putExtra("GENDER", registrationModel.getGender());
-        i.putExtra("ACTUALFOD", registrationModel.getActualFollowupDate());
-        i.putExtra("FOD", registrationModel.getFollowUpDate());
-        i.putExtra("AILMENT", registrationModel.getAilments());
-        i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
-        i.putExtra("VISITID", registrationModel.getKey_visit_id());
+        if(strStatus != null && strStatus.equals("incomplete")){
+            Intent i = new Intent(getContext().getApplicationContext(), EditIncompleteRecordsActivity.class);
+            i.putExtra("ID", registrationModel.getPat_id());
+            i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
+            i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
+            i.putExtra("LASTNAME", registrationModel.getLastName());
+            i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
+            i.putExtra("VISITID", registrationModel.getKey_visit_id());
+            startActivity(i);
+        }else {
 
-        i.putExtra("ADDRESS", registrationModel.getAddress());
-        i.putExtra("CITYORTOWN", registrationModel.getCityortown());
-        i.putExtra("DISTRICT", registrationModel.getDistrict());
-        i.putExtra("PIN", registrationModel.getPin_code());
-        i.putExtra("STATE", registrationModel.getState());
-        i.putExtra("WEIGHT", registrationModel.getWeight());
-        i.putExtra("PULSE", registrationModel.getPulse());
-        i.putExtra("BP", registrationModel.getBp());
-        i.putExtra("LOWBP", registrationModel.getlowBp());
-        i.putExtra("TEMPRATURE", registrationModel.getTemprature());
-        i.putExtra("SUGAR", registrationModel.getSugar());
-        i.putExtra("SYMPTOMS", registrationModel.getSymptoms());
-        i.putExtra("DIGNOSIS", registrationModel.getDignosis());
-        i.putExtra("TESTS", registrationModel.getTests());
-        i.putExtra("DRUGS", registrationModel.getDrugs());
-        i.putExtra("BMI", registrationModel.getBmi());
-        i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
-        i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
-        i.putExtra("HEIGHT", registrationModel.getHeight());
-        i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
-        i.putExtra("ISDCODE", registrationModel.getIsd_code());
-        i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
+            Intent i = new Intent(getContext().getApplicationContext(), EditPatientUpdate.class);
 
-        startActivity(i);
+            i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
+            i.putExtra("ID", registrationModel.getPat_id());
+            i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
+            i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
+            i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
+            i.putExtra("LASTNAME", registrationModel.getLastName());
+            i.putExtra("DOB", registrationModel.getDob());
+            i.putExtra("PHONE", registrationModel.getMobileNumber());
+            i.putExtra("PHONETYPE", registrationModel.getPhone_type());
+            i.putExtra("AGE", registrationModel.getAge());
+            i.putExtra("LANGUAGE", registrationModel.getLanguage());
+            i.putExtra("GENDER", registrationModel.getGender());
+            i.putExtra("ACTUALFOD", registrationModel.getActualFollowupDate());
+            i.putExtra("FOD", registrationModel.getFollowUpDate());
+            i.putExtra("AILMENT", registrationModel.getAilments());
+            i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
+            i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
+            i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
+            i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
+            i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
+            i.putExtra("VISITID", registrationModel.getKey_visit_id());
+
+            i.putExtra("ADDRESS", registrationModel.getAddress());
+            i.putExtra("CITYORTOWN", registrationModel.getCityortown());
+            i.putExtra("DISTRICT", registrationModel.getDistrict());
+            i.putExtra("PIN", registrationModel.getPin_code());
+            i.putExtra("STATE", registrationModel.getState());
+            i.putExtra("WEIGHT", registrationModel.getWeight());
+            i.putExtra("PULSE", registrationModel.getPulse());
+            i.putExtra("BP", registrationModel.getBp());
+            i.putExtra("LOWBP", registrationModel.getlowBp());
+            i.putExtra("TEMPRATURE", registrationModel.getTemprature());
+            i.putExtra("SUGAR", registrationModel.getSugar());
+            i.putExtra("SYMPTOMS", registrationModel.getSymptoms());
+            i.putExtra("DIGNOSIS", registrationModel.getDignosis());
+            i.putExtra("TESTS", registrationModel.getTests());
+            i.putExtra("DRUGS", registrationModel.getDrugs());
+            i.putExtra("BMI", registrationModel.getBmi());
+            i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
+            i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
+            i.putExtra("HEIGHT", registrationModel.getHeight());
+            i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
+            i.putExtra("ISDCODE", registrationModel.getIsd_code());
+            i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
+
+            startActivity(i);
+        }
     }
 
     //this is for our test purpose not actualy used in app

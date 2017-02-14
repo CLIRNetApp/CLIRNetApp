@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,13 +20,14 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.reports.GenderWiseDataModel;
 
-public class BarChartFragment extends Fragment {
+public class BarChartFragment extends android.support.v4.app.Fragment {
 
     private String mFromDate;
     private String mToDate;
@@ -39,6 +39,8 @@ public class BarChartFragment extends Fragment {
     private BarEntry v2e1;
     private ArrayList<String> ageBoundlis;
     private BarChart chart;
+    private ArrayList<String> date;
+    private List<Integer> male;
     private AppController appController;
 
 
@@ -55,9 +57,12 @@ public class BarChartFragment extends Fragment {
         // Required empty public constructor
     }
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Typeface mTfRegular = Typeface.createFromAsset(getContext().getAssets(), "OpenSans-Regular.ttf");
     }
 
     @Override
@@ -67,11 +72,10 @@ public class BarChartFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_new_bar_chart, container, false);
         chart = (BarChart) view.findViewById(R.id.chart);
 
-          mFromDate = getArguments().getString("FROMDATE");
-          mToDate = getArguments().getString("TODATE");
+        mFromDate = getArguments().getString("FROMDATE");
+        mToDate = getArguments().getString("TODATE");
 
         //set the data to chart
-        Utils.init(getResources());
         getDataSet();
 
         //////////////////////
@@ -107,7 +111,7 @@ public class BarChartFragment extends Fragment {
             sqlController.open();
 
 
-            ArrayList<GenderWiseDataModel> gd = new ArrayList<>();
+            ArrayList<GenderWiseDataModel> gd;
             gd = sqlController.genderWiseData(mFromDate, mToDate);
 
 
@@ -126,6 +130,8 @@ public class BarChartFragment extends Fragment {
                     male.add(v1e1);
                     female.add(v2e1);
                     listSetAgeBound.add(ageBound);
+
+
 
                 }
 
@@ -179,15 +185,15 @@ public class BarChartFragment extends Fragment {
             chart.setDrawValueAboveBar(true);
             chart.setPinchZoom(false);
             chart.setTouchEnabled(false);//disable touch gesture on chart view 10-112-2016
-            Utils.init(getContext());
+
             chart.setData(data);
             chart.setDescription(null);//this will not show the chart description
 
-          //  chart.invalidate();
+            //  chart.invalidate();
 
 
         } catch (Exception e) {
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "BarChartFragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+          //  appController.appendLog(appController.getDateTime() + " " + "/ " + "BarChartFragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
             e.printStackTrace();
         }
 
@@ -238,16 +244,7 @@ public class BarChartFragment extends Fragment {
 
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+
     public interface OnFragmentInteractionListener {
 
         void onFragmentInteraction(Uri uri);

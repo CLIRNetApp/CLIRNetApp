@@ -35,9 +35,9 @@ import java.util.Locale;
 import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.Utility.ItemClickListener;
-import app.clirnet.com.clirnetapp.Utility.MultiSpinner;
-import app.clirnet.com.clirnetapp.Utility.MultiSpinner2;
+import app.clirnet.com.clirnetapp.utility.ItemClickListener;
+import app.clirnet.com.clirnetapp.utility.MultiSpinner;
+import app.clirnet.com.clirnetapp.utility.MultiSpinner2;
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
 import app.clirnet.com.clirnetapp.activity.PrivacyPolicy;
 import app.clirnet.com.clirnetapp.activity.ShowPersonalDetailsActivity;

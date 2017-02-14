@@ -100,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="20dp">
 
-                <app.clirnet.com.clirnetapp.Utility.MultiSpinner2
+                <app.clirnet.com.clirnetapp.utility.MultiSpinner2
                     android:id="@+id/ageGap"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"
@@ -108,7 +108,7 @@
                     android:padding="5dp"
                     android:paddingRight="10dp" />
 
-                <app.clirnet.com.clirnetapp.Utility.MultiSpinner
+                <app.clirnet.com.clirnetapp.utility.MultiSpinner
                     android:id="@+id/gender"
                     android:layout_width="wrap_content"
                     android:layout_height="50dp"

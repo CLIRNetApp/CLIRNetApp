@@ -157,6 +157,12 @@ public class RegistrationModel {
         return phone_type;
     }
 
+    private String status;
+
+    public String getStatus() {
+        return status;
+    }
+
     private String special_instruction;
     private String pin_code;
     private String district;
@@ -745,6 +751,62 @@ public class RegistrationModel {
         this.banner_image_name = image_name;
         this.start_time = start_time;
         this.end_time = end_time;
+
+    }
+    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
+                             String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
+                             String sugar, String symptoms, String dignosis, String tests, String drugs,String altername_no,String height,String bmi,String sugar_fasting,String altternate_phType,String phone_type,String isd_code,String alternate_noisd_code,String status) {
+
+        this.pat_id = id;
+        this.firstName = first_name;
+        this.middleName = middle_name;
+        this.lastName = last_name;
+        this.dob = strdate_of_birth;
+        this.gender = gender;
+
+        this.age = current_age;
+        this.mobileNumber = phone_number;
+        this.language = selectedLanguage;
+        this.photo = patientImagePath;
+        this.followUpDate = follow_up_date;
+
+        this.followUpdays = daysSel;
+        this.followUpWeek = weekSel;
+        this.followUpMonth = monthSel;
+        this.ailments = ailmentList;
+        this.pres_img = prescriptionImgPath;
+        this.clinicalNotes = clinical_note;
+        this.added_on = added_on;
+        this.visit_date = visit_date;
+        this.modified_on = modified_on;
+        this.key_visit_id = key_visit_id;
+        this.actualFollowupDate = actFolDate;
+
+        this.address = address;
+        this.cityortown = city;
+        this.district = district;
+        this.pin_code = pin;
+        this.state = state;
+
+        this.weight=weight;
+        this.pulse = pulse;
+        this.bp = bp;
+        this.lowBp = mmhg;
+        this.temprature = temprature;
+        this.sugar = sugar;
+        this.symptoms = symptoms;
+        this.dignosis = dignosis;
+        this.tests = tests;
+        this.drugs = drugs;
+        this.bmi=bmi;
+        this.height=height;
+        this.alternatePhoneNumber=altername_no;
+        this.alternatePhoneType=altternate_phType;
+        this.sugarFasting=sugar_fasting;
+        this.phone_type=phone_type;
+        this.isd_code=isd_code;
+        this.alternate_isd_code=alternate_noisd_code;
+        this.status=status;
 
     }
 }

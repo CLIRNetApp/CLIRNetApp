@@ -20,9 +20,9 @@ import android.widget.Toast;
 import java.io.IOException;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.Utility.ConnectionDetector;
-import app.clirnet.com.clirnetapp.Utility.MD5;
-import app.clirnet.com.clirnetapp.Utility.SyncDataService;
+import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
+import app.clirnet.com.clirnetapp.utility.MD5;
+import app.clirnet.com.clirnetapp.utility.SyncDataService;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.app.DoctorDeatilsAsynTask;
 import app.clirnet.com.clirnetapp.app.LoginAsyncTask;

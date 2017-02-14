@@ -1,4 +1,4 @@
-package app.clirnet.com.clirnetapp.Utility;
+package app.clirnet.com.clirnetapp.utility;
 
 /**
  * Created by ${Ashish} on 8/3/2016.
