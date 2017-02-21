@@ -153,6 +153,8 @@ public class AddPatientUpdate extends AppCompatActivity {
     private String strAlternatephtype;
     private String strIsd_code;
     private String strAlternateIsd_code;
+    private String patientImagePath;
+    private String prescriptionImgPath;
 
 
     @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
@@ -530,7 +532,8 @@ public class AddPatientUpdate extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // back button pressed
-                goToNavigation();
+              goToNavigation1();
+
                 //  Toast.makeText(EditPatientUpdate.this,"back is pressed",Toast.LENGTH_SHORT).show();
             }
         });
@@ -623,7 +626,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                // TODO Auto-generated method stub
+
                 if (event.getAction() == KeyEvent.ACTION_DOWN) {
                     days.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
                     week.setTextColor(getResources().getColor(R.color.black));
@@ -1005,7 +1008,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             //convert visit date from 2016-11-1 to 2016-11-01
             visit_date = myFormat.format(fromUser.parse(added_on));
             added_on = myFormat.format(fromUser.parse(addedOnDate));
-
+            usersellectedDate=myFormat.format(fromUser.parse(usersellectedDate));
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -1019,7 +1022,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         String action = "added";
 
         //  dbController.updatePatientPersonalforNewVisit(strPatientId, "2", modified_on.toString());//thiis will update pateint data for new visit
-        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, PrescriptionimageName, ailments, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
+        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, ailments, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
                 strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs,strHeight,strbmi,strSugarFasting);
 
         Toast.makeText(getApplicationContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
@@ -1092,8 +1095,14 @@ public class AddPatientUpdate extends AppCompatActivity {
     //this will show captured image to image view
     private void previewCapturedImage() {
         try {
+            prescriptionImgPath = uriSavedImage.getPath();
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+        try {
 
-            String patientImagePath = uriSavedImage.getPath();
+             patientImagePath = uriSavedImage.getPath();
 
             if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
 
@@ -1112,6 +1121,12 @@ public class AddPatientUpdate extends AppCompatActivity {
         startActivity(i);
         finish();
     }
+    private void goToNavigation1() {
+        this.onBackPressed();
+        finish();
+
+    }
+
 
     @Override
     public void onStop() {

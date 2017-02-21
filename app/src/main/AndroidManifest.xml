@@ -54,7 +54,8 @@
         <activity
             android:name=".activity.ShowPersonalDetailsActivity"
             android:label="@string/title_activity_show_personal_details"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask"/>
 
         <service
             android:name=".utility.SyncDataService"
@@ -69,7 +70,9 @@
         <activity android:name=".activity.RegistrationActivityNew" />
 
 
-        <activity android:name=".activity.ShowPrescriptionImageActivity" />
+        <activity android:name=".activity.ShowPrescriptionImageActivity"
+            android:configChanges="orientation|screenSize"
+            android:launchMode="singleTask"/>
 
         <activity android:name=".activity.ServiceArea" />
 
@@ -79,21 +82,9 @@
         <activity
             android:name=".quickAdd.EditIncompleteRecordsActivity"
             android:label="@string/title_edit_quick_add"
-            android:screenOrientation="landscape">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
+            android:screenOrientation="landscape"/>
 
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-                <!-- ATTENTION: This data URL was auto-generated. We recommend that you use the HTTP scheme.
-                  TODO: Change the host or pathPrefix as necessary. -->
-                <data
-                    android:host="[ENTER-YOUR-HTTP-HOST-HERE]"
-                    android:pathPrefix="/editincompleterecords"
-                    android:scheme="http" />
-            </intent-filter>
-        </activity>
-        <!--Commented this service for test build -->
+      <!--  Commented this service for test build-->
         <!-- <service android:name=".fcm.MyFirebaseMessagingService" >
              <intent-filter>
                  <action android:name="com.google.firebase.MESSAGING_EVENT" />

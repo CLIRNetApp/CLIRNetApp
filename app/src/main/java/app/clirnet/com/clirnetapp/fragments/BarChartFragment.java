@@ -44,7 +44,6 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
     private AppController appController;
 
 
-
     public static BarChartFragment newInstance(String param1, String param2) {
         BarChartFragment fragment = new BarChartFragment();
         Bundle args = new Bundle();
@@ -56,7 +55,6 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
     public BarChartFragment() {
         // Required empty public constructor
     }
-
 
 
     @Override
@@ -82,7 +80,6 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
         if (appController == null) {
             appController = new AppController();
         }
-
 
 
         Utils.init(getResources());
@@ -116,25 +113,33 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
 
 
             int size1 = gd.size();
-
-            if (size1 > 0) {
-                for (int im = 0; im < size1; im++) {
-                    int mcount = Integer.parseInt(gd.get(im).getmCount());
-                    int fCount = Integer.parseInt(gd.get(im).getfCount());
-                    String ageBound = gd.get(im).getAgeBound();
-
-
-                    v1e1 = new BarEntry(mcount, im);
-                    v2e1 = new BarEntry(fCount, im);
-
-                    male.add(v1e1);
-                    female.add(v2e1);
-                    listSetAgeBound.add(ageBound);
-
-
-
+            //Log.e("size1", "  " + size1);
+            //Removes items from gd when agebound is null 15-02-2017
+            for (int i = size1-1; i >= 0; i--){
+                String ageBound = gd.get(i).getAgeBound();
+                if(ageBound == null)
+                {
+                    gd.remove(i);
                 }
+            }
 
+            int size2 = gd.size();
+           // Log.e("size2", "  " + size2);
+            if (size2 > 0) {
+                for (int im = 0; im < size2; im++) {
+                    int mcount = Integer.parseInt(gd.get(im).getmCount());//getting male count
+                    int fCount = Integer.parseInt(gd.get(im).getfCount());//getting female count
+                    String ageBound = gd.get(im).getAgeBound();
+                    //  Log.e("ageBound", "  " + ageBound + " " + mcount + " " + fCount);
+
+                    if (ageBound != null) {
+                        v1e1 = new BarEntry(mcount, im);
+                        v2e1 = new BarEntry(fCount, im);
+                        male.add(v1e1);
+                        female.add(v2e1);
+                        listSetAgeBound.add(ageBound);
+                    }
+                }
             }
             Utils.init(getResources());
             Utils.init(getContext());
@@ -193,7 +198,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
 
 
         } catch (Exception e) {
-          //  appController.appendLog(appController.getDateTime() + " " + "/ " + "BarChartFragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            //  appController.appendLog(appController.getDateTime() + " " + "/ " + "BarChartFragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
             e.printStackTrace();
         }
 
@@ -223,8 +228,8 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
         if (view != null) {
             view = null;
         }
-        if(appController !=null){
-            appController=null;
+        if (appController != null) {
+            appController = null;
         }
         mListener = null;
         mFromDate = null;

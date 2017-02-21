@@ -12,15 +12,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
@@ -35,6 +30,9 @@ import app.clirnet.com.clirnetapp.fragments.ReportFragmentViewPagerSetup;
 import app.clirnet.com.clirnetapp.fragments.TopTenAilmentFragment;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
+
+/*import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;*/
 
 
 public class NavigationActivity extends AppCompatActivity
@@ -121,7 +119,7 @@ public class NavigationActivity extends AppCompatActivity
        // subscribeToPushService();
     }
 
-    private void subscribeToPushService() {
+   /* private void subscribeToPushService() {
 
         FirebaseMessaging.getInstance().subscribeToTopic("news");
         Log.d("AndroidBash", "Subscribed");
@@ -132,7 +130,7 @@ public class NavigationActivity extends AppCompatActivity
         // Log and toast
       Log.d("AndroidBash", token);
        // Toast.makeText(NavigationActivity.this, token, Toast.LENGTH_SHORT).show();
-    }
+    }*/
 
     @Override
     public void onBackPressed() {

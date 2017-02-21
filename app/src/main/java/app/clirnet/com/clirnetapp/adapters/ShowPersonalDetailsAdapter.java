@@ -65,7 +65,8 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
         holder.tv_visit_date.setText(model.getVisit_date());
         String strailment=model.getAilments();
 
-        if(strailment == null && strailment.length()<= 0 || strailment.equals("") && model.getClinicalNotes().trim().length()> 0 && model.getSymptoms().trim().length()>0){
+
+        if(strailment == null || strailment.length()<= 0 || strailment.equals("") && model.getClinicalNotes().trim().length()> 0 && model.getSymptoms().trim().length()>0){
             holder.tv_ailment.setText("--");
         }else {
 

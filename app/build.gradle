@@ -13,8 +13,8 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         multiDexEnabled true
-        versionCode 7
-        versionName "1.2.4"
+        versionCode 8
+        versionName "1.2.4.1"
     }
 
     lintOptions {
@@ -64,10 +64,11 @@ dependencies {
         exclude module: "httpclient"
     }
     compile 'com.github.delight-im:Android-AdvancedWebView:v3.0.0'
-    compile 'com.google.firebase:firebase-core:9.4.0'
+  /*  compile 'com.google.firebase:firebase-core:9.4.0'
     compile 'com.google.firebase:firebase-messaging:9.4.0'
 
-    compile 'com.google.android.gms:play-services-auth:9.4.0'
+    compile 'com.google.android.gms:play-services-auth:9.4.0'*/
 
 }
-apply plugin: 'com.google.gms.google-services'
+/*
+apply plugin: 'com.google.gms.google-services'*/

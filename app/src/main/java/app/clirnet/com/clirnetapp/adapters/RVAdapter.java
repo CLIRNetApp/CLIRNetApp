@@ -1,8 +1,6 @@
 package app.clirnet.com.clirnetapp.adapters;
 
-import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,19 +44,18 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder>
         String middle_name = patientList.get(position).getMiddleName();
         String last_name = patientList.get(position).getLastName();
 
-        if(last_name == null){
-            last_name="";
+        if(middle_name == null || middle_name.equals("Null")){
+            middle_name="";
         }
 
         String name=AppController.toCamelCase(first_name + " " + middle_name + " " + last_name);
 
         holder.name.setText(name);
-        String status=patientList.get(position).getStatus();
 
-        Log.e("status","   "+status);
+         /*String status=patientList.get(position).getStatus();
         if(status != null && status.equals("incomplete")){
             holder.linearlayout.setBackgroundColor(Color.LTGRAY);
-        }
+        }*/
         //holder.follow_up_date.setText(model.getActualFollowupDate());
 
         String follow_up_date = model.getActualFollowupDate();

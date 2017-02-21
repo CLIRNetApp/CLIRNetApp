@@ -137,7 +137,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
         TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
-//open privacy poilicy page
+       //open privacy poilicy page
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -147,7 +147,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
             }
         });
-//open Terms and Condition page
+     //open Terms and Condition page
         termsandCondition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -158,7 +158,15 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             }
         });
 
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // back button pressed
+                goToNavigation1();
 
+                //  Toast.makeText(EditPatientUpdate.this,"back is pressed",Toast.LENGTH_SHORT).show();
+            }
+        });
         setDatatoText();
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);//it will show date as 10 sep,2016
@@ -234,6 +242,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
                     i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
                     i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
                     i.putExtra("VISITID", registrationModel.getKey_visit_id());
+                    i.putExtra("ADDED_ON",registrationModel.getAdded_on());
 
                     i.putExtra("ADDRESS", registrationModel.getAddress());
                     i.putExtra("CITYORTOWN", registrationModel.getCityortown());
@@ -368,13 +377,16 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             backChangingImages.setImageDrawable(null);
         }
     }
+    private void goToNavigation1() {
+        this.onBackPressed();
+        finish();
 
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
         Log.d("lifecycle", "The onDestroy() event");
         // session.setLogin(false);
-        //Close the all database connection opened here 31/10/2008 By. Ashish
 
         if (sqlController != null) {
             sqlController = null;
@@ -450,13 +462,13 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-       // Log.d("lifecycle","onPause invoked");
+        // Log.d("lifecycle","onPause invoked");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
         setupAnimation();
-       // Log.d("lifecycle","onRestart invoked");
+        // Log.d("lifecycle","onRestart invoked");
     }
 }

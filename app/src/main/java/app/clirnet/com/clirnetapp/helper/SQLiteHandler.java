@@ -8,18 +8,11 @@ package app.clirnet.com.clirnetapp.helper;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-
-
 import android.database.sqlite.SQLiteDatabase;
-
 import android.database.sqlite.SQLiteOpenHelper;
-
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 
 public class SQLiteHandler extends SQLiteOpenHelper {
@@ -415,7 +408,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     //update the patient visit records into db
     public void updatePatientOtherInfo(String strId, String visitId, String usersellectedDate, String strfollow_up_date, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String modified_dateon, String modified_time, String modified_by, String action, String patInfoType, String flag,
-                                       String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String strbmi, String strSugarFasting, String visit_date,String status) throws ClirNetAppException {
+                                       String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String strbmi, String strSugarFasting, String status) throws ClirNetAppException {
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
         try {
@@ -447,7 +440,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(HEIGHT, strHeight);
             values.put(BMI, strbmi);
             values.put(SUGAR_FASTING, strSugarFasting);
-            values.put(VISIT_DATE, visit_date);
+          //  values.put(VISIT_DATE, visit_date);
             values.put(STATUS, status);
 
 
@@ -543,7 +536,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                          String act_follow_up_date, String notes, String added_by, String added_on, String addedTime,
                                          String modified_by, String modified_on, String is_disabled, String disabled_by,
                                          String disabled_on, String is_deleted, String deleted_by, String deleted_on, String flag, String patient_info_type_form,
-                                         String precription, String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs) {
+                                         String precription, String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs,String doc_mem_id) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
@@ -588,6 +581,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             contentValue.put(DIGNOSIS, dignosis);
             contentValue.put(TESTS, tests);
             contentValue.put(DRUGS, drugs);
+            contentValue.put(DOCTOR_MEMBERSHIP_ID,doc_mem_id);
 
 
             db.delete(TABLE_PATIENT_HISTORY, KEY_PATIENT_ID + " = ?" + " AND " + KEY_VISIT_ID + " = ? ", new String[]{pat_id, visit_id});
@@ -780,13 +774,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public JSONArray getResultsForPatientInformation() {
 
         JSONArray resultSet;
-        //or you can use `context.getDatabasePath("my_db_test.db")`
+
         Cursor cursor = null;
 
         SQLiteDatabase db1 = getReadableDatabase();
-        //Cursor cursor = db1.rawQuery(selectQuery, null);
 
-        //SQLiteDatabase myDataBase = SQLiteDatabase.openDatabase(DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY);'
         try {
             resultSet = new JSONArray();
             String searchQuery = "SELECT  * FROM patient where flag = 0 ";
@@ -818,8 +810,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 cursor.moveToNext();
             }
 
-
-            //     Log.d("TAG_NAME", resultSet.toString());
 
             return resultSet;
 
@@ -1274,18 +1264,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                 rowObject.put(cursor.getColumnName(i), "");
                             }
                         } catch (Exception e) {
-                            Log.d("TAG_NAME", e.getMessage());
+                            //Log.d("TAG_NAME", e.getMessage());
                         }
-
                     }
                 }
                 resultSet.put(rowObject);
                 cursor.moveToNext();
             }
-
-
-
-
             return resultSet;
 
         } finally {
@@ -1475,31 +1460,19 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         return false;
     }
     //This will add records from registration page into patient table  28/8/2016 ashish u
-    public void addQuickAddPatientPersonalfromLocal(int patient_id, String doctor_id, String first_name,  String last_name, String create_date, String doctor_membership_number, String flag, String patientInfoType, String addedTime, String added_by, String action,String status) {
+    public void addQuickAddPatientPersonalfromLocal(String create_date, String prescriptionImgPath, String added_by,String status) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         long id = 0;
         try {
             ContentValues values = new ContentValues();
-            values.put(KEY_PATIENT_ID, patient_id);
-            values.put(DOCTOR_ID, doctor_id);
-            values.put(FIRST_NAME, first_name); // Name
-
-            values.put(LAST_NAME, last_name); // Email
-
+            values.put(PRESCRIPTION, prescriptionImgPath);
             values.put(ADDED_ON, create_date);
-
-            values.put(DOCTOR_MEMBERSHIP_ID, doctor_membership_number);
-            values.put(SYCHRONIZED, flag);
-            values.put(PATIENT_INFO_TYPE_FORM, patientInfoType);
-            values.put(ADDED_TIME, addedTime);
             values.put(ADDED_BY, added_by);
-            values.put(ACTION, action);
             values.put(STATUS, status);
 
-
             // Inserting Row
-            id = db.insert(TABLE_PATIENT, null, values);
+            id = db.insert("prescription_queue", null, values);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -1509,7 +1482,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-        Log.d(TAG, "New patient inserted into sqlite: " + id);
+       // Log.d(TAG, "New patient inserted into sqlite: " + id);
     }
 
 
@@ -1522,7 +1495,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put(KEY_VISIT_ID, visit_id);
             values.put(KEY_PATIENT_ID, patient_id);
-
             values.put(PRESCRIPTION, prescriptionImgPath);
             values.put(ADDED_ON, added_on_date);
             values.put(VISIT_DATE, visit_date);
@@ -1544,7 +1516,57 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
+        //  Log.d(TAG, "New patient inserted into sqlite: " + id);
+    }
 
-        Log.d(TAG, "New patient inserted into sqlite: " + id);
+    public void setDocMemId(String docMemId) {
+        SQLiteDatabase db = null;
+        long id = 0;
+        try {
+            db = this.getWritableDatabase();
+
+
+            ContentValues values = new ContentValues();
+
+            values.put(DOCTOR_MEMBERSHIP_ID, docMemId); // Name
+
+            String selectQuery = "UPDATE patient_history SET doc_mem_id = '"+ docMemId +"' where patient_info_type='Electronics';";
+
+
+             db.rawQuery(selectQuery, null);
+
+            // Inserting Row
+       //     id = db.update(TABLE_PATIENT_HISTORY, values, PATIENT_INFO_TYPE_FORM + "='Electronics'" , null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+    }
+
+    public void deletePrescriptionImageQueue(String prescriptionimgId,String prescriptionimgPath) {
+
+        SQLiteDatabase db = null;
+
+        try {
+            db = this.getWritableDatabase();
+
+
+            String deleteQuery = "DELETE FROM prescription_queue WHERE id =" + prescriptionimgId + " and prescription='"+ prescriptionimgPath + "';" ;//+ prescriptionimgId + "' ";
+
+
+            db.execSQL(deleteQuery);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
     }
 }

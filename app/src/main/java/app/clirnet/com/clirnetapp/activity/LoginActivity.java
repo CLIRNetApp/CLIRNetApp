@@ -87,8 +87,6 @@ public class LoginActivity extends Activity {
         LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
         appController = new AppController();
 
-
-
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -289,7 +287,7 @@ public class LoginActivity extends Activity {
             boolean isInternetPresent = connectionDetector.isConnectingToInternet();
             if (isInternetPresent) {
 
-               String start_time=appController.getDateTimenew();
+                String start_time=appController.getDateTimenew();
 
                 new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword,start_time);
                 new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber,start_time);

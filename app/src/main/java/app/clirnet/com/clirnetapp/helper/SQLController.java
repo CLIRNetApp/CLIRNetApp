@@ -34,10 +34,7 @@ public class SQLController {
         if (dbHelper == null) {
             dbHelper = new SQLiteHandler(ourcontext);
             database = dbHelper.getWritableDatabase();
-        } else {
-            //Log.e("DB Opended", "Database is allready opened");
         }
-
         return this;
 
     }
@@ -49,7 +46,6 @@ public class SQLController {
         }
 
     }
-
 
     //method to fetch user name and password
     public ArrayList<LoginModel> getUserLoginRecrodsNew() throws ClirNetAppException {
@@ -131,7 +127,7 @@ public class SQLController {
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,ph.status  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "'  order by ph.key_visit_id desc";
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "'  order by ph.key_visit_id desc";
 
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
@@ -143,7 +139,7 @@ public class SQLController {
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
-                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44),cursor.getString(45));
+                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44));
 
                     hotelList.add(user);
 
@@ -1111,7 +1107,7 @@ public class SQLController {
             String selectQuery = "SELECT COUNT(CASE WHEN UPPER(dpr.gender) = 'MALE' THEN 1 END) Male,\n" +
                     "COUNT(CASE WHEN UPPER(dpr.gender) = 'FEMALE' THEN 1 END) Female,\n" +
                     "  CASE\n" +
-                    "\tWHEN CAST(dpr.age AS Integer)  >=0 AND CAST(dpr.age AS Integer) <5 THEN '00-05'\n" +
+                    "\tWHEN CAST(dpr.age AS Integer) >=0 AND CAST(dpr.age AS Integer) <5 THEN '00-05'\n" +
                     "\tWHEN CAST(dpr.age AS Integer) >=5 AND CAST(dpr.age AS Integer) <15 THEN '05-15'\n" +
                     "\tWHEN CAST(dpr.age AS Integer) >=15 AND CAST(dpr.age AS Integer) <25 THEN '15-25'\n" +
                     "\tWHEN CAST(dpr.age AS Integer) >=25 AND CAST(dpr.age AS Integer) <35 THEN '25-35'\n" +
@@ -1123,6 +1119,7 @@ public class SQLController {
                     "FROM\n" +
                     " patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id  \n" +
                     " AND  date(substr(pvd.visit_date,7,4)||'-'||substr(pvd.visit_date,4,2)||'-'||substr(pvd.visit_date,1,2)) \n" +
+                   // " AND dpr.status = 'complete' AND pvd.status = 'complete' \n" +
                     "Between Date('" + fromdate + "') AND Date('" + todate + "')\n" +
                     "GROUP BY ageband ORDER by ageband";
 
@@ -1182,7 +1179,6 @@ public class SQLController {
 
             throw new ClirNetAppException("something went wrong while getting company Id");
         } finally {
-
             if (cursor != null) {
                 //close statment
                 cursor.close();
@@ -1732,6 +1728,42 @@ public class SQLController {
         }
 
         return VisitidList;
+
+    }
+    //get all the patient imp data from db, which will used in Consultation fragments and home fragments
+    public ArrayList<RegistrationModel> getIncompleteRecordList() throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "select id,prescription,added_on,added_by,status from prescription_queue;";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4));
+
+                    hotelList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+
+            throw new ClirNetAppException("Something went wrong while getting getPatientList");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+
+        return hotelList;
 
     }
 

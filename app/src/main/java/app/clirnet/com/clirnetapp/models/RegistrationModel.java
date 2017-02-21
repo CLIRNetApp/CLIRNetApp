@@ -27,6 +27,7 @@ public class RegistrationModel {
     private  String start_time;
     private  String end_time ;
 
+
     public String getProcess() {
         return process;
     }
@@ -809,4 +810,13 @@ public class RegistrationModel {
         this.status=status;
 
     }
+    public RegistrationModel(String id, String prescription_image, String added_on, String added_by, String status) {
+
+        this.id=id;
+        this.pres_img=prescription_image;
+        this.added_on=added_on;
+        this.added_by=added_by;
+        this.status=status;
+    }
+
 }

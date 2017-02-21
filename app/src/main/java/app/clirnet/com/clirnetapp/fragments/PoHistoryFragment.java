@@ -646,7 +646,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         int index = poHistoryAdapter.getItemCount();
         int end = index + PAGE_SIZE;
-       // Log.e("index", "" + index + " " + end + " size is " + queryCount);
 
         if (end <= queryCount) {
             try {
@@ -656,9 +655,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 e.printStackTrace();
             }
 
-
-            //  patientData.addAll(memberList);
-            // adapter.notifyDataSetChanged();
             poHistoryAdapter.addAll(memberList);
 
             if (end >= queryCount) {

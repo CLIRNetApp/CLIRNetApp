@@ -94,7 +94,7 @@ public class EditPatientUpdate extends AppCompatActivity {
     private Intent imageIntent;
     private File imagesFolder;
     private Uri uriSavedImage;
-    private String patientImagePath;
+    private String prescriptionImagePath;
     private SimpleDateFormat sdf1;
 
     private String updatedTime;
@@ -1030,15 +1030,15 @@ public class EditPatientUpdate extends AppCompatActivity {
                 maxid = maxid + 1;
             }
         }
-        String added_on = visitDate.getText().toString();
+        String modified_on = visitDate.getText().toString();
         String visit_date = sysdate;
         SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
         SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
         try {
             //convert visit date from 2016-11-1 to 2016-11-01
-            visit_date = myFormat.format(fromUser.parse(added_on));
-            added_on = myFormat.format(fromUser.parse(sysdate));
-
+            visit_date = myFormat.format(fromUser.parse(modified_on));
+            modified_on = myFormat.format(fromUser.parse(sysdate));
+            usersellectedDate=myFormat.format(fromUser.parse(usersellectedDate));
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -1052,8 +1052,8 @@ public class EditPatientUpdate extends AppCompatActivity {
         String action = "updated";
         String status=null;
         try {
-            dbController.updatePatientOtherInfo(strId, strVisitId, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, clinical_note, patientImagePath, ailments, sysdate, updatedTime, modified_by, action, patientInfoType, flag,
-                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs,strHeight,strbmi,strSugarFasting,visit_date,status);
+            dbController.updatePatientOtherInfo(strId, strVisitId, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, clinical_note, prescriptionImagePath, ailments, modified_on, updatedTime, modified_by, action, patientInfoType, flag,
+                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs,strHeight,strbmi,strSugarFasting,status);
         } catch (ClirNetAppException e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1124,10 +1124,10 @@ public class EditPatientUpdate extends AppCompatActivity {
     private void previewCapturedImage() {
         try {
 
-            patientImagePath = uriSavedImage.getPath();
+            prescriptionImagePath = uriSavedImage.getPath();
 
-            if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
-               // setUpGlide(patientImagePath, imageViewprescription);
+            if (prescriptionImagePath != null && !TextUtils.isEmpty(prescriptionImagePath)) {
+               // setUpGlide(prescriptionImagePath, imageViewprescription);
             }
 
         } catch (NullPointerException e) {
@@ -1138,9 +1138,9 @@ public class EditPatientUpdate extends AppCompatActivity {
     }
 
 // --Commented out by Inspection START (2/2/2017 5:22 PM):
-//    private void setUpGlide(String patientImagePath, ImageView img) {
+//    private void setUpGlide(String prescriptionImagePath, ImageView img) {
 //        Glide.with(EditPatientUpdate.this)
-//                .load(patientImagePath)
+//                .load(prescriptionImagePath)
 //                .crossFade()
 //                .diskCacheStrategy(DiskCacheStrategy.NONE)
 //                .skipMemoryCache(true)
@@ -1344,7 +1344,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         imageIntent = null;
         imagesFolder = null;
         uriSavedImage = null;
-        patientImagePath = null;
+        prescriptionImagePath = null;
         sdf1 = null;
         updatedTime = null;
         sysdate = null;

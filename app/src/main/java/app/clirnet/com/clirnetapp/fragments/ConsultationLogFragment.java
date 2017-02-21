@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,7 +32,6 @@ import java.util.Locale;
 import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.utility.ItemClickListener;
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
 import app.clirnet.com.clirnetapp.activity.PrivacyPolicy;
 import app.clirnet.com.clirnetapp.activity.ShowPersonalDetailsActivity;
@@ -42,6 +42,7 @@ import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
+import app.clirnet.com.clirnetapp.utility.ItemClickListener;
 
 
 /**
@@ -72,6 +73,8 @@ public class ConsultationLogFragment extends Fragment {
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
     private String doctor_membership_number;
+    private RecyclerView recycler_view2;
+    private Button searchRecords;
 
     public ConsultationLogFragment() {
         // this.setHasOptionsMenu(true);
@@ -107,9 +110,10 @@ public class ConsultationLogFragment extends Fragment {
         ((NavigationActivity) getActivity()).setActionBarTitle("Consultation Log");
 
         date = (EditText) view.findViewById(R.id.date);
-        final Button searchRecords = (Button) view.findViewById(R.id.search);
+        searchRecords = (Button) view.findViewById(R.id.search);
         TextView currdate = (TextView) view.findViewById(R.id.sysdate);
         recycler_view = (RecyclerView) view.findViewById(R.id.recycler_view);
+
         backChangingImages = (ImageView) view.findViewById(R.id.backChangingImages);
 
         norecordtv = (LinearLayout) view.findViewById(R.id.norecordtv);
@@ -215,15 +219,16 @@ public class ConsultationLogFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-                SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+                SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
 
                 searchdate = date.getText().toString();
                 String reformattedStr = "";
                 try {
 
                     reformattedStr = myFormat.format(fromUser.parse(searchdate));
-                    // Log.e("reformattedStr", "" + reformattedStr);
+                   // Log.e("reformattedStr", "" + reformattedStr);
+
 
                 } catch (ParseException e) {
                     e.printStackTrace();
@@ -236,7 +241,7 @@ public class ConsultationLogFragment extends Fragment {
                 }
 
                 try {
-                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
                     Date date1 = sdf1.parse(searchdate);
                   //  Log.e("date1","   "+date1);
 
@@ -254,32 +259,35 @@ public class ConsultationLogFragment extends Fragment {
 
                         filterfodList = sqlController.getPatientListnew(reformattedStr);
 
+
                         int filterModelSize = filterfodList.size();
                         if (filterModelSize > 0) {
                             norecordtv.setVisibility(View.GONE);
+                            txtfod.setVisibility(View.GONE);
+                            txtupdateDate.setVisibility(View.VISIBLE);
+                            followUpDateSearchAdapter.setFilter(filterfodList);
+                            recycler_view.setAdapter(followUpDateSearchAdapter);
+                            if (filterfodList.size() > 0) {
+                                recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
+
+                                    @Override
+                                    public void onClick(View view, int position) {
+
+                                        followUpDateSearchAdapterToRecyclerView(position);
+
+                                    }
+
+                                    @Override
+                                    public void onLongClick(View view, int position) {
+
+                                    }
+
+                                }));
+                            }
                         }
 
                         //  Toast.makeText(getContext(), "Date1 is after sysdate", Toast.LENGTH_LONG).show();
-                        txtfod.setVisibility(View.GONE);
-                        txtupdateDate.setVisibility(View.VISIBLE);
-                        followUpDateSearchAdapter.setFilter(filterfodList);
-                        recycler_view.setAdapter(followUpDateSearchAdapter);
 
-                        recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
-
-                            @Override
-                            public void onClick(View view, int position) {
-
-                                followUpDateSearchAdapterToRecyclerView(position);
-
-                            }
-
-                            @Override
-                            public void onLongClick(View view, int position) {
-
-                            }
-
-                        }));
                     }
                     if (date1.before(currentdate)) {
 
@@ -303,23 +311,26 @@ public class ConsultationLogFragment extends Fragment {
 
                         rvAdapterforUpdateDate.setFilter(filterVistDateList);
                         recycler_view.setAdapter(rvAdapterforUpdateDate);
+
                         //   Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
-                        recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
+                        if (filterVistDateList.size() > 0) {
+                            recycler_view.addOnItemTouchListener(new RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
 
-                            @Override
-                            public void onClick(View view, int position) {
+                                @Override
+                                public void onClick(View view, int position) {
 
 
-                                setrvAdapterforUpdateDateToRecyclerView(position);
+                                    setrvAdapterforUpdateDateToRecyclerView(position);
 
-                            }
+                                }
 
-                            @Override
-                            public void onLongClick(View view, int position) {
+                                @Override
+                                public void onLongClick(View view, int position) {
 
-                            }
+                                }
 
-                        }));
+                            }));
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -329,9 +340,13 @@ public class ConsultationLogFragment extends Fragment {
             }
 
         });
+
         setupAnimation();
         return view;
     }
+
+
+
 
     private void setrvAdapterforUpdateDateToRecyclerView(int position) {
 
@@ -347,7 +362,7 @@ public class ConsultationLogFragment extends Fragment {
         i.putExtra("DOB", book.getDob());
 
         i.putExtra("PHONE", book.getMobileNumber());
-        i.putExtra("PHONETYPE",book.getPhone_type());
+        i.putExtra("PHONETYPE", book.getPhone_type());
         i.putExtra("AGE", book.getAge());
         i.putExtra("LANGUAGE", book.getLanguage());
         i.putExtra("GENDER", book.getGender());
@@ -382,7 +397,7 @@ public class ConsultationLogFragment extends Fragment {
         i.putExtra("DOB", book.getDob());
 
         i.putExtra("PHONE", book.getMobileNumber());
-        i.putExtra("PHONETYPE",book.getPhone_type());
+        i.putExtra("PHONETYPE", book.getPhone_type());
         i.putExtra("AGE", book.getAge());
         i.putExtra("LANGUAGE", book.getLanguage());
         i.putExtra("GENDER", book.getGender());
@@ -463,7 +478,7 @@ public class ConsultationLogFragment extends Fragment {
             backChangingImages.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                  //  Toast.makeText(getContext(), "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+                    //  Toast.makeText(getContext(), "Image Clicked" + url, Toast.LENGTH_SHORT).show();
 
                     String action = "clicked";
 
@@ -525,10 +540,62 @@ public class ConsultationLogFragment extends Fragment {
         recycler_view = null;
         backChangingImages.setOnClickListener(null);
         backChangingImages = null;
-        txtupdateDate=null;
+        txtupdateDate = null;
+        searchRecords = null;
+        filterfodList = null;
+        filterVistDateList = null;
 
-        filterfodList=null;
-        filterVistDateList=null;
+    }
+    //class to implement OnClick Listner
+    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+
+        private final GestureDetector gestureDetector;
+
+        private final ItemClickListener clickListener;
+
+        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ItemClickListener clickListener) {
+            this.clickListener = clickListener;
+            gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onSingleTapUp(MotionEvent e) {
+                    return true;
+                }
+
+                @Override
+                public void onLongPress(MotionEvent e) {
+                    View child = recyclerView.findChildViewUnder(e.getX(), e.getY());
+                    if (child != null && clickListener != null) {
+                        clickListener.onLongClick(child, recyclerView.getChildPosition(child));
+                    }
+                }
+            });
+        }
+
+        @Override
+        public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
+
+            View child = rv.findChildViewUnder(e.getX(), e.getY());
+            try {
+                if (child != null && clickListener != null && gestureDetector.onTouchEvent(e)) {
+                    clickListener.onClick(child, rv.getChildPosition(child));
+                }
+            } catch (Exception exe) {
+
+                exe.printStackTrace();
+
+            }
+            return false;
+        }
+
+        @Override
+        public void onTouchEvent(RecyclerView rv, MotionEvent e) {
+
+        }
+
+        @Override
+        public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
+
+        }
 
     }
 }

@@ -251,7 +251,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             }
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime()+"" +"/"+"LastNamedatabase"+e);
-            //TODO Create cutom exception and throw from here
+            
             throw new ClirNetAppException("Something went wrong while getting login records");
         } finally {
             //create method & pass cursor & db1 ref.

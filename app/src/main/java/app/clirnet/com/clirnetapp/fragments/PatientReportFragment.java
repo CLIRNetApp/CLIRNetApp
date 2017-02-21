@@ -339,9 +339,5 @@ public class PatientReportFragment extends Fragment {
         // editor.putInt("idName", 12);
         editor.apply();
 
-
-
     }
-
-
 }
