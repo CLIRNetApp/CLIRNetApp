@@ -18,7 +18,6 @@ import android.text.Html;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -41,6 +40,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
 
 import java.io.File;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,6 +55,8 @@ import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
+
+import static app.clirnet.com.clirnetapp.R.id.sysdate;
 
 public class EditPersonalInfo extends AppCompatActivity {
 
@@ -195,7 +197,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
         save = (Button) findViewById(R.id.save);
         backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
-        TextView date = (TextView) findViewById(R.id.sysdate);
+        TextView date = (TextView) findViewById(sysdate);
 
         editfirstname.setText(strFirstName);
         editmiddlename.setText(strMiddleName);
@@ -695,7 +697,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
                 if (selectedLanguage != null && selectedLanguage.length() > 0) {
 
-                    Log.e("tang1", "" + strLanguage);
+
                 } else {
                     strLanguage = selectedLanguage;
 
@@ -707,7 +709,20 @@ public class EditPersonalInfo extends AppCompatActivity {
                     // Toast.makeText(getApplicationContext(), "Mobile Number should be 10 digits", Toast.LENGTH_LONG).show();
                     return;
                 }
+                SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+                SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
 
+
+                // Log.e("added_on","  "+added_on + "  "+sysdate.toString());
+                //convert visit date from 2016-11-1 to 2016-11-01
+                try {
+                    modified_on_date = myFormat.format(fromUser.parse(modified_on_date));
+
+
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                }
                 String strUid = uid.getText().toString();
 
                 String modified_by = docId;
@@ -892,7 +907,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("cap_img", "" + CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+
         try {
 
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -975,28 +990,30 @@ public class EditPersonalInfo extends AppCompatActivity {
 
         Random r = new Random();
         try {
-            int n = r.nextInt(bannerimgNames.size());
+            if (bannerimgNames.size() > 0) {
+                int n = r.nextInt(bannerimgNames.size());
 
-            final String url = bannerimgNames.get(n);
+                final String url = bannerimgNames.get(n);
 
-            BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-            backChangingImages.setImageDrawable(d);
+                BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
+                backChangingImages.setImageDrawable(d);
 
-            backChangingImages.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                  //  Toast.makeText(EditPersonalInfo.this, "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+                backChangingImages.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //  Toast.makeText(EditPersonalInfo.this, "Image Clicked" + url, Toast.LENGTH_SHORT).show();
 
-                    String action = "clicked";
+                        String action = "clicked";
 
-                    appController.showAdDialog(EditPersonalInfo.this, url);
-                    appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action);
+                        appController.showAdDialog(EditPersonalInfo.this, url);
+                        appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action);
 
 
-                }
-            });
-            String action = "display";
-            appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action);
+                    }
+                });
+                String action = "display";
+                appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

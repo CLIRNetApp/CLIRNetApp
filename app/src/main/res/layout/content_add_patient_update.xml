@@ -512,6 +512,40 @@
 
                 </LinearLayout>
 
+                <LinearLayout
+                    android:id="@+id/visitDateLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/addresslayout"
+                    android:layout_marginTop="30dp"
+                    android:gravity="start"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:paddingRight="10dp"
+                        android:text="@string/visitDate"
+                        android:textColor="@color/colorPrimary"
+                        android:textSize="18sp" />
+
+                    <EditText
+                        android:id="@+id/visitDate"
+                        android:layout_width="300dp"
+                        android:layout_height="45dp"
+                        android:background="@drawable/rectangle_corner"
+                        android:drawableRight="@android:drawable/ic_menu_my_calendar"
+                        android:editable="false"
+                        android:focusable="false"
+                        android:gravity="center"
+                        android:inputType="date"
+                        android:text="@string/visitDate"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:textColor="@color/black"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/txtRecord"
@@ -626,6 +660,10 @@
                             android:hint="BMI"
                             android:inputType="number"
                             android:maxLength="4"
+                            android:clickable="false"
+                            android:cursorVisible="false"
+                            android:focusable="false"
+                            android:focusableInTouchMode="false"
                             android:paddingBottom="5dp"
                             android:paddingLeft="5dp"
                             android:paddingRight="0dp"
@@ -962,7 +1000,6 @@
                     android:id="@+id/presciptiontext"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
-                    android:layout_below="@+id/symptomsdigosislayout"
                     android:drawableRight="@drawable/down_arrow"
                     android:layout_marginTop="30dp"
                     android:background="@color/btn_back_sbmt"
@@ -979,7 +1016,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:layout_below="@+id/presciptiontext"
                     android:background="@drawable/rectangle_corner"
                     android:layout_marginTop="0dp"
                     android:padding="5dp"
@@ -997,7 +1033,7 @@
                     android:paddingTop="5dp"
                     android:paddingLeft="10dp"
                     android:paddingRight="10dp"
-                    >
+                    android:visibility="gone">
 
                     <com.beardedhen.androidbootstrap.BootstrapEditText
 
@@ -1024,7 +1060,6 @@
                         android:layout_height="35dp"
                         android:layout_marginLeft="0dp"
                         android:layout_marginRight="5dp"
-                        android:layout_toRightOf="@+id/txt"
                         android:background="@color/grey"
                         android:visibility="gone" />
 
@@ -1033,7 +1068,6 @@
                         android:id="@+id/drugs"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
-                        android:layout_below="@+id/txtsymptomsanddignost"
                         android:layout_weight="1"
                         android:focusable="true"
                         android:focusableInTouchMode="true"
@@ -1057,58 +1091,33 @@
                         android:padding="5dp"
                         android:layout_marginTop="25dp">
 
+
                         <Button
                             android:id="@+id/addPatientprescriptionBtn"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.4"
+                            android:layout_width="150dp"
+                            android:layout_height="45dp"
                             android:background="#50BAA0"
                             android:fontFamily="sans-serif-medium"
+                            android:layout_gravity="center"
                             android:gravity="center"
-                            android:paddingRight="5dp"
-                            android:text="Add Prescription"
+                            android:paddingLeft="20dp"
+                            android:paddingRight="20dp"
+                            android:text="@string/addimage"
+                            android:textAllCaps="false"
                             android:textColor="#ffffff"
-                            android:textSize="16sp"
-                            tools:targetApi="jelly_bean" />
-
+                            android:textSize="16sp" />
                         <TextView
-                            android:id="@+id/sendreminder"
+                            android:id="@+id/prescriptionImgPath"
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_below="@+id/presciptionlayout"
-                            android:layout_marginLeft="5dp"
-                            android:layout_toRightOf="@+id/prescriptionBtn"
-                            android:gravity="center"
-                            android:text="@string/visitDate"
-                            android:textColor="@color/colorPrimary"
-                            android:textSize="18sp" />
-
-                        <EditText
-                            android:id="@+id/visitDate"
-                            android:layout_width="300dp"
                             android:layout_height="45dp"
-                            android:background="@drawable/rectangle_corner"
-                            android:drawableRight="@android:drawable/ic_menu_my_calendar"
-                            android:layout_marginLeft="5dp"
-                            android:inputType="date"
-                            android:gravity="center"
-                            android:editable="false"
-                            android:focusable="false"
-                            android:text="@string/visitDate"
-                            android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:textSize="14sp"
-                            android:textColor="@color/black" />
-                        <!--<com.mikhaellopez.circularimageview.CircularImageView
-                            android:id="@+id/imageViewprescription"
-                            android:layout_width="80dp"
-                            android:layout_height="80dp"
-                            android:src="@drawable/main_profile"
-                            app:civ_border_color="#EEEEEE"
-                            app:civ_border_width="4dp"
-                            app:civ_shadow="true"
-                            app:civ_shadow_radius="10"
-                            app:civ_shadow_color="#FF0000"
-                            android:visibility="gone"/>-->
+                            android:paddingTop="5dp"
+                            android:paddingLeft="20dp"
+                            android:paddingRight="20dp"
+                            android:fontFamily="sans-serif-medium"
+                            android:textColor="@color/colorPrimary"
+                            android:textSize="16sp"
+                            android:visibility="gone"/>
+
 
                     </LinearLayout>
 

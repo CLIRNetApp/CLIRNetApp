@@ -106,7 +106,7 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
 
         try {
             final String imgPath = patientList.get(position).getPres_img();
-            if (!TextUtils.isEmpty(imgPath) && imgPath != null) {
+            if (imgPath != null && !TextUtils.isEmpty(imgPath)) {
 
                 holder.imgText.setText("View Prescription");
                 holder.imgText.setOnClickListener(new View.OnClickListener() {

@@ -35,7 +35,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
     // Login table name
-    public static final String TABLE_USER = "user";
+    static final String TABLE_USER = "user";
     private static final String TABLE_PATIENT = "patient";
     private static final String TABLE_PATIENT_HISTORY = "patient_history";
     private static final String MASTER_AILMENT = "table_MasterAilment";
@@ -57,8 +57,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String MODIFIED_TIME = "modified_time";
     private static final String SYCHRONIZED = "flag";
 
-    public static final String KEY_NAME = "name";
-    public static final String KEY_PASSWORD = "password";
+    static final String KEY_NAME = "name";
+    static final String KEY_PASSWORD = "password";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_UID = "uid";
     private static final String KEY_CREATED_AT = "created_at";
@@ -101,7 +101,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
     private static final String AGE = "age";
-    public static final String PHONE_NUMBER = "phonenumber";
+    static final String PHONE_NUMBER = "phonenumber";
 
     private static final String LANGUAGE = "language";
     private static final String PHOTO = "photo";
@@ -214,22 +214,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-
-       /* db.execSQL(CREATE_LOGIN_TABLE);
-        db.execSQL(CREATE_TABLE_PATIENT);
-        db.execSQL(CREATE_TABLE_AILMENT);
-        db.execSQL(CREATE_TABLE_LASTNAME);
-        db.execSQL(CREATE_PATIENT_HISTORY);
-        db.execSQL(CREATE_TABLE_PATIENT_INFO_HIOTORY);
-        db.execSQL(CREATE_DOCTORPERINFO_TABLE);
-        db.execSQL(CREATE_ASYNC);
-
-        //addMe();
-        Log.d(TAG, "Database tables created");*/
-
     }
-   /* private static final String DATABASE_ALTER_TEAM_1 = "ALTER TABLE "
-            + + " ADD COLUMN " + COLUMN_COACH + " string;";*/
+
 
     private static final String DATABASE_ALTER_TABLE_USER = "ALTER TABLE user"
             + " ADD COLUMN phonenumber text;";
@@ -303,11 +289,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
      * Updating Patient Personal details in database
      */
     public void updatePatientPersonalInfo(String keyid, String firstname, String middlename, String lastname, String gender, String dateofbirth, String age, String phNo, String language, String imgPath, String modified_on_date, String modified_by, String modifiedTime, String action, String flag, String docId,
-                                          String address, String cityortown, String district, String pin, String state, String phoneType, String alternatephoneType, String alternatePhoneNumber, String uid, String uidType, String isd_code, String alternateisd_code,String status) throws ClirNetAppException {
+                                          String address, String cityortown, String district, String pin, String state, String phoneType, String alternatephoneType, String alternatePhoneNumber, String uid, String uidType, String isd_code, String alternateisd_code, String status) throws ClirNetAppException {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
-        long id = 0;
         try {
 
             ContentValues values = new ContentValues();
@@ -342,7 +327,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
             // Inserting Row
-            id = db.update(TABLE_PATIENT, values, KEY_PATIENT_ID + "=" + keyid, null);
+            db.update(TABLE_PATIENT, values, KEY_PATIENT_ID + "=" + keyid, null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -353,15 +338,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-
-        // Log.d("update", " user data updatedinto sqlite: " + id);
     }
 
 
-    /**
-     * Re crate database Delete all tables and create them again
-     */
-    //never used in app
     public void deleteUsers() {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -374,13 +353,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         db.delete(TABLE_PATIENTPERSONALINFO_HIOTORY, null, null);
         db.close();
 
-        // Log.d(TAG, "Deleted all user info from sqlite");
     }
 
     //add user login credentails into db
     public void addLoginRecord(String username, String password, String phoneNumber) throws ClirNetAppException {
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = 0;
         try {
             ContentValues contentValue = new ContentValues();
 
@@ -390,7 +367,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
             // Inserting Row
             db.delete(TABLE_USER, KEY_NAME + " = ?", new String[]{username});
-            id = db.insert(TABLE_USER, null, contentValue);
+            db.insert(TABLE_USER, null, contentValue);
         } catch (Exception e) {
             throw new ClirNetAppException("Error inserting data");
         } finally {
@@ -399,18 +376,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-
-        // Log.d(TAG, "New Login Info into sqlite: " + id);
-
-
     }
 
 
     //update the patient visit records into db
     public void updatePatientOtherInfo(String strId, String visitId, String usersellectedDate, String strfollow_up_date, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String modified_dateon, String modified_time, String modified_by, String action, String patInfoType, String flag,
-                                       String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String strbmi, String strSugarFasting, String status) throws ClirNetAppException {
+                                       String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String strbmi, String strSugarFasting, String status, String visit_date) throws ClirNetAppException {
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = 0;
+
         try {
             ContentValues values = new ContentValues();
             values.put(ACTUAL_FOLLOW_UP_DATE, usersellectedDate); // Name
@@ -440,20 +413,19 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(HEIGHT, strHeight);
             values.put(BMI, strbmi);
             values.put(SUGAR_FASTING, strSugarFasting);
-          //  values.put(VISIT_DATE, visit_date);
+            //  values.put(VISIT_DATE, visit_date);
             values.put(STATUS, status);
+            values.put(VISIT_DATE, visit_date);
 
 
             // Inserting Row
-            id = db.update(TABLE_PATIENT_HISTORY, values, KEY_PATIENT_ID + "=" + strId + " AND " + KEY_VISIT_ID + "=" + visitId, null);
+            db.update(TABLE_PATIENT_HISTORY, values, KEY_PATIENT_ID + "=" + strId + " AND " + KEY_VISIT_ID + "=" + visitId, null);
         } catch (Exception e) {
             throw new ClirNetAppException("Error inserting data");
         } finally {
             if (db != null) {
                 db.close(); // Closing database connection
             }
-
-            //   Log.d("update", " user data updatedinto sqlite: " + id);
         }
     }
 
@@ -468,7 +440,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                           String deleted_by, String deleted_on, String flag) {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = 0;
         try {
             ContentValues contentValue = new ContentValues();
 
@@ -514,18 +485,13 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
             db.delete(TABLE_PATIENT, KEY_PATIENT_ID + " = ?" + " AND " + DOB + " = ? " + " AND " + PHONE_NUMBER + " = ? " + " AND " + ADDED_ON + " = ? ", new String[]{pat_id, pat_date_of_birth, pat_mobile_no, added_on});
             // Inserting Row
-
-            id = db.insert(TABLE_PATIENT, null, contentValue);
+            db.insert(TABLE_PATIENT, null, contentValue);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (db != null) {
                 db.close(); // Closing database connection
             }
-
-
-
-
         }
     }
 
@@ -536,10 +502,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                          String act_follow_up_date, String notes, String added_by, String added_on, String addedTime,
                                          String modified_by, String modified_on, String is_disabled, String disabled_by,
                                          String disabled_on, String is_deleted, String deleted_by, String deleted_on, String flag, String patient_info_type_form,
-                                         String precription, String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs,String doc_mem_id) {
+                                         String precription, String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String doc_mem_id) {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = 0;
+
         try {
             ContentValues contentValue = new ContentValues();
 
@@ -581,12 +547,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             contentValue.put(DIGNOSIS, dignosis);
             contentValue.put(TESTS, tests);
             contentValue.put(DRUGS, drugs);
-            contentValue.put(DOCTOR_MEMBERSHIP_ID,doc_mem_id);
+            contentValue.put(DOCTOR_MEMBERSHIP_ID, doc_mem_id);
 
 
             db.delete(TABLE_PATIENT_HISTORY, KEY_PATIENT_ID + " = ?" + " AND " + KEY_VISIT_ID + " = ? ", new String[]{pat_id, visit_id});
             // Inserting Row
-            id = db.insert(TABLE_PATIENT_HISTORY, null, contentValue);
+            db.insert(TABLE_PATIENT_HISTORY, null, contentValue);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -594,11 +560,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-
-
-        // Log.d(TAG, "New Login Info into sqlite: " + id);
-
-
     }
 
     //This will add records from registration page into patient table  28/8/2016 ashish u
@@ -606,7 +567,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                             String address, String city, String district, String pinno, String state, String phoneType, String alternatePhone_no, String selectedPhoneTypealternate_no, String uid, String uidType, String selectedIsd_codeType, String alternate_no_isdcode) {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = 0;
         try {
             ContentValues values = new ContentValues();
             values.put(KEY_PATIENT_ID, patient_id);
@@ -645,7 +605,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(ATERNATE_NO_ISD_CODE, alternate_no_isdcode);
 
             // Inserting Row
-            id = db.insert(TABLE_PATIENT, null, values);
+            db.insert(TABLE_PATIENT, null, values);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -666,7 +626,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                          String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String bmi, String strSugarFasting) {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = 0;
+
         try {
             ContentValues values = new ContentValues();
             values.put(KEY_VISIT_ID, visit_id);
@@ -703,7 +663,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(BMI, bmi);
             values.put(SUGAR_FASTING, strSugarFasting);
 
-            id = db.insert(TABLE_PATIENT_HISTORY, null, values);
+            db.insert(TABLE_PATIENT_HISTORY, null, values);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -711,9 +671,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-
-
-        // Log.d(TAG, "New patient inserted into sqlite: " + id);
     }
 
     //add patient records from add pateint update page
@@ -721,7 +678,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                           String weight, String pulse, String bp, String mmhg, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String strbmi, String strSugarFasting) {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = 0;
+
         try {
             ContentValues values = new ContentValues();
 
@@ -758,7 +715,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(BMI, strbmi);
             values.put(SUGAR_FASTING, strSugarFasting);
             // Inserting Row
-            id = db.insert(TABLE_PATIENT_HISTORY, null, values);
+            db.insert(TABLE_PATIENT_HISTORY, null, values);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -766,8 +723,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-
-        //  Log.d("update", " user Visit data added into sqlite: " + id);
     }
 
     //this will give u a json array of patient records where flag =o
@@ -800,8 +755,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                             } else {
                                 rowObject.put(cursor.getColumnName(i), "");
                             }
-                        } catch (Exception e) {
-
+                        } catch (Exception e) {//. e.printStackTrace();
                         }
 
                     }
@@ -810,8 +764,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 cursor.moveToNext();
             }
 
-
+            // Log.e("resultSet"," "+ resultSet.toString());
             return resultSet;
+
 
         } finally {
             if (cursor != null) {
@@ -831,7 +786,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         try {
-            String searchQuery = "SELECT  * FROM patient_history where flag=0 ";
+            String searchQuery = "SELECT  * FROM patient_history where flag = 0 ";
             cursor = db1.rawQuery(searchQuery, null);
 
             JSONArray resultSet = new JSONArray();
@@ -875,7 +830,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     //update the flag once data send to server successfully
     public void FlagupdatePatientPersonal(String strPatientId, String flag) {
         SQLiteDatabase db = null;
-        long id = 0;
+
         try {
             db = this.getWritableDatabase();
 
@@ -885,7 +840,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(SYCHRONIZED, flag); // Name
 
             // Inserting Row
-            id = db.update(TABLE_PATIENT, values, KEY_PATIENT_ID + "=" + strPatientId, null);
+            db.update(TABLE_PATIENT, values, KEY_PATIENT_ID + "=" + strPatientId, null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -894,13 +849,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-
-        //  Log.d("update", "patient data modified into sqlite: " + id);
     }
 
     //update the flag once data send to server successfully
     public void FlagupdatePatientVisit(String strVisitId, String flag) {
-        long id = 0;
         SQLiteDatabase db = null;
         try {
             db = this.getWritableDatabase();
@@ -910,7 +862,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(SYCHRONIZED, flag); // Name
 
             // Inserting Row
-            id = db.update(TABLE_PATIENT_HISTORY, values, KEY_VISIT_ID + "=" + strVisitId, null);
+            db.update(TABLE_PATIENT_HISTORY, values, KEY_VISIT_ID + "=" + strVisitId, null);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -918,14 +870,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close(); // Closing database connection
             }
         }
-
-        //  Log.d("update", "patient data modified into sqlite: " + id);
     }
 
     //add doctor personal info into db
     public void addDoctorPerInfo(String doc_id, String doctor_login_id, String membership_id, String first_name, String middle_name, String last_name, String email_id, String phone_no, String company_id) {
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = 0;
         try {
 
             ContentValues values = new ContentValues();
@@ -945,7 +894,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             db.delete(TABLE_DOCTORINFO, DOCTOR_LOGIN_ID + " = ? ", new String[]{doctor_login_id});
             db.execSQL("delete from " + TABLE_DOCTORINFO);
             /// Inserting Row
-            id = db.insert(TABLE_DOCTORINFO, null, values);
+            db.insert(TABLE_DOCTORINFO, null, values);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -955,22 +904,16 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close(); // Closing database connection
             }
         }
-
-
-        //  Log.d(TAG, "New doctor personal info inserted into sqlite: " + id);
-
-
     }
 
     public void addAsync() {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = 0;
         try {
             ContentValues values = new ContentValues();
             values.put(KEY_VALUE, "true");
 
-            id = db.insert(TABLE_ASYNC, null, values);
+            db.insert(TABLE_ASYNC, null, values);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -979,24 +922,17 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close(); // Closing database connection
             }
         }
-
-
-        //  Log.d("addedailemnt", "New patient inserted into sqlite: " + id);
-
     }
 
     public void addAilments(String ailments) {
         SQLiteDatabase db = null;
-        long id = 0;
 
         try {
             db = this.getWritableDatabase();
 
             ContentValues values = new ContentValues();
             values.put("ailment", ailments);
-
-            // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-            id = db.insert(MASTER_AILMENT, null, values);
+            db.insert(MASTER_AILMENT, null, values);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -1004,16 +940,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-
-
-        //  Log.d("addedailemnt", "New ailment inserted into sqlite: " + id);
-
-
     }
 
     //update the flag once data send to server successfully
     public void FlagupdatePassword(String password) {
-        long id = 0;
+
         SQLiteDatabase db = null;
         try {
             db = this.getWritableDatabase();
@@ -1023,7 +954,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(KEY_PASSWORD, password); // Name
 
             // Inserting Row
-            id = db.update(TABLE_USER, values, null, null);
+            db.update(TABLE_USER, values, null, null);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -1031,15 +962,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close(); // Closing database connection
             }
         }
-
-        //  Log.d("update", "user password changed: " + id);
     }
 
     public void addBannerDisplayData(String doc_id, String membership_id, String company_id, String banner_id, String banner_folder, String banner_image_url,
                                      int banner_image_type, String module, String is_disabled, String is_deleted, String added_on, String flag) {
 
         SQLiteDatabase db = null;
-        long id = 0;
         try {
 
             db = this.getWritableDatabase();
@@ -1061,9 +989,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(ADDED_ON, added_on);
             values.put(FLAG, flag);
 
-            // int rows = db.update("last_name_master", values, "last_name" + "= ?", new String[]{lastName});
-            //id =db.insertWithOnConflict("table_LastNames", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-            id = db.insert(TABLE_BANNER_DISPLAY, null, values);
+            db.insert(TABLE_BANNER_DISPLAY, null, values);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1074,16 +1000,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-        //  Log.d("ADDED", " user data ADDED into sqlite: " + id);
-
-
     }
 
     public void addBannerClickedData(String doc_id, String membership_id, String company_id, String banner_id, String banner_folder, String banner_image_url,
                                      int banner_image_type, String module, String is_disabled, String is_deleted, String added_on, String flag) {
 
         SQLiteDatabase db = null;
-        long id = 0;
         try {
             db = this.getWritableDatabase();
 
@@ -1104,10 +1026,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(ADDED_ON, added_on);
             values.put(FLAG, flag);
 
-
-            // int rows = db.update("last_name_master", values, "last_name" + "= ?", new String[]{lastName});
-            //id =db.insertWithOnConflict("table_LastNames", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-            id = db.insert(TABLE_BANNER_CLICKED, null, values);
+            db.insert(TABLE_BANNER_CLICKED, null, values);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1118,9 +1037,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-        // Log.d("ADDED", " user data ADDED into sqlite: " + id);
-
-
     }
 
 
@@ -1130,7 +1046,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                   String is_disabled, String disabled_by, String disabled_on, String deleted_on, String flag, String added_on, String added_by) {
 
         SQLiteDatabase db = null;
-        long id = 0;
         try {
             db = this.getWritableDatabase();
 
@@ -1164,11 +1079,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(ADDED_ON, added_on);
             values.put(ADDED_BY, added_by);
             values.put(FLAG, flag);
-
-
-            // int rows = db.update("last_name_master", values, "last_name" + "= ?", new String[]{lastName});
-            //id =db.insertWithOnConflict("table_LastNames", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-            id = db.insert(TABLE_CALLMEET_REASON, null, values);
+            db.insert(TABLE_CALLMEET_REASON, null, values);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1179,12 +1090,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-        //  Log.d("ADDED", " user data ADDED into sqlite: " + id);
-
     }
 
     public void FlagupdatePatientVisit(String flag) {
-        long id = 0;
         SQLiteDatabase db = null;
         try {
             db = this.getWritableDatabase();
@@ -1194,7 +1102,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(SYCHRONIZED, flag); // Name
 
             // Inserting Row
-            id = db.update(TABLE_PATIENT_HISTORY, values, null, null);
+            db.update(TABLE_PATIENT_HISTORY, values, null, null);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -1202,14 +1110,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close(); // Closing database connection
             }
         }
-
-        //   Log.d("update", "patient data modified into sqlite: " + id);
     }
 
     //update the flag once data send to server successfully
     public void FlagupdatePatientPersonal(String flag) {
         SQLiteDatabase db = null;
-        long id = 0;
+
         try {
             db = this.getWritableDatabase();
 
@@ -1219,7 +1125,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(SYCHRONIZED, flag); // Name
 
             // Inserting Row
-            id = db.update(TABLE_PATIENT, values, null, null);
+            db.update(TABLE_PATIENT, values, null, null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1229,7 +1135,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-        //   Log.d("update", "patient data modified into sqlite: " + id);
     }
 
     //this will give u a json array of patient records where flag =o
@@ -1291,9 +1196,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         Cursor cursor = null;
 
         SQLiteDatabase db1 = getReadableDatabase();
-        //Cursor cursor = db1.rawQuery(selectQuery, null);
 
-        //SQLiteDatabase myDataBase = SQLiteDatabase.openDatabase(DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY);'
         try {
             resultSet = new JSONArray();
             String searchQuery = "SELECT  * FROM banner_clicked where flag = 0 ";
@@ -1316,7 +1219,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                 rowObject.put(cursor.getColumnName(i), "");
                             }
                         } catch (Exception e) {
-
+                         // e.printStackTrace();
                         }
 
                     }
@@ -1324,10 +1227,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 resultSet.put(rowObject);
                 cursor.moveToNext();
             }
-
-
-            //    Log.d("TAG_NAME", resultSet.toString());
-
             return resultSet;
 
         } finally {
@@ -1343,7 +1242,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     //update the flag once data send to server successfully
     public void updateBannerDisplayDataF(String bid, String flag) {
         SQLiteDatabase db = null;
-        long id = 0;
+
         try {
             db = this.getWritableDatabase();
 
@@ -1353,7 +1252,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(SYCHRONIZED, flag); // Name
 
             // Inserting Row
-            id = db.update(TABLE_BANNER_DISPLAY, values, KEY_ID + "=" + bid, null);
+            db.update(TABLE_BANNER_DISPLAY, values, KEY_ID + "=" + bid, null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1363,13 +1262,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-        //Log.d("updated", "banner flag data modified into sqlite: " + id);
     }
 
     //update the flag once data send to server successfully
     public void updateBannerClickedDataFlag(String bid, String flag) {
         SQLiteDatabase db = null;
-        long id = 0;
         try {
             db = this.getWritableDatabase();
 
@@ -1379,7 +1276,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(SYCHRONIZED, flag); // Name
 
             // Inserting Row
-            id = db.update(TABLE_BANNER_CLICKED, values, KEY_ID + "=" + bid, null);
+            db.update(TABLE_BANNER_CLICKED, values, KEY_ID + "=" + bid, null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1395,7 +1292,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public void addAsynctascRun_status(String process, String start_time, String end_time, String update_on) {
 
         SQLiteDatabase db = null;
-        long id = 0;
         try {
             db = this.getWritableDatabase();
 
@@ -1409,11 +1305,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             boolean isProcessExistsboolean = isProcessExists(process);
 
             if (!isProcessExistsboolean) {
-                id = db.insert("asynctascrun_status", null, values);
+                db.insert("asynctascrun_status", null, values);
             } else {
                 //  Log.e("allreadyExist", "  " + isImageUrlExistsboolean);
                 //  id = db.update(TABLE_COMPANY_BANNER, values, "banner_image1=? and banner_id=?", new String[]{banner_image_url,banner_id});
-                id = db.update("asynctascrun_status", values, "process=?", new String[]{process});
+                db.update("asynctascrun_status", values, "process=?", new String[]{process});
             }
 
 
@@ -1426,9 +1322,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 db.close();
             }
         }
-        // Log.d("ADDED", " user data ADDED into sqlite: " + id);
-
-
     }
 
     //checking if record exist in db  or not if not add it
@@ -1459,20 +1352,23 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
         return false;
     }
+
     //This will add records from registration page into patient table  28/8/2016 ashish u
-    public void addQuickAddPatientPersonalfromLocal(String create_date, String prescriptionImgPath, String added_by,String status) {
+    public void addQuickAddPatientPersonalfromLocal(String create_date, String prescriptionImgPath, String added_by, String status,String phnumber,String email ) {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = 0;
         try {
             ContentValues values = new ContentValues();
             values.put(PRESCRIPTION, prescriptionImgPath);
             values.put(ADDED_ON, create_date);
             values.put(ADDED_BY, added_by);
             values.put(STATUS, status);
+            values.put(PHONE_NUMBER, phnumber);
+            values.put(KEY_EMAIL, email);
+
 
             // Inserting Row
-            id = db.insert("prescription_queue", null, values);
+            db.insert("prescription_queue", null, values);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -1482,15 +1378,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
 
-       // Log.d(TAG, "New patient inserted into sqlite: " + id);
+        // Log.d(TAG, "New patient inserted into sqlite: " + id);
     }
 
 
     //add  new patient records into db from registration page
-    public void addQuickHistoryPatientRecords(int visit_id, int patient_id, String prescriptionImgPath, String added_on_date, String visit_date, String doc_id, String doc_mem_id, String flag, String addedTime, String patientInfoType, String added_by, String action,String status) {
+    public void addQuickHistoryPatientRecords(int visit_id, int patient_id, String prescriptionImgPath, String added_on_date, String visit_date, String doc_id, String doc_mem_id, String flag, String addedTime, String patientInfoType, String added_by, String action, String status) {
 
         SQLiteDatabase db = this.getWritableDatabase();
-        long id = 0;
         try {
             ContentValues values = new ContentValues();
             values.put(KEY_VISIT_ID, visit_id);
@@ -1507,7 +1402,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(ADDED_BY, added_by);
             values.put(STATUS, status);
 
-            id = db.insert(TABLE_PATIENT_HISTORY, null, values);
+            db.insert(TABLE_PATIENT_HISTORY, null, values);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -1521,22 +1416,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     public void setDocMemId(String docMemId) {
         SQLiteDatabase db = null;
-        long id = 0;
         try {
             db = this.getWritableDatabase();
 
+            String selectQuery = "UPDATE patient_history SET doc_mem_id = '" + docMemId + "' where patient_info_type='Electronics';";
 
-            ContentValues values = new ContentValues();
-
-            values.put(DOCTOR_MEMBERSHIP_ID, docMemId); // Name
-
-            String selectQuery = "UPDATE patient_history SET doc_mem_id = '"+ docMemId +"' where patient_info_type='Electronics';";
-
-
-             db.rawQuery(selectQuery, null);
+            db.rawQuery(selectQuery, null);
 
             // Inserting Row
-       //     id = db.update(TABLE_PATIENT_HISTORY, values, PATIENT_INFO_TYPE_FORM + "='Electronics'" , null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1547,7 +1434,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
     }
 
-    public void deletePrescriptionImageQueue(String prescriptionimgId,String prescriptionimgPath) {
+    public void deletePrescriptionImageQueue(String prescriptionimgId, String prescriptionimgPath) {
 
         SQLiteDatabase db = null;
 
@@ -1555,7 +1442,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             db = this.getWritableDatabase();
 
 
-            String deleteQuery = "DELETE FROM prescription_queue WHERE id =" + prescriptionimgId + " and prescription='"+ prescriptionimgPath + "';" ;//+ prescriptionimgId + "' ";
+            String deleteQuery = "DELETE FROM prescription_queue WHERE id =" + prescriptionimgId + " and prescription='" + prescriptionimgPath + "';";//+ prescriptionimgId + "' ";
 
 
             db.execSQL(deleteQuery);

@@ -6,8 +6,12 @@ package app.clirnet.com.clirnetapp.models;
 //model class
 public class LoginModel {
 
+    private String act_followupdate;
     private String userName;
     private String passowrd;
+
+
+
     private String docId;
     private String doctor_login_id;
     private String membership_id;
@@ -15,6 +19,22 @@ public class LoginModel {
     private String lastName;
     private String middleName;
     private String phoneNo;
+    private String visit_id;
+
+    public String getVisit_id() {
+        return visit_id;
+    }
+
+    public String getVisit_date() {
+        return visit_date;
+    }
+
+    public String getAdded_on() {
+        return added_on;
+    }
+
+    private String visit_date;
+    private String  added_on ;
 
 
 
@@ -30,7 +50,9 @@ public class LoginModel {
         this.emailId=email;
         this.phoneNo=phNo;
     }
-
+    public String getAct_followupdate() {
+        return act_followupdate;
+    }
     public String getDocId() {
         return docId;
     }
@@ -81,5 +103,12 @@ public class LoginModel {
     public LoginModel(String name, String password) {
         this.userName = name;
         this.passowrd = password;
+    }
+
+    public LoginModel(String visit_id, String visit_date,String added_on,String actual_follow_up_date) {
+        this.visit_id = visit_id;
+        this.visit_date=visit_date;
+        this.added_on = added_on;
+        this.act_followupdate=actual_follow_up_date;
     }
 }

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -212,8 +211,8 @@ public class ConsultationLogFragment extends Fragment {
             }
 
         });
-        //search the records from user query
-        searchRecords.setOnClickListener(new View.OnClickListener() {
+      //search the records from user query
+       searchRecords.setOnClickListener(new View.OnClickListener() {
 
 
             @Override
@@ -247,6 +246,7 @@ public class ConsultationLogFragment extends Fragment {
 
                     Date currentdate = sdf1.parse(String.valueOf(sysdate));
 
+
                     if (date1.after(currentdate) || date1.equals(currentdate)) {
 
                         if (filterVistDateList != null) {
@@ -259,7 +259,6 @@ public class ConsultationLogFragment extends Fragment {
 
                         filterfodList = sqlController.getPatientListnew(reformattedStr);
 
-
                         int filterModelSize = filterfodList.size();
                         if (filterModelSize > 0) {
                             norecordtv.setVisibility(View.GONE);
@@ -267,7 +266,7 @@ public class ConsultationLogFragment extends Fragment {
                             txtupdateDate.setVisibility(View.VISIBLE);
                             followUpDateSearchAdapter.setFilter(filterfodList);
                             recycler_view.setAdapter(followUpDateSearchAdapter);
-                            if (filterfodList.size() > 0) {
+                            if (filterfodList.size() > 0 ) {
                                 recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
 
                                     @Override
@@ -287,13 +286,13 @@ public class ConsultationLogFragment extends Fragment {
                         }
 
                         //  Toast.makeText(getContext(), "Date1 is after sysdate", Toast.LENGTH_LONG).show();
-
                     }
-                    if (date1.before(currentdate)) {
+                    else if (date1.before(currentdate)) {
 
                         if (filterfodList != null) {
 
                             filterfodList.clear();
+
 
                         }
 
@@ -302,6 +301,7 @@ public class ConsultationLogFragment extends Fragment {
                         filterVistDateList = sqlController.getPatientListVisitDateSearch(reformattedStr);
 
                         int filterModelSize = filterVistDateList.size();
+
                         if (filterModelSize > 0) {
                             norecordtv.setVisibility(View.GONE);
                         }
@@ -313,7 +313,7 @@ public class ConsultationLogFragment extends Fragment {
                         recycler_view.setAdapter(rvAdapterforUpdateDate);
 
                         //   Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
-                        if (filterVistDateList.size() > 0) {
+                        if (filterVistDateList.size() > 0 ) {
                             recycler_view.addOnItemTouchListener(new RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
 
                                 @Override
@@ -340,6 +340,7 @@ public class ConsultationLogFragment extends Fragment {
             }
 
         });
+
 
         setupAnimation();
         return view;
@@ -376,20 +377,20 @@ public class ConsultationLogFragment extends Fragment {
         i.putExtra("ISDCODE", book.getIsd_code());
         i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
         i.putExtra("FROMWHERE", "2");
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
 
         startActivity(i);
     }
 
     private void followUpDateSearchAdapterToRecyclerView(int position) {
 
-        //  RegistrationModel book = filteredModelList.get(position);
         RegistrationModel book = filterfodList.get(position);
 
         Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
 
         i.putExtra("PATIENTPHOTO", book.getPhoto());
         i.putExtra("ID", book.getPat_id());
-        Log.e("book.getPat_id()", "" + book.getPat_id());
+       // Log.e("book.getPat_id()", "" + book.getPat_id());
         i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
         i.putExtra("FIRSTTNAME", book.getFirstName());
         i.putExtra("MIDDLENAME", book.getMiddleName());
@@ -411,7 +412,10 @@ public class ConsultationLogFragment extends Fragment {
         i.putExtra("ISDCODE", book.getIsd_code());
         i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
         i.putExtra("FROMWHERE", "2");
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
+        //i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(i);
+
     }
 
     //open date dialog
@@ -467,28 +471,30 @@ public class ConsultationLogFragment extends Fragment {
 
         Random r = new Random();
         try {
-            int n = r.nextInt(bannerimgNames.size());
+            if (bannerimgNames.size() > 0) {
+                int n = r.nextInt(bannerimgNames.size());
 
 
-            final String url = bannerimgNames.get(n);
+                final String url = bannerimgNames.get(n);
 
-            BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-            backChangingImages.setImageDrawable(d);
+                BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
+                backChangingImages.setImageDrawable(d);
 
-            backChangingImages.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //  Toast.makeText(getContext(), "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+                backChangingImages.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //  Toast.makeText(getContext(), "Image Clicked" + url, Toast.LENGTH_SHORT).show();
 
-                    String action = "clicked";
+                        String action = "clicked";
 
-                    appController.showAdDialog(getContext(), url);
-                    appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+                        appController.showAdDialog(getContext(), url);
+                        appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
 
-                }
-            });
-            String action = "display";
-            appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+                    }
+                });
+                String action = "display";
+                appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -553,7 +559,7 @@ public class ConsultationLogFragment extends Fragment {
 
         private final ItemClickListener clickListener;
 
-        public RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ItemClickListener clickListener) {
+        RecyclerTouchListener(Context context, final RecyclerView recyclerView, final ItemClickListener clickListener) {
             this.clickListener = clickListener;
             gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override

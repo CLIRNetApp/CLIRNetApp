@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -17,12 +18,25 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
-import app.clirnet.com.clirnetapp.utility.MD5;
-import app.clirnet.com.clirnetapp.utility.SyncDataService;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.app.DoctorDeatilsAsynTask;
 import app.clirnet.com.clirnetapp.app.LoginAsyncTask;
@@ -34,6 +48,12 @@ import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
+import app.clirnet.com.clirnetapp.models.LoginModel;
+import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
+import app.clirnet.com.clirnetapp.utility.MD5;
+import app.clirnet.com.clirnetapp.utility.SyncDataService;
+
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class LoginActivity extends Activity {
 
@@ -66,6 +86,7 @@ public class LoginActivity extends Activity {
     private BannerClass bannerClass;
 
     private Dialog dialog;
+    private static String BASE_URL = "http://192.168.1.108/ClirnetNotofication/register.php";
 
 
     @Override
@@ -128,14 +149,14 @@ public class LoginActivity extends Activity {
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
             dbController = new SQLiteHandler(getApplicationContext());
-            Boolean value=getFirstTimeLoginStatus();
-            if(value) {
+            Boolean value = getFirstTimeLoginStatus();
+            if (value) {
                 doctor_membership_number = sqlController.getDoctorMembershipIdNew();
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTimenew() + " " + "/ " + "Home" + e +" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTimenew() + " " + "/ " + "Home" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         try {
@@ -145,7 +166,7 @@ public class LoginActivity extends Activity {
             phoneNumber = sqlController.getPhoneNumber();
 
         } catch (Exception ioe) {
-            appController.appendLog(appController.getDateTimenew() + "" + "/" + "Home" + ioe+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTimenew() + "" + "/" + "Home" + ioe + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             throw new Error("Unable to create database");
 
@@ -231,6 +252,8 @@ public class LoginActivity extends Activity {
                                     }
         );
 
+        updateVisitDateFormat();
+
         // Link to Register Screen
         btnLinkToForgetScreen.setOnClickListener(new View.OnClickListener()
 
@@ -242,7 +265,7 @@ public class LoginActivity extends Activity {
 
             }
         });
-        /*if (getIntent().getExtras() != null) {
+        if (getIntent().getExtras() != null) {
 
             for (String key : getIntent().getExtras().keySet()) {
                 String value = getIntent().getExtras().getString(key);
@@ -253,8 +276,50 @@ public class LoginActivity extends Activity {
                     finish();
 
             }
-        }*/
+        }
 
+    }
+
+    private void updateVisitDateFormat() {
+        String visitFlag=getupdateVisitDateFlag();
+        //Log.e("visitFlag", "" + visitFlag);
+
+        if(visitFlag == null) {
+        try {
+            ArrayList<LoginModel> visitDateCount = sqlController.getPatientVisitDate();
+            if(visitDateCount.size()>0) {
+                for (int i = 0; i < visitDateCount.size(); i++) {
+                    String visit_date = visitDateCount.get(i).getVisit_date();
+                    String visit_id = visitDateCount.get(i).getVisit_id();
+                    String fod=visitDateCount.get(i).getAct_followupdate();
+                    String added_on=visitDateCount.get(i).getAdded_on();
+
+                    SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                    SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+
+                    try {
+                        String visit_date_converted = myFormat.format(fromUser.parse(visit_date));
+                        String  fod_converted = null;
+                        String added_on_converted = null;
+                        if(fod!=null && !fod.equals("")){
+                            fod_converted= myFormat.format(fromUser.parse(fod));
+                        }
+                        if(added_on!=null && !added_on.equals("")){
+                            added_on_converted=myFormat.format(fromUser.parse(added_on));
+                        }
+                        sqlController.updateVisitDate(visit_date_converted, visit_id,fod_converted,added_on_converted);
+
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    }
+                }
+                setupdateVisitDateFlag("true");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        }
     }
 
     //it will hide the keyboard on button pressed
@@ -267,11 +332,10 @@ public class LoginActivity extends Activity {
 
             inputManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(),
                     InputMethodManager.HIDE_NOT_ALWAYS);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
 
 
     //Do login authentication Operations 2-11-2016
@@ -287,17 +351,17 @@ public class LoginActivity extends Activity {
             boolean isInternetPresent = connectionDetector.isConnectingToInternet();
             if (isInternetPresent) {
 
-                String start_time=appController.getDateTimenew();
+                String start_time = appController.getDateTimenew();
 
-                new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword,start_time);
-                new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber,start_time);
+                new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword, start_time);
+                new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber, start_time);
                 startService();
                 savedLoginCounter("true");//to save shrd pref to update login counter
 
+               // registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
+
                 //update last sync time if sync from server
-
-
-                //update last login time
+                // update last login time
                 lastSyncTime(start_time);
                 //lastSyncTime("05-02-2017 02:12:25");
                 // hideDialog();
@@ -409,8 +473,8 @@ public class LoginActivity extends Activity {
 
                 String md5oldPassword = MD5.getMD5(oldPass);
                 String md5newPassword = MD5.getMD5(newPass);
-                String start_time=appController.getDateTimenew();
-                new UpdatePassworsAsynTask(LoginActivity.this, username, doctor_membership_number, md5oldPassword, md5newPassword,start_time);
+                String start_time = appController.getDateTimenew();
+                new UpdatePassworsAsynTask(LoginActivity.this, username, doctor_membership_number, md5oldPassword, md5newPassword, start_time);
                 dialog.dismiss();
             }
         });
@@ -426,7 +490,6 @@ public class LoginActivity extends Activity {
 
         dialog.show();
     }
-
 
 
     private void goToNavigation() {
@@ -480,7 +543,7 @@ public class LoginActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-       // Log.d("onDestroy", "The onDestroy() event");
+        // Log.d("onDestroy", "The onDestroy() event");
         // session.setLogin(false);
         //Close the all database connection opened here 31/10/2016 By. Ashish
         if (sqlController != null) {
@@ -496,27 +559,27 @@ public class LoginActivity extends Activity {
         if (appController != null) {
             appController = null;
         }
-        if(bannerClass!=null){
-            bannerClass=null;
+        if (bannerClass != null) {
+            bannerClass = null;
         }
         //  pDialog=null;
         md5 = null;
-        strPassword=null;
+        strPassword = null;
         md5EncyptedDataPassword = null;
         inputEmail = null;
         inputPassword = null;
-        name=null;
-        if(pDialog!=null){
-            pDialog=null;
+        name = null;
+        if (pDialog != null) {
+            pDialog = null;
         }
-        dialog=null;
-        btnLogin=null;
-        phoneNumber=null;
-        oldPassword=null;
-        newPassword=null;
-        confirmPassword=null;
-        username=null;
-        doctor_membership_number=null;
+        dialog = null;
+        btnLogin = null;
+        phoneNumber = null;
+        oldPassword = null;
+        newPassword = null;
+        confirmPassword = null;
+        username = null;
+        doctor_membership_number = null;
         System.gc();
     }
 
@@ -571,18 +634,18 @@ public class LoginActivity extends Activity {
 
     }
 
-    private boolean getFirstTimeLoginStatus(){
+    private boolean getFirstTimeLoginStatus() {
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String firstTimeLogin = pref.getString(LOGIN_COUNT
                 , null);
-       // Log.e("firstTimeLogin", ""+ firstTimeLogin);
-        if(firstTimeLogin == null){
-           return false;
-        }else if(firstTimeLogin.equals("false")){
+        // Log.e("firstTimeLogin", ""+ firstTimeLogin);
+        if (firstTimeLogin == null) {
+            return false;
+        } else if (firstTimeLogin.equals("false")) {
 
             return false;
         }
-        return  true;
+        return true;
     }
 
     private void savedLoginCounter(String answer) {
@@ -591,6 +654,102 @@ public class LoginActivity extends Activity {
                 .edit()
                 .putString(LOGIN_COUNT, "true")
                 .apply();
+    }
 
+    private void setupdateVisitDateFlag(String answer) {
+
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .edit()
+                .putString("flag1", answer)
+                .apply();
+    }
+
+    //this method will set username and password to edit text if remember me chkbox is checked previously
+    private String getupdateVisitDateFlag() {
+
+        SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String visitDateUpdateFlag = pref.getString("flag1", null);
+        return visitDateUpdateFlag;
+    }
+    private void registerToServer(final String name, final String email) {
+        // Tag used to cancel the request
+        String tag_string_req = "req_register";
+
+        pDialog.setMessage("Please wait ...");
+        showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                BASE_URL, new Response.Listener<String>() {
+
+            @Override
+            public void onResponse(String response) {
+                Log.d(TAG, "Register Response: " + response.toString());
+                hideDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+                    boolean error = jObj.getBoolean("error");
+
+                    // Check for error node in json
+                    if (!error) {
+                        Toast.makeText(getApplicationContext(), "Register Successful!", Toast.LENGTH_LONG).show();
+                        Intent i = new Intent(LoginActivity.this, NavigationActivity.class);
+                        i.putExtra("name", name);
+                        startActivity(i);
+                    } else {
+                        Toast.makeText(getApplicationContext(), "this email is already in use", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Database Problem!", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("PUSHNOTIREGISTER", "Register Error: " + error.getMessage());
+                Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_LONG).show();
+                hideDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<String, String>();
+
+                String fcm_id = FirebaseInstanceId.getInstance().getToken();
+
+                params.put("tag", "register");
+                params.put("name", name);
+                params.put("email", email);
+                params.put("fcm_id", fcm_id);
+
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String,String> params = new HashMap<String, String>();
+                params.put("Content-Type","application/x-www-form-urlencoded");
+                return params;
+            }
+
+        };
+
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+    }
+    private void showDialog() {
+        if (!pDialog.isShowing())
+            pDialog.show();
+    }
+
+    private void hideDialog() {
+        if (pDialog.isShowing())
+            pDialog.dismiss();
     }
 }

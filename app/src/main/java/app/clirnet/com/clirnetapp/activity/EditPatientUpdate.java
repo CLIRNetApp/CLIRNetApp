@@ -17,7 +17,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -48,7 +47,6 @@ import java.util.Objects;
 import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.utility.Validator;
 import app.clirnet.com.clirnetapp.adapters.EditPatientAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
@@ -58,6 +56,7 @@ import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
+import app.clirnet.com.clirnetapp.utility.Validator;
 
 public class EditPatientUpdate extends AppCompatActivity {
 
@@ -154,6 +153,7 @@ public class EditPatientUpdate extends AppCompatActivity {
     private String strIsd_code;
     private String strAlternateIsd_code;
     private EditText visitDate;
+    private TextView edtprescriptionImgPath;
 
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -203,7 +203,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         String strFollowupMonth = getIntent().getStringExtra("FOLLOWMONTH");
 
         String strClinicalNotes = getIntent().getStringExtra("CLINICALNOTES");
-        String strPrescriptionImage = getIntent().getStringExtra("PRESCRIPTION");
+        prescriptionImagePath = getIntent().getStringExtra("PRESCRIPTION");
         strVisitId = getIntent().getStringExtra("VISITID");
         strAddress = getIntent().getStringExtra("ADDRESS");
         strCityorTown = getIntent().getStringExtra("CITYORTOWN");
@@ -276,7 +276,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         cancel = (Button) findViewById(R.id.cancel);
         editUpdate = (Button) findViewById(R.id.editUpdate);
         ImageView imageViewprescription = (ImageView) findViewById(R.id.imageViewprescription);
-
+         edtprescriptionImgPath=(TextView) findViewById(R.id.prescriptionImgPath);
         visitDate=(EditText)findViewById(R.id.visitDate);
 
         addFollowupdateButtonListner();
@@ -372,6 +372,10 @@ public class EditPatientUpdate extends AppCompatActivity {
         edtDignosis.setText(strDignosis);
         edtTest.setText(strTests);
         edtDrugs.setText(strDrugs);
+        if(prescriptionImagePath!=null && prescriptionImagePath.length()>0){
+            edtprescriptionImgPath.setVisibility(View.VISIBLE);
+            edtprescriptionImgPath.setText(prescriptionImagePath);
+        }
 
         edtInput_bmi.setText(strbmi);
         edtInput_height.setText(height);
@@ -387,18 +391,23 @@ public class EditPatientUpdate extends AppCompatActivity {
             inputnumber.setText(strFollowupDays);
             days.setSelected(true);
             days.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+            days.setTextColor(getResources().getColor(R.color.white));
+
             daysSel = strFollowupDays;
 
         } else if (strFollowupWeeks != null && !strFollowupWeeks.equals("") && !strFollowupWeeks.equals("0")) {
             inputnumber.setText(strFollowupWeeks);
             week.setSelected(true);
             week.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+            week.setTextColor(getResources().getColor(R.color.white));
             fowSel = strFollowupWeeks;
         } else if (strFollowupMonth != null && !strFollowupMonth.equals("") && !strFollowupMonth.equals("0")) {
           //  Log.e("strFollowupMonth ","   "+strFollowupMonth);
             inputnumber.setText(strFollowupMonth);
             month.setSelected(true);
             month.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+            month.setTextColor(getResources().getColor(R.color.white));
+
             monthSel = strFollowupMonth;
         }
 
@@ -537,11 +546,11 @@ public class EditPatientUpdate extends AppCompatActivity {
             }
         }
 
-        if (strPrescriptionImage != null && !TextUtils.isEmpty(strPrescriptionImage)) {
-            if (strPrescriptionImage.length() > 0) {
+        if (prescriptionImagePath != null && !TextUtils.isEmpty(prescriptionImagePath)) {
+            if (prescriptionImagePath.length() > 0) {
                 // Bitmap bitmap = BitmapFactory.decodeFile(strPatientPhoto);
                 Glide.with(EditPatientUpdate.this)
-                        .load(strPrescriptionImage)
+                        .load(prescriptionImagePath)
                         .crossFade()
                         .diskCacheStrategy(DiskCacheStrategy.NONE)
                         .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
@@ -1010,7 +1019,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         Boolean ailmentValue;
         if (ailments.length() > 0) {
             ailmentValue = appController.findNumbersAilment(ailments);
-            Log.e("ailmentValue", "" + ailmentValue);
+         //   Log.e("ailmentValue", "" + ailmentValue);
             if (ailmentValue) {
                 ailments1.setError("Please Enter Valid ailment");
                 return;
@@ -1030,14 +1039,15 @@ public class EditPatientUpdate extends AppCompatActivity {
                 maxid = maxid + 1;
             }
         }
-        String modified_on = visitDate.getText().toString();
-        String visit_date = sysdate;
+        String modified_on = sysdate;
+        String visit_date =visitDate.getText().toString();
         SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
         SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
         try {
             //convert visit date from 2016-11-1 to 2016-11-01
-            visit_date = myFormat.format(fromUser.parse(modified_on));
+            visit_date = myFormat.format(fromUser.parse(visit_date));
             modified_on = myFormat.format(fromUser.parse(sysdate));
+            //Log.e("visit_date",""+visit_date+"  "+modified_on);
             usersellectedDate=myFormat.format(fromUser.parse(usersellectedDate));
 
         } catch (ParseException e) {
@@ -1053,12 +1063,11 @@ public class EditPatientUpdate extends AppCompatActivity {
         String status=null;
         try {
             dbController.updatePatientOtherInfo(strId, strVisitId, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, clinical_note, prescriptionImagePath, ailments, modified_on, updatedTime, modified_by, action, patientInfoType, flag,
-                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs,strHeight,strbmi,strSugarFasting,status);
+                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs,strHeight,strbmi,strSugarFasting,status,visit_date);
         } catch (ClirNetAppException e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
-
         Toast.makeText(getApplicationContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
 //redirect to navigation activity
 
@@ -1071,30 +1080,32 @@ public class EditPatientUpdate extends AppCompatActivity {
 
         Random r = new Random();
         try {
-            int n = r.nextInt(bannerimgNames.size());
+            if (bannerimgNames.size() > 0) {
+                int n = r.nextInt(bannerimgNames.size());
 
-            // final String url = getString(imageArray[n]);
-            //  backChangingImages.setImageResource(imageArray[n]);
-            final String url = bannerimgNames.get(n);
-            Log.e("nUrl", "" + n + "" + url);
+                // final String url = getString(imageArray[n]);
+                //  backChangingImages.setImageResource(imageArray[n]);
+                final String url = bannerimgNames.get(n);
+               // Log.e("nUrl", "" + n + "" + url);
 
-            BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-            backChangingImages.setImageDrawable(d);
-            backChangingImages.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-
-                    String action = "clicked";
-
-                    appController.showAdDialog(EditPatientUpdate.this, url);
-                    appController.saveBannerDataIntoDb(url, EditPatientUpdate.this, doctor_membership_number, action);
+                BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
+                backChangingImages.setImageDrawable(d);
+                backChangingImages.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
 
-                }
-            });
-            String action = "display";
-            appController.saveBannerDataIntoDb(url, EditPatientUpdate.this, doctor_membership_number, action);
+                        String action = "clicked";
+
+                        appController.showAdDialog(EditPatientUpdate.this, url);
+                        appController.saveBannerDataIntoDb(url, EditPatientUpdate.this, doctor_membership_number, action);
+
+
+                    }
+                });
+                String action = "display";
+                appController.saveBannerDataIntoDb(url, EditPatientUpdate.this, doctor_membership_number, action);
+            }
         }catch (Exception e){
             e.printStackTrace();
         }
@@ -1103,7 +1114,6 @@ public class EditPatientUpdate extends AppCompatActivity {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d("cap_img", "" + CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
         try {
 //        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -1126,6 +1136,8 @@ public class EditPatientUpdate extends AppCompatActivity {
 
             prescriptionImagePath = uriSavedImage.getPath();
 
+            edtprescriptionImgPath.setVisibility(View.VISIBLE);
+            edtprescriptionImgPath.setText(prescriptionImagePath);
             if (prescriptionImagePath != null && !TextUtils.isEmpty(prescriptionImagePath)) {
                // setUpGlide(prescriptionImagePath, imageViewprescription);
             }
@@ -1236,7 +1248,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                 Log.e("result", "" + dateCreatedPatient);*/
             } else {
                 filteredModelList.add(model);
-                Log.e(appController.getDateTime() + " " + "/ " + "result", "" + phVisitDate);
+
             }
         }
         return filteredModelList;
@@ -1249,7 +1261,7 @@ public class EditPatientUpdate extends AppCompatActivity {
     }
 
     private void goToNavigation() {
-        this.onBackPressed();
+        //this.onBackPressed();
         //finish();
         Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
         startActivity(i);
@@ -1373,7 +1385,12 @@ public class EditPatientUpdate extends AppCompatActivity {
         edtInput_bmi=null;
         btnclear=null;
         visitDate=null;
-
+        edtprescriptionImgPath=null;
+        strAlternatenumber=null;
+        strAlternatephtype=null;
+        strPhoneTpe=null;
+        strIsd_code=null;
+        strAlternateIsd_code=null;
     }
 
 }

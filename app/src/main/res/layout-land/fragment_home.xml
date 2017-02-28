@@ -246,8 +246,8 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="0.6dp"
-                    android:layout_weight="0.6"
+                    android:layout_height="0.5dp"
+                    android:layout_weight="0.5"
                     android:scrollbars="vertical"
                     app:layoutManager="GridLayoutManager"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -256,8 +256,8 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/Searchrecycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="0.6dp"
-                    android:layout_weight="0.6"
+                    android:layout_height="0.5dp"
+                    android:layout_weight="0.5"
                     android:scrollbars="vertical"
                     android:visibility="gone"
                     app:layoutManager="GridLayoutManager"
@@ -277,15 +277,16 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:text="Incomplete Record List."
+                    android:text="Incomplete Prescription Queue."
                     android:textColor="@color/bg_login"
                     android:textSize="16sp"
                     android:visibility="gone"/>
+
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/incomplete_recordsRecyclerview"
                     android:layout_width="match_parent"
-                    android:layout_height="0.6dp"
-                    android:layout_weight="0.3"
+                    android:layout_height="0.5dp"
+                    android:layout_weight="0.5"
                     android:paddingTop="5dp"
                     android:paddingBottom="2dp"
                     android:scrollbars="vertical"

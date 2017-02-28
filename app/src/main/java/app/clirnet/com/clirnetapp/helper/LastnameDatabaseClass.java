@@ -251,7 +251,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             }
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime()+"" +"/"+"LastNamedatabase"+e);
-            
+
             throw new ClirNetAppException("Something went wrong while getting login records");
         } finally {
             //create method & pass cursor & db1 ref.
@@ -287,7 +287,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             }
         }
 
-        Log.d("addedailemnt", "New last_names inserted into sqlite: " + id);
+       // Log.d("addedailemnt", "New last_names inserted into sqlite: " + id);
 
     }
 

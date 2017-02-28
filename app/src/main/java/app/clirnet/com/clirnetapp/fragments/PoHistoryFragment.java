@@ -53,8 +53,6 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpinnerListener, MultiSpinner2.MultiSpinnerListener {
 
-
-
     private OnFragmentInteractionListener mListener;
     private EditText firstName;
     private EditText lastName;
@@ -289,7 +287,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     }
                 }
 
-
                 int count = patientData.size();
                 try {
                     if (count > 0) {
@@ -472,8 +469,10 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         i.putExtra("ALTERNATENUMBERTYPE", book.getAlternatePhoneType());
         i.putExtra("HEIGHT", book.getHeight());
         i.putExtra("SUGARFASTING", book.getSugarFasting());
-
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
+        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(i);
+
 
     }
 
@@ -555,28 +554,30 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
        try {
            Random r = new Random();
-           int n = r.nextInt(bannerimgNames.size());
+           if (bannerimgNames.size() > 0) {
+               int n = r.nextInt(bannerimgNames.size());
 
-           // final String url = getString(imageArray[n]);
-           //  backChangingImages.setImageResource(imageArray[n]);
-           final String url = bannerimgNames.get(n);
-           //Log.e("nUrl", "" + n + "" + url);
+               // final String url = getString(imageArray[n]);
+               //  backChangingImages.setImageResource(imageArray[n]);
+               final String url = bannerimgNames.get(n);
+               //Log.e("nUrl", "" + n + "" + url);
 
-           BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-           backChangingImages.setImageDrawable(d);
-           backChangingImages.setOnClickListener(new View.OnClickListener() {
-               @Override
-               public void onClick(View v) {
+               BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
+               backChangingImages.setImageDrawable(d);
+               backChangingImages.setOnClickListener(new View.OnClickListener() {
+                   @Override
+                   public void onClick(View v) {
 
 
-                   String action = "clicked";
+                       String action = "clicked";
 
-                   appController.showAdDialog(getContext(), url);
-                   appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
-               }
-           });
-           String action = "display";
-           appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+                       appController.showAdDialog(getContext(), url);
+                       appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+                   }
+               });
+               String action = "display";
+               appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+           }
        }catch (Exception e){
            e.printStackTrace();
        }
@@ -664,8 +665,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         }
 
     }
-
-
 
     @Override
     public void onPause() {

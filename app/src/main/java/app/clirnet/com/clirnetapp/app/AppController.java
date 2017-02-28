@@ -11,7 +11,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -36,16 +35,19 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.LoginModel;
+import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
 
 import static app.clirnet.com.clirnetapp.R.id.produced_bytxt;
 
@@ -101,7 +103,7 @@ public class AppController extends Application {
 
     public <T> void addToRequestQueue(Request<T> req, String tag) {
         req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
-        Log.d("Adding request to ", "" + req.getUrl());
+       // Log.d("Adding request to ", "" + req.getUrl());
         getRequestQueue().add(req);
     }
 
@@ -165,33 +167,49 @@ public class AppController extends Application {
 
     //this will gives you a age from the date
     public int getAge(int year, int monthOfYear, int dayOfMonth) {
-        Date now = new Date();
+       /* Date now = new Date();
         int nowMonths = now.getMonth() + 1;
         int nowDate = now.getDate();
         int nowYear = now.getYear() + 1900;
         int result = nowYear - year;
 
-        if (monthOfYear > nowMonths) {
+       *//* if (monthOfYear > nowMonths) {
             result = 0;
         } else if (dayOfMonth == nowMonths) {
             if (dayOfMonth > nowDate) {
                 result = 0;
             }
 
+        }*//*
+        return result;*/
+        GregorianCalendar cal = new GregorianCalendar();
+        int y, m, d, a;
+
+        y = cal.get(Calendar.YEAR);
+        m = cal.get(Calendar.MONTH);
+        d = cal.get(Calendar.DAY_OF_MONTH);
+        cal.set(year, monthOfYear, dayOfMonth);
+        a = y - cal.get(Calendar.YEAR);
+        if ((m < cal.get(Calendar.MONTH))
+                || ((m == cal.get(Calendar.MONTH)) && (d < cal
+                .get(Calendar.DAY_OF_MONTH)))) {
+            --a;
         }
-        return result;
+        if(a < 0)
+            throw new IllegalArgumentException("Age < 0");
+        return a;
     }
 
     public String getDateTime() {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss",Locale.ENGLISH);
         return (sdf.format(cal.getTime()));
     }
 
     public String getDateTimenew() {
 
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",Locale.ENGLISH);
         return (sdf.format(cal.getTime()));
         //return "22-12-2016 04:05:07"; //for test
     }
@@ -245,7 +263,7 @@ public class AppController extends Application {
     }
 
     public static String addDay(Date date, int i) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.DAY_OF_YEAR, i);
@@ -587,7 +605,7 @@ public class AppController extends Application {
                    /* Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalLink_to_page));
                     startActivity(browserIntent);*/
                 } else {
-                    Toast.makeText(context, "No Link Avaialable", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "No Link Available ", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -602,7 +620,7 @@ public class AppController extends Application {
                     Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalClinical_trial_link));
                     context.startActivity(browserIntent);
                 } else {
-                    Toast.makeText(context, "No Link Avaialable", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "No Link Available", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -1023,6 +1041,16 @@ public class AppController extends Application {
         }
 
         return String.valueOf(bmi);
+    }
+    public String getCharFreq(String s) {
+        int i = 0;
+        Pattern p = Pattern.compile("patient_id");
+        Matcher m = p.matcher( s );
+        while (m.find()) {
+            i++;
+        }
+       // System.out.println(i); // Prints 2
+        return String.valueOf(i);
     }
 
 }

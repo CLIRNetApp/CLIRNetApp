@@ -68,6 +68,9 @@ public class SyncDataService extends Service {
     private Bitmap bmp;
     private ImageDownloader mDownloader;
     private String start_time1;
+    private String pat_personal_count;
+    private String pat_visit_count;
+    private String username;
 
     @Override
     public void onCreate() {
@@ -98,7 +101,13 @@ public class SyncDataService extends Service {
            // Log.e("patientInfoArayString"," "+patientInfoArayString);
 
             patientVisitHistorArayString = String.valueOf(dbController.getResultsForPatientHistory());
+            pat_personal_count = appController.getCharFreq(patientInfoArayString);
 
+            pat_visit_count = appController.getCharFreq(patientVisitHistorArayString);
+
+          /*  Log.e("patientpersonalcount","  "+pat_personal_count);
+            Log.e("patientvisitcount","  "+pat_visit_count);
+*/
             mPhoneNumber = sqlController.getPhoneNumber();
             mEmailId = sqlController.getDocdoctorEmail();
             docId = sqlController.getDoctorId();
@@ -115,12 +124,10 @@ public class SyncDataService extends Service {
         handler.removeCallbacks(sendUpdatesToUI);
 
         handler.postDelayed(sendUpdatesToUI,50000); // 2 min  or 120 second 180000
-
     }
 
     private final Runnable sendUpdatesToUI = new Runnable() {
         public void run() {
-
 
             //DisplayLoggingInfo();   //this used to test the service weather it is sending data to activity or not 29/8/2016 Ashish
             try {
@@ -218,7 +225,7 @@ public class SyncDataService extends Service {
 
             @Override
             public void onResponse(String response) {
-                //Log.d(TAG, "Login Response: " + response);
+
 
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -259,7 +266,7 @@ public class SyncDataService extends Service {
                         String time = appController.getDateTimenew();
                         lastSyncTime(time);
 
-                        appController.appendLog(appController.getDateTime() + " " + "/ " + "data is sync to server from sync service  : patient Visit Count :" + listsize + " patient Count  :" + size);
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "data is sync to server from sync service  : patient Visit Count :" + pat_visit_count + " patient Count  :" + pat_personal_count);
                         dbController.addAsynctascRun_status("Data Synced",start_time1,time,"");
 
                     } else if (msg.equals("Credentials Mismatch or Not Found")) {
@@ -293,6 +300,7 @@ public class SyncDataService extends Service {
                 Map<String, String> params = new HashMap<>();
                 String keyid = getResources().getString(R.string.apikey);
                 params.put("apikey", keyid);
+                params.put("username", mUserName);
                 params.put("patient_details", patient_details);
                 params.put("patient_visits", patient_visits);
                 params.put("membershipid", docMemId);

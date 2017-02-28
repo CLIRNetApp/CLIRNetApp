@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -218,7 +217,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
                 //   Toast.makeText(getApplicationContext(), "There is no history to update!!!", Toast.LENGTH_LONG).show();
                 if (patientPersonalData.size() > 0) {
-                    RegistrationModel registrationModel = patientPersonalData.get(0);
+                    RegistrationModel registrationModel = patientPersonalData.get(0); //0 will get first record from the list
                     Intent i = new Intent(getApplicationContext(), EditPatientUpdate.class);
 
                     i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
@@ -265,6 +264,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
                     i.putExtra("HEIGHT", registrationModel.getHeight());
                     i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
                     startActivity(i);
+                    //finish();
                 }
             }
 
@@ -337,29 +337,31 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
         Random r = new Random();
         try {
-            int n = r.nextInt(bannerimgNames.size());
+            if (bannerimgNames.size() > 0) {
+                int n = r.nextInt(bannerimgNames.size());
 
-            // final String url = getString(imageArray[n]);
-            //  backChangingImages.setImageResource(imageArray[n]);
-            final String url = bannerimgNames.get(n);
-
-
-            BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-            backChangingImages.setImageDrawable(d);
-
-            backChangingImages.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String action = "clicked";
-
-                    appController.showAdDialog(ShowPersonalDetailsActivity.this, url);
-                    appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action);
+                // final String url = getString(imageArray[n]);
+                //  backChangingImages.setImageResource(imageArray[n]);
+                final String url = bannerimgNames.get(n);
 
 
-                }
-            });
-            String action = "display";
-            appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action);
+                BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
+                backChangingImages.setImageDrawable(d);
+
+                backChangingImages.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        String action = "clicked";
+
+                        appController.showAdDialog(ShowPersonalDetailsActivity.this, url);
+                        appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action);
+
+
+                    }
+                });
+                String action = "display";
+                appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action);
+            }
         } catch (Exception e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Show patient Details" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -385,7 +387,6 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("lifecycle", "The onDestroy() event");
         // session.setLogin(false);
 
         if (sqlController != null) {
@@ -427,16 +428,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         // System.gc();
     }
 
-    //this will prevent user to access back press from tab
-   /* @Override
-    public void onBackPressed() {
 
-        Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
-        i.putExtra("FROMWHERE", fromWhere);
-        startActivity(i);
-        finish();
-
-    }*/
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {

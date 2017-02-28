@@ -169,10 +169,7 @@
                             </LinearLayout>
 
 
-
                         </LinearLayout>
-
-
 
 
                         <TextView
@@ -183,12 +180,12 @@
 
                         <LinearLayout
 
-                            android:paddingTop="90dp"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="150dp"
                             android:baselineAligned="false"
                             android:orientation="horizontal"
+                            android:paddingTop="90dp"
                             android:weightSum="4">
 
 
@@ -312,6 +309,7 @@
                         </LinearLayout>
                     </RelativeLayout>
                 </android.support.v7.widget.CardView>
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -321,72 +319,73 @@
                     android:textColor="@color/bg_login"
                     android:textSize="14sp" />
 
-               <!-- <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="5dp"
-                    android:paddingLeft="2dp">
+                <!-- <LinearLayout
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:orientation="horizontal"
+                     android:padding="5dp"
+                     android:paddingLeft="2dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Ailments" />
+                     <TextView
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:text="Ailments" />
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="*"
-                        android:textColor="@color/red" />
-                </LinearLayout>
+                     <TextView
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:text="*"
+                         android:textColor="@color/red" />
+                 </LinearLayout>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:padding="3dp">
+                 <LinearLayout
+                     android:layout_width="match_parent"
+                     android:layout_height="wrap_content"
+                     android:orientation="horizontal"
+                     android:padding="3dp">
 
-                    <MultiAutoCompleteTextView
+                     <MultiAutoCompleteTextView
 
-                        android:id="@+id/ailments1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="4dp"
-                        android:background="@drawable/rectangle_corner"
-                        android:ems="13"
-                        android:fontFamily="sans-serif"
-                        android:padding="10dp"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:digits="@string/digitsnumber"
-                        tools:targetApi="jelly_bean" />
+                         android:id="@+id/ailments1"
+                         android:layout_width="match_parent"
+                         android:layout_height="wrap_content"
+                         android:layout_margin="4dp"
+                         android:background="@drawable/rectangle_corner"
+                         android:ems="13"
+                         android:fontFamily="sans-serif"
+                         android:padding="10dp"
+                         android:textAppearance="?android:attr/textAppearanceSmall"
+                         android:digits="@string/digitsnumber"
+                         tools:targetApi="jelly_bean" />
 
-                </LinearLayout>
--->
+                 </LinearLayout>
+ -->
             </LinearLayout>
+
             <TextView
                 android:id="@+id/followuptxt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/prescriptionBtn"
+                android:layout_marginLeft="8dp"
                 android:layout_marginTop="30dp"
                 android:gravity="start"
-                android:text="Follow Up"
                 android:paddingLeft="5dp"
+                android:text="Follow Up"
                 android:textColor="@color/colorPrimary"
-                android:textSize="18sp"
-                android:layout_marginLeft="8dp"/>
+                android:textSize="18sp" />
 
             <LinearLayout
                 android:id="@+id/dateLayout"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_below="@+id/followuptxt"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginTop="15dp"
                 android:background="@drawable/rectangle_corner"
                 android:orientation="horizontal"
-                android:padding="5dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp">
+                android:padding="5dp">
 
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
@@ -394,9 +393,9 @@
                     android:id="@+id/fodtextshow"
                     android:layout_width="0dp"
                     android:layout_height="40dp"
-                    android:drawableRight="@android:drawable/ic_menu_my_calendar"
                     android:layout_marginRight="15dp"
                     android:layout_weight="0.6"
+                    android:drawableRight="@android:drawable/ic_menu_my_calendar"
                     android:editable="false"
                     android:focusable="false"
                     android:focusableInTouchMode="true"
@@ -483,11 +482,11 @@
                         android:textSize="14sp" />
                 </LinearLayout>
 
-               <Button
+                <Button
                     android:id="@+id/btnclear"
                     android:layout_width="0dp"
-                    android:layout_weight="0.5"
                     android:layout_height="40dp"
+                    android:layout_weight="0.5"
                     android:background="@drawable/circle"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
@@ -495,11 +494,44 @@
                     android:text="@string/clear"
                     android:textAllCaps="false"
                     android:textColor="#000"
-                    android:textSize="14sp"
-                    />
+                    android:textSize="14sp" />
 
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/visitDateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="30dp"
+                android:gravity="start"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingRight="10dp"
+                    android:text="@string/visitDate"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="18sp" />
+
+                <EditText
+                    android:id="@+id/visitDate"
+                    android:layout_width="300dp"
+                    android:layout_height="45dp"
+                    android:background="@drawable/rectangle_corner"
+                    android:drawableRight="@android:drawable/ic_menu_my_calendar"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:gravity="center"
+                    android:inputType="date"
+                    android:text="@string/visitDate"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/txtRecord"
@@ -614,6 +646,10 @@
                         android:hint="BMI"
                         android:inputType="number"
                         android:maxLength="4"
+                        android:clickable="false"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
                         android:paddingBottom="5dp"
                         android:paddingLeft="5dp"
                         android:paddingRight="0dp"
@@ -860,10 +896,10 @@
                 android:background="@color/btn_back_sbmt"
                 android:drawableRight="@drawable/down_arrow"
                 android:gravity="start"
+                android:paddingBottom="5dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingTop="5dp"
-                android:paddingBottom="5dp"
                 android:text="@string/symptomsanddignosis"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
@@ -874,12 +910,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/txtsymptomsanddignost"
+                android:layout_marginTop="0dp"
                 android:background="@drawable/rectangle_corner"
                 android:orientation="horizontal"
-                android:layout_marginTop="0dp"
+                android:padding="5dp"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                android:padding="5dp">
+                android:paddingRight="10dp">
 
                 <MultiAutoCompleteTextView
                     android:id="@+id/ailments1"
@@ -894,10 +930,10 @@
                     android:hint="Ailments"
                     android:paddingLeft="5dp"
                     android:textSize="13sp"
+                    android:visibility="gone"
                     app:bootstrapBrand="success"
                     app:bootstrapSize="md"
-                    app:roundedCorners="false"
-                    android:visibility="gone"/>
+                    app:roundedCorners="false" />
 
                 <MultiAutoCompleteTextView
                     android:id="@+id/symptoms"
@@ -905,36 +941,36 @@
                     android:layout_height="45dp"
                     android:layout_marginRight="5dp"
                     android:layout_weight="1"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
                     android:background="@drawable/rectangle_corner"
                     android:digits="@string/digitsnumber"
                     android:ems="13"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:fontFamily="sans-serif"
                     android:hint="Symptoms"
                     android:inputType="text"
                     android:maxLines="1"
+                    android:paddingLeft="5dp"
                     android:textSize="13sp"
                     app:bootstrapBrand="success"
                     app:bootstrapSize="md"
-                    app:roundedCorners="false"
-                    android:paddingLeft="5dp"/>
+                    app:roundedCorners="false" />
 
                 <MultiAutoCompleteTextView
                     android:id="@+id/dignosis"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
                     android:layout_weight="1"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:hint="Diagnosis"
-                    android:inputType="text"
                     android:background="@drawable/rectangle_corner"
                     android:digits="@string/digitsnumber"
                     android:ems="13"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:fontFamily="sans-serif"
-                    android:paddingLeft="5dp"
+                    android:hint="Diagnosis"
+                    android:inputType="text"
                     android:maxLines="1"
+                    android:paddingLeft="5dp"
                     android:textSize="13sp"
                     app:bootstrapBrand="success"
                     app:bootstrapSize="md"
@@ -947,10 +983,9 @@
                 android:id="@+id/presciptiontext"
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:layout_below="@+id/symptomsdigosislayout"
-                android:drawableRight="@drawable/down_arrow"
                 android:layout_marginTop="30dp"
                 android:background="@color/btn_back_sbmt"
+                android:drawableRight="@drawable/down_arrow"
                 android:gravity="start"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
@@ -960,23 +995,20 @@
                 android:textSize="18sp" />
 
 
-
             <LinearLayout
                 android:id="@+id/presciptionlayout"
-                android:layout_below="@+id/presciptiontext"
-                android:background="@drawable/rectangle_corner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginTop="0dp"
+                android:background="@drawable/rectangle_corner"
+                android:orientation="horizontal"
                 android:padding="5dp"
-                android:paddingTop="5dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
+                android:paddingTop="5dp"
                 android:visibility="gone">
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
-
                     android:id="@+id/test"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
@@ -989,10 +1021,10 @@
                     android:inputType="text"
                     android:maxLines="1"
                     android:textSize="12sp"
+                    android:visibility="gone"
                     app:bootstrapBrand="success"
                     app:bootstrapSize="md"
-                    app:roundedCorners="false"
-                    android:visibility="gone"/>
+                    app:roundedCorners="false" />
 
 
                 <com.beardedhen.androidbootstrap.BootstrapEditText
@@ -1000,7 +1032,7 @@
                     android:id="@+id/drugs"
                     android:layout_width="match_parent"
                     android:layout_height="45dp"
-                    android:layout_below="@+id/txtsymptomsanddignost"
+                    android:layout_marginRight="5dp"
                     android:layout_weight="0.6"
                     android:focusable="true"
                     android:focusableInTouchMode="true"
@@ -1009,11 +1041,10 @@
                     android:inputType="text"
                     android:maxLines="1"
                     android:textSize="12sp"
+                    android:visibility="gone"
                     app:bootstrapBrand="success"
                     app:bootstrapSize="md"
-                    app:roundedCorners="false"
-                    android:layout_marginRight="5dp"
-                    android:visibility="gone"/>
+                    app:roundedCorners="false" />
 
                 <Button
                     android:id="@+id/addPatientprescriptionBtn"
@@ -1029,20 +1060,6 @@
                     android:textColor="#ffffff"
                     android:textSize="16sp" />
 
-                <Button
-                    android:id="@+id/addPatientprescriptionBtn1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="0.4"
-                    android:background="#50BAA0"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="center"
-                    android:paddingRight="5dp"
-                    android:text="Add Prescription"
-                    android:textColor="#ffffff"
-                    android:textSize="16sp"
-                    tools:targetApi="jelly_bean"
-                    android:visibility="gone"/>
 
                 <ImageView
                     android:id="@+id/imageViewprescription"
@@ -1052,135 +1069,129 @@
                     android:contentDescription="@string/desc"
                     android:padding="10dp"
                     android:src="@drawable/emp_img"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
+
 
                 <TextView
-                    android:id="@+id/sendreminder"
+                    android:id="@+id/prescriptionImgPath"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="5dp"
-                    android:gravity="center"
-                    android:text="@string/visitDate"
+                    android:paddingLeft="5dp"
                     android:textColor="@color/colorPrimary"
-                    android:paddingLeft="20dp"
-                    android:textSize="18sp" />
-
-                <EditText
-                    android:id="@+id/visitDate"
-                    android:layout_width="300dp"
-                    android:layout_height="45dp"
-                    android:background="@drawable/rectangle_corner"
-                    android:drawableRight="@android:drawable/ic_menu_my_calendar"
-                    android:layout_marginLeft="5dp"
-                    android:inputType="date"
-                    android:gravity="center"
-                    android:editable="false"
-                    android:focusable="false"
-                    android:text="@string/visitDate"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="14sp"
-                    android:textColor="@color/black" />
-
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+                <!--  <TextView
+                      android:id="@+id/prescriptionImgPath1"
+                      android:layout_width="wrap_content"
+                      android:layout_height="wrap_content"
+                      android:fontFamily="sans-serif-medium"
+                      android:paddingLeft="5dp"
+                      android:paddingRight="5dp"
+                      android:paddingTop="0dp"
+                      android:gravity="start"
+                      android:textColor="@color/colorPrimary"
+                      android:textSize="12sp"
+                      android:visibility="gone" />-->
             </LinearLayout>
 
 
             <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp" />
+                android:layout_width="match_parent"
+                android:layout_height="10dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="0dp"
                     android:orientation="vertical"
-                    android:layout_marginTop="20dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:padding="3dp"
-                        android:paddingTop="2dp"
-                        android:layout_marginLeft="0dp"
-                        android:layout_marginRight="0dp">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Clinical Notes :"
-                            android:textColor="@color/input_register"
-                            android:textSize="18sp"
-                            android:textStyle="bold"
-                            android:layout_marginLeft="0dp"/>
-
-                        <EditText
-                            android:id="@+id/clinicalNotes"
-                            android:layout_width="match_parent"
-                            android:layout_height="100dp"
-                            android:layout_margin="4dp"
-                            android:background="@drawable/rectangle_corner"
-                            android:fontFamily="sans-serif"
-                            android:gravity="left"
-                            android:hint="Clinical Notes"
-                            android:inputType="text|textMultiLine|textCapSentences"
-                            android:maxLines="4"
-                            android:padding="10dp"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            tools:targetApi="jelly_bean" />
-
-                    </LinearLayout>
+                    android:padding="3dp"
+                    android:paddingTop="2dp">
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:height="5dp" />
+                        android:layout_marginLeft="0dp"
+                        android:text="Clinical Notes :"
+                        android:textColor="@color/input_register"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
-                    <LinearLayout
+                    <EditText
+                        android:id="@+id/clinicalNotes"
                         android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="1"
-                        android:layout_marginLeft="5dp"
-                        android:layout_marginRight="5dp"
-                        android:orientation="horizontal"
-                        android:padding="1dp"
-                        android:layout_marginTop="15dp">
+                        android:layout_height="100dp"
+                        android:layout_margin="4dp"
+                        android:background="@drawable/rectangle_corner"
+                        android:fontFamily="sans-serif"
+                        android:gravity="left"
+                        android:hint="Clinical Notes"
+                        android:inputType="text|textMultiLine|textCapSentences"
+                        android:maxLines="4"
+                        android:padding="10dp"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        tools:targetApi="jelly_bean" />
 
-                        <Button
-                            android:id="@+id/cancel"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:background="#c0c0c0"
-                            android:fontFamily="sans-serif-medium"
-                            android:gravity="center"
-                            android:paddingLeft="5dp"
-                            android:text="Cancel"
-                            android:textColor="#ffffff"
-                            android:textSize="16sp"
-                            tools:targetApi="jelly_bean" />
+                </LinearLayout>
 
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".1"
-                            android:visibility="invisible" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:height="5dp" />
 
-                        <Button
-                            android:id="@+id/editUpdate"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.5"
-                            android:background="#50BAA0"
-                            android:fontFamily="sans-serif-medium"
-                            android:gravity="center"
-                            android:paddingRight="5dp"
-                            android:text="Edit Update"
-                            android:textColor="#ffffff"
-                            android:textSize="16sp"
-                            tools:targetApi="jelly_bean" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:padding="1dp">
+
+                    <Button
+                        android:id="@+id/cancel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:background="#c0c0c0"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:paddingLeft="5dp"
+                        android:text="Cancel"
+                        android:textColor="#ffffff"
+                        android:textSize="16sp"
+                        tools:targetApi="jelly_bean" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight=".1"
+                        android:visibility="invisible" />
+
+                    <Button
+                        android:id="@+id/editUpdate"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.5"
+                        android:background="#50BAA0"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:paddingRight="5dp"
+                        android:text="Edit Update"
+                        android:textColor="#ffffff"
+                        android:textSize="16sp"
+                        tools:targetApi="jelly_bean" />
 
 
-                    </LinearLayout>
-
+                </LinearLayout>
 
 
             </LinearLayout>
@@ -1189,11 +1200,11 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
                 android:layout_weight="0.5"
                 android:gravity="center"
                 android:orientation="horizontal"
-                android:paddingTop="10dp"
-                android:layout_marginLeft="10dp">
+                android:paddingTop="10dp">
 
 
                 <TextView
@@ -1243,7 +1254,6 @@
                 </LinearLayout>
 
 
-
             </LinearLayout>
 
             <android.support.v7.widget.RecyclerView
@@ -1253,10 +1263,7 @@
                 android:layout_weight="0.9"
                 android:scrollbars="vertical"
                 app:layoutManager="GridLayoutManager"
-                app:spanCount="1"
-                />
-
-
+                app:spanCount="1" />
 
 
             <LinearLayout
@@ -1267,8 +1274,7 @@
                 <ExpandableListView
                     android:id="@+id/lvExp"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    />
+                    android:layout_height="match_parent" />
 
                 <include
                     layout="@layout/footer"

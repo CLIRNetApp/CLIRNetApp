@@ -279,8 +279,8 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/recycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="0.9dp"
-                    android:layout_weight="0.9"
+                    android:layout_height="0.6dp"
+                    android:layout_weight="0.6"
                     android:paddingLeft="5dp"
                     android:paddingRight="5dp"
                     android:scrollbars="vertical"
@@ -291,8 +291,8 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/Searchrecycler_view"
                     android:layout_width="match_parent"
-                    android:layout_height="0.8dp"
-                    android:layout_weight="0.8"
+                    android:layout_height="0.6dp"
+                    android:layout_weight="0.6"
                     android:padding="5dp"
                     android:scrollbars="vertical"
                     android:visibility="gone"
@@ -313,7 +313,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:padding="10dp"
-                    android:text="Incomplete Record List."
+                    android:text="Incomplete Prescription Queue."
                     android:textColor="@color/bg_login"
                     android:textSize="16sp"
                     android:visibility="gone"/>
@@ -321,8 +321,8 @@
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/incomplete_recordsRecyclerview"
                     android:layout_width="match_parent"
-                    android:layout_height="0.8dp"
-                    android:layout_weight="0.3"
+                    android:layout_height="0.6dp"
+                    android:layout_weight="0.6"
                     android:paddingTop="5dp"
                     android:paddingBottom="2dp"
                     android:scrollbars="vertical"

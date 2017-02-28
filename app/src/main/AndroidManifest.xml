@@ -51,17 +51,18 @@
             android:label="@string/title_activity_add_patient_update"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
         <activity
             android:name=".activity.ShowPersonalDetailsActivity"
             android:label="@string/title_activity_show_personal_details"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTask"/>
+            android:theme="@style/AppTheme.NoActionBar"/>
 
         <service
             android:name=".utility.SyncDataService"
             android:enabled="true" />
 
         <activity android:name=".activity.MailActivity" />
+
         <activity
             android:name=".activity.PrivacyPolicy"
             android:label="@string/title_activity_privacy_policy"
@@ -72,20 +73,24 @@
 
         <activity android:name=".activity.ShowPrescriptionImageActivity"
             android:configChanges="orientation|screenSize"
-            android:launchMode="singleTask"/>
+          android:launchMode="singleTask"/>
 
-        <activity android:name=".activity.ServiceArea" />
+
+        <activity android:name=".activity.ServiceArea"
+            android:label="Service Area"/>
 
         <activity android:name=".quickAdd.QuickAddActivity"
+            android:configChanges="screenSize|orientation"
             android:label="@string/quickadd"/>
 
         <activity
             android:name=".quickAdd.EditIncompleteRecordsActivity"
+            android:configChanges="orientation"
             android:label="@string/title_edit_quick_add"
-            android:screenOrientation="landscape"/>
+            />
 
       <!--  Commented this service for test build-->
-        <!-- <service android:name=".fcm.MyFirebaseMessagingService" >
+         <service android:name=".fcm.MyFirebaseMessagingService" >
              <intent-filter>
                  <action android:name="com.google.firebase.MESSAGING_EVENT" />
              </intent-filter>
@@ -94,7 +99,7 @@
              <intent-filter>
                  <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
              </intent-filter>
-         </service>-->
+         </service>
     </application>
 
 </manifest>

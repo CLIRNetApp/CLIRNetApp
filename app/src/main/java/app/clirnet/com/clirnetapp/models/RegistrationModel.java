@@ -7,7 +7,7 @@ package app.clirnet.com.clirnetapp.models;
 public class RegistrationModel {
 
 
-
+    private  String email;
     private String action;
     private String flag;
     private String phadded_on;
@@ -27,6 +27,9 @@ public class RegistrationModel {
     private  String start_time;
     private  String end_time ;
 
+    public String getEmail() {
+        return email;
+    }
 
     public String getProcess() {
         return process;
@@ -325,22 +328,6 @@ public class RegistrationModel {
         this.id = id;
     }
 
-    //This is used to set values to model class
-    public RegistrationModel(String first_name, String middle_name, String last_name, String sex, String strdate_of_birth, String current_age, String phone_number) {//, String language, String s, String s1, String s2, String s3, String s4, String ailments, String s5, String s6) {
-
-
-        this.firstName = first_name;
-        this.middleName = middle_name;
-        this.lastName = last_name;
-        this.dob = strdate_of_birth;
-        this.gender = sex;
-
-        this.age = current_age;
-        this.mobileNumber = phone_number;
-        //  this.patient_createdDate=date_Patientcreated;
-
-
-    }
 
     //This constructor for get the result from db
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String sex, String strdate_of_birth, String current_age, String phone_number) {//, String language, String s, String s1, String s2, String s3, String s4, String ailments, String s5, String s6) {
@@ -810,13 +797,15 @@ public class RegistrationModel {
         this.status=status;
 
     }
-    public RegistrationModel(String id, String prescription_image, String added_on, String added_by, String status) {
+    public RegistrationModel(String id, String prescription_image, String added_on, String added_by, String status,String phno,String email) {
 
         this.id=id;
         this.pres_img=prescription_image;
         this.added_on=added_on;
         this.added_by=added_by;
         this.status=status;
+        this.mobileNumber=phno;
+        this.email=email;
     }
 
 }

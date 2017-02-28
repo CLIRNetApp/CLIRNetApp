@@ -1,5 +1,6 @@
 package app.clirnet.com.clirnetapp.helper;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -127,7 +128,7 @@ public class SQLController {
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "'  order by ph.key_visit_id desc";
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' and ph.added_on = '" + date + "' or ph.modified_on='"+date+"' order by ph.key_visit_id desc";
 
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
@@ -945,6 +946,7 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {
+
             String selectQuery = "SELECT pvd.visit_date , count( * ) AS tot FROM patient dpr, patient_history pvd WHERE dpr.patient_id = pvd.patient_id AND" +
                     " date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) Between Date('" + fromdate + "') AND Date('" + todate + "') GROUP BY pvd.visit_date";
             db1 = dbHelper.getReadableDatabase();
@@ -1737,14 +1739,14 @@ public class SQLController {
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery = "select id,prescription,added_on,added_by,status from prescription_queue;";
+            String selectQuery = "select id,prescription,added_on,added_by,status,phonenumber,email from prescription_queue;";
 
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
 
             if (cursor.moveToFirst()) {
                 do {
-                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4));
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6));
 
                     hotelList.add(user);
 
@@ -1766,7 +1768,104 @@ public class SQLController {
         return hotelList;
 
     }
+    //get all the patient imp data from db, which will used in Consultation fragments and home fragments
+    public ArrayList<LoginModel> getPatientVisitDate() throws ClirNetAppException {
 
+        ArrayList<LoginModel> hotelList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "select key_visit_id,visit_date,added_on,actual_follow_up_date from patient_history;";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    LoginModel user = new LoginModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3));
+
+                    hotelList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+
+            throw new ClirNetAppException("Something went wrong while getting getPatientList");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+
+        return hotelList;
+    }
+    //update the flag once data send to server successfully
+    public void updateVisitDate(String visit_date,String key_visit_id,String actual_follow_up_date, String added_on){
+        SQLiteDatabase db = null;
+
+        try {
+            db = dbHelper.getWritableDatabase();
+
+
+            ContentValues values = new ContentValues();
+            values.put("visit_date", visit_date);
+            values.put("actual_follow_up_date", actual_follow_up_date);
+            values.put("added_on", added_on);
+
+            db.update("patient_history", values, "key_visit_id=?", new String[]{key_visit_id});
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+    }
+    //update the flag once data send to server successfully
+    public void updateFolowUpDateFormat(String fod,String key_visit_id){
+        SQLiteDatabase db = null;
+
+        try {
+            db = dbHelper.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("actual_follow_up_date", fod);
+
+            db.update("patient_history", values, "key_visit_id=?", new String[]{key_visit_id});
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+    }
+    //update the flag once data send to server successfully
+    public void updateAddedOnFormat(String added_on,String key_visit_id){
+        SQLiteDatabase db = null;
+
+        try {
+            db = dbHelper.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("added_on", added_on);
+
+            db.update("patient_history", values, "key_visit_id=?", new String[]{key_visit_id});
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+    }
 }
 
 

@@ -47,7 +47,6 @@ import java.util.Locale;
 import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.utility.Validator;
 import app.clirnet.com.clirnetapp.adapters.AddPatientUpdateAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
@@ -57,6 +56,9 @@ import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
+import app.clirnet.com.clirnetapp.utility.Validator;
+
+import static app.clirnet.com.clirnetapp.R.id.sysdate;
 
 
 @SuppressWarnings("AccessStaticViaInstance")
@@ -215,7 +217,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         initalizeView();
 
         ImageView patientImage = (ImageView) findViewById(R.id.patientImage);
-        TextView date = (TextView) findViewById(R.id.sysdate);
+        TextView date = (TextView) findViewById(sysdate);
         TextView editpatientName = (TextView) findViewById(R.id.patientName);
         TextView editage = (TextView) findViewById(R.id.age1);
         TextView editmobileno = (TextView) findViewById(R.id.mobileno);
@@ -309,15 +311,14 @@ public class AddPatientUpdate extends AppCompatActivity {
         //this date is ued to set update records date in patient history table
         addedTime = sdf3.format(todayDate3);
 
-
         //This will give date format in 2-9-2016 format
         final Calendar c = Calendar.getInstance();
         int year1 = c.get(Calendar.YEAR);
         int month1 = c.get(Calendar.MONTH);
         int day1 = c.get(Calendar.DAY_OF_MONTH);
 
-         addedOnDate = String.valueOf(new StringBuilder().append(day1).append("-").append(month1 + 1).append("-").append(year1).append(""));
-         visitDate.setText(addedOnDate);
+        addedOnDate = String.valueOf(new StringBuilder().append(day1).append("-").append(month1 + 1).append("-").append(year1).append(""));
+        visitDate.setText(addedOnDate);
 
         editpatientName.setText(strName);
         editmobileno.setText(strPhone);
@@ -420,7 +421,6 @@ public class AddPatientUpdate extends AppCompatActivity {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
-
 
 
         new Thread(new Runnable() {
@@ -567,6 +567,537 @@ public class AddPatientUpdate extends AppCompatActivity {
         }
 
         setupAnimation();//change the banner image after 10  sec interval.
+    }
+
+    private void initalizeView() {
+
+        backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
+        ailments1 = (MultiAutoCompleteTextView) findViewById(R.id.ailments1);
+        clinicalNotes = (EditText) findViewById(R.id.clinicalNotes);
+
+        imageViewprescription = (ImageView) findViewById(R.id.imageViewprescription);
+       // txtfollow_up_date = (TextView) findViewById(R.id.txtfollow_up_date);
+
+
+    }
+
+    //this will send data to EditPatientUpdate Activity
+    private void sendDataToEditPatientUpdate() {
+
+        if (patientHistoryData.size() > 0) {
+            RegistrationModel registrationModel = patientHistoryData.get(0);
+
+            Intent i = new Intent(getApplicationContext(), EditPatientUpdate.class);
+
+            i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
+            i.putExtra("ID", registrationModel.getPat_id());
+            i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
+            i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
+            i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
+            i.putExtra("LASTNAME", registrationModel.getLastName());
+            i.putExtra("DOB", registrationModel.getDob());
+            i.putExtra("PHONE", registrationModel.getMobileNumber());
+            i.putExtra("AGE", registrationModel.getAge());
+            i.putExtra("LANGUAGE", registrationModel.getLanguage());
+            i.putExtra("GENDER", registrationModel.getGender());
+            i.putExtra("ACTUALFOD", registrationModel.getActualFollowupDate());
+            i.putExtra("FOD", registrationModel.getFollowUpDate());
+            i.putExtra("AILMENT", registrationModel.getAilments());
+            i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
+            i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
+            i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
+            i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
+            i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
+            i.putExtra("VISITID", registrationModel.getKey_visit_id());
+
+            i.putExtra("ADDRESS", registrationModel.getAddress());
+            i.putExtra("CITYORTOWN", registrationModel.getCityortown());
+            i.putExtra("DISTRICT", registrationModel.getDistrict());
+            i.putExtra("PIN", registrationModel.getPin_code());
+            i.putExtra("STATE", registrationModel.getState());
+            i.putExtra("WEIGHT", registrationModel.getWeight());
+            i.putExtra("PULSE", registrationModel.getPulse());
+            i.putExtra("BP", registrationModel.getBp());
+            i.putExtra("LOWBP", registrationModel.getlowBp());
+            i.putExtra("TEMPRATURE", registrationModel.getTemprature());
+            i.putExtra("SUGAR", registrationModel.getSugar());
+            i.putExtra("SYMPTOMS", registrationModel.getSymptoms());
+            i.putExtra("DIGNOSIS", registrationModel.getDignosis());
+            i.putExtra("TESTS", registrationModel.getTests());
+            i.putExtra("DRUGS", registrationModel.getDrugs());
+            i.putExtra("BMI", registrationModel.getBmi());
+            i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
+            i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
+            i.putExtra("HEIGHT", registrationModel.getHeight());
+            i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
+            startActivity(i);
+        }
+    }
+
+    private void setUpGlide(String imgPath, ImageView patientImage) {
+
+        Glide.with(getApplicationContext())
+                .load(imgPath)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .skipMemoryCache(true)
+                .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
+                .dontAnimate()
+                .error(R.drawable.main_profile)
+                .into(patientImage);
+    }
+
+    //saved the user enetred data to db
+    private void saveData() {
+
+       // String daysSel = null;
+        monthSel = null;
+        fowSel = null;
+        String ailments = ailments1.getText().toString().trim();
+        String clinical_note = clinicalNotes.getText().toString().trim();
+        //String follow_up_dates = follow_up_date.getText().toString().trim();
+        String follow_up_dates = null;
+
+        String strWeight = edtInput_weight.getText().toString().trim();
+        String strPulse = edtInput_pulse.getText().toString().trim();
+        String strBp = edtInput_bp.getText().toString().trim();
+        String strLowBp = edtLowBp.getText().toString().trim();
+        String strTemp = edtInput_temp.getText().toString().trim();
+        String strSugar = edtInput_sugar.getText().toString().trim();
+        String strSymptoms = edtSymptoms.getText().toString().trim();
+        String strDignosis = edtDignosis.getText().toString().trim();
+        String strTests = edtTest.getText().toString().trim();
+        String strDrugs = edtDrugs.getText().toString().trim();
+
+        String strHeight=edtInput_height.getText().toString().trim();
+        String strbmi=edtInput_bmi.getText().toString().trim();
+        String strSugarFasting=edtInput_sugarfasting.getText().toString().trim();
+
+
+        usersellectedDate=fodtextshow.getText().toString();
+
+        if (TextUtils.isEmpty(ailments) && TextUtils.isEmpty(strSymptoms)&& TextUtils.isEmpty(strDignosis)) {
+            Toast.makeText(getApplicationContext(),"Please enter any of Ailemnt,Symptoms or Diagnosis ",Toast.LENGTH_LONG).show();
+            // ailment.setError("Please enter Ailment");
+            return;
+        }
+
+        if (ailments.length() > 0 && ailments.length() < 2 && ailments.contains(",")) {
+            ailments1.setError("Please Enter Valid ailment");
+            return;
+        }
+        if(strTemp.length()>0){
+            int intTemp = Integer.parseInt(strTemp);
+            if (intTemp > 110) {
+                edtInput_temp.setError("Temp can not be more than 110 ");
+                return;
+            } else {
+                edtInput_temp.setError(null);
+            }
+        }
+
+        //remove comma occurance from string
+        ailments = appController.removeCommaOccurance(ailments);
+        //Remove spaces between text if more than 2 white spaces found 12-12-2016
+        ailments = ailments.replaceAll("\\s+", " ");
+
+
+        Boolean ailmentValue;
+
+        if (ailments.length() > 0) {
+            ailmentValue = appController.findNumbersAilment(ailments);
+
+            if (ailmentValue) {
+                ailments1.setError("Please Enter Valid ailment");
+                return;
+            }
+        }
+
+
+        String delimiter = ",";
+        String[] temp = ailments.split(delimiter);
+             /* print substrings */
+        for (String aTemp : temp) {
+            //System.out.println(temp[i]);
+            //  Log.e("log", aTemp);
+            if (!new AppController().isDuplicate(mAilmemtArrayList, aTemp)) {
+
+                // dbController.addAilment(temp[i]);
+                databaseClass.addAilments(aTemp, maxid);
+                maxid = maxid + 1;
+                //  Log.e("ailment", "" + aTemp);
+
+            }
+        }
+        String visit_id = String.valueOf(maxVisitId + 1);
+        String visit_date = addedOnDate;
+        //  Log.e("visit_date", "" + visit_date);
+
+
+        //here we need to convert date it to 1-09-2016 date format to get records in sys date filter list
+        sdf1 = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+        final Calendar c = Calendar.getInstance();
+
+
+
+        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+       // String visit_date1 = addedOnDate.toString();
+        String added_on = visitDate.getText().toString();
+
+        try {
+            //convert visit date from 2016-11-1 to 2016-11-01
+            visit_date = myFormat.format(fromUser.parse(added_on));
+            added_on = myFormat.format(fromUser.parse(addedOnDate));
+
+            if(usersellectedDate!= null && ! usersellectedDate.equals("")) {
+                usersellectedDate = myFormat.format(fromUser.parse(usersellectedDate));
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+
+        String flag = "0";
+        String added_by = docId;
+        String patientInfoType = "App";
+        String action = "added";
+
+        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, ailments, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
+                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs,strHeight,strbmi,strSugarFasting);
+
+        Toast.makeText(getApplicationContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
+        //Redirect to navigation Activity
+        goToNavigation();
+
+    }
+
+
+    //this will used to change banner image after some time interval
+    private void setupAnimation() {
+
+
+        Random r = new Random();
+        try {
+            if (bannerimgNames.size() > 0) {
+                int n = r.nextInt(bannerimgNames.size());
+
+
+                // final String url = getString(imageArray[n]);
+                //  backChangingImages.setImageResource(imageArray[n]);
+                final String url = bannerimgNames.get(n);
+
+
+                BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
+                backChangingImages.setImageDrawable(d);
+
+                backChangingImages.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        String action = "clicked";
+
+                        appController.showAdDialog(AddPatientUpdate.this, url);
+                        appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action);
+
+
+                    }
+                });
+                String action = "display";
+                appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    //Image capture code
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        try {
+//        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+            if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+
+                if (resultCode == Activity.RESULT_OK) {
+                    // successfully captured the image
+                    // display it in image view
+
+                    //to_do check this for null poinetr exception
+
+                    previewCapturedImage(); //
+
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+    }
+
+    //this will show captured image to image view
+    private void previewCapturedImage() {
+        try {
+            prescriptionImgPath = uriSavedImage.getPath();
+            TextView edtprescriptionImgPath=(TextView) findViewById(R.id.prescriptionImgPath);
+            edtprescriptionImgPath.setVisibility(View.VISIBLE);
+            edtprescriptionImgPath.setText(uriSavedImage.toString());
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+
+        try {
+
+             patientImagePath = uriSavedImage.getPath();
+
+            if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
+
+                setUpGlide(patientImagePath, imageViewprescription);
+            }
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
+        }
+
+    }
+
+    private void goToNavigation() {
+        Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
+        startActivity(i);
+        finish();
+    }
+
+
+    private void goToNavigation1() {
+        this.onBackPressed();
+        finish();
+
+    }
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (backChangingImages != null) {
+            // backChangingImages=null;
+            backChangingImages.setImageDrawable(null);
+        }
+        System.gc();
+
+    }
+
+
+    private void shpwDialog(int id) {
+        switch (id) {
+
+            case DATE_DIALOG_ID1: //for visit date
+
+                final Calendar c1 = Calendar.getInstance();
+                int mYear1 = c1.get(Calendar.YEAR);
+                int mMonth1 = c1.get(Calendar.MONTH);
+                int mDay1 = c1.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dpd2 = new DatePickerDialog(AddPatientUpdate.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+
+
+
+                                visitDate.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);
+
+
+                            }
+                        }, mYear1, mMonth1, mDay1);
+                c1.add(Calendar.DATE, 0);
+
+                Date newDate = c1.getTime();
+                dpd2.getDatePicker().setMaxDate(newDate.getTime());
+
+                dpd2.show();
+
+                break;
+
+            case DATE_DIALOG_ID2: //for fod
+
+                final Calendar c3 = Calendar.getInstance();
+                int mYear3 = c3.get(Calendar.YEAR);
+                int mMonth3 = c3.get(Calendar.MONTH);
+                int mDay3 = c3.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dpd3 = new DatePickerDialog(AddPatientUpdate.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+
+
+
+                                fodtextshow.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);
+                               /* showfodtext.setText(dayOfMonth + "-"
+                                        + (monthOfYear + 1) + "-" + year);*/
+                                inputnumber.setText("");
+                                CleanFollowup();
+
+                            }
+                        }, mYear3, mMonth3, mDay3);
+                c3.add(Calendar.DATE, 1);
+
+                Date newDate3 = c3.getTime();
+                dpd3.getDatePicker().setMinDate(newDate3.getTime());
+
+                dpd3.show();
+
+                break;
+        }
+    }
+    private void CleanFollowup(){
+
+        month.setTextColor(getResources().getColor(R.color.black));
+        days.setTextColor(getResources().getColor(R.color.black));
+        week.setTextColor(getResources().getColor(R.color.black));
+        inputnumber.setText("");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            days.setBackground(getResources().getDrawable(R.drawable.circle));
+            month.setBackground(getResources().getDrawable(R.drawable.circle));
+            week.setBackground(getResources().getDrawable(R.drawable.circle));
+        }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //Log.d("lifecycle","onResume invoked");
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        // Log.d("lifecycle","onPause invoked");
+    }
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        setupAnimation();
+        // Log.d("lifecycle","onRestart invoked");
+    }
+
+    @Override
+    protected void onDestroy() {
+        //android.os.Process.killProcess(android.os.Process.myPid());
+
+        super.onDestroy();
+
+        if (sqlController != null) {
+            sqlController = null;
+        }
+        if (dbController != null) {
+            dbController = null;
+        }
+        if (databaseClass != null) {
+            databaseClass = null;
+        }
+        if (patientHistoryData != null) {
+            patientHistoryData.clear();
+            patientHistoryData = null;
+        }
+
+        if (appController != null) {
+            appController = null;
+        }
+        if (mAilmemtArrayList != null) {
+            mAilmemtArrayList = null;
+        }
+        if(bannerClass != null){
+            bannerClass=null;
+        }
+        if(mSymptomsList!= null){
+            mSymptomsList=null;
+        }
+
+        if(lastNamedb != null){
+            lastNamedb=null;
+        }
+        doctor_membership_number=null;
+        bannerimgNames=null;
+
+        cleanResources();
+        System.gc();
+
+    }
+    private void cleanResources() {
+
+        patientHistoryData = null;
+        sdf1 = null;
+        strPhone = null;
+        strAge = null;
+        strLanguage = null;
+        strgender = null;
+        strPatientPhoto = null;
+        ailments1 = null;
+        clinicalNotes = null;
+        strFirstName = null;
+        strMiddleName = null;
+        strLastName = null;
+        strDob = null;
+        strPatientId = null;
+        visitDate=null;
+        fowSel = null;
+        usersellectedDate = null;
+        monthSel = null;
+        sqlController = null;
+        imageViewprescription = null;
+        docId = null;
+        addedTime = null;
+        addedOnDate = null;
+        patientHistoryData = null;
+        PrescriptionimageName = null;
+        backChangingImages=null;
+        imageIntent=null;
+
+        imagesFolder=null;
+        uriSavedImage=null;
+        addUpdate=null;
+        cancel=null;
+        validator=null;
+        strCityorTown=null;
+        strDistrict=null;
+        strPinNo=null;
+        strState=null;
+        strAddress=null;
+
+        edtInput_weight=null;
+        edtInput_pulse=null;
+        edtInput_bp=null;
+        edtLowBp=null;
+        edtInput_temp=null;
+        edtInput_sugar=null;
+        edtSymptoms=null;
+        edtDignosis=null;
+        edtTest=null;
+        edtDrugs=null;
+        fodtextshow=null;
+        days=null;
+        week=null;
+        month=null;
+        inputnumber=null;
+        value=null;
+        daysSel=null;
+        txtRecord=null;
+        txtsymtomsanddignost=null;
+        presciptiontext=null;
+        edtInput_sugarfasting=null;
+        edtInput_bmi=null;
+        edtInput_height=null;
+        btnclear=null;
+        strAlternatenumber=null;
+        strAlternatephtype=null;
+        strIsd_code=null;
+        strAlternateIsd_code=null;
     }
 
     private void addFollowupdateButtonListner() {
@@ -816,538 +1347,5 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         });
 
-    }
-
-    private void initalizeView() {
-
-        backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
-        ailments1 = (MultiAutoCompleteTextView) findViewById(R.id.ailments1);
-        clinicalNotes = (EditText) findViewById(R.id.clinicalNotes);
-
-        imageViewprescription = (ImageView) findViewById(R.id.imageViewprescription);
-       // txtfollow_up_date = (TextView) findViewById(R.id.txtfollow_up_date);
-
-
-    }
-
-    //this will send data to EditPatientUpdate Activity
-    private void sendDataToEditPatientUpdate() {
-
-        if (patientHistoryData.size() > 0) {
-            RegistrationModel registrationModel = patientHistoryData.get(0);
-
-            Intent i = new Intent(getApplicationContext(), EditPatientUpdate.class);
-
-            i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
-            i.putExtra("ID", registrationModel.getPat_id());
-            i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
-            i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
-            i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
-            i.putExtra("LASTNAME", registrationModel.getLastName());
-            i.putExtra("DOB", registrationModel.getDob());
-            i.putExtra("PHONE", registrationModel.getMobileNumber());
-            i.putExtra("AGE", registrationModel.getAge());
-            i.putExtra("LANGUAGE", registrationModel.getLanguage());
-            i.putExtra("GENDER", registrationModel.getGender());
-            i.putExtra("ACTUALFOD", registrationModel.getActualFollowupDate());
-            i.putExtra("FOD", registrationModel.getFollowUpDate());
-            i.putExtra("AILMENT", registrationModel.getAilments());
-            i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
-            i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
-            i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
-            i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
-            i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
-            i.putExtra("VISITID", registrationModel.getKey_visit_id());
-
-            i.putExtra("ADDRESS", registrationModel.getAddress());
-            i.putExtra("CITYORTOWN", registrationModel.getCityortown());
-            i.putExtra("DISTRICT", registrationModel.getDistrict());
-            i.putExtra("PIN", registrationModel.getPin_code());
-            i.putExtra("STATE", registrationModel.getState());
-            i.putExtra("WEIGHT", registrationModel.getWeight());
-            i.putExtra("PULSE", registrationModel.getPulse());
-            i.putExtra("BP", registrationModel.getBp());
-            i.putExtra("LOWBP", registrationModel.getlowBp());
-            i.putExtra("TEMPRATURE", registrationModel.getTemprature());
-            i.putExtra("SUGAR", registrationModel.getSugar());
-            i.putExtra("SYMPTOMS", registrationModel.getSymptoms());
-            i.putExtra("DIGNOSIS", registrationModel.getDignosis());
-            i.putExtra("TESTS", registrationModel.getTests());
-            i.putExtra("DRUGS", registrationModel.getDrugs());
-            i.putExtra("BMI", registrationModel.getBmi());
-            i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
-            i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
-            i.putExtra("HEIGHT", registrationModel.getHeight());
-            i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
-            startActivity(i);
-        }
-    }
-
-    private void setUpGlide(String imgPath, ImageView patientImage) {
-
-        Glide.with(getApplicationContext())
-                .load(imgPath)
-                .crossFade()
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .skipMemoryCache(true)
-                .signature(new StringSignature(String.valueOf(System.currentTimeMillis())))
-                .dontAnimate()
-                .error(R.drawable.main_profile)
-                .into(patientImage);
-    }
-
-
-    //saved the user enetred data to db
-    private void saveData() {
-
-       // String daysSel = null;
-        monthSel = null;
-        fowSel = null;
-        String ailments = ailments1.getText().toString().trim();
-        String clinical_note = clinicalNotes.getText().toString().trim();
-        //String follow_up_dates = follow_up_date.getText().toString().trim();
-        String follow_up_dates = null;
-
-        String strWeight = edtInput_weight.getText().toString().trim();
-        String strPulse = edtInput_pulse.getText().toString().trim();
-        String strBp = edtInput_bp.getText().toString().trim();
-        String strLowBp = edtLowBp.getText().toString().trim();
-        String strTemp = edtInput_temp.getText().toString().trim();
-        String strSugar = edtInput_sugar.getText().toString().trim();
-        String strSymptoms = edtSymptoms.getText().toString().trim();
-        String strDignosis = edtDignosis.getText().toString().trim();
-        String strTests = edtTest.getText().toString().trim();
-        String strDrugs = edtDrugs.getText().toString().trim();
-
-        String strHeight=edtInput_height.getText().toString().trim();
-        String strbmi=edtInput_bmi.getText().toString().trim();
-        String strSugarFasting=edtInput_sugarfasting.getText().toString().trim();
-
-
-        usersellectedDate=fodtextshow.getText().toString();
-
-        if (TextUtils.isEmpty(ailments) && TextUtils.isEmpty(strSymptoms)&& TextUtils.isEmpty(strDignosis)) {
-            Toast.makeText(getApplicationContext(),"Please enter any of Ailemnt,Symptoms or Diagnosis ",Toast.LENGTH_LONG).show();
-            // ailment.setError("Please enter Ailment");
-            return;
-        }
-
-        /*if (TextUtils.isEmpty(ailments)) {
-            ailments1.setError("Please enter Ailment");
-            return;
-        } else {
-            ailments1.setError(null);
-        }*/
-        if (ailments.length() > 0 && ailments.length() < 2 && ailments.contains(",")) {
-            ailments1.setError("Please Enter Valid ailment");
-            return;
-        }
-        if(strTemp.length()>0){
-            int intTemp = Integer.parseInt(strTemp);
-            if (intTemp > 110) {
-                edtInput_temp.setError("Temp can not be more than 110 ");
-                return;
-            } else {
-                edtInput_temp.setError(null);
-            }
-        }
-
-        //remove comma occurance from string
-        ailments = appController.removeCommaOccurance(ailments);
-        //Remove spaces between text if more than 2 white spaces found 12-12-2016
-        ailments = ailments.replaceAll("\\s+", " ");
-
-
-        Boolean ailmentValue;
-
-        if (ailments.length() > 0) {
-            ailmentValue = appController.findNumbersAilment(ailments);
-
-            if (ailmentValue) {
-                ailments1.setError("Please Enter Valid ailment");
-                return;
-            }
-        }
-
-
-        String delimiter = ",";
-        String[] temp = ailments.split(delimiter);
-             /* print substrings */
-        for (String aTemp : temp) {
-            //System.out.println(temp[i]);
-            //  Log.e("log", aTemp);
-            if (!new AppController().isDuplicate(mAilmemtArrayList, aTemp)) {
-
-                // dbController.addAilment(temp[i]);
-                databaseClass.addAilments(aTemp, maxid);
-                maxid = maxid + 1;
-                //  Log.e("ailment", "" + aTemp);
-
-            }
-        }
-//  System.out.println("Date1 is before or equal to Date2");
-
-        //  dbController.addPatient(first_name, middle_name, last_name, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, usersellectedDate, daysSel, fowSel, monthSel, ailments, prescriptionImgPath, clinical_note, sysdate.toString());
-        String visit_id = String.valueOf(maxVisitId + 1);
-        String visit_date = addedOnDate;
-        //  Log.e("visit_date", "" + visit_date);
-
-
-        //here we need to convert date it to 1-09-2016 date format to get records in sys date filter list
-        sdf1 = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
-        final Calendar c = Calendar.getInstance();
-
-
-
-        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
-        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
-       // String visit_date1 = addedOnDate.toString();
-        String added_on = visitDate.getText().toString();
-
-        try {
-            //convert visit date from 2016-11-1 to 2016-11-01
-            visit_date = myFormat.format(fromUser.parse(added_on));
-            added_on = myFormat.format(fromUser.parse(addedOnDate));
-            usersellectedDate=myFormat.format(fromUser.parse(usersellectedDate));
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
-        }
-
-
-        String flag = "0";
-        String added_by = docId;
-        String patientInfoType = "App";
-        String action = "added";
-
-        //  dbController.updatePatientPersonalforNewVisit(strPatientId, "2", modified_on.toString());//thiis will update pateint data for new visit
-        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, ailments, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
-                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs,strHeight,strbmi,strSugarFasting);
-
-        Toast.makeText(getApplicationContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
-        //Redirect to navigation Activity
-        goToNavigation();
-
-    }
-
-    //this will used to change banner image after some time interval
-    private void setupAnimation() {
-
-
-        Random r = new Random();
-        try {
-            int n = r.nextInt(bannerimgNames.size());
-
-
-            // final String url = getString(imageArray[n]);
-            //  backChangingImages.setImageResource(imageArray[n]);
-            final String url = bannerimgNames.get(n);
-
-
-            BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-            backChangingImages.setImageDrawable(d);
-
-            backChangingImages.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-
-                    String action = "clicked";
-
-                    appController.showAdDialog(AddPatientUpdate.this, url);
-                    appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action);
-
-
-                }
-            });
-            String action = "display";
-            appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-    }
-
-    //Image capture code
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        try {
-//        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
-            if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
-
-                if (resultCode == Activity.RESULT_OK) {
-                    // successfully captured the image
-                    // display it in image view
-
-                    //to_do check this for null poinetr exception
-
-                    previewCapturedImage(); //
-
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
-        }
-    }
-
-    //this will show captured image to image view
-    private void previewCapturedImage() {
-        try {
-            prescriptionImgPath = uriSavedImage.getPath();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
-        }
-        try {
-
-             patientImagePath = uriSavedImage.getPath();
-
-            if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
-
-                setUpGlide(patientImagePath, imageViewprescription);
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
-        }
-
-    }
-
-
-    private void goToNavigation() {
-        Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
-        startActivity(i);
-        finish();
-    }
-    private void goToNavigation1() {
-        this.onBackPressed();
-        finish();
-
-    }
-
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (backChangingImages != null) {
-            // backChangingImages=null;
-            backChangingImages.setImageDrawable(null);
-        }
-        System.gc();
-
-    }
-    private void shpwDialog(int id) {
-        switch (id) {
-
-            case DATE_DIALOG_ID1: //for visit date
-
-                final Calendar c1 = Calendar.getInstance();
-                int mYear1 = c1.get(Calendar.YEAR);
-                int mMonth1 = c1.get(Calendar.MONTH);
-                int mDay1 = c1.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog dpd2 = new DatePickerDialog(AddPatientUpdate.this,
-                        new DatePickerDialog.OnDateSetListener() {
-
-                            @Override
-                            public void onDateSet(DatePicker view, int year,
-                                                  int monthOfYear, int dayOfMonth) {
-
-
-
-                                visitDate.setText(dayOfMonth + "-"
-                                        + (monthOfYear + 1) + "-" + year);
-
-
-                            }
-                        }, mYear1, mMonth1, mDay1);
-                c1.add(Calendar.DATE, 0);
-
-                Date newDate = c1.getTime();
-                dpd2.getDatePicker().setMaxDate(newDate.getTime());
-
-                dpd2.show();
-
-                break;
-
-            case DATE_DIALOG_ID2: //for fod
-
-                final Calendar c3 = Calendar.getInstance();
-                int mYear3 = c3.get(Calendar.YEAR);
-                int mMonth3 = c3.get(Calendar.MONTH);
-                int mDay3 = c3.get(Calendar.DAY_OF_MONTH);
-
-                DatePickerDialog dpd3 = new DatePickerDialog(AddPatientUpdate.this,
-                        new DatePickerDialog.OnDateSetListener() {
-
-                            @Override
-                            public void onDateSet(DatePicker view, int year,
-                                                  int monthOfYear, int dayOfMonth) {
-
-
-
-                                fodtextshow.setText(dayOfMonth + "-"
-                                        + (monthOfYear + 1) + "-" + year);
-                               /* showfodtext.setText(dayOfMonth + "-"
-                                        + (monthOfYear + 1) + "-" + year);*/
-                                inputnumber.setText("");
-                                CleanFollowup();
-
-                            }
-                        }, mYear3, mMonth3, mDay3);
-                c3.add(Calendar.DATE, 1);
-
-                Date newDate3 = c3.getTime();
-                dpd3.getDatePicker().setMinDate(newDate3.getTime());
-
-                dpd3.show();
-
-                break;
-        }
-    }
-    private void CleanFollowup(){
-
-        month.setTextColor(getResources().getColor(R.color.black));
-        days.setTextColor(getResources().getColor(R.color.black));
-        week.setTextColor(getResources().getColor(R.color.black));
-        inputnumber.setText("");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-            days.setBackground(getResources().getDrawable(R.drawable.circle));
-            month.setBackground(getResources().getDrawable(R.drawable.circle));
-            week.setBackground(getResources().getDrawable(R.drawable.circle));
-        }
-    }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //Log.d("lifecycle","onResume invoked");
-    }
-    @Override
-    protected void onPause() {
-        super.onPause();
-        // Log.d("lifecycle","onPause invoked");
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();
-        setupAnimation();
-        // Log.d("lifecycle","onRestart invoked");
-    }
-    @Override
-    protected void onDestroy() {
-        //android.os.Process.killProcess(android.os.Process.myPid());
-
-        super.onDestroy();
-
-        if (sqlController != null) {
-            sqlController = null;
-        }
-        if (dbController != null) {
-            dbController = null;
-        }
-        if (databaseClass != null) {
-            databaseClass = null;
-        }
-        if (patientHistoryData != null) {
-            patientHistoryData.clear();
-            patientHistoryData = null;
-        }
-
-        if (appController != null) {
-            appController = null;
-        }
-        if (mAilmemtArrayList != null) {
-            mAilmemtArrayList = null;
-        }
-        if(bannerClass != null){
-            bannerClass=null;
-        }
-        if(mSymptomsList!= null){
-            mSymptomsList=null;
-        }
-
-        if(lastNamedb != null){
-            lastNamedb=null;
-        }
-        doctor_membership_number=null;
-        bannerimgNames=null;
-
-        cleanResources();
-        System.gc();
-
-    }
-
-    private void cleanResources() {
-
-        patientHistoryData = null;
-        sdf1 = null;
-        strPhone = null;
-        strAge = null;
-        strLanguage = null;
-        strgender = null;
-        strPatientPhoto = null;
-        ailments1 = null;
-        clinicalNotes = null;
-        strFirstName = null;
-        strMiddleName = null;
-        strLastName = null;
-        strDob = null;
-        strPatientId = null;
-        visitDate=null;
-        fowSel = null;
-        usersellectedDate = null;
-        monthSel = null;
-        sqlController = null;
-        imageViewprescription = null;
-        docId = null;
-        addedTime = null;
-        addedOnDate = null;
-        patientHistoryData = null;
-        PrescriptionimageName = null;
-        backChangingImages=null;
-        imageIntent=null;
-
-        imagesFolder=null;
-        uriSavedImage=null;
-        addUpdate=null;
-        cancel=null;
-        validator=null;
-        strCityorTown=null;
-        strDistrict=null;
-        strPinNo=null;
-        strState=null;
-        strAddress=null;
-
-        edtInput_weight=null;
-        edtInput_pulse=null;
-        edtInput_bp=null;
-        edtLowBp=null;
-        edtInput_temp=null;
-        edtInput_sugar=null;
-        edtSymptoms=null;
-        edtDignosis=null;
-        edtTest=null;
-        edtDrugs=null;
-        fodtextshow=null;
-        days=null;
-        week=null;
-        month=null;
-        inputnumber=null;
-        value=null;
-        daysSel=null;
-        txtRecord=null;
-        txtsymtomsanddignost=null;
-        presciptiontext=null;
-        edtInput_sugarfasting=null;
-        edtInput_bmi=null;
-        edtInput_height=null;
-        btnclear=null;
-        strAlternatenumber=null;
-        strAlternatephtype=null;
-        strIsd_code=null;
-        strAlternateIsd_code=null;
     }
 }

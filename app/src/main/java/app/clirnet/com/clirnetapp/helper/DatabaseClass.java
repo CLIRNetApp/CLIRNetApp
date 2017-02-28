@@ -42,8 +42,6 @@ public class DatabaseClass extends SQLiteOpenHelper {
             dbHelper = new SQLiteHandler(myContext);
             database = dbHelper.getWritableDatabase();
             appController = new AppController();
-        } else {
-           // Log.e("DB Opended1", "Database is allready opened");
         }
 
     }
