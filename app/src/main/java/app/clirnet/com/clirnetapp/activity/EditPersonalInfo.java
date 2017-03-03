@@ -326,8 +326,6 @@ public class EditPersonalInfo extends AppCompatActivity {
         //this is to check of image url is null or not for handle null pointer exception 13-8-16 Ashish
         if (strPatientPhoto != null && !TextUtils.isEmpty(strPatientPhoto)) {
 
-            /*Bitmap bitmap = BitmapFactory.decodeFile(strPatientPhoto);
-            patientImage.setImageBitmap(bitmap);*/
             setUpGlide(strPatientPhoto, patientImage);
 
         } else {
@@ -344,8 +342,6 @@ public class EditPersonalInfo extends AppCompatActivity {
                 position = 2;
                 break;
         }
-
-
         //this will disable age edit text if dob is present 31-8-2016 Ashish
         try {
             if (strDob.length() > 0) {
@@ -378,7 +374,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " Edit Personal Info " + e + "  " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1006,13 +1002,13 @@ public class EditPersonalInfo extends AppCompatActivity {
                         String action = "clicked";
 
                         appController.showAdDialog(EditPersonalInfo.this, url);
-                        appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action);
+                        appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action,"Edit Personal Info");
 
 
                     }
                 });
                 String action = "display";
-                appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action);
+                appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action,"Edit Personal Info");
             }
         } catch (Exception e) {
             e.printStackTrace();

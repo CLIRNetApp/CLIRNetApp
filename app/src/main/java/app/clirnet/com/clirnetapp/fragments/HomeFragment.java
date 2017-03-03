@@ -9,7 +9,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -86,7 +85,9 @@ import app.clirnet.com.clirnetapp.adapters.RVAdapter;
 import app.clirnet.com.clirnetapp.adapters.SearchViewdapter;
 import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.app.GetBannerImageTask;
 import app.clirnet.com.clirnetapp.app.LastNameAsynTask;
+import app.clirnet.com.clirnetapp.app.UploadBannerDataAsyncTask;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.SQLController;
@@ -179,6 +180,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private TextView incompletedisplay_tv;
     private String pat_personal_count;
     private String pat_visit_count;
+    private String url;
 
 
     public HomeFragment() {
@@ -261,7 +263,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             }
         });
 
-       FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
+        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
         fab.setVisibility(View.VISIBLE);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -335,12 +337,21 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                     int getPatientVisitIdsListSize = getPatientVisitIdsList.size();
 
+                    ArrayList<String>  bannerDisplayIds_List = sqlController.getBannerDisplaysFalg0();
+                    ArrayList<String> bannaerClickedIdsList = sqlController.getBannerClickedFalg0();
+                    String bannerDisplayArayString = String.valueOf(dbController.getResultsForBannerDisplay());
+                    String bannerClickedArayString = String.valueOf(dbController.getResultsForBannerClicked());
+
                     boolean isInternetPresent = connectionDetector.isConnectingToInternet();
 
                     if (isInternetPresent) {
-                        if (patientIds_ListSize != 0 || getPatientVisitIdsListSize != 0) {
 
-                            sendDataToServer();
+                        if (bannaerClickedIdsList.size() > 0 || bannerDisplayIds_List.size() > 0) {
+                            new UploadBannerDataAsyncTask(savedUserName, savedUserPassword, getContext(), bannerDisplayArayString, bannerClickedArayString, doctor_membership_number, docId, bannerDisplayIds_List, bannaerClickedIdsList,new AppController().getDateTimenew());
+                        }
+                       if (patientIds_ListSize != 0 || getPatientVisitIdsListSize != 0) {
+
+                           sendDataToServer();
 
                         } else {
 
@@ -406,7 +417,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String formatedDate = appController.ConvertDateFormat(sysdate.toString());
 
             filteredModelList = sqlController1.getPatientList(formatedDate);
-            incompleteRecordList = sqlController1.getIncompleteRecordList();
+            incompleteRecordList = sqlController1.getIncompleteRecordList(formatedDate);
 
             if (filteredModelList.size() > 0) {
                 //do nothing
@@ -415,9 +426,12 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 recyclerView.setAdapter(rvadapter);
                 rvadapter.notifyDataSetChanged();
             }
-           if (incompleteRecordList.size() > 0) {
-                incompletedisplay_tv=(TextView)view.findViewById(R.id.incompletedisplay_tv);
+            if (incompleteRecordList.size() > 0) {
+                incompletedisplay_tv = (TextView) view.findViewById(R.id.incompletedisplay_tv);
                 incompletedisplay_tv.setVisibility(View.VISIBLE);
+
+                LinearLayout nameheader = (LinearLayout) view.findViewById(R.id.nameheader);
+                nameheader.setVisibility(View.VISIBLE);
                 View view1 = (View) view.findViewById(R.id.view);
                 view1.setVisibility(View.VISIBLE);
                 IncompleteRecordsAdapter incompleteRecordsAdapter = new IncompleteRecordsAdapter(incompleteRecordList);
@@ -426,7 +440,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + " / " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         if (sqlController1 != null) {
             sqlController1.close();
@@ -477,7 +491,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 Intent i = new Intent(getContext().getApplicationContext(), EditIncompleteRecordsActivity.class);
                 i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
                 i.putExtra("ID", registrationModel.getId());
-                i.putExtra("ADDED_ON",registrationModel.getAdded_on());
+                i.putExtra("ADDED_ON", registrationModel.getAdded_on());
+                i.putExtra("MOBILE_NO", registrationModel.getMobileNumber());
+                i.putExtra("EMAIL_ADDRESS", registrationModel.getEmail());
                 startActivity(i);
             }
 
@@ -552,8 +568,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         cao.setValue("2");
 
                         String apiKey = getResources().getString(R.string.apikey);
-                        getBannersData(savedUserName, savedUserPassword, apiKey, doctor_membership_number, company_id);
-                        //new GetBannerImageTask(getContext(), savedUserName, savedUserPassword, doctor_membership_number, company_id); //send log file to server
+                        if (savedUserName != null && savedUserPassword != null) {
+
+                            new GetBannerImageTask(getContext(), savedUserName, savedUserPassword, doctor_membership_number, company_id); //send log file to server
+
+                        }
 
                         new LastNameAsynTask(getContext(), savedUserName, savedUserPassword, appController.getDateTime());
                         getPatientRecords(savedUserName, savedUserPassword);
@@ -981,7 +1000,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("ISDCODE", registrationModel.getIsd_code());
         i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
 
-
         startActivity(i);
     }
 
@@ -1055,18 +1073,34 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         dialog.show();
     }
+
     //this will used to change banner image after some time interval
     private void setupAnimation() {
 
         if (bannerimgNames != null) {
             Random r = new Random();
+
             try {
                 if (bannerimgNames.size() > 0) {
                     int n = r.nextInt(bannerimgNames.size());
+                  //  Log.e("n", " " + n + "  " + bannerimgNames.size());
 
-                    // final String url = getString(imageArray[n]);
-                    //  backChangingImages.setImageResource(imageArray[n]);
-                    final String url = bannerimgNames.get(n);
+                    url = bannerimgNames.get(n);
+                    if (AppController.checkifImageExists(url)) {
+
+                        File file = getImage("/" + url + ".png");
+                        String path = file.getAbsolutePath();
+                        if (path != null) {
+
+                           // Log.e("imageExist", "imageExist allready");
+                        }
+                    } else {
+                        bannerimgNames.remove(n);//remove element from list whose img not exist 1-3-2017
+                        //Log.e("imageExist", "image Not Exist allready");
+                        int n2 = r.nextInt(bannerimgNames.size());
+                        //Log.e("n2", " " + n2 + "  " + bannerimgNames.size());
+                        url = bannerimgNames.get(n2);
+                    }
 
                     BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
 
@@ -1081,11 +1115,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                             String action = "clicked";
 
                             appController.showAdDialog(getContext(), url);
-                            appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+                            appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action,"Patient Central");
                         }
                     });
                     String action = "display";
-                    appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+                    appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action,"Patient Central");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -1304,6 +1338,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     JSONObject user = jObj.getJSONObject("data");
 
                     String msg = user.getString("msg");
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Activity data is sync to server : patient Visit Count : " + pat_visit_count + " patient Count : " + pat_personal_count);
 
 
                     if (msg.equals("OK")) {
@@ -1318,7 +1353,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                         int patientVisitIdsList = getPatientVisitIdsList.size();
                         for (int i = 0; i < patientVisitIdsList; i++) {
-                            // String patientId = getPatientVisitIdsList.get(i).getPat_id();
                             String patientVisitId = getPatientVisitIdsList.get(i).getKey_visit_id();
                             String flag = "1";
 
@@ -1327,9 +1361,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                         String time = appController.getDateTimenew();
                         appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Activity data is sync to server : patient Visit Count : " + pat_visit_count + " patient Count : " + pat_personal_count);
-                        //    Log.e("senddata", "data is sent " + time);
-                        /*appController.appendLog(appController.getDateTime() + " " + "/ " + "patient_details : " + patient_details);
-                        appController.appendLog(appController.getDateTime() + " " + "/ " + "patient_visits : " + patient_visits);*/
+
 
                         lastSyncTime(time);
                         dbController.addAsynctascRun_status("Data Synced", send_data_start_time, time, "");
@@ -1376,6 +1408,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             }
         };
+        int socketTimeout = 30000;  //30 seconds - change to what you want
+        int retryforTimes = 2;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, retryforTimes, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        strReq.setRetryPolicy(policy);
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
@@ -1416,8 +1452,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             @Override
             public void onResponse(String response) {
-                //  Log.d(TAG, "Sync Response: " + response);
-                //  Log.e("responseresponse", "" + response);
+
 
                 new getPatientRecordsFromServer().execute(response);
 
@@ -1643,7 +1678,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
-
             String patient_info_type_form = "Electronics"; //need to add this if records are added from web service to identify the data...........
 
             dbController.addPatientHistoryRecords(visit_id, pat_id, ailment, convertedVisitDate, follow_up_date, follow_up_days,
@@ -1652,7 +1686,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         }
 
-        dbController.addAsync();
+        dbController.addAsync();//set sync value true if data is synced from server successfully.
         String end_time = appController.getDateTimenew();
 
 
@@ -1661,7 +1695,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         Intent i = new Intent(getContext(), NavigationActivity.class);
         startActivity(i);
         //makeToast("Application Initialization Successful");
-
     }
 
     //custom dialog  for the sync button result
@@ -1796,6 +1829,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         incompletedisplay_tv = null;
         docId = null;
         company_id = null;
+        url = null;
     }
 
     @Override
@@ -1877,6 +1911,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
 
                 JSONObject user = jObj.getJSONObject("data");
+                String msg = user.getString("msg");
+                String responce = user.getString("response");
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Initial Patient Data :  Message :" + msg +"  Response : "+ responce +"  "+Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                 JSONArray jsonArray = user.getJSONArray("doctor_patient_relation");
 
@@ -1980,258 +2017,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         }
     }
 
-    private void getBannersData(final String savedUserName, final String savedUserPassword, final String apiKey, final String docMemId, final String companyid) {
-        // Tag used to cancel the request
-        String tag_string_req = "req_login";
-
-
-        pDialog.setMessage("Initializing Application.Getting Banner data Please Wait...");
-        pDialog.setCancelable(false);
-        showDialog();
-        banner_downloadstart_time = appController.getDateTimenew();
-
-        StringRequest strReq = new StringRequest(Request.Method.POST,
-                AppConfig.URL_BANNER_API, new Response.Listener<String>() {
-
-
-            @Override
-            public void onResponse(String response) {
-                //  Log.d(TAG, "Sync Response: " + response);
-                // Log.e("getBannersData", "" + response);
-                // new getPatientRecordsFromServer().execute(response);
-                hideDialog();
-                pDialog.dismiss();
-
-                new getBannerImagesFromServer().execute(response);
-
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                //  Log.e(TAG, "Login Error: Failed To Initalize Data" + error.getMessage()+""+Thread.currentThread().getStackTrace()[2].getLineNumber());
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment getting banners" + error);
-                hideDialog();
-            }
-        }) {
-
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to login url
-                Map<String, String> params = new HashMap<>();
-
-                params.put("username", savedUserName);
-                params.put("password", savedUserPassword);
-                params.put("apikey", getResources().getString(R.string.apikey));
-                params.put("membershipid", docMemId);
-                params.put("companyid", companyid);
-                // Log.e("apikey",""+savedUserName + "  "+savedUserPassword + " "+ getResources().getString(R.string.apikey));
-                return params;
-            }
-
-        };
-
-        //this will retry the request for 2 times
-        int socketTimeout = 30000;//30 seconds - change to what you want
-        int retryforTimes = 2;
-        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, retryforTimes, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
-        strReq.setRetryPolicy(policy);
-        AppController.getInstance().setPriority(Request.Priority.LOW);
-        // Adding request to request queue
-        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
-
-    }
-
-    private class getBannerImagesFromServer extends AsyncTask<String, Void, String> {
-
-        ProgressDialog pd;
-
-        @Override
-        protected String doInBackground(String... params) {
-
-            try {
-
-                JSONObject jObj = new JSONObject(params[0]);
-
-                JSONObject user = jObj.getJSONObject("data");
-
-                String msg = user.getString("msg");
-                String responce = user.getString("response");
-
-                if (msg.equals("OK") && responce.equals("200")) {
-
-                    JSONArray jsonArray = user.getJSONArray("result");
-
-                    setBannerImgListList(jsonArray);
-                }
-            } catch (JSONException e) {
-                // JSON error
-                e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + "" + Thread.currentThread().getStackTrace()[2].getLineNumber());
-
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            //  Log.e("onPostExecute", "onPostExecute");
-            pd.dismiss();
-            hideDialog();
-            //makeToast("Application Initialization Successful");
-        }
-
-        @Override
-        protected void onPreExecute() {
-            //  Log.e("onPreExecute", "onPreExecute");
-            pd = new ProgressDialog(getContext());
-            pd.setMessage("Initializing Application. Downloading Images,Please Wait...2");
-            pd.show();
-        }
-
-        @Override
-        protected void onProgressUpdate(Void... values) {
-        }
-    }
-
-    private void setBannerImgListList(JSONArray jsonArray) throws JSONException {
-
-        for (int i = 0; i < jsonArray.length(); i++) {
-
-            JSONObject jsonProsolveObject = jsonArray.getJSONObject(i);
-
-            String banner_id = jsonProsolveObject.getString("banner_id");
-
-            String company_id = jsonProsolveObject.getString("company_id");
-            String brand_name = jsonProsolveObject.getString("brand_name");
-            String folder_name = jsonProsolveObject.getString("folder_name");
-            String banner_image_name = jsonProsolveObject.getString("banner_image1");
-            banner_image_name = banner_image_name.replace(".jpg", "");
-
-            String type = jsonProsolveObject.getString("type");
-            String banner_image_url = jsonProsolveObject.getString("banner_image_url");
-
-            banner_image_url = banner_image_url.replace(" ", "%20");
-
-            String speciality_name = jsonProsolveObject.getString("speciality_name");
-            String product_image_url = jsonProsolveObject.getString("product_image_url");
-
-            product_image_url = product_image_url.replace(" ", "%20");
-
-            String product_image_name = jsonProsolveObject.getString("product_image2");
-            String product_imagenm = product_image_name.replace(".jpg", "");
-            String banner_type = jsonProsolveObject.getString("banner_type_id");
-
-            String generic_name = jsonProsolveObject.getString("generic_name");
-            String manufactured_by = jsonProsolveObject.getString("manufactured_by");
-            String marketed_by = jsonProsolveObject.getString("marketed_by");
-            String group_name = jsonProsolveObject.getString("group_name");
-            String link_to_page = jsonProsolveObject.getString("link_to_page");
-
-            String call_me = jsonProsolveObject.getString("call_me");
-            String meet_me = jsonProsolveObject.getString("meet_me");
-
-            String priority = jsonProsolveObject.getString("priority");
-
-            String status = jsonProsolveObject.getString("status");
-            String status_name = jsonProsolveObject.getString("status_name");
-
-            String start_time = jsonProsolveObject.getString("start_time");
-            String end_time = jsonProsolveObject.getString("end_time");
-            String clinical_trial_source = jsonProsolveObject.getString("clinical_trial_source");
-            String clinical_trial_identifier = jsonProsolveObject.getString("clinical_trial_identifier");
-
-            String clinical_trial_link = jsonProsolveObject.getString("clinical_trial_link");
-            String clinical_sponsor = jsonProsolveObject.getString("clinical_sponsor");
-            String drug_composition = jsonProsolveObject.getString("drug_composition");
-            String drug_dosing_durability = jsonProsolveObject.getString("drug_dosing_durability");
-
-
-            String added_by = jsonProsolveObject.getString("added_by");
-            String added_on = jsonProsolveObject.getString("added_on");
-            String modified_by = jsonProsolveObject.getString("modified_by");
-            String modified_on = jsonProsolveObject.getString("modified_on");
-            String is_disabled = jsonProsolveObject.getString("is_disabled");
-            String disabled_by = jsonProsolveObject.getString("disabled_by");
-            String disabled_on = jsonProsolveObject.getString("disabled_on");
-            String is_deleted = jsonProsolveObject.getString("is_deleted");
-            String deleted_by = jsonProsolveObject.getString("deleted_by");
-            String deleted_on = jsonProsolveObject.getString("deleted_on");
-
-            if (checkifImageExists(banner_id)) {
-                File file = getImage("/" + banner_image_name + ".png");
-                String path = file.getAbsolutePath();
-                if (path != null) {
-
-                    // Log.e("imageExist","imageExist allready");
-                }
-            } else {
-                // Log.e("imageExist","imageExist not");
-                downloadImage(banner_image_url, banner_image_name);
-            }
-            if (checkifImageExists(product_imagenm)) {
-                File file = getImage("/" + product_imagenm + ".png");
-                String path = file.getAbsolutePath();
-                if (path != null) {
-
-                    //  Log.e("imageExist","imageExist allready");
-                }
-            } else {
-                // Log.e("imageExist","imageExist not");
-                downloadImage(product_image_url, product_imagenm);
-            }
-
-            //saveImageToSD(banner_image1);
-            String img_download_status = "inprogress";
-            String download_initialization_time = appController.getDateTimenew();
-
-            bannerClass.addBannerData(banner_id, company_id, brand_name, type, banner_image_url, speciality_name,
-                    product_image_url, generic_name, manufactured_by, marketed_by, group_name, link_to_page, call_me, meet_me,
-                    priority, status, start_time, end_time,
-                    clinical_trial_source, clinical_trial_identifier, clinical_trial_link, clinical_sponsor, drug_composition, drug_dosing_durability, added_by, added_on, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, banner_image_name, banner_type, product_imagenm, folder_name, status_name, img_download_status, download_initialization_time);
-
-        }
-        String processend_time = appController.getDateTimenew();
-        dbController.addAsynctascRun_status("Banner Downloads", banner_downloadstart_time, processend_time, "");
-    }
-
-    private void downloadImage(final String banner_image_url, final String banner_image1) {
-          /*--- check whether there is some Text entered ---*/
-        if (banner_image_url.trim().length() > 0) {
-            /*--- instantiate our downloader passing it required components ---*/
-            getActivity().runOnUiThread(new Runnable() {
-                public void run() {
-                    mDownloader = new ImageDownloader(banner_image_url
-                            .trim(), banner_image1.trim(), pb, getContext(), bmp, new ImageDownloader.ImageLoaderListener() {
-                        @Override
-                        public void onImageDownloaded(Bitmap bmp) {
-                            bmp = bmp;
-                    /*--- here we assign the value of bmp field in our Loader class
-                     * to the bmp field of the current class ---*/
-                        }
-                    });
-                    mDownloader.execute();
-                    String img_download_status = "downloading";
-
-                    String download_start_time = appController.getDateTimenew();
-                    bannerClass.updateBannerImgDownloadStatus(banner_image1, banner_image_url, img_download_status, download_start_time);
-                }
-
-            });
-        }
-    }
-
-    public static boolean checkifImageExists(String imagename) {
-        Bitmap b = null;
-        File file = getImage("/" + imagename + ".png");
-        String path = file.getAbsolutePath();
-
-        if (path != null)
-            b = BitmapFactory.decodeFile(path);
-
-        return !(b == null || b.equals(""));
-    }
-
     public static File getImage(String imagename) {
 
         File mediaImage = null;
@@ -2255,4 +2040,5 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         return pref1.getString("lastSyncTime", null);
     }
+
 }

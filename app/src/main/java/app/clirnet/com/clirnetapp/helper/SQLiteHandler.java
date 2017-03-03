@@ -366,7 +366,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             contentValue.put(PHONE_NUMBER, phoneNumber);
 
             // Inserting Row
-            db.delete(TABLE_USER, KEY_NAME + " = ?", new String[]{username});
+            db.delete(TABLE_USER, null, null);
             db.insert(TABLE_USER, null, contentValue);
         } catch (Exception e) {
             throw new ClirNetAppException("Error inserting data");
@@ -564,7 +564,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     //This will add records from registration page into patient table  28/8/2016 ashish u
     public void addPatientPersonalfromLocal(int patient_id, String doctor_id, String first_name, String middle_name, String last_name, String sex, String strdate_of_birth, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String create_date, String doctor_membership_number, String flag, String patientInfoType, String addedTime, String added_by, String action,
-                                            String address, String city, String district, String pinno, String state, String phoneType, String alternatePhone_no, String selectedPhoneTypealternate_no, String uid, String uidType, String selectedIsd_codeType, String alternate_no_isdcode) {
+                                            String address, String city, String district, String pinno, String state, String phoneType, String alternatePhone_no, String selectedPhoneTypealternate_no, String uid, String uidType, String selectedIsd_codeType, String alternate_no_isdcode,String email) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         try {
@@ -572,16 +572,16 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(KEY_PATIENT_ID, patient_id);
             values.put(DOCTOR_ID, doctor_id);
             values.put(FIRST_NAME, first_name); // Name
-            values.put(MIDDLE_NAME, middle_name); // Email
-            values.put(LAST_NAME, last_name); // Email
-            values.put(GENDER, sex); // Created At
+            values.put(MIDDLE_NAME, middle_name);
+            values.put(LAST_NAME, last_name);
+            values.put(GENDER, sex);
 
-            values.put(DOB, strdate_of_birth); // Name
-            values.put(AGE, current_age); // Email
+            values.put(DOB, strdate_of_birth);
+            values.put(AGE, current_age);
 
-            values.put(PHONE_NUMBER, phone_number); // Email
-            values.put(LANGUAGE, selectedLanguage); // Email
-            values.put(PHOTO, patientImagePath); // Created At
+            values.put(PHONE_NUMBER, phone_number);
+            values.put(LANGUAGE, selectedLanguage);
+            values.put(PHOTO, patientImagePath);
 
             values.put(ADDED_ON, create_date);
 
@@ -603,6 +603,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(UIDTYPE, uidType);
             values.put(ISD_CODE, selectedIsd_codeType);
             values.put(ATERNATE_NO_ISD_CODE, alternate_no_isdcode);
+            values.put(KEY_EMAIL, email);
 
             // Inserting Row
             db.insert(TABLE_PATIENT, null, values);
@@ -883,18 +884,21 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(DOCTOR_LOGIN_ID, doctor_login_id);
             values.put(DOCTOR_MEMBERSHIP_ID, membership_id);
             values.put(FIRST_NAME, first_name); // Name
-            values.put(MIDDLE_NAME, middle_name); // Email
-            values.put(LAST_NAME, last_name); // Email
+            values.put(MIDDLE_NAME, middle_name);
+            values.put(LAST_NAME, last_name);
             values.put(KEY_EMAIL, email_id);
             values.put(PHONE_NUMBER, phone_no);
             values.put(COMPANY_ID, company_id);
-
+            //this will update record if exist else create new record 02-03-2017
+            int u = db.update(TABLE_DOCTORINFO, values, "doctor_id=?", new String[]{doc_id});
+            if (u == 0) {
+                db.insertWithOnConflict(TABLE_DOCTORINFO, null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            }
             //delete all previous records if there any in doctor info table.
-            //  db.delete(TABLE_DOCTORINFO, DOCTOR_ID + " = ? " + " AND " + DOCTOR_LOGIN_ID + " = ? ", new String[]{doc_id, doctor_login_id, DOCTOR_MEMBERSHIP_ID});
-            db.delete(TABLE_DOCTORINFO, DOCTOR_LOGIN_ID + " = ? ", new String[]{doctor_login_id});
+           /* db.delete(TABLE_DOCTORINFO, DOCTOR_LOGIN_ID + " = ? ", new String[]{doctor_login_id});
             db.execSQL("delete from " + TABLE_DOCTORINFO);
             /// Inserting Row
-            db.insert(TABLE_DOCTORINFO, null, values);
+            db.insert(TABLE_DOCTORINFO, null, values);*/
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -965,7 +969,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     public void addBannerDisplayData(String doc_id, String membership_id, String company_id, String banner_id, String banner_folder, String banner_image_url,
-                                     int banner_image_type, String module, String is_disabled, String is_deleted, String added_on, String flag) {
+                                     int banner_image_type, String module, String is_disabled, String is_deleted, String added_on, String flag,String source_page) {
 
         SQLiteDatabase db = null;
         try {
@@ -988,12 +992,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(IS_DELETED, is_deleted);
             values.put(ADDED_ON, added_on);
             values.put(FLAG, flag);
+            values.put("source_page",source_page);
 
             db.insert(TABLE_BANNER_DISPLAY, null, values);
 
         } catch (Exception e) {
             e.printStackTrace();
-
 
         } finally {
             if (db != null) {
@@ -1003,7 +1007,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     public void addBannerClickedData(String doc_id, String membership_id, String company_id, String banner_id, String banner_folder, String banner_image_url,
-                                     int banner_image_type, String module, String is_disabled, String is_deleted, String added_on, String flag) {
+                                     int banner_image_type, String module, String is_disabled, String is_deleted, String added_on, String flag,String source_page) {
 
         SQLiteDatabase db = null;
         try {
@@ -1025,6 +1029,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(IS_DELETED, is_deleted);
             values.put(ADDED_ON, added_on);
             values.put(FLAG, flag);
+            values.put("source_page", source_page);
 
             db.insert(TABLE_BANNER_CLICKED, null, values);
 
@@ -1240,7 +1245,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     //update the flag once data send to server successfully
-    public void updateBannerDisplayDataF(String bid, String flag) {
+    public void updateBannerDisplayDataFlag(String banner_id, String flag) {
         SQLiteDatabase db = null;
 
         try {
@@ -1252,7 +1257,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(SYCHRONIZED, flag); // Name
 
             // Inserting Row
-            db.update(TABLE_BANNER_DISPLAY, values, KEY_ID + "=" + bid, null);
+            db.update(TABLE_BANNER_DISPLAY, values, KEY_ID + "=" + banner_id, null);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1307,8 +1312,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             if (!isProcessExistsboolean) {
                 db.insert("asynctascrun_status", null, values);
             } else {
-                //  Log.e("allreadyExist", "  " + isImageUrlExistsboolean);
-                //  id = db.update(TABLE_COMPANY_BANNER, values, "banner_image1=? and banner_id=?", new String[]{banner_image_url,banner_id});
+
                 db.update("asynctascrun_status", values, "process=?", new String[]{process});
             }
 

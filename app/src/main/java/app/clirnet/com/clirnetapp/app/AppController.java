@@ -6,7 +6,8 @@ import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.support.multidex.MultiDex;
@@ -50,6 +51,7 @@ import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
 
 import static app.clirnet.com.clirnetapp.R.id.produced_bytxt;
+import static app.clirnet.com.clirnetapp.fragments.HomeFragment.getImage;
 
 public class AppController extends Application {
 
@@ -71,7 +73,6 @@ public class AppController extends Application {
     private String savedUserName;
     private String savedUserPassword;
     private ConnectionDetector connectionDetector;
-
 
 
     @Override
@@ -103,7 +104,7 @@ public class AppController extends Application {
 
     public <T> void addToRequestQueue(Request<T> req, String tag) {
         req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
-       // Log.d("Adding request to ", "" + req.getUrl());
+        // Log.d("Adding request to ", "" + req.getUrl());
         getRequestQueue().add(req);
     }
 
@@ -195,21 +196,21 @@ public class AppController extends Application {
                 .get(Calendar.DAY_OF_MONTH)))) {
             --a;
         }
-        if(a < 0)
+        if (a < 0)
             throw new IllegalArgumentException("Age < 0");
         return a;
     }
 
     public String getDateTime() {
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss",Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss", Locale.ENGLISH);
         return (sdf.format(cal.getTime()));
     }
 
     public String getDateTimenew() {
 
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss",Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
         return (sdf.format(cal.getTime()));
         //return "22-12-2016 04:05:07"; //for test
     }
@@ -263,7 +264,7 @@ public class AppController extends Application {
     }
 
     public static String addDay(Date date, int i) {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         cal.add(Calendar.DAY_OF_YEAR, i);
@@ -319,8 +320,8 @@ public class AppController extends Application {
     }
 
     public String ConvertDateFormat(String date) {
-        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
-        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
 
         String frmtedDate = "";
@@ -342,7 +343,7 @@ public class AppController extends Application {
 
         boolean result = true;
         try {
-            if(value!=null && !value.equals("")) {
+            if (value != null && !value.equals("")) {
                 long val = Long.parseLong((value.trim()));
                 result = val >= 1000000000;
             }
@@ -440,7 +441,7 @@ public class AppController extends Application {
                 product_image_url = list.get("product_image2");
                 brand_name = list.get("brand_name");
                 prdctgeneric_name = list.get("generic_name");
-                banner_type=list.get("banner_type");
+                banner_type = list.get("banner_type");
 
                 listBannerInformation = sqlController.getBannerInformation(img_name);
 
@@ -466,10 +467,10 @@ public class AppController extends Application {
         ImageView productImage = (ImageView) dialog.findViewById(R.id.productImage);
 
         /////////////////////////////////////
-        TextView mktByText=(TextView)dialog.findViewById(R.id.mktByText);
-        TextView brand_nameText=(TextView)dialog.findViewById(R.id.brand_name);
-        TextView produced_byText=(TextView)dialog.findViewById(produced_bytxt);
-        TextView generic_nameText=(TextView)dialog.findViewById(R.id.generic_name);
+        TextView mktByText = (TextView) dialog.findViewById(R.id.mktByText);
+        TextView brand_nameText = (TextView) dialog.findViewById(R.id.brand_name);
+        TextView produced_byText = (TextView) dialog.findViewById(produced_bytxt);
+        TextView generic_nameText = (TextView) dialog.findViewById(R.id.generic_name);
 
         Button btnrequest_sample = (Button) dialog.findViewById(R.id.request_sample);
 
@@ -486,7 +487,7 @@ public class AppController extends Application {
         } else {
             productImage.setImageResource(R.drawable.brand);
         }
-        if(banner_type.equals("product")) {
+        if (banner_type.equals("product")) {
             dialog.setTitle("Product Details");
             mktByText.setVisibility(View.VISIBLE);
             brand_nameText.setVisibility(View.VISIBLE);
@@ -515,7 +516,7 @@ public class AppController extends Application {
 
                 txtgeneric_name.setText(prdctgeneric_name);
             }
-        }else{
+        } else {
             dialog.setTitle("Company Details");
             btnseedrugProfile.setText("Visit Company Website");
             mktByText.setVisibility(View.GONE);
@@ -542,7 +543,7 @@ public class AppController extends Application {
         });
 
         Button call_me = (Button) dialog.findViewById(R.id.call_me);
-        if(connectionDetector ==null) {
+        if (connectionDetector == null) {
             connectionDetector = new ConnectionDetector(context);
         }
         call_me.setOnClickListener(new View.OnClickListener() {
@@ -553,8 +554,7 @@ public class AppController extends Application {
                 boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
                 if (isInternetPresent) {
                     creteCallMeDialog(context, "call_me");
-                }
-                else {
+                } else {
 
                     // Toast.makeText(context1, "Please Connect to Internet and try again", Toast.LENGTH_LONG).show();
                     callNoInternetDialog(context);
@@ -574,8 +574,7 @@ public class AppController extends Application {
                 boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
                 if (isInternetPresent) {
                     creteCallMeDialog(context, "meet_me");
-                }
-                else {
+                } else {
 
                     // Toast.makeText(context1, "Please Connect to Internet and try again", Toast.LENGTH_LONG).show();
                     callNoInternetDialog(context);
@@ -593,8 +592,8 @@ public class AppController extends Application {
 
                 if (finalLink_to_page != null && finalLink_to_page.trim().length() > 0) {
                     try {
-                        String updatedUrl=finalLink_to_page;
-                        if (!updatedUrl.startsWith("http://") && !updatedUrl.startsWith("https://")){
+                        String updatedUrl = finalLink_to_page;
+                        if (!updatedUrl.startsWith("http://") && !updatedUrl.startsWith("https://")) {
 
                             updatedUrl = "http://" + updatedUrl;
                         }
@@ -645,7 +644,7 @@ public class AppController extends Application {
 
         dialog.setTitle("Please Connect to Internet");
         //  dialog.setCancelable(false);
-        TextView msgTxt=(TextView)dialog.findViewById(R.id.msgTxt);
+        TextView msgTxt = (TextView) dialog.findViewById(R.id.msgTxt);
         msgTxt.setText("Please Connect to Internet and try again");
 
         Button dialogButtonCancel = (Button) dialog.findViewById(R.id.customDialogCancel);
@@ -948,7 +947,7 @@ public class AppController extends Application {
         //show age of pateint
     }
 
-    public void saveBannerDataIntoDb(String image_url, Context context, String doctor_membership_number, String action) {
+    public void saveBannerDataIntoDb(String image_url, Context context, String doctor_membership_number, String action, String sourcepage) {
 
         SQLiteHandler dbController = null;
 
@@ -981,11 +980,11 @@ public class AppController extends Application {
             if (dbController != null)
                 if (action.equals("display")) {
 
-                    dbController.addBannerDisplayData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time, flag);
+                    dbController.addBannerDisplayData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time, flag, sourcepage);
 
                 } else {
 
-                    dbController.addBannerClickedData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time, flag);
+                    dbController.addBannerClickedData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time, flag, sourcepage);
 
                 }
         } catch (NullPointerException e) {
@@ -996,7 +995,6 @@ public class AppController extends Application {
 
 
     private void getUsernamePasswordFromDatabase(Context context) {
-        Cursor cursor = null;
         SQLController sqlController1 = null;
         try {
 
@@ -1014,12 +1012,9 @@ public class AppController extends Application {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appendLog(getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appendLog(getDateTime() + " " + "/ " + "AppController" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
 
-            if (cursor != null) {
-                cursor.close();
-            }
             if (sqlController1 != null) {
                 sqlController1.close();
             }
@@ -1042,15 +1037,35 @@ public class AppController extends Application {
 
         return String.valueOf(bmi);
     }
+
     public String getCharFreq(String s) {
         int i = 0;
         Pattern p = Pattern.compile("patient_id");
-        Matcher m = p.matcher( s );
+        Matcher m = p.matcher(s);
         while (m.find()) {
             i++;
         }
-       // System.out.println(i); // Prints 2
+        // System.out.println(i); // Prints 2
         return String.valueOf(i);
+    }
+
+    public static boolean checkifImageExists(String imagename) {
+        Bitmap b = null;
+        try {
+            File file = getImage("/" + imagename + ".png");
+            String path = null;
+            if (file != null) {
+                path = file.getAbsolutePath();
+            }
+
+            if (path != null)
+                b = BitmapFactory.decodeFile(path);
+
+            //  return !(b == null || b.equals(""));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return !(b == null || b.equals(""));
     }
 
 }

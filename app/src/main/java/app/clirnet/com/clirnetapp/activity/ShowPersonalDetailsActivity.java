@@ -354,13 +354,13 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
                         String action = "clicked";
 
                         appController.showAdDialog(ShowPersonalDetailsActivity.this, url);
-                        appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action);
+                        appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action,"Show Personal Details");
 
 
                     }
                 });
                 String action = "display";
-                appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action);
+                appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action,"Show Personal Details");
             }
         } catch (Exception e) {
             e.printStackTrace();

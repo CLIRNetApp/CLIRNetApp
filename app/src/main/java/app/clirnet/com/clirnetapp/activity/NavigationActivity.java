@@ -12,21 +12,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.fragments.BarChartFragment;
 import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
 import app.clirnet.com.clirnetapp.fragments.HomeFragment;
+import app.clirnet.com.clirnetapp.fragments.IncompleteListFragment;
 import app.clirnet.com.clirnetapp.fragments.KnowledgeFragment;
 import app.clirnet.com.clirnetapp.fragments.PatientReportFragment;
 import app.clirnet.com.clirnetapp.fragments.PoHistoryFragment;
@@ -43,7 +39,7 @@ import com.google.firebase.messaging.FirebaseMessaging;*/
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
         , ReportFragment.OnFragmentInteractionListener, PatientReportFragment.OnFragmentInteractionListener, ReportFragmentViewPagerSetup.OnFragmentInteractionListener, TopTenAilmentFragment.OnFragmentInteractionListener,
-        BarChartFragment.OnFragmentInteractionListener,KnowledgeFragment.OnFragmentInteractionListener{
+        BarChartFragment.OnFragmentInteractionListener,KnowledgeFragment.OnFragmentInteractionListener,IncompleteListFragment.OnFragmentInteractionListener{
 
 
     private FragmentManager fragmentManager;
@@ -57,8 +53,6 @@ public class NavigationActivity extends AppCompatActivity
     private String docName;
     private String emailId;
     private AppController appController;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +118,7 @@ public class NavigationActivity extends AppCompatActivity
        //subscribeToPushService();
     }
 
-    private void subscribeToPushService() {
+   /* private void subscribeToPushService() {
 
         FirebaseMessaging.getInstance().subscribeToTopic("news");
         Log.d("AndroidBash", "Subscribed");
@@ -136,7 +130,7 @@ public class NavigationActivity extends AppCompatActivity
        Log.d("AndroidBash", token);
        // Toast.makeText(NavigationActivity.this, token, Toast.LENGTH_SHORT).show();
     }
-
+*/
     @Override
     public void onBackPressed() {
     }
@@ -189,6 +183,9 @@ public class NavigationActivity extends AppCompatActivity
             case R.id.nav_knowldge:
 
                 fragment = new KnowledgeFragment();
+                break;
+            case R.id.nav_prescription:
+                fragment=new IncompleteListFragment();
                 break;
 
             case R.id.nav_logout:

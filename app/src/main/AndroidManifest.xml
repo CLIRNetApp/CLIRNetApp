@@ -90,7 +90,7 @@
             />
 
       <!--  Commented this service for test build-->
-         <service android:name=".fcm.MyFirebaseMessagingService" >
+        <!-- <service android:name=".fcm.MyFirebaseMessagingService" >
              <intent-filter>
                  <action android:name="com.google.firebase.MESSAGING_EVENT" />
              </intent-filter>
@@ -99,7 +99,7 @@
              <intent-filter>
                  <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
              </intent-filter>
-         </service>
+         </service>-->
     </application>
 
 </manifest>

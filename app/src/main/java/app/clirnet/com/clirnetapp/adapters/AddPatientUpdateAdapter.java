@@ -45,8 +45,6 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
         RegistrationModel model = patientList.get(position);
 
 
-      //  String visit_date = patientList.get(position).getVisit_date();
-       // String ailments = patientList.get(position).getAilments();
         String follow_up_date = patientList.get(position).getActualFollowupDate();
 
 
@@ -61,7 +59,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
         }
         catch(Exception e){
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime()+" " +"/ "+"Addpatient update Adapter"+e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime()+" " +"/ "+"Addpatient update Adapter " + e + " "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         holder.tv_visit_date.setText(model.getVisit_date());
@@ -99,7 +97,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
                 holder.imgText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                       // Toast.makeText(mContext, "PATH IS: " + imgPath.trim(), Toast.LENGTH_LONG).show();
+
                         Intent i = new Intent(mContext, ShowPrescriptionImageActivity.class);
                         i.putExtra("PRESCRIPTIONIMAGE", imgPath);
                         mContext.startActivity(i);
@@ -124,9 +122,9 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
     public class HistoryViewHolder extends RecyclerView.ViewHolder {
 
         public final TextView tv_ailment;
-        public final TextView tv_fod;
+        private final TextView tv_fod;
         private final TextView tv_visit_date;
-        public final TextView tv_clinical_notes;
+        private final TextView tv_clinical_notes;
         private final TextView imgText;
         private final LinearLayout linearlayoutSymptoms;
         private final LinearLayout linearlayoutDiagnosis;

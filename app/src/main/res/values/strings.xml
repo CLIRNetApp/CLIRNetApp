@@ -134,6 +134,7 @@
     <string name="consultation_log">Consultation Log</string>
     <string name="patient_central">Patient Central</string>
     <string name="reports">Reports</string>
+    <string name="prescriptionqueue">Prescription Queue</string>
     <string name="change_password">Change Password !</string>
     <string name="to">To :</string>
     <string name="mob_no_notfound">Mobile Number Not Found!!!</string>
@@ -158,8 +159,8 @@
     <string name="quickview">Quick View</string>
     <string name="about">About</string>
     <string name="personadetails">Personal Details</string>
-    <string name="version">Release Version 1.2.5.2 </string>
-    <string name="aboutApp">About App V 1.2.5.2</string>
+    <string name="version">Release Version 1.2.5.3 </string>
+    <string name="aboutApp">About App V 1.2.5.3</string>
     <string name="language">Language</string>
     <string name="eng">Eng</string>
     <string name="hin">Hin</string>
@@ -188,7 +189,7 @@
     <string name="other">OTHR</string>
     <string name="na">NA</string>
     <string name="knowledge">Knowledge</string>
-    <string name="old_password">Current Paasword</string>
+    <string name="old_password">Current Password</string>
     <string name="hint_confirmpassword">Confirm New Password</string>
     <string name="settings_pwd_equal">Password Match</string>
     <string name="settings_pwd_not_equal">Password did not match</string>
@@ -205,7 +206,7 @@
     <string name="uid">UID</string>
     <string name="uidtype">Uid Type</string>
     <string name="reset">Reset</string>
-    <string name="updateDate">Last Updated Date 28-02-2017</string>
+    <string name="updateDate">Last Updated Date 01-03-2017</string>
     <string name="quickadd">Quick Add</string>
     <string name="title_edit_quick_add">Edit Quick Patient</string>
 

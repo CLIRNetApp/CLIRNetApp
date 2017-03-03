@@ -15,7 +15,7 @@ public class AppConfig {
      public static final String URL_PATIENT_RECORDS =LOCAL_DEMO_URL +  "/doctor/webapi/initialpatientdata";
 
 
-    public static final String URL_SYCHRONISED_TOSERVER = LOCAL_DEMO_URL + "/doctor/webapi/syncpatientdata";
+    public static final String URL_SYCHRONISED_TOSERVER = LOCAL_DEMO_URL + "/doctor/webapi/syncpatientdatav2";
 
 
      public static final String URL_DOCTORINFO = LOCAL_DEMO_URL + "/doctor/webapi/doctordetailedinformation";

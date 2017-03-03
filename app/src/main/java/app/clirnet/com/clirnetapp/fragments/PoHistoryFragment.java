@@ -572,11 +572,11 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                        String action = "clicked";
 
                        appController.showAdDialog(getContext(), url);
-                       appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+                       appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action,"Patient History");
                    }
                });
                String action = "display";
-               appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+               appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action,"Patient History");
            }
        }catch (Exception e){
            e.printStackTrace();

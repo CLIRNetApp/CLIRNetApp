@@ -1098,13 +1098,13 @@ public class EditPatientUpdate extends AppCompatActivity {
                         String action = "clicked";
 
                         appController.showAdDialog(EditPatientUpdate.this, url);
-                        appController.saveBannerDataIntoDb(url, EditPatientUpdate.this, doctor_membership_number, action);
+                        appController.saveBannerDataIntoDb(url, EditPatientUpdate.this, doctor_membership_number, action,"Edit Patient Update");
 
 
                     }
                 });
                 String action = "display";
-                appController.saveBannerDataIntoDb(url, EditPatientUpdate.this, doctor_membership_number, action);
+                appController.saveBannerDataIntoDb(url, EditPatientUpdate.this, doctor_membership_number, action,"Edit Patient Update");
             }
         }catch (Exception e){
             e.printStackTrace();

@@ -3,7 +3,6 @@ package app.clirnet.com.clirnetapp.utility;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.IBinder;
@@ -19,7 +18,6 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import app.clirnet.com.clirnetapp.R;
@@ -71,6 +69,7 @@ public class SyncDataService extends Service {
     private String pat_personal_count;
     private String pat_visit_count;
     private String username;
+    private ArrayList<String> bannerimgNames;
 
     @Override
     public void onCreate() {
@@ -80,7 +79,6 @@ public class SyncDataService extends Service {
         appController = new AppController();
 
     }
-
 
 
     @Override
@@ -98,16 +96,12 @@ public class SyncDataService extends Service {
             }
 
             patientInfoArayString = String.valueOf(dbController.getResultsForPatientInformation());
-           // Log.e("patientInfoArayString"," "+patientInfoArayString);
 
             patientVisitHistorArayString = String.valueOf(dbController.getResultsForPatientHistory());
             pat_personal_count = appController.getCharFreq(patientInfoArayString);
 
             pat_visit_count = appController.getCharFreq(patientVisitHistorArayString);
 
-          /*  Log.e("patientpersonalcount","  "+pat_personal_count);
-            Log.e("patientvisitcount","  "+pat_visit_count);
-*/
             mPhoneNumber = sqlController.getPhoneNumber();
             mEmailId = sqlController.getDocdoctorEmail();
             docId = sqlController.getDoctorId();
@@ -116,6 +110,8 @@ public class SyncDataService extends Service {
             company_id = sqlController.getCompany_id();
             getUsernamePasswordFromDatabase();
 
+            bannerimgNames = bannerClass.getImageName();
+
         } catch (Exception e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -123,26 +119,43 @@ public class SyncDataService extends Service {
 
         handler.removeCallbacks(sendUpdatesToUI);
 
-        handler.postDelayed(sendUpdatesToUI,50000); // 2 min  or 120 second 180000
+        handler.postDelayed(sendUpdatesToUI, 50000); // 2 min  or 120 second 180000
     }
 
     private final Runnable sendUpdatesToUI = new Runnable() {
         public void run() {
 
-            //DisplayLoggingInfo();   //this used to test the service weather it is sending data to activity or not 29/8/2016 Ashish
+            //this used to test the service weather it is sending data to activity or not 29/8/2016 Ashish
             try {
 
                 sendDataToServerAsyncTask();
-               // Log.e("Started", "Service Started1  " + appController.getDateTimenew());
-
+                checkIfImageExist();
 
             } catch (ClirNetAppException e) {
                 e.printStackTrace();
                 appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
-            handler.postDelayed(this, 1800000); // 10 seconds 10000 //1800000
+            handler.postDelayed(this, 1800000); // 10 seconds 10000 //1800000 30 min time interval
         }
     };
+
+    private void checkIfImageExist() {
+        try {
+            bannerimgNames = bannerClass.getImageName();
+        }catch (Exception e){
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync DataService:" + e);
+        }
+
+        int imgListSize = bannerimgNames.size();
+        if (imgListSize > 0) {
+            for (int i = 0; i < imgListSize; i++) {
+                String url = bannerimgNames.get(i);
+                if (! appController.checkifImageExists(url)) {
+                    bannerClass.updateBannerImgDownloadStatus1(url,"pending");
+                }
+            }
+        }
+    }
 
     private void sendDataToServerAsyncTask() throws ClirNetAppException {
 
@@ -164,23 +177,21 @@ public class SyncDataService extends Service {
         String bannerDisplayArayString = String.valueOf(dbController.getResultsForBannerDisplay());
 
 
-
         String bannerClickedArayString = String.valueOf(dbController.getResultsForBannerClicked());
 
 
         boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
         if (isInternetPresent) {
 
-            String start_time=appController.getDateTimenew();
+            String start_time = appController.getDateTimenew();
 
-            if (bannaerClickedIdsList.size() > 0 & bannerDisplayIds_List.size() > 0) {
-              new UploadBannerDataAsyncTask(mUserName, mPassword, getApplicationContext(), bannerDisplayArayString, bannerClickedArayString, doctor_membership_number, docId, bannerDisplayIds_List, bannaerClickedIdsList,start_time);
+            if (bannaerClickedIdsList.size() > 0 || bannerDisplayIds_List.size() > 0) {
+                new UploadBannerDataAsyncTask(mUserName, mPassword, getApplicationContext(), bannerDisplayArayString, bannerClickedArayString, doctor_membership_number, docId, bannerDisplayIds_List, bannaerClickedIdsList, start_time);
             }
 
             if (mUserName != null && mPassword != null) {
 
                 new GetBannerImageTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, company_id); //send log file to server
-
 
             }
 
@@ -194,10 +205,10 @@ public class SyncDataService extends Service {
                         .putString(PREF_VALUE, "1")
                         .apply();
 
-                 start_time1=appController.getDateTimenew();
+                start_time1 = appController.getDateTimenew();
                 sendDataToServer(patientInfoArayString, patientVisitHistorArayString, doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size());
 
-                new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword,start_time1); //send log file to server
+                new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, start_time1); //send log file to server
             }
         }
     }
@@ -234,6 +245,7 @@ public class SyncDataService extends Service {
 
                     String msg = user.getString("msg");
 
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync DataService data is sync to server : Messaage: " + msg );
 
                     if (msg.equals("OK")) {
 
@@ -267,11 +279,11 @@ public class SyncDataService extends Service {
                         lastSyncTime(time);
 
                         appController.appendLog(appController.getDateTime() + " " + "/ " + "data is sync to server from sync service  : patient Visit Count :" + pat_visit_count + " patient Count  :" + pat_personal_count);
-                        dbController.addAsynctascRun_status("Data Synced",start_time1,time,"");
+                        dbController.addAsynctascRun_status("Data Synced", start_time1, time, "");
 
                     } else if (msg.equals("Credentials Mismatch or Not Found")) {
 
-                        appController.appendLog(appController.getDateTime() + " " + "/ " + "data is sync to server from sync service  : patient Visit Count :" + msg);
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync DataService:" + msg);
 
                         // showNotification();
                     }
@@ -279,7 +291,7 @@ public class SyncDataService extends Service {
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Data Service" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
 
                 }
@@ -289,7 +301,7 @@ public class SyncDataService extends Service {
             @Override
             public void onErrorResponse(VolleyError error) {
                 // Log.e(TAG, "Login Error: " + error.getMessage());
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Service" + error + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Data Service" + error + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             }
         }) {
@@ -310,14 +322,12 @@ public class SyncDataService extends Service {
                 return checkParams(params);
 
             }
-            private Map<String, String> checkParams(Map<String, String> map){
-                Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry<String, String> pairs = it.next();
-                    if(pairs.getValue()==null){
+
+            private Map<String, String> checkParams(Map<String, String> map) {
+                for (Map.Entry<String, String> pairs : map.entrySet())
+                    if (pairs.getValue() == null) {
                         map.put(pairs.getKey(), "");
                     }
-                }
                 return map;
             }
         };
@@ -328,7 +338,7 @@ public class SyncDataService extends Service {
 
 
     private void getUsernamePasswordFromDatabase() {
-        Cursor cursor = null;
+
         SQLController sqlController1 = null;
         try {
 
@@ -348,9 +358,6 @@ public class SyncDataService extends Service {
             appController.appendLog(appController.getDateTime() + " " + "/ " + "SyncDataService " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
 
-            if (cursor != null) {
-                cursor.close();
-            }
             if (sqlController1 != null) {
                 sqlController1.close();
             }

@@ -54,7 +54,7 @@ public class SQLController {
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery = "SELECT name,password  FROM user limit 1   ";
+            String selectQuery = " SELECT name,password  FROM user  order by id desc limit 1 ";
 
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
@@ -593,10 +593,6 @@ public class SQLController {
 
             if (cursor.moveToFirst()) {
                 do {
-                   /* RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
-                            cursor.getString(7), cursor.getString(8),
-                            cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
-                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),cursor.getString(22),cursor.getString(23));*/
                     RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
                             cursor.getString(7), cursor.getString(8),
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
@@ -730,7 +726,6 @@ public class SQLController {
         String returnString = ""; // Your default if none is found
         try {
             db1 = dbHelper.getReadableDatabase();
-            //   stmt = db1.compileStatement("select doctor_id from doctor_perInfo order by doctor_id desc limit 1");
 
             String query = "select doctor_id from doctor_perInfo order by doctor_id desc limit 1";
 
@@ -758,8 +753,7 @@ public class SQLController {
 
     //doctor first and last name to set to navigation bar
     public String getDocdoctorName() throws ClirNetAppException {
-        // SQLiteStatement stmt = null;
-        // SQLiteStatement stmt2 = null;
+
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         String firstName = null;
@@ -767,8 +761,7 @@ public class SQLController {
         try {
             db1 = dbHelper.getReadableDatabase();
             String query = "select first_name,last_name from doctor_perInfo order by doctor_id desc limit 1";
-           /* stmt = db1.compileStatement("select first_name from doctor_perInfo order by doctor_id desc limit 1");
-            stmt2 = db1.compileStatement("select last_name from doctor_perInfo order by doctor_id desc limit 1");*/
+
             cursor = db1.rawQuery(query, null);
 
 
@@ -1121,7 +1114,6 @@ public class SQLController {
                     "FROM\n" +
                     " patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id  \n" +
                     " AND  date(substr(pvd.visit_date,7,4)||'-'||substr(pvd.visit_date,4,2)||'-'||substr(pvd.visit_date,1,2)) \n" +
-                   // " AND dpr.status = 'complete' AND pvd.status = 'complete' \n" +
                     "Between Date('" + fromdate + "') AND Date('" + todate + "')\n" +
                     "GROUP BY ageband ORDER by ageband";
 
@@ -1165,12 +1157,9 @@ public class SQLController {
 
         try {
             db1 = dbHelper.getReadableDatabase();
-            // stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
             String query = "select company_id from doctor_perInfo order by company_id desc limit 1";
 
-
             cursor = db1.rawQuery(query, null);
-
 
             if (cursor.moveToFirst()) {
                 returnString = cursor.getString(cursor.getColumnIndex("company_id"));
@@ -1364,60 +1353,6 @@ public class SQLController {
         return user;
     }
 
-    public void updatePatient() throws ClirNetAppException {
-
-        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
-        SQLiteDatabase database1 = null;
-        Cursor cursor = null;
-        try {
-
-            String selectQuery = "update patient set flag=0;";
-
-            database1 = dbHelper.getWritableDatabase();
-            cursor = database1.rawQuery(selectQuery, null);
-
-        } catch (Exception e) {
-
-            throw new ClirNetAppException("Something went wrong while getting getPatientListnew");
-        } finally {
-            //create method & pass cursor & db1 ref.
-            if (cursor != null) {
-                cursor.close();
-            }
-            if (database1 != null) {
-                database1.close();
-            }
-        }
-
-
-    }
-
-    public void updatePatientVisit() throws ClirNetAppException {
-
-        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
-        SQLiteDatabase database1 = null;
-        Cursor cursor = null;
-        try {
-
-            String selectQuery = "update patient_history set flag = 0;";
-
-            database1 = dbHelper.getWritableDatabase();
-            cursor = database1.rawQuery(selectQuery, null);
-
-
-        } catch (Exception e) {
-
-            throw new ClirNetAppException("Something went wrong while getting getPatientListnew");
-        } finally {
-            //create method & pass cursor & db1 ref.
-            if (cursor != null) {
-                cursor.close();
-            }
-            if (database1 != null) {
-                database1.close();
-            }
-        }
-    }
 
     public String getBannerId(String banner_image) throws ClirNetAppException {
         SQLiteDatabase db1 = null;
@@ -1733,13 +1668,13 @@ public class SQLController {
 
     }
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments
-    public ArrayList<RegistrationModel> getIncompleteRecordList() throws ClirNetAppException {
+    public ArrayList<RegistrationModel> getIncompleteRecordList(String formatedDate) throws ClirNetAppException {
 
-        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
+        ArrayList<RegistrationModel> incompletePrescrList = new ArrayList<>();
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery = "select id,prescription,added_on,added_by,status,phonenumber,email from prescription_queue;";
+            String selectQuery = "select id,prescription,added_on,added_by,status,phonenumber,email from prescription_queue where added_on = '" + formatedDate + "';";
 
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
@@ -1748,7 +1683,7 @@ public class SQLController {
                 do {
                     RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6));
 
-                    hotelList.add(user);
+                    incompletePrescrList.add(user);
 
                 } while (cursor.moveToNext());
             }
@@ -1765,7 +1700,44 @@ public class SQLController {
             }
         }
 
-        return hotelList;
+        return incompletePrescrList;
+
+    }
+
+    //get all the patient imp data from db, which will used in Incomplete List  fragments
+    public ArrayList<RegistrationModel> getIncompleteRecordList() throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> incompletePrescrList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "select id,prescription,added_on,added_by,status,phonenumber,email from prescription_queue ;";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6));
+
+                    incompletePrescrList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+
+            throw new ClirNetAppException("Something went wrong while getting getPatientList");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+
+        return incompletePrescrList;
 
     }
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments
@@ -1826,45 +1798,30 @@ public class SQLController {
             }
         }
     }
-    //update the flag once data send to server successfully
-    public void updateFolowUpDateFormat(String fod,String key_visit_id){
-        SQLiteDatabase db = null;
+    //get max count of patient id
+    public int getPrescriptionQueueCount() throws ClirNetAppException {
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        int returnValue = 0;
 
         try {
-            db = dbHelper.getWritableDatabase();
-
-            ContentValues values = new ContentValues();
-            values.put("actual_follow_up_date", fod);
-
-            db.update("patient_history", values, "key_visit_id=?", new String[]{key_visit_id});
-
+            db1 = dbHelper.getReadableDatabase();
+            //stmt = db1.compileStatement("select max(patient_id) from patient");
+            cursor = db1.rawQuery("select count(id) from prescription_queue", null);
+            if (cursor.moveToFirst()) {
+                returnValue = cursor.getInt(0);
+            }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new ClirNetAppException("Something went wrong while getting getPatientIdCount");
         } finally {
-            if (db != null) {
-                db.close();
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
             }
         }
-    }
-    //update the flag once data send to server successfully
-    public void updateAddedOnFormat(String added_on,String key_visit_id){
-        SQLiteDatabase db = null;
-
-        try {
-            db = dbHelper.getWritableDatabase();
-
-            ContentValues values = new ContentValues();
-            values.put("added_on", added_on);
-
-            db.update("patient_history", values, "key_visit_id=?", new String[]{key_visit_id});
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            if (db != null) {
-                db.close();
-            }
-        }
+        return returnValue;
     }
 }
 

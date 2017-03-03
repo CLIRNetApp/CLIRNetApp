@@ -265,15 +265,16 @@ public class LoginActivity extends Activity {
 
             }
         });
+
         if (getIntent().getExtras() != null) {
 
             for (String key : getIntent().getExtras().keySet()) {
                 String value = getIntent().getExtras().getString(key);
-                Log.e("value","  "+getIntent().getExtras().getString(key));
-                    Intent intent = new Intent(this, NavigationActivity.class);
-                    intent.putExtra("value", value);
-                    startActivity(intent);
-                    finish();
+                Log.e("value", "  " + getIntent().getExtras().getString(key));
+                Intent intent = new Intent(this, NavigationActivity.class);
+                intent.putExtra("value", value);
+                startActivity(intent);
+                finish();
 
             }
         }
@@ -281,44 +282,44 @@ public class LoginActivity extends Activity {
     }
 
     private void updateVisitDateFormat() {
-        String visitFlag=getupdateVisitDateFlag();
+        String visitFlag = getupdateVisitDateFlag();
         //Log.e("visitFlag", "" + visitFlag);
 
-        if(visitFlag == null) {
-        try {
-            ArrayList<LoginModel> visitDateCount = sqlController.getPatientVisitDate();
-            if(visitDateCount.size()>0) {
-                for (int i = 0; i < visitDateCount.size(); i++) {
-                    String visit_date = visitDateCount.get(i).getVisit_date();
-                    String visit_id = visitDateCount.get(i).getVisit_id();
-                    String fod=visitDateCount.get(i).getAct_followupdate();
-                    String added_on=visitDateCount.get(i).getAdded_on();
+        if (visitFlag == null) {
+            try {
+                ArrayList<LoginModel> visitDateCount = sqlController.getPatientVisitDate();
+                if (visitDateCount.size() > 0) {
+                    for (int i = 0; i < visitDateCount.size(); i++) {
+                        String visit_date = visitDateCount.get(i).getVisit_date();
+                        String visit_id = visitDateCount.get(i).getVisit_id();
+                        String fod = visitDateCount.get(i).getAct_followupdate();
+                        String added_on = visitDateCount.get(i).getAdded_on();
 
-                    SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-                    SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
-                    try {
-                        String visit_date_converted = myFormat.format(fromUser.parse(visit_date));
-                        String  fod_converted = null;
-                        String added_on_converted = null;
-                        if(fod!=null && !fod.equals("")){
-                            fod_converted= myFormat.format(fromUser.parse(fod));
+                        try {
+                            String visit_date_converted = myFormat.format(fromUser.parse(visit_date));
+                            String fod_converted = null;
+                            String added_on_converted = null;
+                            if (fod != null && !fod.equals("")) {
+                                fod_converted = myFormat.format(fromUser.parse(fod));
+                            }
+                            if (added_on != null && !added_on.equals("")) {
+                                added_on_converted = myFormat.format(fromUser.parse(added_on));
+                            }
+                            sqlController.updateVisitDate(visit_date_converted, visit_id, fod_converted, added_on_converted);
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                         }
-                        if(added_on!=null && !added_on.equals("")){
-                            added_on_converted=myFormat.format(fromUser.parse(added_on));
-                        }
-                        sqlController.updateVisitDate(visit_date_converted, visit_id,fod_converted,added_on_converted);
-
-                    } catch (ParseException e) {
-                        e.printStackTrace();
-                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                     }
+                    setupdateVisitDateFlag("true");
                 }
-                setupdateVisitDateFlag("true");
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         }
     }
 
@@ -355,10 +356,10 @@ public class LoginActivity extends Activity {
 
                 new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword, start_time);
                 new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber, start_time);
-                startService();
+                //startService();
                 savedLoginCounter("true");//to save shrd pref to update login counter
 
-               // registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
+                // registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
 
                 //update last sync time if sync from server
                 // update last login time
@@ -418,7 +419,7 @@ public class LoginActivity extends Activity {
         return AppController.hoursAgo(lastSyncTime);
     }
 
-    private void startService() {
+    public void startService() {
         String apiKey = getResources().getString(R.string.apikey);
         Intent serviceIntent = new Intent(getApplicationContext(), SyncDataService.class);
         serviceIntent.putExtra("name", name);
@@ -671,6 +672,7 @@ public class LoginActivity extends Activity {
         String visitDateUpdateFlag = pref.getString("flag1", null);
         return visitDateUpdateFlag;
     }
+
     private void registerToServer(final String name, final String email) {
         // Tag used to cancel the request
         String tag_string_req = "req_register";
@@ -733,8 +735,8 @@ public class LoginActivity extends Activity {
 
             @Override
             public Map<String, String> getHeaders() throws AuthFailureError {
-                Map<String,String> params = new HashMap<String, String>();
-                params.put("Content-Type","application/x-www-form-urlencoded");
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("Content-Type", "application/x-www-form-urlencoded");
                 return params;
             }
 
@@ -743,6 +745,7 @@ public class LoginActivity extends Activity {
         // Adding request to request queue
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
     }
+
     private void showDialog() {
         if (!pDialog.isShowing())
             pDialog.show();

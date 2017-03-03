@@ -2,7 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
 
-
     <group android:checkableBehavior="single">
 
         <item
@@ -12,19 +11,20 @@
         <item
             android:id="@+id/nav_consultLog"
             android:icon="@drawable/icon_2_green"
-            android:title="@string/consultation_log"
-             />
+            android:title="@string/consultation_log" />
         <item
             android:id="@+id/nav_pohistory"
             android:icon="@drawable/icon_3_green"
-            android:title="@string/pohistory"
-            />
+            android:title="@string/pohistory" />
+        <item
+            android:id="@+id/nav_prescription"
+            android:icon="@drawable/report"
+            android:title="@string/prescriptionqueue" />
 
         <item
             android:id="@+id/nav_report"
             android:icon="@drawable/report"
             android:title="@string/reports" />
-
 
 
     </group>

@@ -72,7 +72,7 @@ public class ConsultationLogFragment extends Fragment {
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
     private String doctor_membership_number;
-    private RecyclerView recycler_view2;
+
     private Button searchRecords;
 
     public ConsultationLogFragment() {
@@ -157,7 +157,6 @@ public class ConsultationLogFragment extends Fragment {
             sqlController = new SQLController(getContext().getApplicationContext());
             sqlController.open();
             appController = new AppController();
-            // patientData = (sqlController.getPatientList());
             bannerimgNames = bannerClass.getImageName();
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
@@ -165,9 +164,6 @@ public class ConsultationLogFragment extends Fragment {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
         }
-
-
-//To changes backgound images on time slot
 
         Calendar c = Calendar.getInstance();
 
@@ -211,38 +207,37 @@ public class ConsultationLogFragment extends Fragment {
             }
 
         });
-      //search the records from user query
-       searchRecords.setOnClickListener(new View.OnClickListener() {
+        //search the records from user query
+        searchRecords.setOnClickListener(new View.OnClickListener() {
 
 
             @Override
             public void onClick(View v) {
 
-                SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
-                SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+                SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                norecordtv.setVisibility(View.VISIBLE);
+                recycler_view.setVisibility(View.INVISIBLE);
 
                 searchdate = date.getText().toString();
                 String reformattedStr = "";
                 try {
 
                     reformattedStr = myFormat.format(fromUser.parse(searchdate));
-                   // Log.e("reformattedStr", "" + reformattedStr);
-
-
                 } catch (ParseException e) {
                     e.printStackTrace();
                     appController.appendLog(appController.getDateTimenew() + " " + "/ " + "ConsultationLog" + e);
                 }
 
                 if (TextUtils.isEmpty(searchdate)) {
-                    date.setError("Please enter Mobile Number");
+                    date.setError("Please enter Date");
                     return;
                 }
 
                 try {
-                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
                     Date date1 = sdf1.parse(searchdate);
-                  //  Log.e("date1","   "+date1);
+                    //  Log.e("date1","   "+date1);
 
                     Date currentdate = sdf1.parse(String.valueOf(sysdate));
 
@@ -260,39 +255,40 @@ public class ConsultationLogFragment extends Fragment {
                         filterfodList = sqlController.getPatientListnew(reformattedStr);
 
                         int filterModelSize = filterfodList.size();
+
                         if (filterModelSize > 0) {
                             norecordtv.setVisibility(View.GONE);
                             txtfod.setVisibility(View.GONE);
+                            recycler_view.setVisibility(View.VISIBLE);
                             txtupdateDate.setVisibility(View.VISIBLE);
                             followUpDateSearchAdapter.setFilter(filterfodList);
                             recycler_view.setAdapter(followUpDateSearchAdapter);
-                            if (filterfodList.size() > 0 ) {
-                                recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
 
-                                    @Override
-                                    public void onClick(View view, int position) {
+                        }
+                        if (filterfodList != null && filterModelSize > 0) {
+                            recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
 
-                                        followUpDateSearchAdapterToRecyclerView(position);
+                                @Override
+                                public void onClick(View view, int position) {
 
-                                    }
+                                    followUpDateSearchAdapterToRecyclerView(position);
 
-                                    @Override
-                                    public void onLongClick(View view, int position) {
+                                }
 
-                                    }
+                                @Override
+                                public void onLongClick(View view, int position) {
 
-                                }));
-                            }
+                                }
+
+                            }));
                         }
 
                         //  Toast.makeText(getContext(), "Date1 is after sysdate", Toast.LENGTH_LONG).show();
-                    }
-                    else if (date1.before(currentdate)) {
+                    } else if (date1.before(currentdate)) {
 
-                        if (filterfodList != null) {
+                        if (filterfodList.size() > 0) {
 
                             filterfodList.clear();
-
 
                         }
 
@@ -308,12 +304,12 @@ public class ConsultationLogFragment extends Fragment {
 
                         txtfod.setVisibility(View.VISIBLE);
                         txtupdateDate.setVisibility(View.GONE);
-
+                        recycler_view.setVisibility(View.VISIBLE);
                         rvAdapterforUpdateDate.setFilter(filterVistDateList);
                         recycler_view.setAdapter(rvAdapterforUpdateDate);
 
                         //   Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
-                        if (filterVistDateList.size() > 0 ) {
+                        if (filterModelSize > 0) {
                             recycler_view.addOnItemTouchListener(new RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
 
                                 @Override
@@ -332,6 +328,7 @@ public class ConsultationLogFragment extends Fragment {
                             }));
                         }
                     }
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
@@ -347,74 +344,74 @@ public class ConsultationLogFragment extends Fragment {
     }
 
 
-
-
     private void setrvAdapterforUpdateDateToRecyclerView(int position) {
+        if (filterVistDateList.size() > 0) {
+            RegistrationModel book = filterVistDateList.get(position);
+            Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
 
-        RegistrationModel book = filterVistDateList.get(position);
-        Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
+            i.putExtra("PATIENTPHOTO", book.getPhoto());
+            i.putExtra("ID", book.getPat_id());
+            i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
+            i.putExtra("FIRSTTNAME", book.getFirstName());
+            i.putExtra("MIDDLENAME", book.getMiddleName());
+            i.putExtra("LASTNAME", book.getLastName());
+            i.putExtra("DOB", book.getDob());
 
-        i.putExtra("PATIENTPHOTO", book.getPhoto());
-        i.putExtra("ID", book.getPat_id());
-        i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
-        i.putExtra("FIRSTTNAME", book.getFirstName());
-        i.putExtra("MIDDLENAME", book.getMiddleName());
-        i.putExtra("LASTNAME", book.getLastName());
-        i.putExtra("DOB", book.getDob());
+            i.putExtra("PHONE", book.getMobileNumber());
+            i.putExtra("PHONETYPE", book.getPhone_type());
+            i.putExtra("AGE", book.getAge());
+            i.putExtra("LANGUAGE", book.getLanguage());
+            i.putExtra("GENDER", book.getGender());
+            i.putExtra("FOD", book.getFollowUpDate());
+            i.putExtra("AILMENT", book.getAilments());
+            i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
+            i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
+            i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
+            i.putExtra("CLINICALNOTES", book.getClinicalNotes());
+            i.putExtra("PRESCRIPTION", book.getPres_img());
+            i.putExtra("ISDCODE", book.getIsd_code());
+            i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
+            i.putExtra("FROMWHERE", "2");
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
-        i.putExtra("PHONE", book.getMobileNumber());
-        i.putExtra("PHONETYPE", book.getPhone_type());
-        i.putExtra("AGE", book.getAge());
-        i.putExtra("LANGUAGE", book.getLanguage());
-        i.putExtra("GENDER", book.getGender());
-        i.putExtra("FOD", book.getFollowUpDate());
-        i.putExtra("AILMENT", book.getAilments());
-        i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", book.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", book.getPres_img());
-        i.putExtra("ISDCODE", book.getIsd_code());
-        i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
-        i.putExtra("FROMWHERE", "2");
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
-
-        startActivity(i);
+            startActivity(i);
+        }
     }
 
     private void followUpDateSearchAdapterToRecyclerView(int position) {
+        if (filterfodList.size() > 0) {
+            RegistrationModel book = filterfodList.get(position);
 
-        RegistrationModel book = filterfodList.get(position);
+            Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
 
-        Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
+            i.putExtra("PATIENTPHOTO", book.getPhoto());
+            i.putExtra("ID", book.getPat_id());
+            // Log.e("book.getPat_id()", "" + book.getPat_id());
+            i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
+            i.putExtra("FIRSTTNAME", book.getFirstName());
+            i.putExtra("MIDDLENAME", book.getMiddleName());
+            i.putExtra("LASTNAME", book.getLastName());
+            i.putExtra("DOB", book.getDob());
 
-        i.putExtra("PATIENTPHOTO", book.getPhoto());
-        i.putExtra("ID", book.getPat_id());
-       // Log.e("book.getPat_id()", "" + book.getPat_id());
-        i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
-        i.putExtra("FIRSTTNAME", book.getFirstName());
-        i.putExtra("MIDDLENAME", book.getMiddleName());
-        i.putExtra("LASTNAME", book.getLastName());
-        i.putExtra("DOB", book.getDob());
-
-        i.putExtra("PHONE", book.getMobileNumber());
-        i.putExtra("PHONETYPE", book.getPhone_type());
-        i.putExtra("AGE", book.getAge());
-        i.putExtra("LANGUAGE", book.getLanguage());
-        i.putExtra("GENDER", book.getGender());
-        i.putExtra("FOD", book.getFollowUpDate());
-        i.putExtra("AILMENT", book.getAilments());
-        i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", book.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", book.getPres_img());
-        i.putExtra("ISDCODE", book.getIsd_code());
-        i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
-        i.putExtra("FROMWHERE", "2");
-        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
-        //i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-        startActivity(i);
+            i.putExtra("PHONE", book.getMobileNumber());
+            i.putExtra("PHONETYPE", book.getPhone_type());
+            i.putExtra("AGE", book.getAge());
+            i.putExtra("LANGUAGE", book.getLanguage());
+            i.putExtra("GENDER", book.getGender());
+            i.putExtra("FOD", book.getFollowUpDate());
+            i.putExtra("AILMENT", book.getAilments());
+            i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
+            i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
+            i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
+            i.putExtra("CLINICALNOTES", book.getClinicalNotes());
+            i.putExtra("PRESCRIPTION", book.getPres_img());
+            i.putExtra("ISDCODE", book.getIsd_code());
+            i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
+            i.putExtra("FROMWHERE", "2");
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            //i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            startActivity(i);
+        }
 
     }
 
@@ -488,12 +485,12 @@ public class ConsultationLogFragment extends Fragment {
                         String action = "clicked";
 
                         appController.showAdDialog(getContext(), url);
-                        appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+                        appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action,"Consultation Log");
 
                     }
                 });
                 String action = "display";
-                appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+                appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action,"Consultation Log");
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -552,6 +549,7 @@ public class ConsultationLogFragment extends Fragment {
         filterVistDateList = null;
 
     }
+
     //class to implement OnClick Listner
     public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 

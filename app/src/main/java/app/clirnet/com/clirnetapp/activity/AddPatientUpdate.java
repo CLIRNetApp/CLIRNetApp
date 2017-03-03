@@ -799,13 +799,13 @@ public class AddPatientUpdate extends AppCompatActivity {
                         String action = "clicked";
 
                         appController.showAdDialog(AddPatientUpdate.this, url);
-                        appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action);
+                        appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action,"Add Patient Visit");
 
 
                     }
                 });
                 String action = "display";
-                appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action);
+                appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action,"Add Patient Visit");
             }
         }catch (Exception e){
             e.printStackTrace();

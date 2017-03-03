@@ -18,7 +18,6 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -182,6 +181,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
     private String added_on;
     private BannerClass bannerClass;
     private ArrayList<String> bannerimgNames;
+    private String emial_addr;
 
     public QuickAddNewRecordsFragment() {
         // Required empty public constructor
@@ -205,7 +205,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
             prescriptionimgId = getArguments().getString("PRESCRIPTIONID");
             phNumber = getArguments().getString("PHNUMBER");
             added_on=getArguments().getString("ADDED_ON");
-            Log.e("prescriptionimgId", "" + prescriptionimgId);
+             emial_addr=getArguments().getString("EMIAL_ADDRESS");
+            //Log.e("prescriptionimgId", "" + emial_addr);
         }
         this.setRetainInstance(true);
     }
@@ -337,7 +338,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         try {
             mDiagnosisList = lastNamedb.getDiagnosis();
@@ -352,7 +353,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -1650,7 +1651,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
             } catch (ParseException e) {
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Quick Edit Records fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
             String action = "added";
@@ -1666,7 +1667,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
             //Add a new patient
                 dbController.addPatientPersonalfromLocal(patient_id, docId, strFirstName, middle_name, strLastName, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, visit_date, doctor_membership_number, flag, patientInfoType, addedTime, added_by, action,
-                        strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, stralternatePhone_no, selectedPhoneTypealternate_no, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType);
+                        strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, stralternatePhone_no, selectedPhoneTypealternate_no, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType,emial_addr);
 
                 dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, strailments, prescriptionimgPath, clinical_note, added_on, visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action,
                         strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting);
@@ -1695,7 +1696,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         try {
@@ -1740,17 +1741,17 @@ public class QuickAddNewRecordsFragment extends Fragment {
                             String action = "clicked";
 
                             appController.showAdDialog(getContext(), url);
-                            appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+                            appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action,"Quick Add New Records");
 
                         }
                     });
                     String action = "display";
-                    appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action);
+                    appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action,"Quick Add New Records");
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         }
     }
@@ -1770,7 +1771,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
     private void previewPrescriptionCapturedImage() {
@@ -1781,7 +1782,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             edtprescriptionImgPath.setText(uriSavedImage.toString());
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
     private static Date addDay(Date date, int i) {
