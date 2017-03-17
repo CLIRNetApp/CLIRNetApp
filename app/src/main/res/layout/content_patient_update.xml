@@ -319,184 +319,8 @@
                     android:textColor="@color/bg_login"
                     android:textSize="14sp" />
 
-                <!-- <LinearLayout
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content"
-                     android:orientation="horizontal"
-                     android:padding="5dp"
-                     android:paddingLeft="2dp">
-
-                     <TextView
-                         android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
-                         android:text="Ailments" />
-
-                     <TextView
-                         android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
-                         android:text="*"
-                         android:textColor="@color/red" />
-                 </LinearLayout>
-
-                 <LinearLayout
-                     android:layout_width="match_parent"
-                     android:layout_height="wrap_content"
-                     android:orientation="horizontal"
-                     android:padding="3dp">
-
-                     <MultiAutoCompleteTextView
-
-                         android:id="@+id/ailments1"
-                         android:layout_width="match_parent"
-                         android:layout_height="wrap_content"
-                         android:layout_margin="4dp"
-                         android:background="@drawable/rectangle_corner"
-                         android:ems="13"
-                         android:fontFamily="sans-serif"
-                         android:padding="10dp"
-                         android:textAppearance="?android:attr/textAppearanceSmall"
-                         android:digits="@string/digitsnumber"
-                         tools:targetApi="jelly_bean" />
-
-                 </LinearLayout>
- -->
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/followuptxt"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/prescriptionBtn"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="30dp"
-                android:gravity="start"
-                android:paddingLeft="5dp"
-                android:text="Follow Up"
-                android:textColor="@color/colorPrimary"
-                android:textSize="18sp" />
-
-            <LinearLayout
-                android:id="@+id/dateLayout"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_below="@+id/followuptxt"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="15dp"
-                android:background="@drawable/rectangle_corner"
-                android:orientation="horizontal"
-                android:padding="5dp">
-
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-
-                    android:id="@+id/fodtextshow"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_marginRight="15dp"
-                    android:layout_weight="0.6"
-                    android:drawableRight="@android:drawable/ic_menu_my_calendar"
-                    android:editable="false"
-                    android:focusable="false"
-                    android:focusableInTouchMode="true"
-                    android:fontFamily="sans-serif"
-                    android:gravity="center"
-                    android:hint="Select Date"
-                    android:inputType="text"
-                    android:maxLines="1"
-                    android:padding="3dp"
-                    android:textSize="12sp"
-                    app:bootstrapBrand="success"
-                    app:bootstrapSize="md"
-                    app:roundedCorners="false" />
-
-                <com.beardedhen.androidbootstrap.BootstrapEditText
-
-                    android:id="@+id/inputnumber"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_marginRight="35dp"
-                    android:layout_weight="0.5"
-                    android:editable="false"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:fontFamily="sans-serif"
-                    android:hint="Enter number of"
-                    android:inputType="number"
-                    android:maxLength="19"
-                    android:maxLines="1"
-                    android:padding="3dp"
-                    android:textSize="12sp"
-                    app:bootstrapBrand="success"
-                    app:bootstrapSize="md"
-                    app:roundedCorners="false" />
-
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="5dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:paddingLeft="5dp">
-
-                    <Button
-                        android:id="@+id/days"
-                        android:layout_width="70dp"
-                        android:layout_height="40dp"
-                        android:layout_marginRight="20dp"
-                        android:background="@drawable/circle"
-                        android:fontFamily="sans-serif-medium"
-                        android:gravity="center"
-                        android:paddingRight="5dp"
-                        android:saveEnabled="true"
-                        android:text="@string/day"
-                        android:textAllCaps="false"
-                        android:textColor="#000"
-                        android:textSize="14sp" />
-
-                    <Button
-                        android:id="@+id/week"
-                        android:layout_width="70dp"
-                        android:layout_height="40dp"
-                        android:layout_marginRight="20dp"
-                        android:background="@drawable/circle"
-                        android:fontFamily="sans-serif-medium"
-                        android:gravity="center"
-                        android:paddingRight="5dp"
-                        android:text="@string/week"
-                        android:textAllCaps="false"
-                        android:textColor="#000"
-                        android:textSize="14sp" />
-
-                    <Button
-                        android:id="@+id/month"
-                        android:layout_width="70dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/circle"
-                        android:fontFamily="sans-serif-medium"
-                        android:gravity="center"
-                        android:paddingRight="7dp"
-                        android:text="@string/month"
-                        android:textAllCaps="false"
-                        android:textColor="#000"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/btnclear"
-                    android:layout_width="0dp"
-                    android:layout_height="40dp"
-                    android:layout_weight="0.5"
-                    android:background="@drawable/circle"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="center"
-                    android:paddingRight="7dp"
-                    android:text="@string/clear"
-                    android:textAllCaps="false"
-                    android:textColor="#000"
-                    android:textSize="14sp" />
-
-            </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/visitDateLayout"
@@ -529,6 +353,20 @@
                     android:text="@string/visitDate"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textColor="@color/black"
+                    android:textSize="14sp" />
+
+                <Button
+                    android:id="@+id/referedby"
+                    android:layout_width="350dp"
+                    android:layout_height="45dp"
+                    android:layout_marginLeft="40dp"
+                    android:layout_marginRight="10sp"
+                    android:padding="10dp"
+                    android:background="@color/bg_login"
+                    android:gravity="center"
+                    android:text="@string/referedby"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:textColor="@color/white"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -994,7 +832,6 @@
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 
-
             <LinearLayout
                 android:id="@+id/presciptionlayout"
                 android:layout_width="match_parent"
@@ -1094,8 +931,139 @@
                       android:textSize="12sp"
                       android:visibility="gone" />-->
             </LinearLayout>
+            <TextView
+                android:id="@+id/followuptxt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="30dp"
+                android:gravity="start"
+                android:paddingLeft="5dp"
+                android:text="Follow Up"
+                android:textColor="@color/colorPrimary"
+                android:textSize="18sp" />
+
+            <LinearLayout
+                android:id="@+id/dateLayout"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="15dp"
+                android:background="@drawable/rectangle_corner"
+                android:orientation="horizontal"
+                android:padding="5dp">
 
 
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+
+                    android:id="@+id/fodtextshow"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="15dp"
+                    android:layout_weight="0.6"
+                    android:drawableRight="@android:drawable/ic_menu_my_calendar"
+                    android:editable="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"
+                    android:hint="Select Date"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:padding="3dp"
+                    android:textSize="12sp"
+                    app:bootstrapBrand="success"
+                    app:bootstrapSize="md"
+                    app:roundedCorners="false" />
+
+                <com.beardedhen.androidbootstrap.BootstrapEditText
+
+                    android:id="@+id/inputnumber"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_marginRight="35dp"
+                    android:layout_weight="0.5"
+                    android:editable="false"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:fontFamily="sans-serif"
+                    android:hint="Enter number of"
+                    android:inputType="number"
+                    android:maxLength="19"
+                    android:maxLines="1"
+                    android:padding="3dp"
+                    android:textSize="12sp"
+                    app:bootstrapBrand="success"
+                    app:bootstrapSize="md"
+                    app:roundedCorners="false" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:paddingLeft="5dp">
+
+                    <Button
+                        android:id="@+id/days"
+                        android:layout_width="70dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="20dp"
+                        android:background="@drawable/circle"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:paddingRight="5dp"
+                        android:saveEnabled="true"
+                        android:text="@string/day"
+                        android:textAllCaps="false"
+                        android:textColor="#000"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/week"
+                        android:layout_width="70dp"
+                        android:layout_height="40dp"
+                        android:layout_marginRight="20dp"
+                        android:background="@drawable/circle"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:paddingRight="5dp"
+                        android:text="@string/week"
+                        android:textAllCaps="false"
+                        android:textColor="#000"
+                        android:textSize="14sp" />
+
+                    <Button
+                        android:id="@+id/month"
+                        android:layout_width="70dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/circle"
+                        android:fontFamily="sans-serif-medium"
+                        android:gravity="center"
+                        android:paddingRight="7dp"
+                        android:text="@string/month"
+                        android:textAllCaps="false"
+                        android:textColor="#000"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btnclear"
+                    android:layout_width="0dp"
+                    android:layout_height="40dp"
+                    android:layout_weight="0.5"
+                    android:background="@drawable/circle"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:paddingRight="7dp"
+                    android:text="@string/clear"
+                    android:textAllCaps="false"
+                    android:textColor="#000"
+                    android:textSize="14sp" />
+
+            </LinearLayout>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="10dp" />

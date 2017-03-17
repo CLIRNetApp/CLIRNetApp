@@ -278,7 +278,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
             sqlController = new SQLController(getContext());
             sqlController.open();
-            dbController = new SQLiteHandler(getContext());
+            dbController = SQLiteHandler.getInstance(getContext());
             appController = new AppController();
             databaseClass = new DatabaseClass(getContext());
 
@@ -1349,7 +1349,13 @@ public class QuickAddNewRecordsFragment extends Fragment {
         });
 
     }
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        // Tracking the screen view
+        AppController.getInstance().trackScreenView("Quick Add New Records Fragment");
+    }
     @Override
     public void onDetach() {
         super.onDetach();
@@ -1670,7 +1676,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
                         strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, stralternatePhone_no, selectedPhoneTypealternate_no, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType,emial_addr);
 
                 dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, strailments, prescriptionimgPath, clinical_note, added_on, visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action,
-                        strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting);
+                        strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting,"","");//"" are refredby and to
 
                 dbController.deletePrescriptionImageQueue(prescriptionimgId,prescriptionimgPath);
 

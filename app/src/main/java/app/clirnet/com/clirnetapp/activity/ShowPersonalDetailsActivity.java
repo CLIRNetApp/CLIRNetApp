@@ -72,6 +72,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private String strAlternatenumber;
     private String strAlternatephtype;
     private String strPhoneTpe;
+    private String strVisitDate;
 
 
     @Override
@@ -119,6 +120,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
         strAlternatephtype = getIntent().getStringExtra("ALTERNATENUMBERTYPE");
         strPhoneTpe = getIntent().getStringExtra("PHONETYPE");
+        strVisitDate=getIntent().getStringExtra("VISITDATE");
 
 
         TextView txtSysDate = (TextView) findViewById(R.id.sysdate);
@@ -242,7 +244,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
                     i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
                     i.putExtra("VISITID", registrationModel.getKey_visit_id());
                     i.putExtra("ADDED_ON",registrationModel.getAdded_on());
-
+                    i.putExtra("VISITDATE",registrationModel.getVisit_date());
                     i.putExtra("ADDRESS", registrationModel.getAddress());
                     i.putExtra("CITYORTOWN", registrationModel.getCityortown());
                     i.putExtra("DISTRICT", registrationModel.getDistrict());

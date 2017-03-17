@@ -18,8 +18,13 @@
             android:title="@string/pohistory" />
         <item
             android:id="@+id/nav_prescription"
-            android:icon="@drawable/report"
+            android:icon="@drawable/rx"
             android:title="@string/prescriptionqueue" />
+
+        <item
+            android:id="@+id/nav_refered"
+            android:icon="@drawable/referal"
+            android:title="@string/associates" />
 
         <item
             android:id="@+id/nav_report"
@@ -31,6 +36,7 @@
 
     <item android:title="Knowledge Suite ">
         <menu>
+            <group android:checkableBehavior="single">
             <item
                 android:id="@+id/nav_knowldge"
                 android:icon="@drawable/ic_menu_manage"
@@ -39,6 +45,7 @@
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_menu_send"
                 android:title="@string/logout" />
+            </group>
         </menu>
     </item>
 

@@ -505,7 +505,13 @@ public class ConsultationLogFragment extends Fragment {
         inputMethodManager.hideSoftInputFromWindow(date.getWindowToken(), 0);
         super.onPause();
     }
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        // Tracking the screen view
+        AppController.getInstance().trackScreenView("ConsultationLog Fragment");
+    }
     @Override
     public void onDetach() {
         super.onDetach();

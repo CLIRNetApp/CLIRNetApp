@@ -67,8 +67,15 @@
         <item>NA</item>
     </string-array>
 
+    <string-array name="associate_group">
+        <item>Physician</item>
+        <item>Diagnostic</item>
+        <item>Hospital </item>
+        <item>Chemist</item>
+        <item>Other</item>
+    </string-array>
+
     <string-array name="states">
-        <item>Select State</item>
         <item>Andhra Pradesh</item>
         <item>Arunachal Pradesh</item>
         <item>Assam </item>
@@ -159,8 +166,8 @@
     <string name="quickview">Quick View</string>
     <string name="about">About</string>
     <string name="personadetails">Personal Details</string>
-    <string name="version">Release Version 1.2.5.3 </string>
-    <string name="aboutApp">About App V 1.2.5.3</string>
+    <string name="version">Release Version 1.2.5.4 </string>
+    <string name="aboutApp">About App V 1.2.5.4</string>
     <string name="language">Language</string>
     <string name="eng">Eng</string>
     <string name="hin">Hin</string>
@@ -206,9 +213,17 @@
     <string name="uid">UID</string>
     <string name="uidtype">Uid Type</string>
     <string name="reset">Reset</string>
-    <string name="updateDate">Last Updated Date 01-03-2017</string>
+    <string name="updateDate">Last Updated Date 09-03-2017</string>
     <string name="quickadd">Quick Add</string>
     <string name="title_edit_quick_add">Edit Quick Patient</string>
+    <string name="referedby">Refered By</string>
+    <string name="associates">Associates</string>
+    <string name="speciality">Specialty</string>
+    <string name="address">Address</string>
+    <string name="city">City</string>
+    <string name="district">District</string>
+    <string name="state">State</string>
+    <string name="pin">Pin Code</string>
 
 
 </resources>

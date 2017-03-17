@@ -94,7 +94,6 @@ public class DatabaseClass extends SQLiteOpenHelper {
         //transfer bytes from the inputfile to the outputfile
         byte[] buffer = new byte[1024] ;
         int length;
-        int i=0;
 
         while ((length = myInput.read(buffer)) > 0) {
             myOutput.write(buffer, 0, length) ;
@@ -207,7 +206,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
 
     public void addAilments(String ailments, int ailid) {
         SQLiteDatabase db = null;
-        long id = 0;
+
 
         try {
             db = this.getWritableDatabase();
@@ -216,7 +215,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
             values.put("ailment_name", ailments);
             values.put("id", ailid);
             // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-            id = db.insert("ailments", null, values);
+            db.insert("ailments", null, values);
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime()+"" +"/"+"Database"+e);
             e.printStackTrace();
@@ -233,7 +232,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
     }
 
     private boolean isTableExists(SQLiteDatabase db, String tableName) {
-        if ("ailments" == null || db == null || !db.isOpen()) {
+        if (db == null || !db.isOpen()) {
             return false;
         }
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM sqlite_master WHERE type = ? AND name = ?", new String[]{"table", tableName});

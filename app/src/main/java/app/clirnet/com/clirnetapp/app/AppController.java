@@ -25,6 +25,10 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.StandardExceptionParser;
+import com.google.android.gms.analytics.Tracker;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -87,11 +91,66 @@ public class AppController extends Application {
         super.onCreate();
         MultiDex.install(this);
         mInstance = this;
+        AnalyticsTrackers.initialize(this);
+        AnalyticsTrackers.getInstance().get(AnalyticsTrackers.Target.APP);
 
     }
 
     public static synchronized AppController getInstance() {
         return mInstance;
+    }
+
+    public synchronized Tracker getGoogleAnalyticsTracker() {
+        AnalyticsTrackers analyticsTrackers = AnalyticsTrackers.getInstance();
+        return analyticsTrackers.get(AnalyticsTrackers.Target.APP);
+    }
+    /***
+     * Tracking screen view
+     *
+     * @param screenName screen name to be displayed on GA dashboard
+     */
+    public void trackScreenView(String screenName) {
+        Tracker t = getGoogleAnalyticsTracker();
+
+        // Set screen name.
+        t.setScreenName(screenName);
+
+        // Send a screen view.
+        t.send(new HitBuilders.ScreenViewBuilder().build());
+
+        GoogleAnalytics.getInstance(this).dispatchLocalHits();
+    }
+    /***
+     * Tracking exception
+     *
+     * @param e exception to be tracked
+     */
+    public void trackException(Exception e) {
+        if (e != null) {
+            Tracker t = getGoogleAnalyticsTracker();
+
+            t.send(new HitBuilders.ExceptionBuilder()
+                    .setDescription(
+                            new StandardExceptionParser(this, null)
+                                    .getDescription(Thread.currentThread().getName(), e))
+                    .setFatal(false)
+                    .build()
+            );
+        }
+    }
+
+    /***
+     * Tracking event
+     *
+     * @param category event category
+     * @param action   action of the event
+     * @param label    label
+     */
+    public void trackEvent(String category, String action, String label) {
+        Tracker t = getGoogleAnalyticsTracker();
+
+        // Build and send an Event.
+        t.send(new HitBuilders.EventBuilder().setCategory(category).setAction(action).setLabel(label).build());
     }
 
     private RequestQueue getRequestQueue() {
@@ -133,6 +192,8 @@ public class AppController extends Application {
         File logFile = new File("sdcard/PatientsImages/log.txt");
         if (!logFile.exists()) {
             try {
+
+                logFile.getParentFile().mkdirs(); // Will create parent directories if not exists
                 logFile.createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -152,7 +213,7 @@ public class AppController extends Application {
     //Remove leading zero from the age filed if any
     public static String removeLeadingZeroes(String value) throws ClirNetAppException {
         String val = null;
-        if (value.trim() != null) {
+        if (value!= null && value.trim().length()>0) {
             try {
                 val = Integer.valueOf(value).toString();
             } catch (Exception e) {
@@ -215,13 +276,20 @@ public class AppController extends Application {
         //return "22-12-2016 04:05:07"; //for test
     }
 
+    public String getDateTimeddmmyyyy() {
+
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        return (sdf.format(cal.getTime()));
+    }
+
     //This will remove commas from string
 
     public String removeCommaOccurance(String str) {
         //String str = ",,,,,,,,,,kushal,,,,,,,,,,,,,,,,,,mayurv,narendra,dhrumil,mark, ,,,, ";
         String splitted[] = str.split(",");
         StringBuilder sb = new StringBuilder();
-        String retrieveData = "";
+        String retrieveData;
         for (int i = 0; i < splitted.length; i++) {
             retrieveData = splitted[i];
             if ((retrieveData.trim()).length() > 0) {
@@ -477,13 +545,11 @@ public class AppController extends Application {
         Button btnseedrugProfile = (Button) dialog.findViewById(R.id.seedrugProfile);
         Button btnseeclinical_trial = (Button) dialog.findViewById(R.id.seeclinical_trial);
 
-        if (!product_image_name.equals("") && product_image_url != null && product_image_url.trim().length() > 0 && product_image_name != null && product_image_name.trim().length() > 0) {
+        if (!product_image_name.equals("") && product_image_url != null && product_image_url.trim().length() > 0 && product_image_name.trim().length() > 0) {
 
             BitmapDrawable d = new BitmapDrawable(context.getResources(), "sdcard/BannerImages/" + product_image_name + ".png"); // path is ur resultant //image
 
-            if (d != null) {
-                productImage.setImageDrawable(d);
-            }
+            productImage.setImageDrawable(d);
         } else {
             productImage.setImageResource(R.drawable.brand);
         }
@@ -624,12 +690,12 @@ public class AppController extends Application {
             }
         });
 
-        String brand_name2 = listBannerInformation.get("brand_name");
+        final String brand_name2 = listBannerInformation.get("brand_name");
         btnrequest_sample.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                creteSampleRequestDialog(context, listBannerInformation.get("brand_name"));
+                creteSampleRequestDialog(context, brand_name2);
             }
         });
 
@@ -728,7 +794,7 @@ public class AppController extends Application {
                 }
                 boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
                 if (isInternetPresent) {
-                    new AskforSampleAsyncTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, doc_mem_id, selected_id, strQty, strother);
+                    new AskforSampleAsyncTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, doc_mem_id, selected_id, strQty, strother,getDateTimenew());
                 } else {
 
                     Toast.makeText(context1, "Please Connect to Internet and try again", Toast.LENGTH_LONG).show();
@@ -846,7 +912,7 @@ public class AppController extends Application {
                 String added_on = request_on;
                 boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
                 if (isInternetPresent) {
-                    new CallMeMeetMeAsynTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, called_from, strDate, from_time, to_time, address, strreason, doc_mem_id);
+                    new CallMeMeetMeAsynTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, called_from, strDate, from_time, to_time, address, strreason, doc_mem_id,getDateTimenew());
 
                 }
                  /* dbController.addCallMeetMeData(brand_name, company_id, generic_name, called_from, strDate, from_time, to_time,

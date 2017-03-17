@@ -46,7 +46,6 @@ import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
-import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
@@ -69,7 +68,7 @@ public class LoginActivity extends Activity {
     private String name;
     private MD5 md5;
     private ConnectionDetector connectionDetector;
-    private SQLiteHandler dbController;
+
     private String strPassword;
     private String md5EncyptedDataPassword;
 
@@ -98,7 +97,15 @@ public class LoginActivity extends Activity {
         inputPassword = (EditText) findViewById(R.id.password);
         btnLogin = (Button) findViewById(R.id.btnLogin);
 
-
+        try {
+            String startPageNumber;
+            if (savedInstanceState != null) {
+                startPageNumber = savedInstanceState.getString("MSG");
+               // Log.e("startPageNumber", "  " + startPageNumber);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Button btnLinkToForgetScreen = (Button) findViewById(R.id.btnLinkToForgetScreen);
         TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
@@ -148,11 +155,16 @@ public class LoginActivity extends Activity {
         try {
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
-            dbController = new SQLiteHandler(getApplicationContext());
             Boolean value = getFirstTimeLoginStatus();
             if (value) {
                 doctor_membership_number = sqlController.getDoctorMembershipIdNew();
             }
+           /* ArrayList<HashMap<String, String>> list = sqlController.getAllbank();
+            for (HashMap<String, String> e : list) {
+               Log.e("ID"," "+e.get("ID"));
+                Log.e("NAME"," "+e.get("NAME"));
+                Log.e("SPECIALITY"," "+e.get("SPECIALITY"));
+            }*/
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -229,6 +241,7 @@ public class LoginActivity extends Activity {
 
         });
 
+
         // Login button Click Event
         btnLogin.setOnClickListener(new View.OnClickListener() {
 
@@ -239,6 +252,7 @@ public class LoginActivity extends Activity {
                                             strPassword = inputPassword.getText().toString().trim();
 
                                             String time = appController.getDateTimenew();
+                                            AppController.getInstance().trackEvent("Login", "Login Pressed", "Track event");
 
                                             //This code used for Remember Me(ie. save login id and password for future ref.)
                                             rememberMe(name, strPassword, time); //save username only
@@ -246,6 +260,7 @@ public class LoginActivity extends Activity {
                                             //rememberMeCheckbox();//Removed remeber me check box for safety concern 04-11-16
                                             //to authenticate user credentials
                                             LoginAuthentication();
+
 
                                         }
 
@@ -266,7 +281,7 @@ public class LoginActivity extends Activity {
             }
         });
 
-        if (getIntent().getExtras() != null) {
+        /*if (getIntent().getExtras() != null) {
 
             for (String key : getIntent().getExtras().keySet()) {
                 String value = getIntent().getExtras().getString(key);
@@ -277,13 +292,14 @@ public class LoginActivity extends Activity {
                 finish();
 
             }
-        }
+        }*/
 
     }
 
     private void updateVisitDateFormat() {
+
         String visitFlag = getupdateVisitDateFlag();
-        //Log.e("visitFlag", "" + visitFlag);
+      //  Log.e("visitFlag", "" + visitFlag);
 
         if (visitFlag == null) {
             try {
@@ -358,8 +374,7 @@ public class LoginActivity extends Activity {
                 new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber, start_time);
                 //startService();
                 savedLoginCounter("true");//to save shrd pref to update login counter
-
-                // registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
+                //registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
 
                 //update last sync time if sync from server
                 // update last login time
@@ -496,8 +511,9 @@ public class LoginActivity extends Activity {
     private void goToNavigation() {
 
         Intent intent = new Intent(getApplicationContext(),
-                NavigationActivity.class);
+         NavigationActivity.class);
         startActivity(intent);
+       //overridePendingTransition(R.anim.slide_out, R.anim.slide_in);
         finish();
     }
 
@@ -518,7 +534,11 @@ public class LoginActivity extends Activity {
                 .apply();
 
     }
-
+    @Override
+    public void onResume(){
+        super.onResume();
+       // overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+    }
 
     public void onStart() {
         super.onStart();
@@ -544,15 +564,10 @@ public class LoginActivity extends Activity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        // Log.d("onDestroy", "The onDestroy() event");
-        // session.setLogin(false);
+
         //Close the all database connection opened here 31/10/2016 By. Ashish
         if (sqlController != null) {
             sqlController = null;
-        }
-        if (dbController != null) {
-            dbController.close();
-            dbController = null;
         }
         if (connectionDetector != null) {
             connectionDetector = null;
@@ -669,8 +684,7 @@ public class LoginActivity extends Activity {
     private String getupdateVisitDateFlag() {
 
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        String visitDateUpdateFlag = pref.getString("flag1", null);
-        return visitDateUpdateFlag;
+        return pref.getString("flag1", null);
     }
 
     private void registerToServer(final String name, final String email) {
@@ -685,7 +699,7 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Register Response: " + response.toString());
+                Log.d(TAG, "Register Response: " + response);
                 hideDialog();
 
                 try {

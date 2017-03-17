@@ -3,6 +3,7 @@ package app.clirnet.com.clirnetapp.activity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
@@ -12,16 +13,20 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -43,6 +48,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
@@ -84,7 +90,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
     private String strPatientId;
     private String fowSel = null;
-    private String usersellectedDate ;
+    private String usersellectedDate;
     private String monthSel = null;
     private SQLController sqlController;
     private SQLiteHandler dbController;
@@ -157,6 +163,13 @@ public class AddPatientUpdate extends AppCompatActivity {
     private String strAlternateIsd_code;
     private String patientImagePath;
     private String prescriptionImgPath;
+    private ArrayList<RegistrationModel> mAssociateList;
+    private HashMap<String, String> NameData;
+    private ArrayList<String> specialityArray;
+    private StringBuilder sb;
+    private int addCounter = 0;
+    private String strReferedTo;
+    private String strRederedBy;
 
 
     @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
@@ -174,13 +187,13 @@ public class AddPatientUpdate extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         if (databaseClass == null) {
             databaseClass = new DatabaseClass(getApplicationContext());
         }
-        if(lastNamedb == null){
+        if (lastNamedb == null) {
             lastNamedb = new LastnameDatabaseClass(getApplicationContext());
         }
 
@@ -199,20 +212,19 @@ public class AddPatientUpdate extends AppCompatActivity {
         strLanguage = getIntent().getStringExtra("LANGUAGE");
         strgender = getIntent().getStringExtra("GENDER");
 
-        String strPrescriptionImage = getIntent().getStringExtra("PRESCRIPTION");
-
         strAddress = getIntent().getStringExtra("ADDRESS");
         strCityorTown = getIntent().getStringExtra("CITYORTOWN");
         strDistrict = getIntent().getStringExtra("DISTRICT");
         strPinNo = getIntent().getStringExtra("PIN");
         strState = getIntent().getStringExtra("STATE");
 
-        strIsd_code=getIntent().getStringExtra("ISDCODE");
-        strAlternateIsd_code=getIntent().getStringExtra("ALTERNATEISDCODE");
+        strIsd_code = getIntent().getStringExtra("ISDCODE");
+        strAlternateIsd_code = getIntent().getStringExtra("ALTERNATEISDCODE");
 
-        strAlternatenumber=getIntent().getStringExtra("ALTERNATENUMBER");
+        strAlternatenumber = getIntent().getStringExtra("ALTERNATENUMBER");
 
-        strAlternatephtype=getIntent().getStringExtra("ALTERNATENUMBERTYPE");
+        strAlternatephtype = getIntent().getStringExtra("ALTERNATENUMBERTYPE");
+
         //Initalize global view to this method 3-11-2016
         initalizeView();
 
@@ -239,9 +251,9 @@ public class AddPatientUpdate extends AppCompatActivity {
         days = (Button) findViewById(R.id.days);
         week = (Button) findViewById(R.id.week);
         month = (Button) findViewById(R.id.month);
-        btnclear=(Button)findViewById(R.id.btnclear);
+        btnclear = (Button) findViewById(R.id.btnclear);
 
-        visitDate=(EditText)findViewById(R.id.visitDate);
+        visitDate = (EditText) findViewById(R.id.visitDate);
 
         edtInput_weight = (EditText) findViewById(R.id.input_weight);
         edtInput_pulse = (EditText) findViewById(R.id.input_pulse);
@@ -250,8 +262,8 @@ public class AddPatientUpdate extends AppCompatActivity {
         edtInput_temp = (EditText) findViewById(R.id.input_temp);
         edtInput_sugar = (EditText) findViewById(R.id.input_sugar);
         edtInput_sugarfasting = (EditText) findViewById(R.id.input_sugarfasting);
-        edtInput_bmi=(EditText)findViewById(R.id.input_bmi);
-        edtInput_height=(EditText)findViewById(R.id.input_height);
+        edtInput_bmi = (EditText) findViewById(R.id.input_bmi);
+        edtInput_height = (EditText) findViewById(R.id.input_height);
 
         edtSymptoms = (MultiAutoCompleteTextView) findViewById(R.id.symptoms);
         edtDignosis = (MultiAutoCompleteTextView) findViewById(R.id.dignosis);
@@ -295,7 +307,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy",Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
         Date todayDate = new Date();
 
         String dd = sdf.format(todayDate);
@@ -304,7 +316,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         // String current_date = sdf.format(todayDate);
 
 
-        SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss",Locale.ENGLISH);
+        SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
         Date todayDate3 = new Date();
 
 
@@ -332,26 +344,27 @@ public class AddPatientUpdate extends AppCompatActivity {
                 sqlController = new SQLController(getApplicationContext());
                 sqlController.open();
             }
-            dbController = new SQLiteHandler(getApplicationContext());
+            dbController = SQLiteHandler.getInstance(getApplicationContext());
             //This will get all the visit  history of patient
+            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
+            docId = sqlController.getDoctorId();
+            maxVisitId = sqlController.getPatientVisitIdCount();
             patientHistoryData = (sqlController.getPatientHistoryListAll1(strPatientId)); //get all patient data from db
             int size = patientHistoryData.size();
 
             if (size > 0) {
                 //this will set adapter to list to show all the patient history
-                AddPatientUpdateAdapter pha = new AddPatientUpdateAdapter(AddPatientUpdate.this,patientHistoryData);
+                AddPatientUpdateAdapter pha = new AddPatientUpdateAdapter(AddPatientUpdate.this, patientHistoryData);
                 recyclerView.setAdapter(pha);
 
             }
-            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
-            docId = sqlController.getDoctorId();
-            maxVisitId = sqlController.getPatientVisitIdCount();
 
-            if(bannerClass == null){
-                bannerClass=new BannerClass(getApplicationContext());
+
+            if (bannerClass == null) {
+                bannerClass = new BannerClass(getApplicationContext());
             }
-            bannerimgNames= bannerClass.getImageName();
-          //  Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1));
+            bannerimgNames = bannerClass.getImageName();
+            //  Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1));
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
         } finally {
@@ -383,7 +396,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             maxid = id + 1;
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + "" + "/" + "AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
 
             if (databaseClass != null) {
@@ -404,7 +417,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         try {
             ArrayList<String> mDiagnosisList = lastNamedb.getDiagnosis();
@@ -419,7 +432,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -480,13 +493,13 @@ public class AddPatientUpdate extends AppCompatActivity {
                 i.putExtra("DISTRICT", strDistrict);
                 i.putExtra("PIN", strPinNo);
                 i.putExtra("STATE", strState);
-                i.putExtra("ALTERNATENUMBER",strAlternatenumber);
-                i.putExtra("ALTERNATENUMBERTYPE",strAlternatephtype );
+                i.putExtra("ALTERNATENUMBER", strAlternatenumber);
+                i.putExtra("ALTERNATENUMBERTYPE", strAlternatephtype);
                 i.putExtra("ISDCODE", strIsd_code);
-                i.putExtra("ALTERNATEISDCODE",strAlternateIsd_code);
+                i.putExtra("ALTERNATEISDCODE", strAlternateIsd_code);
                 i.putExtra("FROMWHERE", "editpatient");
                 startActivity(i);
-               // finish();
+                // finish();
             }
         });
         cancel.setOnTouchListener(new View.OnTouchListener() {
@@ -516,7 +529,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
                     addUpdate.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
-                   
+
                     saveData();//saved data int db
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -532,7 +545,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // back button pressed
-              goToNavigation1();
+                goToNavigation1();
 
                 //  Toast.makeText(EditPatientUpdate.this,"back is pressed",Toast.LENGTH_SHORT).show();
             }
@@ -565,6 +578,14 @@ public class AddPatientUpdate extends AppCompatActivity {
         } else {
             Toast.makeText(getApplicationContext(), "There is no history to update!!!", Toast.LENGTH_LONG).show();
         }
+        Button refered = (Button) findViewById(R.id.referedby);
+        refered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                showReferedDialogBox();
+            }
+        });
 
         setupAnimation();//change the banner image after 10  sec interval.
     }
@@ -576,9 +597,409 @@ public class AddPatientUpdate extends AppCompatActivity {
         clinicalNotes = (EditText) findViewById(R.id.clinicalNotes);
 
         imageViewprescription = (ImageView) findViewById(R.id.imageViewprescription);
-       // txtfollow_up_date = (TextView) findViewById(R.id.txtfollow_up_date);
+        // txtfollow_up_date = (TextView) findViewById(R.id.txtfollow_up_date);
 
 
+    }
+
+    private void showReferedDialogBox() {
+
+        final Dialog dialog = new Dialog(new ContextThemeWrapper(this, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Overscan));
+
+        LayoutInflater factory = LayoutInflater.from(AddPatientUpdate.this);
+        final View f = factory.inflate(R.layout.refered_by_dialog, null);
+
+        dialog.setTitle("Refered By-To");
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(f);
+        Button dialogButtonCancel = (Button) f.findViewById(R.id.customDialogCancel);
+        Button dialogButtonOk = (Button) f.findViewById(R.id.customDialogOk);
+        final Button addMore = (Button) f.findViewById(R.id.addMore);
+        final AutoCompleteTextView nameRefredBy = (AutoCompleteTextView) f.findViewById(R.id.nameRefredBy);
+        final AutoCompleteTextView nameReferedTo1 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo1);
+        final AutoCompleteTextView nameReferedTo2 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo2);
+        final AutoCompleteTextView nameReferedTo3 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo3);
+        final AutoCompleteTextView nameReferedTo4 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo4);
+        final AutoCompleteTextView nameReferedTo5 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo5);
+
+        final ArrayList<String> nameArray = new ArrayList<>();
+        specialityArray = new ArrayList<>();
+
+        try {
+            mAssociateList = sqlController.getAssociateDataIdName();
+            final ArrayList<HashMap<String, String>> list = sqlController.getAllbank();
+
+            NameData = new HashMap<>();
+
+            for (int im = 0; im < list.size(); im++) {
+                String strid = list.get(im).get("ID");
+                String strName = list.get(im).get("NAME");
+                String str = list.get(im).get("SPECIALITY");
+                specialityArray.add(str);
+                NameData.put(strName, strid);
+                Log.e("str", " " + strName + "  " + strid + " " + str);
+
+            }
+
+            setCities(NameData.keySet().toArray(
+                    new String[0]), f);
+
+        } catch (ClirNetAppException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+
+
+        // Click cancel to dismiss android custom dialog box
+        dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addCounter = 0;
+                dialog.dismiss();
+
+            }
+        });
+
+        dialogButtonOk.setOnClickListener(new View.OnClickListener() {
+
+
+            public String code;
+
+            @Override
+            public void onClick(View v) {
+                StringBuilder sb = new StringBuilder();
+
+                if (addCounter >= 0) {
+                    String refredToName1 = nameReferedTo1.getText().toString();
+                    if (refredToName1 != null && !refredToName1.equals("") && refredToName1.length() > 0) {
+                        code = NameData.get(refredToName1);
+                        if (code == null) {
+                            Log.e("NoValForcode", "NoValFor code");
+                        } else {
+                            int index = Integer.parseInt(code);
+                            sb.append(index);
+                        }
+                    }
+
+                }
+                if (addCounter >= 1) {
+                    String refredToName2 = nameReferedTo2.getText().toString();
+                    if (refredToName2 != null && !refredToName2.equals("") && refredToName2.length() > 0) {
+                        code = NameData.get(refredToName2);
+                        if (code == null) {
+                            Log.e("NoValForcode", "NoValFor code");
+                        } else {
+                            int index = Integer.parseInt(code);
+                            sb.append(index);
+                        }
+                    }
+                }
+                if (addCounter >= 2) {
+                    String refredToName3 = nameReferedTo3.getText().toString();
+                    if (refredToName3 != null && !refredToName3.equals("") && refredToName3.length() > 0) {
+                        code = NameData.get(refredToName3);
+                        if (code == null) {
+                            Log.e("NoValForcode", "NoValFor code");
+                        } else {
+                            int index = Integer.parseInt(code);
+                            sb.append(index);
+                        }
+                    }
+                }
+                if (addCounter >= 3) {
+                    String refredToName4 = nameReferedTo4.getText().toString();
+                    if (refredToName4 != null && !refredToName4.equals("") && refredToName4.length() > 0) {
+                        code = NameData.get(refredToName4);
+                        if (code == null) {
+                            Log.e("NoValForcode", "NoValFor code");
+                        } else {
+                            int index = Integer.parseInt(code);
+                            sb.append(index);
+                        }
+                    }
+                }
+                if (addCounter >= 4) {
+                    String refredToName5 = nameReferedTo5.getText().toString();
+                    if (refredToName5 != null && !refredToName5.equals("") && refredToName5.length() > 0) {
+                        code = NameData.get(refredToName5);
+                        if (code == null) {
+                            Log.e("NoValForcode", "NoValFor code");
+                        } else {
+                            int index = Integer.parseInt(code);
+                            sb.append(index);
+                        }
+                    }
+                }
+
+                strReferedTo = String.valueOf(sb);
+                String strRederedBy1 = nameRefredBy.getText().toString();
+
+                if (strRederedBy1 != null && !strRederedBy1.equals("") && strRederedBy1.length() > 0) {
+                    code = NameData.get(strRederedBy1);
+                    if (code == null) {
+                        Log.e("NoValForcode", "NoValFor code");
+                    } else {
+                        int index = Integer.parseInt(code);
+                        strRederedBy = String.valueOf(index);
+                    }
+
+                }
+
+
+               /* Toast.makeText(getApplicationContext(), "  " + strRederedBy, Toast.LENGTH_LONG).show();*/
+                strReferedTo = String.valueOf(sb);
+                addCounter = 0;
+                dialog.dismiss();
+            }
+        });
+
+        addMore.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                addCounter = addCounter + 1;
+                if (addCounter == 1) {
+                    LinearLayout refred1 = (LinearLayout) dialog.findViewById(R.id.refred1);
+                    refred1.setVisibility(View.VISIBLE);
+                }
+                if (addCounter == 2) {
+                    LinearLayout refred2 = (LinearLayout) dialog.findViewById(R.id.refred2);
+                    refred2.setVisibility(View.VISIBLE);
+                }
+                if (addCounter == 3) {
+                    LinearLayout refred3 = (LinearLayout) dialog.findViewById(R.id.refred3);
+                    refred3.setVisibility(View.VISIBLE);
+                }
+                if (addCounter == 4) {
+                    LinearLayout refred4 = (LinearLayout) dialog.findViewById(R.id.refred4);
+                    refred4.setVisibility(View.VISIBLE);
+                }
+                if (addCounter >= 4) {
+                    addMore.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getApplicationContext(), "Limit Exceed! You can not add more", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
+
+
+        dialog.show();
+    }
+
+    private void setCities(String cData[], View f) {
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+                android.R.layout.simple_dropdown_item_1line, cData);
+
+        final AutoCompleteTextView nameRefredBy = (AutoCompleteTextView) f.findViewById(R.id.nameRefredBy);
+        final AutoCompleteTextView nameReferedTo1 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo1);
+        final AutoCompleteTextView nameReferedTo2 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo2);
+        final AutoCompleteTextView nameReferedTo3 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo3);
+        final AutoCompleteTextView nameReferedTo4 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo4);
+        final AutoCompleteTextView nameReferedTo5 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo5);
+
+        nameRefredBy.setThreshold(2);
+        nameRefredBy.setAdapter(adapter);
+        nameReferedTo1.setThreshold(2);
+        nameReferedTo1.setAdapter(adapter);
+        nameReferedTo2.setThreshold(2);
+        nameReferedTo2.setAdapter(adapter);
+        nameReferedTo3.setThreshold(2);
+        nameReferedTo3.setAdapter(adapter);
+        nameReferedTo4.setThreshold(2);
+        nameReferedTo4.setAdapter(adapter);
+        nameReferedTo5.setThreshold(2);
+        nameReferedTo5.setAdapter(adapter);
+
+        final TextView refredtoSpeciality1 = (TextView) f.findViewById(R.id.refredtoSpeciality1);
+        final TextView refredtoSpeciality2 = (TextView) f.findViewById(R.id.refredtoSpeciality2);
+        final TextView refredtoSpeciality3 = (TextView) f.findViewById(R.id.refredtoSpeciality3);
+        final TextView refredtoSpeciality4 = (TextView) f.findViewById(R.id.refredtoSpeciality4);
+        final TextView refredtoSpeciality5 = (TextView) f.findViewById(R.id.refredtoSpeciality5);
+        final TextView refredBySpeciality = (TextView) f.findViewById(R.id.refredBySpeciality);
+
+        sb = new StringBuilder();
+
+        nameRefredBy.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            String val = null;
+
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+
+                    val = nameRefredBy.getText() + "";
+                    int index = 0;
+                    String strSpecialty = null;
+                    String code = null;
+                    if (val != null && !val.equals("") && val.length() > 0) {
+                        code = NameData.get(val);
+                        index = Integer.parseInt(code);
+                    }
+                    if (index == 0) {
+                        //  strSpecialty=specialityArray.get(index);
+                    } else {
+                        strSpecialty = specialityArray.get(index - 1);
+                    }
+                    if (val == null) {
+                        nameRefredBy.setError("Invalid Entry");
+                    } else {
+                        refredBySpeciality.setVisibility(View.VISIBLE);
+                        refredBySpeciality.setText(strSpecialty);
+                        // strRederedBy = String.valueOf(index);
+                    }
+                    if (val == null || code == null) {
+                        strRederedBy = null;
+                    }
+                    Log.e("index", " " + index);
+                    Log.v("TruitonAutoCompleteTe",
+                            "Selected City Code: " + code + " " + strSpecialty);
+
+                }
+            }
+        });
+
+        nameReferedTo1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    String val = nameReferedTo1.getText() + "";
+                    int index = 0;
+                    String strSpecialty = null;
+                    String code = null;
+                    if (val != null && !val.equals("") && val.length() > 0) {
+                        code = NameData.get(val);
+                        index = Integer.parseInt(code);
+                        Log.e("index", "  " + index + " " + code);
+                    }
+                    if (index == 0) {
+                        //  strSpecialty=specialityArray.get(index);
+                    } else {
+                        strSpecialty = specialityArray.get(index - 1);
+                    }
+                    refredtoSpeciality1.setVisibility(View.VISIBLE);
+                    refredtoSpeciality1.setText(strSpecialty);
+                    // sb.append(index);
+                    Log.v("TruitonAutoCompleteTe",
+                            "Selected City Code: " + code + " " + strSpecialty);
+                    if (code == null) {
+                        nameReferedTo1.setError("Invalid Entry");
+                    }
+                }
+            }
+        });
+        nameReferedTo2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    String val = nameReferedTo2.getText() + "";
+                    int index = 0;
+                    String strSpecialty = null;
+                    String code = null;
+                    if (val != null && !val.equals("") && val.length() > 0) {
+                        code = NameData.get(val);
+                        index = Integer.parseInt(code);
+                    }
+                    if (index == 0) {
+                        //  strSpecialty=specialityArray.get(index);
+                    } else {
+                        strSpecialty = specialityArray.get(index - 1);
+                    }
+                    refredtoSpeciality2.setVisibility(View.VISIBLE);
+                    refredtoSpeciality2.setText(strSpecialty);
+                    //   sb.append(",").append(index);
+                    Log.v("TruitonAutoCompleteTe",
+                            "Selected City Code: " + code + " " + strSpecialty);
+                    if (code == null) {
+                        nameReferedTo2.setError("Invalid Entry");
+                    }
+                }
+            }
+        });
+        nameReferedTo3.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    String val = nameReferedTo3.getText() + "";
+                    int index = 0;
+                    String strSpecialty = null;
+                    String code = null;
+                    if (val != null && !val.equals("") && val.length() > 0) {
+                        code = NameData.get(val);
+                        index = Integer.parseInt(code);
+                    }
+                    if (index == 0) {
+                        //  strSpecialty=specialityArray.get(index);
+                    } else {
+                        strSpecialty = specialityArray.get(index - 1);
+                    }
+                    refredtoSpeciality3.setVisibility(View.VISIBLE);
+                    refredtoSpeciality3.setText(strSpecialty);
+                    //sb.append(",").append(index);
+                    Log.v("TruitonAutoCompleteTe",
+                            "Selected City Code: " + code + " " + strSpecialty);
+                    if (code == null) {
+                        nameReferedTo3.setError("Invalid Entry");
+                    }
+                }
+            }
+        });
+        nameReferedTo4.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    String val = nameReferedTo4.getText() + "";
+                    int index = 0;
+                    String strSpecialty = null;
+                    String code = null;
+                    if (val != null && !val.equals("") && val.length() > 0) {
+                        code = NameData.get(val);
+                        index = Integer.parseInt(code);
+                    }
+                    if (index == 0) {
+                        //  strSpecialty=specialityArray.get(index);
+                    } else {
+                        strSpecialty = specialityArray.get(index - 1);
+                    }
+                    refredtoSpeciality4.setVisibility(View.VISIBLE);
+                    refredtoSpeciality4.setText(strSpecialty);
+                    // sb.append(",").append(index);
+                    Log.v("TruitonAutoCompleteTe",
+                            "Selected City Code: " + code + " " + strSpecialty);
+                    if (code == null) {
+                        nameReferedTo2.setError("Invalid Entry");
+                    }
+                }
+            }
+        });
+        nameReferedTo5.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    String val = nameReferedTo5.getText() + "";
+                    int index = 0;
+                    String strSpecialty = null;
+                    String code = null;
+                    if (val != null && !val.equals("") && val.length() > 0) {
+                        code = NameData.get(val);
+                        index = Integer.parseInt(code);
+                    }
+                    if (index == 0) {
+                        //  strSpecialty=specialityArray.get(index);
+                    } else {
+                        strSpecialty = specialityArray.get(index - 1);
+                    }
+                    refredtoSpeciality5.setVisibility(View.VISIBLE);
+                    refredtoSpeciality5.setText(strSpecialty);
+                    // sb.append(",").append(index);
+                    Log.v("TruitonAutoCompleteTe",
+                            "Selected City Code: " + code + " " + strSpecialty);
+                    if (code == null) {
+                        nameReferedTo5.setError("Invalid Entry");
+                    }
+                }
+            }
+        });
     }
 
     //this will send data to EditPatientUpdate Activity
@@ -650,7 +1071,7 @@ public class AddPatientUpdate extends AppCompatActivity {
     //saved the user enetred data to db
     private void saveData() {
 
-       // String daysSel = null;
+        // String daysSel = null;
         monthSel = null;
         fowSel = null;
         String ailments = ailments1.getText().toString().trim();
@@ -669,80 +1090,41 @@ public class AddPatientUpdate extends AppCompatActivity {
         String strTests = edtTest.getText().toString().trim();
         String strDrugs = edtDrugs.getText().toString().trim();
 
-        String strHeight=edtInput_height.getText().toString().trim();
-        String strbmi=edtInput_bmi.getText().toString().trim();
-        String strSugarFasting=edtInput_sugarfasting.getText().toString().trim();
+        String strHeight = edtInput_height.getText().toString().trim();
+        String strbmi = edtInput_bmi.getText().toString().trim();
+        String strSugarFasting = edtInput_sugarfasting.getText().toString().trim();
 
 
-        usersellectedDate=fodtextshow.getText().toString();
+        usersellectedDate = fodtextshow.getText().toString();
 
-        if (TextUtils.isEmpty(ailments) && TextUtils.isEmpty(strSymptoms)&& TextUtils.isEmpty(strDignosis)) {
-            Toast.makeText(getApplicationContext(),"Please enter any of Ailemnt,Symptoms or Diagnosis ",Toast.LENGTH_LONG).show();
+        if (TextUtils.isEmpty(ailments) && TextUtils.isEmpty(strSymptoms) && TextUtils.isEmpty(strDignosis)) {
+            Toast.makeText(getApplicationContext(), "Please enter any of Symptoms or Diagnosis ", Toast.LENGTH_LONG).show();
             // ailment.setError("Please enter Ailment");
             return;
         }
 
-        if (ailments.length() > 0 && ailments.length() < 2 && ailments.contains(",")) {
-            ailments1.setError("Please Enter Valid ailment");
-            return;
-        }
-        if(strTemp.length()>0){
+        if (strTemp.length() > 0) {
             int intTemp = Integer.parseInt(strTemp);
             if (intTemp > 110) {
-                edtInput_temp.setError("Temp can not be more than 110 ");
+                edtInput_temp.setError(" Temp can not be more than 110 ");
                 return;
             } else {
                 edtInput_temp.setError(null);
             }
         }
 
-        //remove comma occurance from string
-        ailments = appController.removeCommaOccurance(ailments);
-        //Remove spaces between text if more than 2 white spaces found 12-12-2016
-        ailments = ailments.replaceAll("\\s+", " ");
 
-
-        Boolean ailmentValue;
-
-        if (ailments.length() > 0) {
-            ailmentValue = appController.findNumbersAilment(ailments);
-
-            if (ailmentValue) {
-                ailments1.setError("Please Enter Valid ailment");
-                return;
-            }
-        }
-
-
-        String delimiter = ",";
-        String[] temp = ailments.split(delimiter);
-             /* print substrings */
-        for (String aTemp : temp) {
-            //System.out.println(temp[i]);
-            //  Log.e("log", aTemp);
-            if (!new AppController().isDuplicate(mAilmemtArrayList, aTemp)) {
-
-                // dbController.addAilment(temp[i]);
-                databaseClass.addAilments(aTemp, maxid);
-                maxid = maxid + 1;
-                //  Log.e("ailment", "" + aTemp);
-
-            }
-        }
         String visit_id = String.valueOf(maxVisitId + 1);
         String visit_date = addedOnDate;
-        //  Log.e("visit_date", "" + visit_date);
 
 
         //here we need to convert date it to 1-09-2016 date format to get records in sys date filter list
-        sdf1 = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
-        final Calendar c = Calendar.getInstance();
+        sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
 
+        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
-        SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
-        SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
-       // String visit_date1 = addedOnDate.toString();
         String added_on = visitDate.getText().toString();
 
         try {
@@ -750,13 +1132,13 @@ public class AddPatientUpdate extends AppCompatActivity {
             visit_date = myFormat.format(fromUser.parse(added_on));
             added_on = myFormat.format(fromUser.parse(addedOnDate));
 
-            if(usersellectedDate!= null && ! usersellectedDate.equals("")) {
+            if (usersellectedDate != null && !usersellectedDate.equals("")) {
                 usersellectedDate = myFormat.format(fromUser.parse(usersellectedDate));
             }
 
         } catch (ParseException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         String flag = "0";
@@ -765,7 +1147,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         String action = "added";
 
         dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, ailments, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
-                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs,strHeight,strbmi,strSugarFasting);
+                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strRederedBy, strReferedTo);
 
         Toast.makeText(getApplicationContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
         //Redirect to navigation Activity
@@ -799,15 +1181,15 @@ public class AddPatientUpdate extends AppCompatActivity {
                         String action = "clicked";
 
                         appController.showAdDialog(AddPatientUpdate.this, url);
-                        appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action,"Add Patient Visit");
+                        appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action, "Add Patient Visit");
 
 
                     }
                 });
                 String action = "display";
-                appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action,"Add Patient Visit");
+                appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action, "Add Patient Visit");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -825,9 +1207,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                     // successfully captured the image
                     // display it in image view
 
-                    //to_do check this for null poinetr exception
-
-                    previewCapturedImage(); //
+                    previewCapturedImage();
 
                 }
             }
@@ -841,17 +1221,17 @@ public class AddPatientUpdate extends AppCompatActivity {
     private void previewCapturedImage() {
         try {
             prescriptionImgPath = uriSavedImage.getPath();
-            TextView edtprescriptionImgPath=(TextView) findViewById(R.id.prescriptionImgPath);
+            TextView edtprescriptionImgPath = (TextView) findViewById(R.id.prescriptionImgPath);
             edtprescriptionImgPath.setVisibility(View.VISIBLE);
             edtprescriptionImgPath.setText(uriSavedImage.toString());
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         try {
 
-             patientImagePath = uriSavedImage.getPath();
+            patientImagePath = uriSavedImage.getPath();
 
             if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
 
@@ -859,7 +1239,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "AddPatientUpdate" + e);
         }
 
     }
@@ -876,6 +1256,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         finish();
 
     }
+
     @Override
     public void onStop() {
         super.onStop();
@@ -904,7 +1285,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                             @Override
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
-
 
 
                                 visitDate.setText(dayOfMonth + "-"
@@ -937,7 +1317,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                                                   int monthOfYear, int dayOfMonth) {
 
 
-
                                 fodtextshow.setText(dayOfMonth + "-"
                                         + (monthOfYear + 1) + "-" + year);
                                /* showfodtext.setText(dayOfMonth + "-"
@@ -957,7 +1336,8 @@ public class AddPatientUpdate extends AppCompatActivity {
                 break;
         }
     }
-    private void CleanFollowup(){
+
+    private void CleanFollowup() {
 
         month.setTextColor(getResources().getColor(R.color.black));
         days.setTextColor(getResources().getColor(R.color.black));
@@ -969,16 +1349,19 @@ public class AddPatientUpdate extends AppCompatActivity {
             week.setBackground(getResources().getDrawable(R.drawable.circle));
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         //Log.d("lifecycle","onResume invoked");
     }
+
     @Override
     protected void onPause() {
         super.onPause();
         // Log.d("lifecycle","onPause invoked");
     }
+
     @Override
     protected void onRestart() {
         super.onRestart();
@@ -1012,23 +1395,24 @@ public class AddPatientUpdate extends AppCompatActivity {
         if (mAilmemtArrayList != null) {
             mAilmemtArrayList = null;
         }
-        if(bannerClass != null){
-            bannerClass=null;
+        if (bannerClass != null) {
+            bannerClass = null;
         }
-        if(mSymptomsList!= null){
-            mSymptomsList=null;
+        if (mSymptomsList != null) {
+            mSymptomsList = null;
         }
 
-        if(lastNamedb != null){
-            lastNamedb=null;
+        if (lastNamedb != null) {
+            lastNamedb = null;
         }
-        doctor_membership_number=null;
-        bannerimgNames=null;
+        doctor_membership_number = null;
+        bannerimgNames = null;
 
         cleanResources();
         System.gc();
 
     }
+
     private void cleanResources() {
 
         patientHistoryData = null;
@@ -1045,7 +1429,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         strLastName = null;
         strDob = null;
         strPatientId = null;
-        visitDate=null;
+        visitDate = null;
         fowSel = null;
         usersellectedDate = null;
         monthSel = null;
@@ -1056,48 +1440,48 @@ public class AddPatientUpdate extends AppCompatActivity {
         addedOnDate = null;
         patientHistoryData = null;
         PrescriptionimageName = null;
-        backChangingImages=null;
-        imageIntent=null;
+        backChangingImages = null;
+        imageIntent = null;
 
-        imagesFolder=null;
-        uriSavedImage=null;
-        addUpdate=null;
-        cancel=null;
-        validator=null;
-        strCityorTown=null;
-        strDistrict=null;
-        strPinNo=null;
-        strState=null;
-        strAddress=null;
+        imagesFolder = null;
+        uriSavedImage = null;
+        addUpdate = null;
+        cancel = null;
+        validator = null;
+        strCityorTown = null;
+        strDistrict = null;
+        strPinNo = null;
+        strState = null;
+        strAddress = null;
 
-        edtInput_weight=null;
-        edtInput_pulse=null;
-        edtInput_bp=null;
-        edtLowBp=null;
-        edtInput_temp=null;
-        edtInput_sugar=null;
-        edtSymptoms=null;
-        edtDignosis=null;
-        edtTest=null;
-        edtDrugs=null;
-        fodtextshow=null;
-        days=null;
-        week=null;
-        month=null;
-        inputnumber=null;
-        value=null;
-        daysSel=null;
-        txtRecord=null;
-        txtsymtomsanddignost=null;
-        presciptiontext=null;
-        edtInput_sugarfasting=null;
-        edtInput_bmi=null;
-        edtInput_height=null;
-        btnclear=null;
-        strAlternatenumber=null;
-        strAlternatephtype=null;
-        strIsd_code=null;
-        strAlternateIsd_code=null;
+        edtInput_weight = null;
+        edtInput_pulse = null;
+        edtInput_bp = null;
+        edtLowBp = null;
+        edtInput_temp = null;
+        edtInput_sugar = null;
+        edtSymptoms = null;
+        edtDignosis = null;
+        edtTest = null;
+        edtDrugs = null;
+        fodtextshow = null;
+        days = null;
+        week = null;
+        month = null;
+        inputnumber = null;
+        value = null;
+        daysSel = null;
+        txtRecord = null;
+        txtsymtomsanddignost = null;
+        presciptiontext = null;
+        edtInput_sugarfasting = null;
+        edtInput_bmi = null;
+        edtInput_height = null;
+        btnclear = null;
+        strAlternatenumber = null;
+        strAlternatephtype = null;
+        strIsd_code = null;
+        strAlternateIsd_code = null;
     }
 
     private void addFollowupdateButtonListner() {
@@ -1299,8 +1683,8 @@ public class AddPatientUpdate extends AppCompatActivity {
                     month.setBackground(getResources().getDrawable(R.drawable.circle));
                     week.setBackground(getResources().getDrawable(R.drawable.circle));
                 }
-                daysSel=null;
-                fowSel=null;
+                daysSel = null;
+                fowSel = null;
                 monthSel = null;
                 CleanFollowup();
             }
@@ -1321,7 +1705,6 @@ public class AddPatientUpdate extends AppCompatActivity {
 
             @Override
             public void onClick(View v) {
-
 
 
                 shpwDialog(DATE_DIALOG_ID2);

@@ -467,7 +467,13 @@ public class ReportFragment extends Fragment {
         rootview = null;
 
     }
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        // Tracking the screen view
+        AppController.getInstance().trackScreenView("Report Fragment");
+    }
     @Override
     public void onDetach() {
         super.onDetach();

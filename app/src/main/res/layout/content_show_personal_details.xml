@@ -97,7 +97,6 @@
                                 <LinearLayout
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:layout_weight="1"
                                     android:orientation="horizontal"
                                     android:padding="3dp">
 
@@ -112,12 +111,6 @@
                                         app:civ_shadow_color="#FF0000"
                                         app:civ_shadow_radius="0" />
 
-                                    <!-- <ImageView
-                                         android:id="@+id/patientImage"
-                                         android:layout_width="0dp"
-                                         android:layout_height="150dp"
-                                         android:layout_weight="0.4"
-                                         android:src="@drawable/main_profile" />-->
 
                                     <LinearLayout
 

@@ -221,7 +221,13 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        // Tracking the screen view
+        AppController.getInstance().trackScreenView("BarChart Fragment");
+    }
     @Override
     public void onDetach() {
         super.onDetach();

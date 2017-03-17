@@ -72,6 +72,6 @@
             android:text="Add New"
             android:paddingRight="5dp"
             android:textColor="@color/white"
-            tools:targetApi="lollipop" />
+            />
     </RelativeLayout>
 </LinearLayout>

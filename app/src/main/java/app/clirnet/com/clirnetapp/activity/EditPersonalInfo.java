@@ -246,7 +246,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 sqlController.open();
             }
 
-            dbController = new SQLiteHandler(getApplicationContext());
+            dbController = SQLiteHandler.getInstance(getApplicationContext());
             docId = sqlController.getDoctorId();
             //   Log.e("docId", "" + docId);
             String sbdob;

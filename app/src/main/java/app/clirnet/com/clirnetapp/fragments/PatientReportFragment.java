@@ -86,7 +86,13 @@ public class PatientReportFragment extends Fragment {
            // Log.e("dateis", "" + fromDate + "" + toDate);
         }
     }
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        // Tracking the screen view
+        AppController.getInstance().trackScreenView("Patient Report Fragment");
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();

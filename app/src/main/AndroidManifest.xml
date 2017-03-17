@@ -2,15 +2,21 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.clirnet.com.clirnetapp">
 
+
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE"/>
+
+
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.hardware.camera" />
     <uses-permission android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.READ_LOGS" />
+
 
     <application
         android:name=".app.AppController"
@@ -55,7 +61,7 @@
         <activity
             android:name=".activity.ShowPersonalDetailsActivity"
             android:label="@string/title_activity_show_personal_details"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <service
             android:name=".utility.SyncDataService"
@@ -67,39 +73,73 @@
             android:name=".activity.PrivacyPolicy"
             android:label="@string/title_activity_privacy_policy"
             android:theme="@style/AppTheme.NoActionBar" />
+
         <activity android:name=".activity.TermsCondition" />
+
         <activity android:name=".activity.RegistrationActivityNew" />
 
 
-        <activity android:name=".activity.ShowPrescriptionImageActivity"
+        <activity
+            android:name=".activity.ShowPrescriptionImageActivity"
             android:configChanges="orientation|screenSize"
-          android:launchMode="singleTask"/>
+            android:launchMode="singleTask" />
 
 
-        <activity android:name=".activity.ServiceArea"
-            android:label="Service Area"/>
+        <activity
+            android:name=".activity.ServiceArea"
+            android:label="Service Area" />
 
-        <activity android:name=".quickAdd.QuickAddActivity"
+        <activity
+            android:name=".quickAdd.QuickAddActivity"
             android:configChanges="screenSize|orientation"
-            android:label="@string/quickadd"/>
+            android:label="@string/quickadd" />
 
         <activity
             android:name=".quickAdd.EditIncompleteRecordsActivity"
-            android:configChanges="orientation"
-            android:label="@string/title_edit_quick_add"
-            />
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/title_edit_quick_add" />
 
-      <!--  Commented this service for test build-->
-        <!-- <service android:name=".fcm.MyFirebaseMessagingService" >
-             <intent-filter>
-                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
-             </intent-filter>
-         </service>
-         <service android:name=".fcm.MyFirebaseInstanceIDService" >
-             <intent-filter>
-                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-             </intent-filter>
-         </service>-->
+        <!--  Commented this service for test build-->
+        <service android:name=".fcm.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".fcm.MyFirebaseInstanceIDService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <!--
+          Optionally, register AnalyticsReceiver and AnalyticsService to support background
+          dispatching on non-Google Play devices
+        -->
+        <receiver
+            android:name="com.google.android.gms.analytics.AnalyticsReceiver"
+            android:enabled="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.analytics.ANALYTICS_DISPATCH" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name="com.google.android.gms.analytics.AnalyticsService"
+            android:enabled="true"
+            android:exported="false" />
+
+        <!--
+             Optionally, register CampaignTrackingReceiver and CampaignTrackingService to enable
+             installation campaign reporting
+        -->
+        <receiver
+            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.android.vending.INSTALL_REFERRER" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
     </application>
 
 </manifest>

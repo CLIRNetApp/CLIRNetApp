@@ -14,7 +14,7 @@ android {
         targetSdkVersion 25
         multiDexEnabled true
         versionCode 8
-        versionName "1.2.5.3"
+        versionName "1.2.5.4"
     }
 
     lintOptions {
@@ -55,6 +55,7 @@ dependencies {
     compile 'com.google.firebase:firebase-core:9.8.0'
     compile 'com.google.firebase:firebase-messaging:9.8.0'
     compile 'com.google.android.gms:play-services-auth:9.8.0'
+    compile 'com.google.android.gms:play-services-analytics:9.8.0'
     compile 'com.android.support:appcompat-v7:25.0.1'
     compile 'com.android.support:design:25.0.1'
     compile 'com.android.support:recyclerview-v7:25.0.1'

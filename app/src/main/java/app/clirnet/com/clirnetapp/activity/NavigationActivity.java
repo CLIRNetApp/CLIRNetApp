@@ -19,6 +19,7 @@ import android.widget.TextView;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.fragments.AssociatesFragment;
 import app.clirnet.com.clirnetapp.fragments.BarChartFragment;
 import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
 import app.clirnet.com.clirnetapp.fragments.HomeFragment;
@@ -31,6 +32,7 @@ import app.clirnet.com.clirnetapp.fragments.ReportFragmentViewPagerSetup;
 import app.clirnet.com.clirnetapp.fragments.TopTenAilmentFragment;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
+import app.clirnet.com.clirnetapp.utility.SyncDataService;
 
 /*import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;*/
@@ -39,7 +41,7 @@ import com.google.firebase.messaging.FirebaseMessaging;*/
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
         , ReportFragment.OnFragmentInteractionListener, PatientReportFragment.OnFragmentInteractionListener, ReportFragmentViewPagerSetup.OnFragmentInteractionListener, TopTenAilmentFragment.OnFragmentInteractionListener,
-        BarChartFragment.OnFragmentInteractionListener,KnowledgeFragment.OnFragmentInteractionListener,IncompleteListFragment.OnFragmentInteractionListener{
+        BarChartFragment.OnFragmentInteractionListener, KnowledgeFragment.OnFragmentInteractionListener, IncompleteListFragment.OnFragmentInteractionListener,AssociatesFragment.OnFragmentInteractionListener {
 
 
     private FragmentManager fragmentManager;
@@ -53,11 +55,22 @@ public class NavigationActivity extends AppCompatActivity
     private String docName;
     private String emailId;
     private AppController appController;
+    private String msgType;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            /*message from fcm service*/
+            String msg = getIntent().getStringExtra("MSG");
+            // Log.i("QUOTE", "QUOTE: " + msg);
+            msgType = getIntent().getStringExtra("TAG");
 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         setContentView(R.layout.activity_navigation);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -82,7 +95,6 @@ public class NavigationActivity extends AppCompatActivity
         dbController = new SQLiteHandler(getApplicationContext());
 
 
-
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
 
@@ -100,7 +112,7 @@ public class NavigationActivity extends AppCompatActivity
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
             if (sqlController != null) {
                 sqlController.close();
@@ -108,29 +120,63 @@ public class NavigationActivity extends AppCompatActivity
         }
 
         Fragment fragment;
-
+        //todo set the equals condtion  proper and url link update
+        if (msgType != null && msgType.equals("knowledge")) {
+            fragment = new KnowledgeFragment();
+            fragmentManager = getSupportFragmentManager();
+            Bundle bundle2 = new Bundle();
+            bundle2.putString("URL", "http://doctor.clirnet.com/doctor/knowledgecentral/knowledge");
+            fragment.setArguments(bundle2);
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+        } else if (msgType != null && msgType.equals("grandrounds")) {
+            fragment = new KnowledgeFragment();
+            fragmentManager = getSupportFragmentManager();
+            Bundle bundle2 = new Bundle();
+            bundle2.putString("URL", "http://doctor.clirnet.com/doctor/knowledgecentral/grandrounds");
+            fragment.setArguments(bundle2);
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+        } else if (msgType != null && msgType.equals("askclir")) {
+            fragment = new KnowledgeFragment();
+            fragmentManager = getSupportFragmentManager();
+            Bundle bundle2 = new Bundle();
+            bundle2.putString("URL", "http://doctor.clirnet.com/doctor/knowledgecentral/askclir");
+            fragment.setArguments(bundle2);
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+        } else if (msgType != null && msgType.equals("mastersession")) {
+            fragment = new KnowledgeFragment();
+            fragmentManager = getSupportFragmentManager();
+            Bundle bundle2 = new Bundle();
+            bundle2.putString("URL", "http://doctor.clirnet.com/doctor/knowledgecentral/mastersession");
+            fragment.setArguments(bundle2);
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+        } else if (msgType != null && msgType.equals("compendium")) {
+            fragment = new KnowledgeFragment();
+            fragmentManager = getSupportFragmentManager();
+            Bundle bundle2 = new Bundle();
+            bundle2.putString("URL", "http://doctor.clirnet.com/doctor/knowledgecentral/compendium");
+            fragment.setArguments(bundle2);
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+        } else {
             fragment = new HomeFragment();
-
-        fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
-
-
-       //subscribeToPushService();
+            fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+        }
+        //subscribeToPushService();
     }
 
-   /* private void subscribeToPushService() {
+    /* private void subscribeToPushService() {
 
-        FirebaseMessaging.getInstance().subscribeToTopic("news");
-        Log.d("AndroidBash", "Subscribed");
-        Toast.makeText(NavigationActivity.this, "Subscribed", Toast.LENGTH_SHORT).show();
+         FirebaseMessaging.getInstance().subscribeToTopic("news");
+         Log.d("AndroidBash", "Subscribed");
+         Toast.makeText(NavigationActivity.this, "Subscribed", Toast.LENGTH_SHORT).show();
 
-        String token = FirebaseInstanceId.getInstance().getToken();
+         String token = FirebaseInstanceId.getInstance().getToken();
 
-        // Log and toast
-       Log.d("AndroidBash", token);
-       // Toast.makeText(NavigationActivity.this, token, Toast.LENGTH_SHORT).show();
-    }
-*/
+         // Log and toast
+        Log.d("AndroidBash", token);
+        // Toast.makeText(NavigationActivity.this, token, Toast.LENGTH_SHORT).show();
+     }
+ */
     @Override
     public void onBackPressed() {
     }
@@ -150,9 +196,8 @@ public class NavigationActivity extends AppCompatActivity
 
         return super.onOptionsItemSelected(item);
     }
-
     //This will used to navigate user from one menu to another
-    @SuppressWarnings("StatementWithEmptyBody")
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
@@ -166,33 +211,54 @@ public class NavigationActivity extends AppCompatActivity
         switch (item.getItemId()) {
             case R.id.nav_po:
                 fragment = new HomeFragment();
+                AppController.getInstance().trackEvent("Patient Central", "Navigation", "Track event");
+
+
                 break;
 
             case R.id.nav_consultLog:
                 fragment = new ConsultationLogFragment();
+                AppController.getInstance().trackEvent("Consultation Log", "Navigation", "Track event");
+
                 break;
 
             case R.id.nav_pohistory:
                 fragment = new PoHistoryFragment();
+                AppController.getInstance().trackEvent("Patient History", "Navigation", "Track event");
+
                 break;
 
             case R.id.nav_report:
 
                 fragment = new ReportFragment();
+                AppController.getInstance().trackEvent("Patient Report", "Navigation", "Track event");
+
                 break;
+
             case R.id.nav_knowldge:
+                AppController.getInstance().trackEvent("Knowledge", "Navigation", "Track event");
 
                 fragment = new KnowledgeFragment();
                 break;
             case R.id.nav_prescription:
-                fragment=new IncompleteListFragment();
+                AppController.getInstance().trackEvent("Prsecription", "Navigation", "Track event");
+
+                fragment = new IncompleteListFragment();
+                break;
+
+            case R.id.nav_refered:
+                AppController.getInstance().trackEvent("Associates", "Navigation", "Track event");
+
+                fragment = new AssociatesFragment();
                 break;
 
             case R.id.nav_logout:
 
                 // Launching the login activity
-                goToLoginActivity();
+                AppController.getInstance().trackEvent("Logout", "Navigation", "Track event");
 
+                goToLoginActivity();
+                stopService(new Intent(NavigationActivity.this, SyncDataService.class));
                 fragment = new HomeFragment();
                 break;
 
@@ -200,7 +266,7 @@ public class NavigationActivity extends AppCompatActivity
 
         // Insert the fragment by replacing any existing fragment
         fragmentManager = getSupportFragmentManager();
-               fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
 
         // Highlight the selected item, update the title, and close the drawer
         item.setChecked(true);
@@ -232,21 +298,21 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-      //  Log.d(msg, "The onResume() event");
+        //  Log.d(msg, "The onResume() event");
 
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-      //  Log.d(msg, "The onPause() event");
+        //  Log.d(msg, "The onPause() event");
 
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-      //  Log.d(msg, "The onStop() event");
+        //  Log.d(msg, "The onStop() event");
 
         System.gc();
     }
@@ -254,7 +320,7 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     public void onDestroy() {
         super.onDestroy();
-      //  Log.d(msg, "The onDestroy() event");
+        //  Log.d(msg, "The onDestroy() event");
         // session.setLogin(false);
         //Close the all database connection opened here 31/10/2008 By. Ashish
         if (sqlController != null) {

@@ -167,6 +167,7 @@
             android:src="@drawable/logon"
             android:layout_gravity="center"
             android:contentDescription="@string/desc"/>
+
         <TextView
 
             android:layout_width="match_parent"
@@ -175,7 +176,7 @@
             android:text="\u00a9 Copyright CLIRNet Services Private Limited 2016. All Rights Reserved."
             android:textColor="@color/input_register"
             android:gravity="center"
-            android:textSize="14sp"/>
+            android:textSize="16sp"/>
 
     </LinearLayout>
 
