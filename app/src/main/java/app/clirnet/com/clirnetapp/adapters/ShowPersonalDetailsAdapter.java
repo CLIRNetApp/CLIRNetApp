@@ -109,6 +109,9 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
             if (imgPath != null && !TextUtils.isEmpty(imgPath)) {
 
                 holder.imgText.setText("View Prescription");
+               // holder.llayout.setBackgroundColor(R.color.btn_back_sbmt);
+                holder.imgText.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimaryDark));
+                holder.imgText.setTextColor(mContext.getResources().getColor(R.color.white));
                 holder.imgText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -119,6 +122,8 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
                     }
                 });
             }else{
+                holder.imgText.setBackgroundColor(mContext.getResources().getColor(R.color.grey));
+                holder.imgText.setTextColor(mContext.getResources().getColor(R.color.white));
                 holder.imgText.setText("No Prescription Attached");
             }
         } catch (NullPointerException e) {
@@ -143,6 +148,7 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
         private final LinearLayout linearlayoutSymptoms;
         private final LinearLayout linearlayoutDiagnosis;
         private final TextView  tv_diagnosis, tv_symptoms;
+        private final LinearLayout llayout;
 
         public HistoryViewHolder(View view) {
             super(view);
@@ -157,6 +163,7 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
 
             linearlayoutSymptoms = (LinearLayout) view.findViewById(R.id.linearlayoutSymptoms);
             linearlayoutDiagnosis = (LinearLayout) view.findViewById(R.id.linearlayoutDiagnosis);
+            llayout=(LinearLayout)view.findViewById(R.id.llayout);
 
         }
     }

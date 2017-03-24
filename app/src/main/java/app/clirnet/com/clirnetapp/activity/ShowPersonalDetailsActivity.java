@@ -73,6 +73,9 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private String strAlternatephtype;
     private String strPhoneTpe;
     private String strVisitDate;
+    private String struid;
+    private String strEmail;
+    private String url;
 
 
     @Override
@@ -121,6 +124,8 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         strAlternatephtype = getIntent().getStringExtra("ALTERNATENUMBERTYPE");
         strPhoneTpe = getIntent().getStringExtra("PHONETYPE");
         strVisitDate=getIntent().getStringExtra("VISITDATE");
+        struid = getIntent().getStringExtra("UID");
+        strEmail=getIntent().getStringExtra("EMAIL");
 
 
         TextView txtSysDate = (TextView) findViewById(R.id.sysdate);
@@ -265,6 +270,10 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
                     i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
                     i.putExtra("HEIGHT", registrationModel.getHeight());
                     i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
+                    i.putExtra("REFEREDBY", registrationModel.getReferedBy());
+                    i.putExtra("REFEREDTO", registrationModel.getReferedTo());
+                    i.putExtra("UID",registrationModel.getUid());
+                    i.putExtra("EMAIL",registrationModel.getEmail());
                     startActivity(i);
                     //finish();
                 }
@@ -337,37 +346,37 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     //this will used to change banner image after some time interval
     private void setupAnimation() {
 
-        Random r = new Random();
         try {
             if (bannerimgNames.size() > 0) {
+                Random r = new Random();
                 int n = r.nextInt(bannerimgNames.size());
 
-                // final String url = getString(imageArray[n]);
-                //  backChangingImages.setImageResource(imageArray[n]);
-                final String url = bannerimgNames.get(n);
+                url = bannerimgNames.get(n);
 
+                if (AppController.checkifImageExists(url)) {
 
-                BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-                backChangingImages.setImageDrawable(d);
+                    url = bannerimgNames.get(n);
+                    BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
 
-                backChangingImages.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        String action = "clicked";
+                    //Log.e("BitmapDrawable", "" + d);
+                    backChangingImages.setImageDrawable(d);
 
-                        appController.showAdDialog(ShowPersonalDetailsActivity.this, url);
-                        appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action,"Show Personal Details");
+                    backChangingImages.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
+                            String action = "clicked";
 
-                    }
-                });
-                String action = "display";
-                appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action,"Show Personal Details");
+                            appController.showAdDialog(ShowPersonalDetailsActivity.this, url);
+                            appController.saveBannerDataIntoDb(url,ShowPersonalDetailsActivity.this, doctor_membership_number, action, "Show Personal Details");
+                        }
+                    });
+                    String action = "display";
+                    appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action, "Show Personal Details");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Show patient Details" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
-
         }
 
     }
@@ -427,6 +436,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         editmobileno= null;
         editgender= null;
         editlang= null;
+        url=null;
         // System.gc();
     }
 

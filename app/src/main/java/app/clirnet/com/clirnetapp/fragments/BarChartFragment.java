@@ -20,7 +20,6 @@ import com.github.mikephil.charting.interfaces.datasets.IBarDataSet;
 import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
@@ -39,8 +38,6 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
     private BarEntry v2e1;
     private ArrayList<String> ageBoundlis;
     private BarChart chart;
-    private ArrayList<String> date;
-    private List<Integer> male;
     private AppController appController;
 
 

@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,17 +79,11 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
         String clinicalNotes = model.getClinicalNotes().trim();
         if (clinicalNotes.length() > 0) {
             holder.tv_clinical_notes.setText(clinicalNotes);
-        } else {
-            holder.tv_clinical_notes.setText("No Aailable Notes");
-        }
-
-        clinicalNotes = model.getClinicalNotes().trim();
-        if (clinicalNotes.length() > 0) {
-            holder.tv_clinical_notes.setText(clinicalNotes);
 
         } else {
             holder.tv_clinical_notes.setText("No Available Notes");
         }
+
         String mSymptoms = model.getSymptoms();
         if (mSymptoms != null && !mSymptoms.equals("") && mSymptoms.length()>0) {
             holder.tv_symptoms.setText(mSymptoms);
@@ -107,9 +100,12 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
 
         try {
             final String imgPath = patientList.get(position).getPres_img();
-            if (!TextUtils.isEmpty(imgPath) && imgPath != null) {
+            if (!TextUtils.isEmpty(imgPath)) {
 
                 holder.imgText.setText("View Prescription");
+             //   holder.llayout.setBackgroundColor(R.color.colorPrimary2);
+                holder.imgText.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimaryDark));
+                holder.imgText.setTextColor(mContext.getResources().getColor(R.color.white));
                 holder.imgText.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -121,6 +117,8 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
                 });
 
             } else {
+                holder.imgText.setBackgroundColor(mContext.getResources().getColor(R.color.grey));
+                holder.imgText.setTextColor(mContext.getResources().getColor(R.color.bg_list_row));
                 holder.imgText.setText("No Prescription Attached");
             }
         } catch (NullPointerException e) {
@@ -164,18 +162,19 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
         return patientList.size();
     }
 
-    public class HistoryViewHolder extends RecyclerView.ViewHolder {
+    class HistoryViewHolder extends RecyclerView.ViewHolder {
 
         public final TextView tv_ailment;
-        public final TextView tv_fod;
+        final TextView tv_fod;
         private final TextView tv_visit_date;
-        public final TextView tv_clinical_notes;
+        final TextView tv_clinical_notes;
         private final TextView imgText, tv_diagnosis, tv_symptoms;
         private final LinearLayout linearlayoutSymptoms;
         private final LinearLayout linearlayoutDiagnosis;
+        private final LinearLayout llayout;
 
 
-        public HistoryViewHolder(View view) {
+        HistoryViewHolder(View view) {
             super(view);
             tv_visit_date = (TextView) view.findViewById(R.id.tv_visit_date);
             tv_ailment = (TextView) view.findViewById(R.id.tv_ailment);
@@ -188,7 +187,7 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
             tv_clinical_notes = (TextView) view.findViewById(R.id.tv_clinical_notes);
             linearlayoutSymptoms = (LinearLayout) view.findViewById(R.id.linearlayoutSymptoms);
             linearlayoutDiagnosis = (LinearLayout) view.findViewById(R.id.linearlayoutDiagnosis);
-
+            llayout=(LinearLayout)view.findViewById(R.id.llayout);
 
         }
     }

@@ -19,7 +19,6 @@ import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -129,8 +128,6 @@ public class AddPatientUpdate extends AppCompatActivity {
     private EditText edtInput_sugar;
     private MultiAutoCompleteTextView edtSymptoms;
     private MultiAutoCompleteTextView edtDignosis;
-    private BootstrapEditText edtTest;
-    private BootstrapEditText edtDrugs;
     private BootstrapEditText fodtextshow;
     private Button days;
     private Button week;
@@ -141,11 +138,9 @@ public class AddPatientUpdate extends AppCompatActivity {
     private String daysSel;
     private TextView txtRecord;
     private TextView txtsymtomsanddignost;
-    private TextView presciptiontext;
 
     private int countvitalsLayout = 1;
     private int countsymtomsanddignostLayout = 1;
-    private int countPrescriptiontLayout = 1;
     private int countAddressLayout = 1;
     private EditText visitDate;
 
@@ -163,13 +158,15 @@ public class AddPatientUpdate extends AppCompatActivity {
     private String strAlternateIsd_code;
     private String patientImagePath;
     private String prescriptionImgPath;
-    private ArrayList<RegistrationModel> mAssociateList;
     private HashMap<String, String> NameData;
     private ArrayList<String> specialityArray;
-    private StringBuilder sb;
     private int addCounter = 0;
     private String strReferedTo;
     private String strRederedBy;
+    private ArrayList<String> mDiagnosisList;
+    private String struid;
+    private String strEmail;
+    private String url;
 
 
     @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
@@ -191,7 +188,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         }
 
         if (databaseClass == null) {
-            databaseClass = new DatabaseClass(getApplicationContext());
+            databaseClass =new DatabaseClass(getApplicationContext());
         }
         if (lastNamedb == null) {
             lastNamedb = new LastnameDatabaseClass(getApplicationContext());
@@ -224,6 +221,8 @@ public class AddPatientUpdate extends AppCompatActivity {
         strAlternatenumber = getIntent().getStringExtra("ALTERNATENUMBER");
 
         strAlternatephtype = getIntent().getStringExtra("ALTERNATENUMBERTYPE");
+        struid = getIntent().getStringExtra("UID");
+        strEmail = getIntent().getStringExtra("EMAIL");
 
         //Initalize global view to this method 3-11-2016
         initalizeView();
@@ -241,7 +240,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         addUpdate = (Button) findViewById(R.id.addUpdate);
         txtRecord = (TextView) findViewById(R.id.txtRecord);
         txtsymtomsanddignost = (TextView) findViewById(R.id.txtsymptomsanddignost);
-        presciptiontext = (TextView) findViewById(R.id.presciptiontext);
+        //presciptiontext = (TextView) findViewById(R.id.presciptiontext);
         TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
 
@@ -267,8 +266,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         edtSymptoms = (MultiAutoCompleteTextView) findViewById(R.id.symptoms);
         edtDignosis = (MultiAutoCompleteTextView) findViewById(R.id.dignosis);
-        edtTest = (BootstrapEditText) findViewById(R.id.test);
-        edtDrugs = (BootstrapEditText) findViewById(R.id.drugs);
+
 
         Button editlastUpdate = (Button) findViewById(R.id.editlastUpdate);
 
@@ -359,7 +357,6 @@ public class AddPatientUpdate extends AppCompatActivity {
 
             }
 
-
             if (bannerClass == null) {
                 bannerClass = new BannerClass(getApplicationContext());
             }
@@ -420,7 +417,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         try {
-            ArrayList<String> mDiagnosisList = lastNamedb.getDiagnosis();
+            mDiagnosisList = lastNamedb.getDiagnosis();
             if (mDiagnosisList.size() > 0) {
                 ArrayAdapter<String> lastnamespin = new ArrayAdapter<>(AddPatientUpdate.this,
                         android.R.layout.simple_dropdown_item_1line, mDiagnosisList);
@@ -497,6 +494,8 @@ public class AddPatientUpdate extends AppCompatActivity {
                 i.putExtra("ALTERNATENUMBERTYPE", strAlternatephtype);
                 i.putExtra("ISDCODE", strIsd_code);
                 i.putExtra("ALTERNATEISDCODE", strAlternateIsd_code);
+                i.putExtra("UID", struid);
+                i.putExtra("EMAIL", strEmail);
                 i.putExtra("FROMWHERE", "editpatient");
                 startActivity(i);
                 // finish();
@@ -622,12 +621,10 @@ public class AddPatientUpdate extends AppCompatActivity {
         final AutoCompleteTextView nameReferedTo4 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo4);
         final AutoCompleteTextView nameReferedTo5 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo5);
 
-        final ArrayList<String> nameArray = new ArrayList<>();
         specialityArray = new ArrayList<>();
 
         try {
-            mAssociateList = sqlController.getAssociateDataIdName();
-            final ArrayList<HashMap<String, String>> list = sqlController.getAllbank();
+            final ArrayList<HashMap<String, String>> list = sqlController.getAllDataAssociateMaster();
 
             NameData = new HashMap<>();
 
@@ -637,8 +634,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                 String str = list.get(im).get("SPECIALITY");
                 specialityArray.add(str);
                 NameData.put(strName, strid);
-                Log.e("str", " " + strName + "  " + strid + " " + str);
-
             }
 
             setCities(NameData.keySet().toArray(
@@ -646,7 +641,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient Update" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -663,70 +658,67 @@ public class AddPatientUpdate extends AppCompatActivity {
         dialogButtonOk.setOnClickListener(new View.OnClickListener() {
 
 
-            public String code;
+            String code;
 
             @Override
             public void onClick(View v) {
                 StringBuilder sb = new StringBuilder();
-
+                StringBuilder sbname = new StringBuilder();
                 if (addCounter >= 0) {
                     String refredToName1 = nameReferedTo1.getText().toString();
-                    if (refredToName1 != null && !refredToName1.equals("") && refredToName1.length() > 0) {
+                    if (!refredToName1.equals("") && refredToName1.length() > 0) {
                         code = NameData.get(refredToName1);
-                        if (code == null) {
-                            Log.e("NoValForcode", "NoValFor code");
-                        } else {
+                        if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(index);
+                            sbname.append(refredToName1);
                         }
                     }
 
                 }
                 if (addCounter >= 1) {
                     String refredToName2 = nameReferedTo2.getText().toString();
-                    if (refredToName2 != null && !refredToName2.equals("") && refredToName2.length() > 0) {
+                    if (!refredToName2.equals("") && refredToName2.length() > 0) {
                         code = NameData.get(refredToName2);
-                        if (code == null) {
-                            Log.e("NoValForcode", "NoValFor code");
-                        } else {
+                        if (code != null) {
+
                             int index = Integer.parseInt(code);
-                            sb.append(index);
+                            sb.append(",").append(index);
+                            sbname.append(",").append(refredToName2);
                         }
                     }
                 }
                 if (addCounter >= 2) {
                     String refredToName3 = nameReferedTo3.getText().toString();
-                    if (refredToName3 != null && !refredToName3.equals("") && refredToName3.length() > 0) {
+                    if (!refredToName3.equals("") && refredToName3.length() > 0) {
                         code = NameData.get(refredToName3);
-                        if (code == null) {
-                            Log.e("NoValForcode", "NoValFor code");
-                        } else {
+                        if (code != null) {
                             int index = Integer.parseInt(code);
-                            sb.append(index);
+                            sb.append(",").append(index);
+                            sbname.append(",").append(refredToName3);
                         }
                     }
                 }
                 if (addCounter >= 3) {
                     String refredToName4 = nameReferedTo4.getText().toString();
-                    if (refredToName4 != null && !refredToName4.equals("") && refredToName4.length() > 0) {
+                    if (!refredToName4.equals("") && refredToName4.length() > 0) {
                         code = NameData.get(refredToName4);
-                        if (code == null) {
-                            Log.e("NoValForcode", "NoValFor code");
-                        } else {
+                        if (code != null) {
+
                             int index = Integer.parseInt(code);
-                            sb.append(index);
+                            sb.append(",").append(index);
+                            sbname.append(",").append(refredToName4);
                         }
                     }
                 }
                 if (addCounter >= 4) {
                     String refredToName5 = nameReferedTo5.getText().toString();
-                    if (refredToName5 != null && !refredToName5.equals("") && refredToName5.length() > 0) {
+                    if (!refredToName5.equals("") && refredToName5.length() > 0) {
                         code = NameData.get(refredToName5);
-                        if (code == null) {
-                            Log.e("NoValForcode", "NoValFor code");
-                        } else {
+                        if (code != null) {
                             int index = Integer.parseInt(code);
-                            sb.append(index);
+                            sb.append(",").append(index);
+                            sbname.append(",").append(refredToName5);
                         }
                     }
                 }
@@ -734,20 +726,21 @@ public class AddPatientUpdate extends AppCompatActivity {
                 strReferedTo = String.valueOf(sb);
                 String strRederedBy1 = nameRefredBy.getText().toString();
 
-                if (strRederedBy1 != null && !strRederedBy1.equals("") && strRederedBy1.length() > 0) {
+                if (!strRederedBy1.equals("") && strRederedBy1.length() > 0) {
                     code = NameData.get(strRederedBy1);
-                    if (code == null) {
-                        Log.e("NoValForcode", "NoValFor code");
-                    } else {
+                    if (code != null) {
                         int index = Integer.parseInt(code);
                         strRederedBy = String.valueOf(index);
                     }
 
                 }
 
-
-               /* Toast.makeText(getApplicationContext(), "  " + strRederedBy, Toast.LENGTH_LONG).show();*/
                 strReferedTo = String.valueOf(sb);
+                String insertedName = String.valueOf(sbname);
+                TextView textRefredByShow = (TextView) findViewById(R.id.txtrefredby);
+                TextView textRefredToShow = (TextView) findViewById(R.id.txtrefredto);
+                textRefredByShow.setText(strRederedBy + "");
+                textRefredToShow.setText(insertedName + "");
                 addCounter = 0;
                 dialog.dismiss();
             }
@@ -799,17 +792,17 @@ public class AddPatientUpdate extends AppCompatActivity {
         final AutoCompleteTextView nameReferedTo4 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo4);
         final AutoCompleteTextView nameReferedTo5 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo5);
 
-        nameRefredBy.setThreshold(2);
+        nameRefredBy.setThreshold(1);
         nameRefredBy.setAdapter(adapter);
-        nameReferedTo1.setThreshold(2);
+        nameReferedTo1.setThreshold(1);
         nameReferedTo1.setAdapter(adapter);
-        nameReferedTo2.setThreshold(2);
+        nameReferedTo2.setThreshold(1);
         nameReferedTo2.setAdapter(adapter);
-        nameReferedTo3.setThreshold(2);
+        nameReferedTo3.setThreshold(1);
         nameReferedTo3.setAdapter(adapter);
-        nameReferedTo4.setThreshold(2);
+        nameReferedTo4.setThreshold(1);
         nameReferedTo4.setAdapter(adapter);
-        nameReferedTo5.setThreshold(2);
+        nameReferedTo5.setThreshold(1);
         nameReferedTo5.setAdapter(adapter);
 
         final TextView refredtoSpeciality1 = (TextView) f.findViewById(R.id.refredtoSpeciality1);
@@ -819,7 +812,6 @@ public class AddPatientUpdate extends AppCompatActivity {
         final TextView refredtoSpeciality5 = (TextView) f.findViewById(R.id.refredtoSpeciality5);
         final TextView refredBySpeciality = (TextView) f.findViewById(R.id.refredBySpeciality);
 
-        sb = new StringBuilder();
 
         nameRefredBy.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             String val = null;
@@ -832,9 +824,11 @@ public class AddPatientUpdate extends AppCompatActivity {
                     int index = 0;
                     String strSpecialty = null;
                     String code = null;
-                    if (val != null && !val.equals("") && val.length() > 0) {
+                    if (!val.equals("") && val.length() > 0) {
                         code = NameData.get(val);
-                        index = Integer.parseInt(code);
+                        if (code != null) {
+                            index = Integer.parseInt(code);
+                        }
                     }
                     if (index == 0) {
                         //  strSpecialty=specialityArray.get(index);
@@ -851,10 +845,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                     if (val == null || code == null) {
                         strRederedBy = null;
                     }
-                    Log.e("index", " " + index);
-                    Log.v("TruitonAutoCompleteTe",
-                            "Selected City Code: " + code + " " + strSpecialty);
-
                 }
             }
         });
@@ -867,10 +857,11 @@ public class AddPatientUpdate extends AppCompatActivity {
                     int index = 0;
                     String strSpecialty = null;
                     String code = null;
-                    if (val != null && !val.equals("") && val.length() > 0) {
+                    if (!val.equals("") && val.length() > 0) {
                         code = NameData.get(val);
-                        index = Integer.parseInt(code);
-                        Log.e("index", "  " + index + " " + code);
+                        if (code != null) {
+                            index = Integer.parseInt(code);
+                        }
                     }
                     if (index == 0) {
                         //  strSpecialty=specialityArray.get(index);
@@ -880,8 +871,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                     refredtoSpeciality1.setVisibility(View.VISIBLE);
                     refredtoSpeciality1.setText(strSpecialty);
                     // sb.append(index);
-                    Log.v("TruitonAutoCompleteTe",
-                            "Selected City Code: " + code + " " + strSpecialty);
+
                     if (code == null) {
                         nameReferedTo1.setError("Invalid Entry");
                     }
@@ -896,9 +886,11 @@ public class AddPatientUpdate extends AppCompatActivity {
                     int index = 0;
                     String strSpecialty = null;
                     String code = null;
-                    if (val != null && !val.equals("") && val.length() > 0) {
+                    if (!val.equals("") && val.length() > 0) {
                         code = NameData.get(val);
-                        index = Integer.parseInt(code);
+                        if (code != null) {
+                            index = Integer.parseInt(code);
+                        }
                     }
                     if (index == 0) {
                         //  strSpecialty=specialityArray.get(index);
@@ -908,8 +900,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                     refredtoSpeciality2.setVisibility(View.VISIBLE);
                     refredtoSpeciality2.setText(strSpecialty);
                     //   sb.append(",").append(index);
-                    Log.v("TruitonAutoCompleteTe",
-                            "Selected City Code: " + code + " " + strSpecialty);
                     if (code == null) {
                         nameReferedTo2.setError("Invalid Entry");
                     }
@@ -924,9 +914,11 @@ public class AddPatientUpdate extends AppCompatActivity {
                     int index = 0;
                     String strSpecialty = null;
                     String code = null;
-                    if (val != null && !val.equals("") && val.length() > 0) {
+                    if (!val.equals("") && val.length() > 0) {
                         code = NameData.get(val);
-                        index = Integer.parseInt(code);
+                        if (code != null) {
+                            index = Integer.parseInt(code);
+                        }
                     }
                     if (index == 0) {
                         //  strSpecialty=specialityArray.get(index);
@@ -936,8 +928,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                     refredtoSpeciality3.setVisibility(View.VISIBLE);
                     refredtoSpeciality3.setText(strSpecialty);
                     //sb.append(",").append(index);
-                    Log.v("TruitonAutoCompleteTe",
-                            "Selected City Code: " + code + " " + strSpecialty);
                     if (code == null) {
                         nameReferedTo3.setError("Invalid Entry");
                     }
@@ -952,9 +942,11 @@ public class AddPatientUpdate extends AppCompatActivity {
                     int index = 0;
                     String strSpecialty = null;
                     String code = null;
-                    if (val != null && !val.equals("") && val.length() > 0) {
+                    if (!val.equals("") && val.length() > 0) {
                         code = NameData.get(val);
-                        index = Integer.parseInt(code);
+                        if (code != null) {
+                            index = Integer.parseInt(code);
+                        }
                     }
                     if (index == 0) {
                         //  strSpecialty=specialityArray.get(index);
@@ -964,8 +956,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                     refredtoSpeciality4.setVisibility(View.VISIBLE);
                     refredtoSpeciality4.setText(strSpecialty);
                     // sb.append(",").append(index);
-                    Log.v("TruitonAutoCompleteTe",
-                            "Selected City Code: " + code + " " + strSpecialty);
                     if (code == null) {
                         nameReferedTo2.setError("Invalid Entry");
                     }
@@ -980,9 +970,11 @@ public class AddPatientUpdate extends AppCompatActivity {
                     int index = 0;
                     String strSpecialty = null;
                     String code = null;
-                    if (val != null && !val.equals("") && val.length() > 0) {
+                    if (!val.equals("") && val.length() > 0) {
                         code = NameData.get(val);
-                        index = Integer.parseInt(code);
+                        if (code != null) {
+                            index = Integer.parseInt(code);
+                        }
                     }
                     if (index == 0) {
                         //  strSpecialty=specialityArray.get(index);
@@ -992,8 +984,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                     refredtoSpeciality5.setVisibility(View.VISIBLE);
                     refredtoSpeciality5.setText(strSpecialty);
                     // sb.append(",").append(index);
-                    Log.v("TruitonAutoCompleteTe",
-                            "Selected City Code: " + code + " " + strSpecialty);
                     if (code == null) {
                         nameReferedTo5.setError("Invalid Entry");
                     }
@@ -1051,6 +1041,8 @@ public class AddPatientUpdate extends AppCompatActivity {
             i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
             i.putExtra("HEIGHT", registrationModel.getHeight());
             i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
+            i.putExtra("UID", registrationModel.getUid());
+            i.putExtra("EMAIL", registrationModel.getEmail());
             startActivity(i);
         }
     }
@@ -1087,8 +1079,8 @@ public class AddPatientUpdate extends AppCompatActivity {
         String strSugar = edtInput_sugar.getText().toString().trim();
         String strSymptoms = edtSymptoms.getText().toString().trim();
         String strDignosis = edtDignosis.getText().toString().trim();
-        String strTests = edtTest.getText().toString().trim();
-        String strDrugs = edtDrugs.getText().toString().trim();
+        String strTests = null;
+        String strDrugs = null;
 
         String strHeight = edtInput_height.getText().toString().trim();
         String strbmi = edtInput_bmi.getText().toString().trim();
@@ -1126,6 +1118,32 @@ public class AddPatientUpdate extends AppCompatActivity {
         SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
         String added_on = visitDate.getText().toString();
+        String delimiter = ",";
+        String[] diagno = strDignosis.split(delimiter);
+             /* print substrings */
+        for (String aTemp : diagno) {
+            //System.out.println(temp[i]);
+
+            if (!new AppController().isDuplicate(mDiagnosisList, aTemp)) {
+
+                // dbController.addAilment(temp[i]);
+                databaseClass.addDiagnosis(aTemp);
+
+            }
+        }
+
+        String[] symp = strSymptoms.split(delimiter);
+             /* print substrings */
+        for (String aTemp : symp) {
+            //System.out.println(temp[i]);
+
+            if (!new AppController().isDuplicate(mSymptomsList, aTemp)) {
+
+                // dbController.addAilment(temp[i]);
+                databaseClass.addSymptoms(aTemp);
+
+            }
+        }
 
         try {
             //convert visit date from 2016-11-1 to 2016-11-01
@@ -1159,35 +1177,34 @@ public class AddPatientUpdate extends AppCompatActivity {
     //this will used to change banner image after some time interval
     private void setupAnimation() {
 
-
-        Random r = new Random();
         try {
             if (bannerimgNames.size() > 0) {
+                Random r = new Random();
                 int n = r.nextInt(bannerimgNames.size());
 
+                url = bannerimgNames.get(n);
 
-                // final String url = getString(imageArray[n]);
-                //  backChangingImages.setImageResource(imageArray[n]);
-                final String url = bannerimgNames.get(n);
+                if (AppController.checkifImageExists(url)) {
 
+                    url = bannerimgNames.get(n);
+                    BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
 
-                BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-                backChangingImages.setImageDrawable(d);
+                    //Log.e("BitmapDrawable", "" + d);
+                    backChangingImages.setImageDrawable(d);
 
-                backChangingImages.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                    backChangingImages.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                        String action = "clicked";
+                            String action = "clicked";
 
-                        appController.showAdDialog(AddPatientUpdate.this, url);
-                        appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action, "Add Patient Visit");
-
-
-                    }
-                });
-                String action = "display";
-                appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action, "Add Patient Visit");
+                            appController.showAdDialog(AddPatientUpdate.this, url);
+                            appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action, "Add Patient Update");
+                        }
+                    });
+                    String action = "display";
+                    appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action, "Add Patient Update");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1235,7 +1252,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
             if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
 
-                setUpGlide(patientImagePath, imageViewprescription);
+                //setUpGlide(patientImagePath, imageViewprescription);
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -1462,8 +1479,6 @@ public class AddPatientUpdate extends AppCompatActivity {
         edtInput_sugar = null;
         edtSymptoms = null;
         edtDignosis = null;
-        edtTest = null;
-        edtDrugs = null;
         fodtextshow = null;
         days = null;
         week = null;
@@ -1473,7 +1488,6 @@ public class AddPatientUpdate extends AppCompatActivity {
         daysSel = null;
         txtRecord = null;
         txtsymtomsanddignost = null;
-        presciptiontext = null;
         edtInput_sugarfasting = null;
         edtInput_bmi = null;
         edtInput_height = null;
@@ -1482,6 +1496,18 @@ public class AddPatientUpdate extends AppCompatActivity {
         strAlternatephtype = null;
         strIsd_code = null;
         strAlternateIsd_code = null;
+        mDiagnosisList = null;
+        strReferedTo = null;
+        strRederedBy = null;
+        NameData = null;
+        specialityArray = null;
+        patientImagePath = null;
+        prescriptionImgPath = null;
+        url = null;
+        struid = null;
+        strEmail = null;
+
+
     }
 
     private void addFollowupdateButtonListner() {
@@ -1514,23 +1540,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                     symptomsdigosislayout.setVisibility(View.GONE);
                     txtsymtomsanddignost.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
                     countsymtomsanddignostLayout = 1;
-                }
-                //  txtRecord.setBackground(R.drawable.);
-            }
-        });
-
-        presciptiontext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayout symptomsdigosislayout = (LinearLayout) findViewById(R.id.presciptionlayout);
-                if (countPrescriptiontLayout == 1) {
-                    symptomsdigosislayout.setVisibility(View.VISIBLE);
-                    presciptiontext.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
-                    countPrescriptiontLayout = 2;
-                } else {
-                    symptomsdigosislayout.setVisibility(View.GONE);
-                    presciptiontext.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
-                    countPrescriptiontLayout = 1;
                 }
                 //  txtRecord.setBackground(R.drawable.);
             }

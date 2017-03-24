@@ -439,6 +439,19 @@
                         android:textColor="@color/input_register"
                         android:textSize="14sp" />
 
+                    <TextView
+                        android:id="@+id/quickaddtxt"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/copy"
+                        android:gravity="right"
+                        android:padding="2dp"
+                        android:text="Quick Add"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:textColor="@color/bg_login"
+                        android:textSize="14sp"
+                        android:visibility="invisible"/>
 
                     <TextView
                         android:id="@+id/privacyPolicy"
@@ -456,8 +469,8 @@
                         android:id="@+id/termsandCondition"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
+                        android:layout_toLeftOf="@+id/quickaddtxt"
+                        android:layout_toStartOf="@+id/quickaddtxt"
                         android:layout_below="@+id/copy"
                         android:gravity="center"
                         android:padding="3dp"

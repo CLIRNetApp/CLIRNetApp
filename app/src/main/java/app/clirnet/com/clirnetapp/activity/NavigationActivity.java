@@ -16,6 +16,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
@@ -120,7 +124,7 @@ public class NavigationActivity extends AppCompatActivity
         }
 
         Fragment fragment;
-        //todo set the equals condtion  proper and url link update
+
         if (msgType != null && msgType.equals("knowledge")) {
             fragment = new KnowledgeFragment();
             fragmentManager = getSupportFragmentManager();
@@ -161,22 +165,22 @@ public class NavigationActivity extends AppCompatActivity
             fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
         }
-        //subscribeToPushService();
+       // subscribeToPushService();
     }
 
-    /* private void subscribeToPushService() {
+     private void subscribeToPushService() {
 
          FirebaseMessaging.getInstance().subscribeToTopic("news");
-         Log.d("AndroidBash", "Subscribed");
+      //   Log.d("AndroidBash", "Subscribed");
          Toast.makeText(NavigationActivity.this, "Subscribed", Toast.LENGTH_SHORT).show();
 
          String token = FirebaseInstanceId.getInstance().getToken();
 
          // Log and toast
-        Log.d("AndroidBash", token);
+       // Log.d("AndroidBash", token);
         // Toast.makeText(NavigationActivity.this, token, Toast.LENGTH_SHORT).show();
      }
- */
+
     @Override
     public void onBackPressed() {
     }

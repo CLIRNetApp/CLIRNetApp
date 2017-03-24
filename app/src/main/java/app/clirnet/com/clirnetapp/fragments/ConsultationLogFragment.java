@@ -74,6 +74,7 @@ public class ConsultationLogFragment extends Fragment {
     private String doctor_membership_number;
 
     private Button searchRecords;
+    private String url;
 
     public ConsultationLogFragment() {
         // this.setHasOptionsMenu(true);
@@ -162,7 +163,7 @@ public class ConsultationLogFragment extends Fragment {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Consultation Log" + e);
         }
 
         Calendar c = Calendar.getInstance();
@@ -226,7 +227,7 @@ public class ConsultationLogFragment extends Fragment {
                     reformattedStr = myFormat.format(fromUser.parse(searchdate));
                 } catch (ParseException e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTimenew() + " " + "/ " + "ConsultationLog" + e);
+                    appController.appendLog(appController.getDateTimenew() + " " + "/ " + "Consultation Log" + e);
                 }
 
                 if (TextUtils.isEmpty(searchdate)) {
@@ -244,7 +245,7 @@ public class ConsultationLogFragment extends Fragment {
 
                     if (date1.after(currentdate) || date1.equals(currentdate)) {
 
-                        if (filterVistDateList != null) {
+                        if (filterVistDateList != null && filterVistDateList.size()>0) {
 
                             filterVistDateList.clear();
 
@@ -286,7 +287,7 @@ public class ConsultationLogFragment extends Fragment {
                         //  Toast.makeText(getContext(), "Date1 is after sysdate", Toast.LENGTH_LONG).show();
                     } else if (date1.before(currentdate)) {
 
-                        if (filterfodList.size() > 0) {
+                        if (filterfodList !=null && filterfodList.size() > 0) {
 
                             filterfodList.clear();
 
@@ -331,7 +332,7 @@ public class ConsultationLogFragment extends Fragment {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Consultation Log" + e);
                 }
 
             }
@@ -465,37 +466,39 @@ public class ConsultationLogFragment extends Fragment {
 
         backChangingImages = (ImageView) view.findViewById(R.id.backChangingImages);
 
-
-        Random r = new Random();
         try {
             if (bannerimgNames.size() > 0) {
+                Random r = new Random();
                 int n = r.nextInt(bannerimgNames.size());
 
+                url = bannerimgNames.get(n);
 
-                final String url = bannerimgNames.get(n);
+                if (AppController.checkifImageExists(url)) {
 
-                BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-                backChangingImages.setImageDrawable(d);
+                    url = bannerimgNames.get(n);
+                    BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
 
-                backChangingImages.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //  Toast.makeText(getContext(), "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+                    //Log.e("BitmapDrawable", "" + d);
+                    backChangingImages.setImageDrawable(d);
 
-                        String action = "clicked";
+                    backChangingImages.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
-                        appController.showAdDialog(getContext(), url);
-                        appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action,"Consultation Log");
+                            String action = "clicked";
 
-                    }
-                });
-                String action = "display";
-                appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action,"Consultation Log");
+                            appController.showAdDialog(getContext(), url);
+                            appController.saveBannerDataIntoDb(url,getContext(), doctor_membership_number, action, "Consultation Log");
+                        }
+                    });
+                    String action = "display";
+                    appController.saveBannerDataIntoDb(url,getContext(), doctor_membership_number, action, "Consultation Log");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+//
     }
 
     @Override
@@ -553,7 +556,7 @@ public class ConsultationLogFragment extends Fragment {
         searchRecords = null;
         filterfodList = null;
         filterVistDateList = null;
-
+           url=null;
     }
 
     //class to implement OnClick Listner

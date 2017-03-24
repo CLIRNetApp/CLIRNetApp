@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -29,6 +28,7 @@ import java.util.Map;
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.app.DoctorDeatilsAsynTask;
 import app.clirnet.com.clirnetapp.app.GetBannerImageTask;
 import app.clirnet.com.clirnetapp.app.UploadBannerDataAsyncTask;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
@@ -146,6 +146,10 @@ public class SyncDataService extends Service {
 
     private void sendDataToServerAsyncTask() throws ClirNetAppException {
 
+        boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
+
+        if (isInternetPresent) {
+
         ArrayList<String> bannerDisplayIds_List;
         ArrayList<String> bannaerClickedIdsList;
         //patient and patient history data count
@@ -178,10 +182,6 @@ public class SyncDataService extends Service {
 
         String bannerClickedArayString = String.valueOf(dbController.getResultsForBannerClicked());
 
-
-        boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
-        if (isInternetPresent) {
-
             String start_time = appController.getDateTimenew();
 
             if (bannaerClickedIdsList.size() > 0 || bannerDisplayIds_List.size() > 0) {
@@ -193,6 +193,8 @@ public class SyncDataService extends Service {
                 new GetBannerImageTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, company_id,start_time); //send log file to server
 
             }
+
+            new DoctorDeatilsAsynTask(getApplicationContext(), mUserName, mPassword, start_time);
 
             if (patientIds_List.size() != 0 || getPatientVisitIdsList.size() != 0) {
 
@@ -206,9 +208,10 @@ public class SyncDataService extends Service {
 
                 start_time1 = appController.getDateTimenew();
                 appController.appendLog(appController.getDateTime() + " " + " / " + "Sending Data to server from Sync Service" + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
                 sendDataToServer(patientInfoArayString, patientVisitHistorArayString, doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size(),new AppController().getDateTimenew());
 
-                new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, start_time1); //send log file to server
+                new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword,doctor_membership_number, start_time1); //send log file to server
             }
         }
     }
@@ -312,20 +315,20 @@ public class SyncDataService extends Service {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-               Log.e("ServiceError", "Login Error: " + error.getMessage());
+              // Log.e("ServiceError", "Login Error: " + error.getMessage());
 
                 if (error instanceof TimeoutError) {
-                    Log.e("Volley", "TimeoutError");
+                  //  Log.e("Volley", "TimeoutError");
                 } else if (error instanceof NoConnectionError) {
-                    Log.e("Volley", "NoConnectionError");
+                  //  Log.e("Volley", "NoConnectionError");
                 } else if (error instanceof AuthFailureError) {
-                    Log.e("Volley", "AuthFailureError");
+                  //  Log.e("Volley", "AuthFailureError");
                 } else if (error instanceof ServerError) {
-                    Log.e("Volley", "ServerError");
+                   // Log.e("Volley", "ServerError");
                 } else if (error instanceof NetworkError) {
-                    Log.e("Volley", "NetworkError");
+                   // Log.e("Volley", "NetworkError");
                 } else if (error instanceof ParseError) {
-                    Log.e("Volley", "ParseError");
+                   // Log.e("Volley", "ParseError");
                 }
 
                 appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Data Service Error  " + error + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -359,7 +362,7 @@ public class SyncDataService extends Service {
                 return map;
             }
         };
-        int socketTimeout = 180000;  //30 seconds - change to what you want
+        int socketTimeout = 180000;  //180 seconds - change to what you want
         int retryforTimes = 1;
         RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, retryforTimes, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
         strReq.setRetryPolicy(policy);

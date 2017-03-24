@@ -7,23 +7,25 @@ package app.clirnet.com.clirnetapp.models;
 public class RegistrationModel {
 
 
+    private String uid;
+
+
     private String referedBy;
     private String referedTo;
-    private  String modiedCounter;
-
+    private String modiedCounter;
 
 
     private String speciality;
-    private  String associateType;
+    private String associateType;
 
     public String getModiedCounter() {
         return modiedCounter;
     }
 
-    private  String name;
+    private String name;
 
 
-    private  String email;
+    private String email;
     private String action;
     private String flag;
     private String phadded_on;
@@ -37,29 +39,12 @@ public class RegistrationModel {
     private String middleName;
     private String dob;
     private String mobileNumber;
-    private  String phone_type;
+    private String phone_type;
 
-    private  String process ;
-    private  String start_time;
-    private  String end_time ;
+    private String process;
+    private String start_time;
+    private String end_time;
 
-
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getProcess() {
-        return process;
-    }
-
-    public String getStart_time() {
-        return start_time;
-    }
-
-    public String getEnd_time() {
-        return end_time;
-    }
 
     private String gender;
     private String age;
@@ -114,12 +99,16 @@ public class RegistrationModel {
     private String bmi;
     private String alternatePhoneType;
     private String alternatePhoneNumber;
-    private String height;  private String sugarFasting;
+    private String height;
+    private String sugarFasting;
     private String alternate_isd_code;
     private String isd_code;
 
-    private  String banner_image_name;
-    private  String banner_id;
+    private String banner_image_name;
+    private String banner_id;
+
+
+    private String title;
 
     public String getDrugs() {
         return drugs;
@@ -148,6 +137,7 @@ public class RegistrationModel {
     public String getMmhg() {
         return lowBp;
     }
+
     public String getlowBp() {
         return lowBp;
     }
@@ -213,10 +203,10 @@ public class RegistrationModel {
     }
 
 
-
     public String getStatus() {
         return status;
     }
+
     public String getAssociateType() {
         return associateType;
     }
@@ -230,7 +220,6 @@ public class RegistrationModel {
     }
 
 
-
     public String getReferedBy() {
         return referedBy;
     }
@@ -238,7 +227,6 @@ public class RegistrationModel {
     public String getReferedTo() {
         return referedTo;
     }
-
 
 
     public String getSugarFasting() {
@@ -269,13 +257,21 @@ public class RegistrationModel {
         return actualFollowupDate;
     }
 
-    public RegistrationModel(String id) {
-        this.pat_id = id;
+
+    public String getEmail() {
+        return email;
     }
 
-    public RegistrationModel(String id, String visitId) {
-        this.pat_id = id;
-        this.key_visit_id = visitId;
+    public String getProcess() {
+        return process;
+    }
+
+    public String getStart_time() {
+        return start_time;
+    }
+
+    public String getEnd_time() {
+        return end_time;
     }
 
 
@@ -309,33 +305,6 @@ public class RegistrationModel {
     }
     //to get data from db 123
 
-    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String usersellectedDate, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on) {
-        this.pat_id = id;
-        this.firstName = first_name;
-        this.middleName = middle_name;
-        this.lastName = last_name;
-        this.dob = strdate_of_birth;
-        this.gender = gender;
-
-        this.age = current_age;
-        this.mobileNumber = phone_number;
-        this.language = selectedLanguage;
-        this.photo = patientImagePath;
-        this.followUpDate = usersellectedDate;
-
-        this.followUpdays = daysSel;
-        this.followUpWeek = weekSel;
-        this.followUpMonth = monthSel;
-        this.ailments = ailmentList;
-        this.pres_img = prescriptionImgPath;
-        this.clinicalNotes = clinical_note;
-        this.added_on = added_on;
-        this.visit_date = visit_date;
-        this.modified_on = modified_on;
-
-
-    }
-
 
     public String getClinicalNotes() {
         return clinicalNotes;
@@ -345,6 +314,10 @@ public class RegistrationModel {
     public String getAilments() {
 
         return ailments;
+    }
+
+    public String getUid() {
+        return uid;
     }
 
     public void setAilments(String ailments) {
@@ -363,22 +336,6 @@ public class RegistrationModel {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-
-    //This constructor for get the result from db
-    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String sex, String strdate_of_birth, String current_age, String phone_number) {//, String language, String s, String s1, String s2, String s3, String s4, String ailments, String s5, String s6) {
-
-        this.id = id;
-        this.firstName = first_name;
-        this.middleName = middle_name;
-        this.lastName = last_name;
-        this.dob = strdate_of_birth;
-        this.gender = sex;
-        this.age = current_age;
-        this.mobileNumber = phone_number;
-
-
     }
 
 
@@ -458,6 +415,24 @@ public class RegistrationModel {
         return followUpMonth;
     }
 
+    public String getAlternate_isd_code() {
+        return alternate_isd_code;
+    }
+
+    public String getIsd_code() {
+        return isd_code;
+    }
+
+    public RegistrationModel(String id) {
+        this.pat_id = id;
+    }
+
+    public String getTitle() { return title; }
+
+    public RegistrationModel(String id, String visitId) {
+        this.pat_id = id;
+        this.key_visit_id = visitId;
+    }
 
     public RegistrationModel(String pat_id, String doctor_id, String doc_membership_id, String patient_info_type_form, String pat_first_name,
                              String pat_middle_name, String pat_last_name, String pat_gender, String pat_date_of_birth,
@@ -510,7 +485,7 @@ public class RegistrationModel {
         this.actualFollowupDate = actualFod;
     }*/
 
-    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,String mSymptoms,String mDiagnosis) {
+    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate, String mSymptoms, String mDiagnosis) {
 
         this.pat_id = id;
         this.firstName = first_name;
@@ -536,48 +511,14 @@ public class RegistrationModel {
         this.modified_on = modified_on;
         this.key_visit_id = key_visit_id;
         this.actualFollowupDate = actFolDate;
-        this.symptoms=mSymptoms;
-        this.dignosis=mDiagnosis;
-    }
-
-    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate) {
-
-        this.pat_id = id;
-        this.firstName = first_name;
-        this.middleName = middle_name;
-        this.lastName = last_name;
-        this.dob = strdate_of_birth;
-        this.gender = gender;
-
-        this.age = current_age;
-        this.mobileNumber = phone_number;
-        this.language = selectedLanguage;
-        this.photo = patientImagePath;
-        this.followUpDate = follow_up_date;
-
-        this.followUpdays = daysSel;
-        this.followUpWeek = weekSel;
-        this.followUpMonth = monthSel;
-        this.ailments = ailmentList;
-        this.pres_img = prescriptionImgPath;
-        this.clinicalNotes = clinical_note;
-        this.added_on = added_on;
-        this.visit_date = visit_date;
-        this.modified_on = modified_on;
-        this.key_visit_id = key_visit_id;
-        this.actualFollowupDate = actFolDate;
+        this.symptoms = mSymptoms;
+        this.dignosis = mDiagnosis;
     }
 
 
-    public String getAlternate_isd_code() {
-        return alternate_isd_code;
-    }
-
-    public String getIsd_code() {
-        return isd_code;
-    }
-
-    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String gender, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String usersellectedDate, String daysSel, String monthSel, String weekSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String modified_on, String actfod, String action,String address, String city, String district, String pin, String state,String altername_no,String altternate_phType,String phone_type,String visit_date) {
+    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String gender, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String usersellectedDate, String daysSel,
+                             String monthSel, String weekSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String modified_on, String actfod, String action, String address, String city, String district, String pin, String state,
+                             String altername_no, String altternate_phType, String phone_type, String visit_date, String email, String uid) {
         this.pat_id = id;
         this.firstName = first_name;
         this.middleName = middle_name;
@@ -609,15 +550,17 @@ public class RegistrationModel {
         this.district = district;
         this.pin_code = pin;
         this.state = state;
-        this.alternatePhoneNumber=altername_no;
-        this.alternatePhoneType=altternate_phType;
-        this.phone_type=phone_type;
+        this.alternatePhoneNumber = altername_no;
+        this.alternatePhoneType = altternate_phType;
+        this.phone_type = phone_type;
+        this.email = email;
+        this.uid = uid;
 
     }
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
                              String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String tests, String drugs,String altername_no,String height,String bmi,String sugar_fasting,String altternate_phType,String phone_type,String isd_code,String alternate_noisd_code) {
+                             String sugar, String symptoms, String dignosis, String tests, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code) {
 
         this.pat_id = id;
         this.firstName = first_name;
@@ -650,7 +593,7 @@ public class RegistrationModel {
         this.pin_code = pin;
         this.state = state;
 
-        this.weight=weight;
+        this.weight = weight;
         this.pulse = pulse;
         this.bp = bp;
         this.lowBp = mmhg;
@@ -660,19 +603,21 @@ public class RegistrationModel {
         this.dignosis = dignosis;
         this.tests = tests;
         this.drugs = drugs;
-        this.bmi=bmi;
-        this.height=height;
-        this.alternatePhoneNumber=altername_no;
-        this.alternatePhoneType=altternate_phType;
-        this.sugarFasting=sugar_fasting;
-        this.phone_type=phone_type;
-        this.isd_code=isd_code;
-        this.alternate_isd_code=alternate_noisd_code;
+        this.bmi = bmi;
+        this.height = height;
+        this.alternatePhoneNumber = altername_no;
+        this.alternatePhoneType = altternate_phType;
+        this.sugarFasting = sugar_fasting;
+        this.phone_type = phone_type;
+        this.isd_code = isd_code;
+        this.alternate_isd_code = alternate_noisd_code;
 
     }
+
+
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
                              String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String tests, String drugs,String altername_no,String height,String bmi,String sugar_fasting,String altternate_phType,String phone_type,String isd_code,String alternate_noisd_code,String referedBy,String referedTo) {
+                             String sugar, String symptoms, String dignosis, String email, String uid, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo) {
 
         this.pat_id = id;
         this.firstName = first_name;
@@ -705,7 +650,7 @@ public class RegistrationModel {
         this.pin_code = pin;
         this.state = state;
 
-        this.weight=weight;
+        this.weight = weight;
         this.pulse = pulse;
         this.bp = bp;
         this.lowBp = mmhg;
@@ -713,110 +658,22 @@ public class RegistrationModel {
         this.sugar = sugar;
         this.symptoms = symptoms;
         this.dignosis = dignosis;
-        this.tests = tests;
-        this.drugs = drugs;
-        this.bmi=bmi;
-        this.height=height;
-        this.alternatePhoneNumber=altername_no;
-        this.alternatePhoneType=altternate_phType;
-        this.sugarFasting=sugar_fasting;
-        this.phone_type=phone_type;
-        this.isd_code=isd_code;
-        this.alternate_isd_code=alternate_noisd_code;
-        this.referedBy=referedBy;
-        this.referedTo=referedTo;
+        this.email = email;
+        this.uid = uid;
+        this.bmi = bmi;
+        this.height = height;
+        this.alternatePhoneNumber = altername_no;
+        this.alternatePhoneType = altternate_phType;
+        this.sugarFasting = sugar_fasting;
+        this.phone_type = phone_type;
+        this.isd_code = isd_code;
+        this.alternate_isd_code = alternate_noisd_code;
+        this.referedBy = referedBy;
+        this.referedTo = referedTo;
 
     }
 
-    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
-                             String address, String city, String district, String pin, String state) {
-        this.pat_id = id;
-        this.firstName = first_name;
-        this.middleName = middle_name;
-        this.lastName = last_name;
-        this.dob = strdate_of_birth;
-        this.gender = gender;
 
-        this.age = current_age;
-        this.mobileNumber = phone_number;
-        this.language = selectedLanguage;
-        this.photo = patientImagePath;
-        this.followUpDate = follow_up_date;
-
-        this.followUpdays = daysSel;
-        this.followUpWeek = weekSel;
-        this.followUpMonth = monthSel;
-        this.ailments = ailmentList;
-        this.pres_img = prescriptionImgPath;
-        this.clinicalNotes = clinical_note;
-        this.added_on = added_on;
-        this.visit_date = visit_date;
-        this.modified_on = modified_on;
-        this.key_visit_id = key_visit_id;
-        this.actualFollowupDate = actFolDate;
-        this.address = address;
-        this.cityortown = city;
-        this.district = district;
-        this.pin_code = pin;
-        this.state = state;
-
-    }
-
-    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
-                             String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String tests, String drugs,String altername_no,String height,String bmi,String sugar_fasting,String altternate_phType,String phone_type,String isd_code,String alternate_noisd_code,String a,String b,String c) {
-
-        this.pat_id = id;
-        this.firstName = first_name;
-        this.middleName = middle_name;
-        this.lastName = last_name;
-        this.dob = strdate_of_birth;
-        this.gender = gender;
-
-        this.age = current_age;
-        this.mobileNumber = phone_number;
-        this.language = selectedLanguage;
-        this.photo = patientImagePath;
-        this.followUpDate = follow_up_date;
-
-        this.followUpdays = daysSel;
-        this.followUpWeek = weekSel;
-        this.followUpMonth = monthSel;
-        this.ailments = ailmentList;
-        this.pres_img = prescriptionImgPath;
-        this.clinicalNotes = clinical_note;
-        this.added_on = added_on;
-        this.visit_date = visit_date;
-        this.modified_on = modified_on;
-        this.key_visit_id = key_visit_id;
-        this.actualFollowupDate = actFolDate;
-
-        this.address = address;
-        this.cityortown = city;
-        this.district = district;
-        this.pin_code = pin;
-        this.state = state;
-
-        this.weight=weight;
-        this.pulse = pulse;
-        this.bp = bp;
-        this.lowBp = mmhg;
-        this.temprature = temprature;
-        this.sugar = sugar;
-        this.symptoms = symptoms;
-        this.dignosis = dignosis;
-        this.tests = tests;
-        this.drugs = drugs;
-        this.bmi=bmi;
-        this.height=height;
-        this.alternatePhoneNumber=altername_no;
-        this.alternatePhoneType=altternate_phType;
-        this.sugarFasting=sugar_fasting;
-        this.phone_type=phone_type;
-        this.isd_code=isd_code;
-        this.alternate_isd_code=alternate_noisd_code;
-
-    }
     //This constructor for get the result from db
     public RegistrationModel(String process, String start_time, String end_time) {//, String language, String s, String s1, String s2, String s3, String s4, String ailments, String s5, String s6) {
 
@@ -827,17 +684,48 @@ public class RegistrationModel {
 
     }
 
-    public RegistrationModel(String banner_id,String image_name, String start_time, String end_time) {//, String language, String s, String s1, String s2, String s3, String s4, String ailments, String s5, String s6) {
+    public RegistrationModel(String banner_id, String image_name, String start_time, String end_time) {//, String language, String s, String s1, String s2, String s3, String s4, String ailments, String s5, String s6) {
 
-        this.banner_id=banner_id;
+        this.banner_id = banner_id;
         this.banner_image_name = image_name;
         this.start_time = start_time;
         this.end_time = end_time;
 
     }
+
+    public RegistrationModel(String id, String prescription_image, String added_on, String added_by, String status, String phno, String email) {
+
+        this.id = id;
+        this.pres_img = prescription_image;
+        this.added_on = added_on;
+        this.added_by = added_by;
+        this.status = status;
+        this.mobileNumber = phno;
+        this.email = email;
+    }
+
+    public RegistrationModel(String id, String name, String type, String phoneno, String speciality, String added_on, String modified_counter, String phone_type, String isd_code, String email, String associate_address, String city, String associate_state, String pin_code, String district, String nameTitle) {
+        this.id = id;
+        this.name = name;
+        this.associateType = type;
+        this.mobileNumber = phoneno;
+        this.speciality = speciality;
+        this.added_on = added_on;
+        this.modiedCounter = modified_counter;
+        this.email = email;
+        this.phone_type = phone_type;
+        this.isd_code = isd_code;
+        this.address = associate_address;
+        this.cityortown = city;
+        this.state = associate_state;
+        this.pin_code = pin_code;
+        this.district = district;
+        this.title = nameTitle;
+    }
+
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
                              String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String tests, String drugs,String altername_no,String height,String bmi,String sugar_fasting,String altternate_phType,String phone_type,String isd_code,String alternate_noisd_code,String status) {
+                             String sugar, String symptoms, String dignosis, String uid, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo, String email) {
 
         this.pat_id = id;
         this.firstName = first_name;
@@ -857,65 +745,45 @@ public class RegistrationModel {
         this.followUpMonth = monthSel;
         this.ailments = ailmentList;
         this.pres_img = prescriptionImgPath;
+
         this.clinicalNotes = clinical_note;
         this.added_on = added_on;
         this.visit_date = visit_date;
         this.modified_on = modified_on;
         this.key_visit_id = key_visit_id;
-        this.actualFollowupDate = actFolDate;
 
+        this.actualFollowupDate = actFolDate;
         this.address = address;
         this.cityortown = city;
         this.district = district;
         this.pin_code = pin;
-        this.state = state;
 
-        this.weight=weight;
+        this.state = state;
+        this.weight = weight;
         this.pulse = pulse;
         this.bp = bp;
         this.lowBp = mmhg;
+
         this.temprature = temprature;
         this.sugar = sugar;
         this.symptoms = symptoms;
         this.dignosis = dignosis;
-        this.tests = tests;
+        this.uid = uid;
+
         this.drugs = drugs;
-        this.bmi=bmi;
-        this.height=height;
-        this.alternatePhoneNumber=altername_no;
-        this.alternatePhoneType=altternate_phType;
-        this.sugarFasting=sugar_fasting;
-        this.phone_type=phone_type;
-        this.isd_code=isd_code;
-        this.alternate_isd_code=alternate_noisd_code;
-        this.status=status;
+        this.bmi = bmi;
+        this.height = height;
+        this.alternatePhoneNumber = altername_no;
+        this.alternatePhoneType = altternate_phType;
 
-    }
-    public RegistrationModel(String id, String prescription_image, String added_on, String added_by, String status,String phno,String email) {
+        this.sugarFasting = sugar_fasting;
+        this.phone_type = phone_type;
+        this.isd_code = isd_code;
+        this.alternate_isd_code = alternate_noisd_code;
+        this.referedBy = referedBy;
 
-        this.id=id;
-        this.pres_img=prescription_image;
-        this.added_on=added_on;
-        this.added_by=added_by;
-        this.status=status;
-        this.mobileNumber=phno;
-        this.email=email;
+        this.referedTo = referedTo;
+        this.email = email;
     }
-    public RegistrationModel(String id, String name, String type, String phoneno, String speciality,String added_on,String modified_counter,String phone_type,String isd_code,String email,String associate_address,String city,String associate_state,String pin_code,String district) {
-        this.id=id;
-        this.name = name;
-        this.associateType=type;
-        this.mobileNumber=phoneno;
-        this.speciality=speciality;
-        this.added_on=added_on;
-        this.modiedCounter=modified_counter;
-        this.email=email;
-        this.phone_type=phone_type;
-        this.isd_code=isd_code;
-        this.address=associate_address;
-        this.cityortown=city;
-        this.state=associate_state;
-        this.pin_code=pin_code;
-        this.district=district;
-    }
+
 }

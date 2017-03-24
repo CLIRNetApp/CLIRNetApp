@@ -3,6 +3,7 @@ package app.clirnet.com.clirnetapp.quickAdd;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -13,11 +14,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -49,6 +52,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
@@ -66,14 +70,6 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 import static app.clirnet.com.clirnetapp.R.id.ailments;
 import static app.clirnet.com.clirnetapp.R.id.prescriptionImgPath;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link QuickAddNewRecordsFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link QuickAddNewRecordsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class QuickAddNewRecordsFragment extends Fragment {
     private static final int DATE_DIALOG_ID = 0;
     private static final int DATE_DIALOG_ID1 = 1;
@@ -181,7 +177,16 @@ public class QuickAddNewRecordsFragment extends Fragment {
     private String added_on;
     private BannerClass bannerClass;
     private ArrayList<String> bannerimgNames;
-    private String emial_addr;
+    private String strEmailAddress;
+    private ArrayList<RegistrationModel> mAssociateList;
+    private HashMap<String, String> NameData;
+    private ArrayList<String> specialityArray;
+    private StringBuilder sb;
+    private int addCounter = 0;
+    private String strReferedTo;
+    private String strReferedBy;
+    private LinearLayout showReferalLayout;
+    private BootstrapEditText edtEmail_id;
 
     public QuickAddNewRecordsFragment() {
         // Required empty public constructor
@@ -204,9 +209,9 @@ public class QuickAddNewRecordsFragment extends Fragment {
             prescriptionimgPath = getArguments().getString("PRESCRIPTIONIMG");
             prescriptionimgId = getArguments().getString("PRESCRIPTIONID");
             phNumber = getArguments().getString("PHNUMBER");
+            Log.e("phNumber",""+phNumber+" "+prescriptionimgId);
             added_on=getArguments().getString("ADDED_ON");
-             emial_addr=getArguments().getString("EMIAL_ADDRESS");
-            //Log.e("prescriptionimgId", "" + emial_addr);
+            strEmailAddress =getArguments().getString("EMIAL_ADDRESS");
         }
         this.setRetainInstance(true);
     }
@@ -229,19 +234,17 @@ public class QuickAddNewRecordsFragment extends Fragment {
         fodtextshow = (BootstrapEditText) view.findViewById(R.id.fodtextshow);
         txtsymtomsanddignost = (TextView) view.findViewById(R.id.txtsymptomsanddignost);
         txtRecord = (TextView) view.findViewById(R.id.txtRecord);
-        presciptiontext = (TextView) view.findViewById(R.id.presciptiontext);
+      //  presciptiontext = (TextView) view.findViewById(R.id.presciptiontext);
         txtaddress = (TextView) view.findViewById(R.id.txtaddress);
         ailment = (MultiAutoCompleteTextView) view.findViewById(ailments);
-        patientimage = (ImageView) view.findViewById(R.id.patientimage);
         Button addPatientImgBtn = (Button) view.findViewById(R.id.addPatientImgBtn);
-        Button prescriptionBtn = (Button) view.findViewById(R.id.addPatientprescriptionBtn);
-        imageViewprescription = (ImageView) view.findViewById(R.id.imageViewprescription);
+        Button prescriptionBtn = (Button) view.findViewById(R.id.prescriptionBtn);
+
         clinical_Notes = (EditText) view.findViewById(R.id.clinicalNotes);
         add = (Button) view.findViewById(R.id.add);
         cancel = (Button) view.findViewById(R.id.cancel);
         multiAutoComplete = (MultiAutoCompleteTextView) view.findViewById(ailments);
         visitDate = (EditText) view.findViewById(R.id.visitDate);
-        showfodtext = (TextView) view.findViewById(R.id.fodtextshow);
         address = (BootstrapEditText) view.findViewById(R.id.address);
         city = (BootstrapEditText) view.findViewById(R.id.city);
         district = (BootstrapEditText) view.findViewById(R.id.district);
@@ -249,7 +252,6 @@ public class QuickAddNewRecordsFragment extends Fragment {
         uid = (BootstrapEditText) view.findViewById(R.id.uid);
         backChangingImages = (ImageView) view.findViewById(R.id.backChangingImages);
 
-        txtaddress = (TextView) view.findViewById(R.id.txtaddress);
         days = (Button) view.findViewById(R.id.days);
         week = (Button) view.findViewById(R.id.week);
         month = (Button) view.findViewById(R.id.month);
@@ -266,7 +268,9 @@ public class QuickAddNewRecordsFragment extends Fragment {
         edtInput_bmi = (EditText) view.findViewById(R.id.input_bmi);
         edtSymptoms = (MultiAutoCompleteTextView) view.findViewById(R.id.symptoms);
         edtDignosis = (MultiAutoCompleteTextView) view.findViewById(R.id.dignosis);
+        edtEmail_id=(BootstrapEditText)view.findViewById(R.id.email_id);
         //  ailments1 = (MultiAutoCompleteTextView) view.findViewById(R.id.ailments1);
+        edtEmail_id.setText(strEmailAddress);
         phone_no.setText(phNumber);
         phone_no.setInputType(InputType.TYPE_CLASS_NUMBER);//this will do not let user to enter any other text than digit 0-9 only
 
@@ -497,11 +501,434 @@ public class QuickAddNewRecordsFragment extends Fragment {
         // setSpinnerData();
         setOnClickListner();
         setSpinnerValue();
+        Button refered = (Button) view.findViewById(R.id.referedby);
+        refered.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                showReferedDialogBox();
+            }
+        });
 
 
         return view;
     }
+    private void showReferedDialogBox() {
 
+        final Dialog dialog = new Dialog(new ContextThemeWrapper(getContext(), android.R.style.Theme_DeviceDefault_Light_NoActionBar_Overscan));
+
+        LayoutInflater factory = LayoutInflater.from(getContext());
+        final View f = factory.inflate(R.layout.refered_by_dialog, null);
+
+        dialog.setTitle("Refered By-To");
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(f);
+        Button dialogButtonCancel = (Button) f.findViewById(R.id.customDialogCancel);
+        Button dialogButtonOk = (Button) f.findViewById(R.id.customDialogOk);
+        final Button addMore = (Button) f.findViewById(R.id.addMore);
+        final AutoCompleteTextView nameRefredBy = (AutoCompleteTextView) f.findViewById(R.id.nameRefredBy);
+        final AutoCompleteTextView nameReferedTo1 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo1);
+        final AutoCompleteTextView nameReferedTo2 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo2);
+        final AutoCompleteTextView nameReferedTo3 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo3);
+        final AutoCompleteTextView nameReferedTo4 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo4);
+        final AutoCompleteTextView nameReferedTo5 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo5);
+
+        specialityArray = new ArrayList<>();
+
+        try {
+            mAssociateList = sqlController.getAssociateDataIdName();
+            final ArrayList<HashMap<String, String>> list = sqlController.getAllDataAssociateMaster();
+
+            NameData = new HashMap<>();
+
+           /* for (int im = 0; im < mAssociateList.size(); im++) {
+                String strid = mAssociateList.get(im).getPat_id();
+                String strName = mAssociateList.get(im).getKey_visit_id();
+                NameData.put(strName, strid);
+                // Log.e("str", " " + strName);
+                nameArray.add(strName);
+            }*//**//*
+*/
+            for (int im = 0; im < list.size(); im++) {
+                String strid = list.get(im).get("ID");
+                String strName = list.get(im).get("NAME");
+                String str = list.get(im).get("SPECIALITY");
+                specialityArray.add(str);
+                NameData.put(strName, strid);
+                Log.e("str", " " + strName + "  "+strid +" "+str);
+
+            }
+
+            setCities(NameData.keySet().toArray(
+                    new String[0]), f);
+
+        } catch (ClirNetAppException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+
+
+        // Click cancel to dismiss android custom dialog box
+        dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addCounter = 0;
+                dialog.dismiss();
+
+            }
+        });
+
+        dialogButtonOk.setOnClickListener(new View.OnClickListener() {
+
+
+            String code;
+
+            @Override
+            public void onClick(View v) {
+                StringBuilder sb = new StringBuilder();
+                StringBuilder sbname = new StringBuilder();
+
+                if (addCounter >= 0) {
+                    String refredToName1 = nameReferedTo1.getText().toString();
+                    if (!refredToName1.equals("") && refredToName1.length() > 0) {
+                        code = NameData.get(refredToName1);
+                        if(code==null){
+                            Log.e("NoValForcode","NoValFor code");
+                        }else{
+                            int index = Integer.parseInt(code);
+                            sb.append(index);
+                            sbname.append(refredToName1);
+                        }
+                    }
+
+                }
+                if (addCounter >= 1) {
+                    String refredToName2 = nameReferedTo2.getText().toString();
+                    if (!refredToName2.equals("") && refredToName2.length() > 0) {
+                        code = NameData.get(refredToName2);
+                        if(code==null){
+                            Log.e("NoValForcode","NoValFor code");
+                        }else{
+                            int index = Integer.parseInt(code);
+                            sb.append(",").append(index);
+                            sbname.append(",").append(refredToName2);
+                        }
+                    }
+                }
+                if (addCounter >= 2) {
+                    String refredToName3 = nameReferedTo3.getText().toString();
+                    if (!refredToName3.equals("") && refredToName3.length() > 0) {
+                        code = NameData.get(refredToName3);
+                        if(code==null){
+                            Log.e("NoValForcode","NoValFor code");
+                        }else{
+                            int index = Integer.parseInt(code);
+                            sb.append(",").append(index);
+                            sbname.append(",").append(refredToName3);
+                        }
+                    }
+                }
+                if (addCounter >= 3) {
+                    String refredToName4 = nameReferedTo4.getText().toString();
+                    if (refredToName4 != null && !refredToName4.equals("") && refredToName4.length() > 0) {
+                        code = NameData.get(refredToName4);
+                        if(code==null){
+                            Log.e("NoValForcode","NoValFor code");
+                        }else{
+                            int index = Integer.parseInt(code);
+                            sb.append(",").append(index);
+                            sbname.append(",").append(refredToName4);
+                        }
+                    }
+                }
+                if (addCounter >= 4) {
+                    String refredToName5 = nameReferedTo5.getText().toString();
+                    if (!refredToName5.equals("") && refredToName5.length() > 0) {
+                        code = NameData.get(refredToName5);
+                        if(code==null){
+                            Log.e("NoValForcode","NoValFor code");
+                        }else{
+                            int index = Integer.parseInt(code);
+                            sb.append(",").append(index);
+                            sbname.append(",").append(refredToName5);
+                        }
+                    }
+                }
+
+                strReferedTo = String.valueOf(sb);
+                String strRederedBy1 = nameRefredBy.getText().toString();
+
+                if (!strRederedBy1.equals("") && strRederedBy1.length() > 0) {
+                    code = NameData.get(strRederedBy1);
+                    if(code==null){
+                        Log.e("NoValForcode","NoValFor code");
+                    }else{
+                        int index = Integer.parseInt(code);
+                        strReferedBy = String.valueOf(index);
+                    }
+                }
+
+
+               /* Toast.makeText(getApplicationContext(), "  " + strReferedBy, Toast.LENGTH_LONG).show();*/
+                strReferedTo = String.valueOf(sb);
+
+                String insertedName=String.valueOf(sbname);
+                TextView textRefredByShow=(TextView)view.findViewById(R.id.txtrefredby) ;
+                TextView textRefredToShow=(TextView)view.findViewById(R.id.txtrefredto) ;
+                textRefredByShow.setText(nameRefredBy.getText() + "");
+                textRefredToShow.setText(insertedName + "");
+                addCounter = 0;
+                dialog.dismiss();
+            }
+        });
+
+        addMore.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                addCounter = addCounter + 1;
+                if (addCounter == 1) {
+                    LinearLayout refred1 = (LinearLayout) dialog.findViewById(R.id.refred1);
+                    refred1.setVisibility(View.VISIBLE);
+                }
+                if (addCounter == 2) {
+                    LinearLayout refred2 = (LinearLayout) dialog.findViewById(R.id.refred2);
+                    refred2.setVisibility(View.VISIBLE);
+                }
+                if (addCounter == 3) {
+                    LinearLayout refred3 = (LinearLayout) dialog.findViewById(R.id.refred3);
+                    refred3.setVisibility(View.VISIBLE);
+                }
+                if (addCounter == 4) {
+                    LinearLayout refred4 = (LinearLayout) dialog.findViewById(R.id.refred4);
+                    refred4.setVisibility(View.VISIBLE);
+                }
+                if (addCounter >= 4) {
+                    addMore.setVisibility(View.INVISIBLE);
+                    Toast.makeText(getContext(), "Limit Exceed! You can not add more", Toast.LENGTH_LONG).show();
+                }
+
+            }
+        });
+
+
+        dialog.show();
+    }
+
+    private void setCities(String cData[], View f) {
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
+                android.R.layout.simple_dropdown_item_1line, cData);
+
+        final AutoCompleteTextView nameRefredBy = (AutoCompleteTextView) f.findViewById(R.id.nameRefredBy);
+        final AutoCompleteTextView nameReferedTo1 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo1);
+        final AutoCompleteTextView nameReferedTo2 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo2);
+        final AutoCompleteTextView nameReferedTo3 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo3);
+        final AutoCompleteTextView nameReferedTo4 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo4);
+        final AutoCompleteTextView nameReferedTo5 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo5);
+
+        nameRefredBy.setThreshold(1);
+        nameRefredBy.setAdapter(adapter);
+        nameReferedTo1.setThreshold(1);
+        nameReferedTo1.setAdapter(adapter);
+        nameReferedTo2.setThreshold(1);
+        nameReferedTo2.setAdapter(adapter);
+        nameReferedTo3.setThreshold(1);
+        nameReferedTo3.setAdapter(adapter);
+        nameReferedTo4.setThreshold(1);
+        nameReferedTo4.setAdapter(adapter);
+        nameReferedTo5.setThreshold(1);
+        nameReferedTo5.setAdapter(adapter);
+
+        final TextView refredtoSpeciality1 = (TextView) f.findViewById(R.id.refredtoSpeciality1);
+        final TextView refredtoSpeciality2 = (TextView) f.findViewById(R.id.refredtoSpeciality2);
+        final TextView refredtoSpeciality3 = (TextView) f.findViewById(R.id.refredtoSpeciality3);
+        final TextView refredtoSpeciality4 = (TextView) f.findViewById(R.id.refredtoSpeciality4);
+        final TextView refredtoSpeciality5 = (TextView) f.findViewById(R.id.refredtoSpeciality5);
+        final  TextView refredBySpeciality=(TextView)f.findViewById(R.id.refredBySpeciality);
+
+        sb = new StringBuilder();
+
+        nameRefredBy.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            String val=null;
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+
+                    val = nameRefredBy.getText() + "";
+                    int index = 0;
+                    String strSpecialty = null;
+                    String code = null;
+                    if (val != null && !val.equals("") && val.length() > 0) {
+                        code = NameData.get(val);
+                        if(code !=null){
+                        index = Integer.parseInt(code);
+                        }else{
+                            index=0;
+                        }
+                    }
+                    if (index == 0) {
+                        //  strSpecialty=specialityArray.get(index);
+                    } else {
+                        strSpecialty = specialityArray.get(index - 1);
+                    }
+                    if (val == null) {
+                        nameRefredBy.setError("Invalid Entry");
+                    }else{
+                        refredBySpeciality.setVisibility(View.VISIBLE);
+                        refredBySpeciality.setText(strSpecialty);
+                        // strReferedBy = String.valueOf(index);
+                    }
+                    if(val == null || code == null){
+                        strReferedBy =null;
+                    }
+
+
+                }
+            }
+        });
+
+        nameReferedTo1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    String val = nameReferedTo1.getText() + "";
+                    int index = 0;
+                    String strSpecialty = null;
+                    String code = null;
+                    if (!val.equals("") && val.length() > 0) {
+                        code = NameData.get(val);
+                        if(code!=null) {
+                            index = Integer.parseInt(code);
+                        }
+                    }
+                    if (index == 0) {
+                        //  strSpecialty=specialityArray.get(index);
+                    } else {
+                        strSpecialty = specialityArray.get(index-1);
+                    }
+                    refredtoSpeciality1.setVisibility(View.VISIBLE);
+                    refredtoSpeciality1.setText(strSpecialty);
+                    // sb.append(index);
+                    if (code == null) {
+                        nameReferedTo1.setError("Invalid Entry");
+                    }
+                }
+            }
+        });
+        nameReferedTo2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    String val = nameReferedTo2.getText() + "";
+                    int index = 0;
+                    String strSpecialty = null;
+                    String code = null;
+                    if (!val.equals("") && val.length() > 0) {
+                        code = NameData.get(val);
+                        if(code!=null) {
+                            index = Integer.parseInt(code);
+                        }
+                    }
+                    if (index == 0) {
+                        //  strSpecialty=specialityArray.get(index);
+                    } else {
+                        strSpecialty = specialityArray.get(index - 1);
+                    }
+                    refredtoSpeciality2.setVisibility(View.VISIBLE);
+                    refredtoSpeciality2.setText(strSpecialty);
+
+                    if (code == null) {
+                        nameReferedTo2.setError("Invalid Entry");
+                    }
+                }
+            }
+        });
+        nameReferedTo3.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    String val = nameReferedTo3.getText() + "";
+                    int index = 0;
+                    String strSpecialty = null;
+                    String code = null;
+                    if (!val.equals("") && val.length() > 0) {
+                        code = NameData.get(val);
+                        if(code!=null) {
+                            index = Integer.parseInt(code);
+                        }
+                    }
+                    if (index == 0) {
+                        //  strSpecialty=specialityArray.get(index);
+                    } else {
+                        strSpecialty = specialityArray.get(index - 1);
+                    }
+                    refredtoSpeciality3.setVisibility(View.VISIBLE);
+                    refredtoSpeciality3.setText(strSpecialty);
+                    if (code == null) {
+                        nameReferedTo3.setError("Invalid Entry");
+                    }
+                }
+            }
+        });
+        nameReferedTo4.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    String val = nameReferedTo4.getText() + "";
+                    int index = 0;
+                    String strSpecialty = null;
+                    String code = null;
+                    if (!val.equals("") && val.length() > 0) {
+                        code = NameData.get(val);
+                        if(code!=null) {
+                            index = Integer.parseInt(code);
+                        }
+                    }
+                    if (index == 0) {
+                        //  strSpecialty=specialityArray.get(index);
+                    } else {
+                        strSpecialty = specialityArray.get(index - 1);
+                    }
+                    refredtoSpeciality4.setVisibility(View.VISIBLE);
+                    refredtoSpeciality4.setText(strSpecialty);
+
+                    if (code == null) {
+                        nameReferedTo2.setError("Invalid Entry");
+                    }
+                }
+            }
+        });
+        nameReferedTo5.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean hasFocus) {
+                if (!hasFocus) {
+                    String val = nameReferedTo5.getText() + "";
+                    int index = 0;
+                    String strSpecialty = null;
+                    String code = null;
+                    if (!val.equals("") && val.length() > 0) {
+                        code = NameData.get(val);
+                        if(code!=null) {
+                            index = Integer.parseInt(code);
+                        }
+                    }
+                    if (index == 0) {
+                        //  strSpecialty=specialityArray.get(index);
+                    } else {
+                        strSpecialty = specialityArray.get(index - 1);
+                    }
+                    refredtoSpeciality5.setVisibility(View.VISIBLE);
+                    refredtoSpeciality5.setText(strSpecialty);
+
+                    if (code == null) {
+                        nameReferedTo5.setError("Invalid Entry");
+                    }
+                }
+            }
+        });
+    }
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -978,22 +1405,6 @@ public class QuickAddNewRecordsFragment extends Fragment {
             }
         });
 
-        presciptiontext.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayout symptomsdigosislayout = (LinearLayout) view.findViewById(R.id.presciptionlayout);
-                if (countPrescriptiontLayout == 1) {
-                    symptomsdigosislayout.setVisibility(View.VISIBLE);
-                    presciptiontext.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
-                    countPrescriptiontLayout = 2;
-                } else {
-                    symptomsdigosislayout.setVisibility(View.GONE);
-                    presciptiontext.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
-                    countPrescriptiontLayout = 1;
-                }
-                //  txtRecord.setBackground(R.drawable.);
-            }
-        });
 
 
         inputnumber.addTextChangedListener(new TextWatcher() {
@@ -1482,7 +1893,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
         String strHeight = edtInput_height.getText().toString().trim();
         String strbmi = edtInput_bmi.getText().toString().trim();
         String strSugarFasting = edtInput_sugarfasting.getText().toString().trim();
-
+        strEmailAddress=edtEmail_id.getText().toString();
 
         usersellectedDate = fodtextshow.getText().toString();
         String strUid = uid.getText().toString();
@@ -1666,17 +2077,17 @@ public class QuickAddNewRecordsFragment extends Fragment {
             strailments = ailment.getText().toString().trim();
 
 
-            String added_by = docId;//INSERTING DOC ID IN ADDED BY COLUMN AS PER PUSHPALDA SAID
+            String added_by = docId;//INSERTING DOC ID IN ADDED BY COLUMN AS PER PUSHPAL-DA SAID
 
             int patient_id = maxPatientIdCount + 1;
             int visit_id = maxVisitId + 1;
 
             //Add a new patient
                 dbController.addPatientPersonalfromLocal(patient_id, docId, strFirstName, middle_name, strLastName, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, visit_date, doctor_membership_number, flag, patientInfoType, addedTime, added_by, action,
-                        strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, stralternatePhone_no, selectedPhoneTypealternate_no, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType,emial_addr);
+                        strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, stralternatePhone_no, selectedPhoneTypealternate_no, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, strEmailAddress);
 
                 dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, strailments, prescriptionimgPath, clinical_note, added_on, visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action,
-                        strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting,"","");//"" are refredby and to
+                        strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy,strReferedTo);//"" are refredby and to
 
                 dbController.deletePrescriptionImageQueue(prescriptionimgId,prescriptionimgPath);
 

@@ -46,10 +46,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
 
     }
 
-
     public void createDataBase() {
-
-
 
         boolean tblExist = isTableExists(database, "ailments");
 
@@ -217,6 +214,27 @@ public class DatabaseClass extends SQLiteOpenHelper {
             // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
             db.insert("ailments", null, values);
         } catch (Exception e) {
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Database" + e);
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+    }
+    public void addSymptoms(String symptoms) {
+        SQLiteDatabase db = null;
+
+
+        try {
+            db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("symptoms_name", symptoms);
+
+            // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            db.insert("Symptoms", null, values);
+        } catch (Exception e) {
             appController.appendLog(appController.getDateTime()+"" +"/"+"Database"+e);
             e.printStackTrace();
         } finally {
@@ -224,11 +242,28 @@ public class DatabaseClass extends SQLiteOpenHelper {
                 db.close();
             }
         }
+    }
+
+    public void addDiagnosis(String diagnosis) {
+        SQLiteDatabase db = null;
 
 
-     //   Log.d("addedailemnt", "New ailment inserted into sqlite: " + id);
+        try {
+            db = this.getWritableDatabase();
 
+            ContentValues values = new ContentValues();
+            values.put("diagnosis_name", diagnosis);
 
+            // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            db.insert("Diagnosis", null, values);
+        } catch (Exception e) {
+            appController.appendLog(appController.getDateTime()+"" +"/"+"Database"+e);
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
     }
 
     private boolean isTableExists(SQLiteDatabase db, String tableName) {

@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -46,6 +47,7 @@ import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
+import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
@@ -86,7 +88,7 @@ public class LoginActivity extends Activity {
 
     private Dialog dialog;
     private static String BASE_URL = "http://192.168.1.108/ClirnetNotofication/register.php";
-
+    private SQLiteHandler sInstance;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,20 +99,12 @@ public class LoginActivity extends Activity {
         inputPassword = (EditText) findViewById(R.id.password);
         btnLogin = (Button) findViewById(R.id.btnLogin);
 
-        try {
-            String startPageNumber;
-            if (savedInstanceState != null) {
-                startPageNumber = savedInstanceState.getString("MSG");
-               // Log.e("startPageNumber", "  " + startPageNumber);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         Button btnLinkToForgetScreen = (Button) findViewById(R.id.btnLinkToForgetScreen);
         TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
 
-        DatabaseClass databaseClass = new DatabaseClass(getApplicationContext());
+       // DatabaseClass databaseClass = DatabaseClass.getInstance(getApplicationContext());
+        DatabaseClass databaseClass =new DatabaseClass(getApplicationContext());
         bannerClass = new BannerClass(getApplicationContext());
         LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
         appController = new AppController();
@@ -149,22 +143,16 @@ public class LoginActivity extends Activity {
 
 
         connectionDetector = new ConnectionDetector(getApplicationContext());
-        //open database controller class for further operations on database
-        // Cursor cursor = null;
 
         try {
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
+            sInstance =SQLiteHandler.getInstance(getApplicationContext());
             Boolean value = getFirstTimeLoginStatus();
             if (value) {
                 doctor_membership_number = sqlController.getDoctorMembershipIdNew();
             }
-           /* ArrayList<HashMap<String, String>> list = sqlController.getAllbank();
-            for (HashMap<String, String> e : list) {
-               Log.e("ID"," "+e.get("ID"));
-                Log.e("NAME"," "+e.get("NAME"));
-                Log.e("SPECIALITY"," "+e.get("SPECIALITY"));
-            }*/
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -188,6 +176,9 @@ public class LoginActivity extends Activity {
 
             databaseClass.openDataBase();
             bannerClass.openDataBase();
+
+            /*This AsyncTask will Insert data from Asset folder file to data 23-03-2016*/
+            new InsertDataLocally().execute();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -281,7 +272,7 @@ public class LoginActivity extends Activity {
             }
         });
 
-        /*if (getIntent().getExtras() != null) {
+       /* if (getIntent().getExtras() != null) {
 
             for (String key : getIntent().getExtras().keySet()) {
                 String value = getIntent().getExtras().getString(key);
@@ -374,7 +365,7 @@ public class LoginActivity extends Activity {
                 new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber, start_time);
                 //startService();
                 savedLoginCounter("true");//to save shrd pref to update login counter
-                //registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
+               // registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
 
                 //update last sync time if sync from server
                 // update last login time
@@ -768,5 +759,47 @@ public class LoginActivity extends Activity {
     private void hideDialog() {
         if (pDialog.isShowing())
             pDialog.dismiss();
+    }
+
+    private class InsertDataLocally extends AsyncTask<String,String,String> {
+
+
+        @Override
+        protected String doInBackground(String... params) {
+            try {
+                String Diagnosiscount= sInstance.getTableCount("Diagnosis");
+                String Specialitycount=sInstance.getTableCount("Speciality");
+                String symptomscount= sInstance.getTableCount("Symptoms");
+                String last_name_masterCount=sInstance.getTableCount("last_name_master");
+               // Log.e("symptomscount"," "+symptomscount + " "+Diagnosiscount + " "+Specialitycount +" "+last_name_masterCount);
+
+                if(symptomscount.equals("0")) {
+                    int insertCount = bannerClass.insertFromFile(getAssets().open("Symptoms.sql"));
+                    //Log.e("symptomsinsertCount"," "+insertCount );
+                }
+                if(Diagnosiscount.equals("0")) {
+                    int insertCount = bannerClass.insertFromFile(getAssets().open("Diagnosis.sql"));
+                    //Log.e("DiagnosisinsertCount"," "+insertCount );
+                }
+                if(Specialitycount.equals("0")) {
+                    int insertCount = bannerClass.insertFromFile(getAssets().open("Speciality.sql"));
+                    //Log.e("SpecialityinsertCount"," "+insertCount );
+                }
+                if(last_name_masterCount.equals("0")) {
+                    int insertCount = bannerClass.insertFromFile(getAssets().open("last_name_master.sql"));
+                    //Log.e("last_name_masterCount"," "+insertCount );
+                }
+                //Toast.makeText(this, "Rows loaded from file= " + insertCount, Toast.LENGTH_SHORT).show();
+            }
+            catch (IOException |ClirNetAppException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+        protected void onPostExecute(String e) {
+          //  Toast.makeText(getApplicationContext(),"Rows loaded from file", Toast.LENGTH_SHORT).show();
+
+        }
+
     }
 }

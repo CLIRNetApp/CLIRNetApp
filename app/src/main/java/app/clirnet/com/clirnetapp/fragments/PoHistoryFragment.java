@@ -35,9 +35,6 @@ import java.util.Locale;
 import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.utility.ItemClickListener;
-import app.clirnet.com.clirnetapp.utility.MultiSpinner;
-import app.clirnet.com.clirnetapp.utility.MultiSpinner2;
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
 import app.clirnet.com.clirnetapp.activity.PrivacyPolicy;
 import app.clirnet.com.clirnetapp.activity.ShowPersonalDetailsActivity;
@@ -49,6 +46,9 @@ import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
+import app.clirnet.com.clirnetapp.utility.ItemClickListener;
+import app.clirnet.com.clirnetapp.utility.MultiSpinner;
+import app.clirnet.com.clirnetapp.utility.MultiSpinner2;
 
 
 public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpinnerListener, MultiSpinner2.MultiSpinnerListener {
@@ -102,6 +102,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
     private String doctor_membership_number;
+    private String url;
 
     public PoHistoryFragment() {
 
@@ -356,7 +357,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Po History Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
             if (databaseClass != null) {
                 databaseClass.close();
@@ -469,6 +470,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         i.putExtra("ALTERNATENUMBERTYPE", book.getAlternatePhoneType());
         i.putExtra("HEIGHT", book.getHeight());
         i.putExtra("SUGARFASTING", book.getSugarFasting());
+        i.putExtra("UID", book.getUid());
+        i.putExtra("EMAIL", book.getEmail());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(i);
@@ -553,34 +556,38 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private void setupAnimation() {
 
         try {
-            Random r = new Random();
             if (bannerimgNames.size() > 0) {
+                Random r = new Random();
                 int n = r.nextInt(bannerimgNames.size());
 
-                // final String url = getString(imageArray[n]);
-                //  backChangingImages.setImageResource(imageArray[n]);
-                final String url = bannerimgNames.get(n);
-                //Log.e("nUrl", "" + n + "" + url);
+                url = bannerimgNames.get(n);
 
-                BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-                backChangingImages.setImageDrawable(d);
-                backChangingImages.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                if (AppController.checkifImageExists(url)) {
 
+                    url = bannerimgNames.get(n);
+                    BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
 
-                        String action = "clicked";
+                    //Log.e("BitmapDrawable", "" + d);
+                    backChangingImages.setImageDrawable(d);
 
-                        appController.showAdDialog(getContext(), url);
-                        appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action, "Patient History");
-                    }
-                });
-                String action = "display";
-                appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action, "Patient History");
+                    backChangingImages.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+
+                            String action = "clicked";
+
+                            appController.showAdDialog(getContext(), url);
+                            appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action, "POHistory Fragment");
+                        }
+                    });
+                    String action = "display";
+                    appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action, "POHistory Fragment");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+
 
     }
 
@@ -658,8 +665,13 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                 e.printStackTrace();
             }
+            try {
+                poHistoryAdapter.addAll(memberList);
+            } catch (Exception e) {
 
-            poHistoryAdapter.addAll(memberList);
+                e.printStackTrace();
+            }
+
 
             if (end >= queryCount) {
                 poHistoryAdapter.setLoading(false);
@@ -749,7 +761,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         lastName = null;
         phone_no = null;
         genderSpinner = null;
-
+        url = null;
         // Log.e("onDetach", "onDetach Po hISTORY fRAGMENT Fragment");
     }
 }

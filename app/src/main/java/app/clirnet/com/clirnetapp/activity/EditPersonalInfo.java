@@ -119,10 +119,10 @@ public class EditPersonalInfo extends AppCompatActivity {
     private BootstrapEditText uid;
     private String selectedIsd_codeType;
     private String selectedAlternateNoIsd_codeType;
-    private String strIsd_code;
-    private String strAlternateIsd_code;
     private Spinner isd_code;
     private int position1;
+    private BootstrapEditText edtEmail_id;
+    private String url;
 
 
     @Override
@@ -166,14 +166,13 @@ public class EditPersonalInfo extends AppCompatActivity {
         String strPinNo = getIntent().getStringExtra("PIN");
         String strState = getIntent().getStringExtra("STATE");
 
+        String strUid = getIntent().getStringExtra("UID");
+        String strEmail = getIntent().getStringExtra("EMAIL");
+
         fromWhere = getIntent().getStringExtra("FROMWHERE");
         String strAlternatenumber = getIntent().getStringExtra("ALTERNATENUMBER");
 
         String strAlternatephtype = getIntent().getStringExtra("ALTERNATENUMBERTYPE");
-
-        strIsd_code = getIntent().getStringExtra("ISDCODE");
-        strAlternateIsd_code = getIntent().getStringExtra("ALTERNATEISDCODE");
-
 
         patientImage = (ImageView) findViewById(R.id.patientimage);
         editfirstname = (EditText) findViewById(R.id.firstname);
@@ -194,6 +193,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         edtCity = (BootstrapEditText) findViewById(R.id.city);
         edtDistrict = (BootstrapEditText) findViewById(R.id.district);
         edtPin = (BootstrapEditText) findViewById(R.id.pin);
+        edtEmail_id=(BootstrapEditText)findViewById(R.id.email_id);
 
         save = (Button) findViewById(R.id.save);
         backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
@@ -209,6 +209,8 @@ public class EditPersonalInfo extends AppCompatActivity {
         edtDistrict.setText(strDistrict);
         edtPin.setText(strPinNo);
         alternatemobile_no.setText(strAlternatenumber);
+        uid.setText(strUid);
+        edtEmail_id.setText(strEmail);
 
         editmobile_no.setInputType(InputType.TYPE_CLASS_NUMBER);//this will do not let user to enter any other text than digit 0-9 only
         editmobile_no.setText(strPhone);
@@ -412,24 +414,6 @@ public class EditPersonalInfo extends AppCompatActivity {
             phType.setSelection(postion);
         }
 
-        /*String[] isd_codearray = getResources().getStringArray(R.array.isd_code);
-        ArrayList<String> _isdList = new ArrayList<>();
-        for (String i : isd_codearray) {
-            //System.out.println(i);
-            _isdList.add(i);
-        }
-        if (strIsd_code != null) {
-            int postion = getCategoryPos(_isdList, strIsd_code);
-            isd_code.setSelection(postion);
-        }
-
-        if (strAlternateIsd_code != null) {
-            int postion = getCategoryPos(_isdList, strAlternateIsd_code);
-            isd_code2.setSelection(postion);
-        }*/
-
-        // Log.e("States ", "" + some_array + " "+_categories.size()+"  position "+ getCategoryPos(_categories,"West Bengal"));
-
 
         final Button cancel = (Button) findViewById(R.id.cancel);
         cancel.setOnTouchListener(new View.OnTouchListener() {
@@ -632,6 +616,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 String strCity = edtCity.getText().toString().trim();
                 String strDistrict = edtDistrict.getText().toString().trim();
                 String strPin = edtPin.getText().toString().trim();
+                String strEmailId=edtEmail_id.getText().toString();
                 //Removes  leading zeros from age filed  11-11-2016 By.Ashish
                 int length = 0;
                 int age = 0;
@@ -726,14 +711,16 @@ public class EditPersonalInfo extends AppCompatActivity {
                 String flag = "0";
                 String status=null;
                 try {
+
                     if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
 
-                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType,status);
+                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType,status,strEmailId);
                         // Log.e("kt", "1");
                     } else {
-                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType,status);
+                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType,status,strEmailId);
                         //Log.e("bt", "2");
                     }
+
                     Toast.makeText(getApplicationContext(), "Record Updated", Toast.LENGTH_LONG).show();
                     goToNavigation();
 
@@ -763,8 +750,6 @@ public class EditPersonalInfo extends AppCompatActivity {
         editlasttname.setAdapter(lastnamespin);
         ///////////////////////////////////////////////
         stateSpinner = (Spinner) findViewById(R.id.stateSpinner);
-        //stateSpinner.setOnItemSelectedListener(EditPatientUpdate.this);
-        // stateSpinner.setPrompt("Select State");
 
         // Creating adapter for spinner
         ArrayAdapter<CharSequence> stateAdapter = ArrayAdapter
@@ -984,31 +969,34 @@ public class EditPersonalInfo extends AppCompatActivity {
 
     private void setupAnimation() {
 
-        Random r = new Random();
         try {
             if (bannerimgNames.size() > 0) {
+                Random r = new Random();
                 int n = r.nextInt(bannerimgNames.size());
 
-                final String url = bannerimgNames.get(n);
+                url = bannerimgNames.get(n);
 
-                BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-                backChangingImages.setImageDrawable(d);
+                if (AppController.checkifImageExists(url)) {
 
-                backChangingImages.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //  Toast.makeText(EditPersonalInfo.this, "Image Clicked" + url, Toast.LENGTH_SHORT).show();
+                    url = bannerimgNames.get(n);
+                    BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
 
-                        String action = "clicked";
+                    //Log.e("BitmapDrawable", "" + d);
+                    backChangingImages.setImageDrawable(d);
 
-                        appController.showAdDialog(EditPersonalInfo.this, url);
-                        appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action,"Edit Personal Info");
+                    backChangingImages.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
 
+                            String action = "clicked";
 
-                    }
-                });
-                String action = "display";
-                appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action,"Edit Personal Info");
+                            appController.showAdDialog(EditPersonalInfo.this, url);
+                            appController.saveBannerDataIntoDb(url,EditPersonalInfo.this, doctor_membership_number, action, "Edit Personal Info");
+                        }
+                    });
+                    String action = "display";
+                    appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action, "Edit Personal Info");
+            }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1123,10 +1111,9 @@ public class EditPersonalInfo extends AppCompatActivity {
         selectedUidType = null;
         selectedPhoneTypealternate_no = null;
         alternatemobile_no = null;
-        strIsd_code = null;
-        strAlternateIsd_code = null;
         isd_code = null;
-
+        edtEmail_id=null;
+        url=null;
         backChangingImages=null;
         mLastNameList=null;
         phType=null;

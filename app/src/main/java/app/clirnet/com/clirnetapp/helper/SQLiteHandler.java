@@ -20,6 +20,7 @@ import org.json.JSONObject;
 public class SQLiteHandler extends SQLiteOpenHelper {
 
 
+
     //private static final String TAG = "SQLHandler";
 
 
@@ -154,6 +155,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String MEMBERSHIP_ID = "membershipid";
     private static final String DISTRICT = "district";
     private static String CITY_TOWN = "city";
+    private static final String NAME_TITLE = "title";
 
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -332,7 +334,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
      * Updating Patient Personal details in database
      */
     public void updatePatientPersonalInfo(String keyid, String firstname, String middlename, String lastname, String gender, String dateofbirth, String age, String phNo, String language, String imgPath, String modified_on_date, String modified_by, String modifiedTime, String action, String flag, String docId,
-                                          String address, String cityortown, String district, String pin, String state, String phoneType, String alternatephoneType, String alternatePhoneNumber, String uid, String uidType, String isd_code, String alternateisd_code, String status) throws ClirNetAppException {
+                                          String address, String cityortown, String district, String pin, String state, String phoneType, String alternatephoneType, String alternatePhoneNumber, String uid, String uidType, String isd_code, String alternateisd_code, String status,String email) throws ClirNetAppException {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -367,6 +369,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(ISD_CODE, isd_code);
             values.put(ATERNATE_NO_ISD_CODE, alternateisd_code);
             values.put(STATUS, status);
+            values.put(KEY_EMAIL, email);
 
 
             // Inserting Row
@@ -713,6 +716,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
             db.insert(TABLE_PATIENT_HISTORY, null, values);
+
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -723,7 +727,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     //add patient records from add pateint update page
-    public void addPatientNextVisitRecord(String visit_id, String strPatientId, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String ailments, String visit_date, String doc_id, String doc_mem_id, String addedOnDate, String addedTime, String flag, String added_by, String action, String patInfoType,
+    public void addPatientNextVisitRecord(String visit_id, String strPatientId, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String clinical_note, String prescriptionimgPath, String ailments, String visit_date, String doc_id, String doc_mem_id, String addedOnDate, String addedTime, String flag, String added_by, String action, String patInfoType,
                                           String weight, String pulse, String bp, String mmhg, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String strbmi, String strSugarFasting,String referedBy,String referedTo) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -739,7 +743,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(WEEKS, fowSel); // Email
             values.put(MONTHS, monthSel); // Created At
             values.put(CLINICAL_NOTES, clinical_note);
-            values.put(PRESCRIPTION, patientImagePath);
+            values.put(PRESCRIPTION, prescriptionimgPath);
             values.put(AILMENT, ailments);
             values.put(VISIT_DATE, visit_date);
             values.put(ADDED_ON, addedOnDate);
@@ -1510,7 +1514,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
 
-    public void addAssociates(String added_by, String mCounter,String strname,String strmob_no, String selectedPhoneType, String selectedIsd_codeType, String strEmail, String selectedSpeciality, String selectedAssociateType, String straddress, String strcity, String selectedState, String strpin, String strdistrict, String dateTimenew, String flag) {
+    public void addAssociates(String added_by, String mCounter,String strname,String strmob_no, String selectedPhoneType, String selectedIsd_codeType, String strEmail, String selectedSpeciality, String selectedAssociateType, String straddress, String strcity, String selectedState, String strpin, String strdistrict, String dateTimenew, String flag,String nameTitle) {
         SQLiteDatabase db = this.getWritableDatabase();
        long id=0;
         try {
@@ -1531,6 +1535,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(ADDED_ON, dateTimenew);
             values.put(MODIFIED_COUNTER,mCounter);
             values.put(FLAG, flag);
+            values.put(NAME_TITLE, nameTitle);
 
             id=db.insert(TABLE_ASSOCIATE_MASTER, null, values);
             Log.e("idvalue",""+id);
@@ -1593,7 +1598,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
     }
 
-    public void updateAssociates(String uid, String modified_by,String modiedCounter, String strname, String strmob_no, String selectedPhoneType, String selectedIsd_codeType, String strEmail, String selectedSpeciality, String selectedAssociateType, String straddress, String strcity, String selectedState, String strpin, String strdistrict, String dateTimeddmmyyyy, String flag) throws ClirNetAppException{
+    public void updateAssociates(String uid, String modified_by,String modiedCounter, String strname, String strmob_no, String selectedPhoneType, String selectedIsd_codeType, String strEmail, String selectedSpeciality, String selectedAssociateType, String straddress, String strcity, String selectedState, String strpin, String strdistrict, String dateTimeddmmyyyy, String flag,String nameTitle) throws ClirNetAppException{
 
         //update the patient visit records into db
              SQLiteDatabase db = this.getWritableDatabase();
@@ -1616,6 +1621,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 values.put(MODIFIED_ON, dateTimeddmmyyyy);
                 values.put(FLAG, flag);
                 values.put(MODIFIED_COUNTER,modiedCounter);
+                values.put(NAME_TITLE,nameTitle);
 
                 // Inserting Row
                 db.update(TABLE_ASSOCIATE_MASTER, values, KEY_ID + "=" + uid , null);
@@ -1628,5 +1634,77 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 }
             }
         }
+    public void FlagupdateAssociateMater(String strVisitId, String flag) {
+        SQLiteDatabase db = null;
+        try {
+            db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+
+            values.put(FLAG, flag); // Name
+
+            // Inserting Row
+            db.update(TABLE_ASSOCIATE_MASTER, values, KEY_ID + "=" + strVisitId, null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close(); // Closing database connection
+            }
+        }
     }
+
+    public String  getPhoneNumberStatus(String strmob_no)  throws ClirNetAppException {
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        String returnString = ""; // Your default if none is found
+        try {
+            db1 = this.getReadableDatabase();
+            String query = "select count(id) as id from associate_master where phonenumber='" + strmob_no + "' ";
+
+
+            cursor = db1.rawQuery(query, null);
+
+            if (cursor.moveToFirst()) {
+                returnString = cursor.getString(cursor.getColumnIndex("id"));
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getDoctorMembershipIdNew");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return returnString;
+    }
+    public String  getTableCount( String tableName)  throws ClirNetAppException {
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        String returnString = ""; // Your default if none is found
+        try {
+            db1 = this.getReadableDatabase();
+            String query = "select count(id) as id from  "+ tableName +" ";
+
+
+            cursor = db1.rawQuery(query, null);
+
+            if (cursor.moveToFirst()) {
+                returnString = cursor.getString(cursor.getColumnIndex("id"));
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getTableCount");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return returnString;
+    }
+}
 
