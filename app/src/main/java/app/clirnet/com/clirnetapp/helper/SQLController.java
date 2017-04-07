@@ -621,7 +621,6 @@ public class SQLController {
             String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms, ph.diagnosis,p.email,p.uid,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd ,ph.refered_by,ph.refered_to from patient_history  ph, patient p where p.patient_id=" + patient_id + " and  p.patient_id=ph.patient_id order by ph.key_visit_id desc ";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-            // Log.d("cursor", "" + cursor.getCount());
 
             // looping through all rows and adding to list
 
@@ -1709,14 +1708,14 @@ public class SQLController {
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery = "select id,prescription,added_on,added_by,status,phonenumber,email from prescription_queue where added_on = '" + formatedDate + "';";
+            String selectQuery = "select id,prescription,added_on,added_by,status,phonenumber,email,refered_by,refered_to from prescription_queue where added_on = '" + formatedDate + "';";
 
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
 
             if (cursor.moveToFirst()) {
                 do {
-                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6));
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getString(7),cursor.getString(8));
 
                     incompletePrescrList.add(user);
 
@@ -1897,7 +1896,7 @@ public class SQLController {
     }
     public ArrayList<HashMap<String, String>> getAllDataAssociateMaster() throws ClirNetAppException {
         ArrayList<HashMap<String, String>> wordList;
-        wordList = new ArrayList<HashMap<String, String>>();
+        wordList = new ArrayList<>();
         String selectQuery = "select id,name,speciality from associate_master";
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         Cursor cursor=null;
@@ -1906,7 +1905,7 @@ public class SQLController {
 
         if (cursor.moveToFirst()) {
             do {
-                HashMap<String, String> map = new HashMap<String, String>();
+                HashMap<String, String> map = new HashMap<>();
                 map.put("ID", cursor.getString(0));
                 map.put("NAME", cursor.getString(1));
                 map.put("SPECIALITY", cursor.getString(2));
@@ -1931,8 +1930,7 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         String returnString = ""; // Your default if none is found
-        try {
-            db1 = dbHelper.getReadableDatabase();
+        try {            db1 = dbHelper.getReadableDatabase();
             String query = "select name from associate_master  where id='" + id + "' limit 1";
 
 
@@ -1941,6 +1939,7 @@ public class SQLController {
             if (cursor.moveToFirst()) {
                 returnString = cursor.getString(cursor.getColumnIndex("name"));
             }
+
         } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong while getting getNameByIdAssociateMaster");
         } finally {
@@ -2015,7 +2014,37 @@ public class SQLController {
             }
         }
         return idList;
+    }
+    public ArrayList<HashMap<String, String>> getIdNameDataAssociateMaster(String name) throws ClirNetAppException {
+        ArrayList<HashMap<String, String>> wordList;
+        wordList = new ArrayList<>();
+        String selectQuery = "select id,speciality from associate_master where name='" + name + "'";
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        Cursor cursor=null;
+        try{
+            cursor = database.rawQuery(selectQuery, null);
 
+            if (cursor.moveToFirst()) {
+                do {
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put("ID", cursor.getString(0));
+                    map.put("SPECIALITY", cursor.getString(1));
+                   // map.put("SPECIALITY", cursor.getString(2));
+                    wordList.add(map);
+                } while (cursor.moveToNext());
+            }
+        }catch (Exception e){
+            throw new ClirNetAppException("Something went wrong while geting getAllDataAssociateMaster");
+        }
+        finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database != null) {
+                database.close();
+            }
+        }
+        return wordList;
     }
 }
 

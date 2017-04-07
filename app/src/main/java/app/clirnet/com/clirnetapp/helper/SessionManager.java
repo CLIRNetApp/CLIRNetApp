@@ -3,7 +3,6 @@ package app.clirnet.com.clirnetapp.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.util.Log;
 //class is used to store the session for app
 public class SessionManager {
 	// LogCat tag

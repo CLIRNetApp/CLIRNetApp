@@ -6,14 +6,12 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -24,14 +22,15 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,7 +48,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.adapters.AddPatientUpdateAdapter;
@@ -89,13 +87,12 @@ public class AddPatientUpdate extends AppCompatActivity {
 
     private String strPatientId;
     private String fowSel = null;
-    private String usersellectedDate;
+    private String userSellectedDate;
     private String monthSel = null;
     private SQLController sqlController;
     private SQLiteHandler dbController;
-    private ArrayList<String> mAilmemtArrayList;
 
-    private ImageView imageViewprescription;
+    // --Commented out by Inspection (06-Apr-17 6:34 PM):private ImageView imageViewprescription;
 
     private Intent imageIntent;
     private File imagesFolder;
@@ -109,7 +106,6 @@ public class AddPatientUpdate extends AppCompatActivity {
     private ArrayList<RegistrationModel> patientHistoryData = new ArrayList<>();
     private DatabaseClass databaseClass;
     private String PrescriptionimageName;
-    private int maxid;
     private AppController appController;
     private Button addUpdate;
     private Button cancel;
@@ -134,14 +130,14 @@ public class AddPatientUpdate extends AppCompatActivity {
     private Button month;
     private BootstrapEditText inputnumber;
     private String value;
-    private String buttonSelected;
+    // --Commented out by Inspection (06-Apr-17 6:34 PM):private String buttonSelected;
     private String daysSel;
     private TextView txtRecord;
     private TextView txtsymtomsanddignost;
 
     private int countvitalsLayout = 1;
     private int countsymtomsanddignostLayout = 1;
-    private int countAddressLayout = 1;
+    // --Commented out by Inspection (06-Apr-17 6:34 PM):private int countAddressLayout = 1;
     private EditText visitDate;
 
     private ArrayList<String> bannerimgNames;
@@ -162,11 +158,18 @@ public class AddPatientUpdate extends AppCompatActivity {
     private ArrayList<String> specialityArray;
     private int addCounter = 0;
     private String strReferedTo;
-    private String strRederedBy;
+    private String strReferedBy;
     private ArrayList<String> mDiagnosisList;
     private String struid;
     private String strEmail;
-    private String url;
+    private String strReferredByName;
+    private String strReferredTo1Name;
+    private String strReferredTo2Name;
+    private String strReferredTo3Name;
+    private String strReferredTo4Name;
+    private String strReferredTo5Name;
+    private ArrayList<String> nameReferralsList;
+    private String buttonSelected;
 
 
     @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
@@ -188,12 +191,11 @@ public class AddPatientUpdate extends AppCompatActivity {
         }
 
         if (databaseClass == null) {
-            databaseClass =new DatabaseClass(getApplicationContext());
+            databaseClass = new DatabaseClass(getApplicationContext());
         }
         if (lastNamedb == null) {
             lastNamedb = new LastnameDatabaseClass(getApplicationContext());
         }
-
 
         strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
 
@@ -240,7 +242,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         addUpdate = (Button) findViewById(R.id.addUpdate);
         txtRecord = (TextView) findViewById(R.id.txtRecord);
         txtsymtomsanddignost = (TextView) findViewById(R.id.txtsymptomsanddignost);
-        //presciptiontext = (TextView) findViewById(R.id.presciptiontext);
+
         TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
 
@@ -310,9 +312,6 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         String dd = sdf.format(todayDate);
         date.setText("Today's Date " + dd);
-        //this date is ued to set update records date in patient history table
-        // String current_date = sdf.format(todayDate);
-
 
         SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
         Date todayDate3 = new Date();
@@ -360,8 +359,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             if (bannerClass == null) {
                 bannerClass = new BannerClass(getApplicationContext());
             }
-            bannerimgNames = bannerClass.getImageName();
-            //  Log.e("ListimgNames", "" + bannerimgNames.size() + "  " + bannerimgNames.get(1));
+
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
         } finally {
@@ -370,36 +368,6 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         }
 
-
-        try {
-
-            databaseClass.openDataBase();
-            mAilmemtArrayList = databaseClass.getAilmentsListNew();
-
-            if (mAilmemtArrayList.size() > 0) {
-
-                //this code is for setting list to auto complete text view  8/6/16
-
-                ArrayAdapter<String> adp = new ArrayAdapter<>(AddPatientUpdate.this,
-                        android.R.layout.simple_dropdown_item_1line, mAilmemtArrayList);
-
-                adp.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-                ailments1.setThreshold(1);
-
-                ailments1.setAdapter(adp);
-                ailments1.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
-            }
-            int id = databaseClass.getMaxAimId();
-            maxid = id + 1;
-        } catch (Exception e) {
-            e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
-        } finally {
-
-            if (databaseClass != null) {
-                databaseClass.close();
-            }
-        }
 
         try {
             mSymptomsList = lastNamedb.getSymptoms();
@@ -545,8 +513,6 @@ public class AddPatientUpdate extends AppCompatActivity {
             public void onClick(View v) {
                 // back button pressed
                 goToNavigation1();
-
-                //  Toast.makeText(EditPatientUpdate.this,"back is pressed",Toast.LENGTH_SHORT).show();
             }
         });
         ailments1.addTextChangedListener(new TextWatcher() {
@@ -595,31 +561,22 @@ public class AddPatientUpdate extends AppCompatActivity {
         ailments1 = (MultiAutoCompleteTextView) findViewById(R.id.ailments1);
         clinicalNotes = (EditText) findViewById(R.id.clinicalNotes);
 
-        imageViewprescription = (ImageView) findViewById(R.id.imageViewprescription);
-        // txtfollow_up_date = (TextView) findViewById(R.id.txtfollow_up_date);
-
-
+        //imageViewprescription = (ImageView) findViewById(R.id.imageViewprescription);
     }
 
     private void showReferedDialogBox() {
 
-        final Dialog dialog = new Dialog(new ContextThemeWrapper(this, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Overscan));
+        final Dialog dialog = new Dialog(this);
 
         LayoutInflater factory = LayoutInflater.from(AddPatientUpdate.this);
         final View f = factory.inflate(R.layout.refered_by_dialog, null);
 
-        dialog.setTitle("Refered By-To");
+        dialog.setTitle("Referred By-To");
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(f);
         Button dialogButtonCancel = (Button) f.findViewById(R.id.customDialogCancel);
         Button dialogButtonOk = (Button) f.findViewById(R.id.customDialogOk);
         final Button addMore = (Button) f.findViewById(R.id.addMore);
-        final AutoCompleteTextView nameRefredBy = (AutoCompleteTextView) f.findViewById(R.id.nameRefredBy);
-        final AutoCompleteTextView nameReferedTo1 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo1);
-        final AutoCompleteTextView nameReferedTo2 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo2);
-        final AutoCompleteTextView nameReferedTo3 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo3);
-        final AutoCompleteTextView nameReferedTo4 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo4);
-        final AutoCompleteTextView nameReferedTo5 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo5);
 
         specialityArray = new ArrayList<>();
 
@@ -636,14 +593,12 @@ public class AddPatientUpdate extends AppCompatActivity {
                 NameData.put(strName, strid);
             }
 
-            setCities(NameData.keySet().toArray(
-                    new String[0]), f);
+            setCities(f);//passsing view to method
 
         } catch (ClirNetAppException e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient Update" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
-
 
         // Click cancel to dismiss android custom dialog box
         dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
@@ -659,87 +614,87 @@ public class AddPatientUpdate extends AppCompatActivity {
 
 
             String code;
+            final TextView textRefredByShow = (TextView) findViewById(R.id.txtrefredby);
+            final TextView textRefredToShow = (TextView) findViewById(R.id.txtrefredto);
 
             @Override
             public void onClick(View v) {
+
                 StringBuilder sb = new StringBuilder();
                 StringBuilder sbname = new StringBuilder();
                 if (addCounter >= 0) {
-                    String refredToName1 = nameReferedTo1.getText().toString();
-                    if (!refredToName1.equals("") && refredToName1.length() > 0) {
-                        code = NameData.get(refredToName1);
+
+                    if (!strReferredTo1Name.equals("") && strReferredTo1Name.length() > 0) {
+                        code = NameData.get(strReferredTo1Name);
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(index);
-                            sbname.append(refredToName1);
+                            sbname.append(strReferredTo1Name);
                         }
                     }
-
                 }
                 if (addCounter >= 1) {
-                    String refredToName2 = nameReferedTo2.getText().toString();
-                    if (!refredToName2.equals("") && refredToName2.length() > 0) {
-                        code = NameData.get(refredToName2);
+
+                    if (!strReferredTo2Name.equals("") && strReferredTo2Name.length() > 0) {
+                        code = NameData.get(strReferredTo2Name);
                         if (code != null) {
 
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
-                            sbname.append(",").append(refredToName2);
+                            sbname.append(",").append(strReferredTo2Name);
                         }
                     }
                 }
                 if (addCounter >= 2) {
-                    String refredToName3 = nameReferedTo3.getText().toString();
-                    if (!refredToName3.equals("") && refredToName3.length() > 0) {
-                        code = NameData.get(refredToName3);
+
+                    if (!strReferredTo3Name.equals("") && strReferredTo3Name.length() > 0) {
+                        code = NameData.get(strReferredTo3Name);
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
-                            sbname.append(",").append(refredToName3);
+                            sbname.append(",").append(strReferredTo3Name);
                         }
                     }
                 }
                 if (addCounter >= 3) {
-                    String refredToName4 = nameReferedTo4.getText().toString();
-                    if (!refredToName4.equals("") && refredToName4.length() > 0) {
-                        code = NameData.get(refredToName4);
-                        if (code != null) {
 
+                    if (!strReferredTo4Name.equals("") && strReferredTo4Name.length() > 0) {
+                        code = NameData.get(strReferredTo4Name);
+                        if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
-                            sbname.append(",").append(refredToName4);
+                            sbname.append(",").append(strReferredTo4Name);
                         }
                     }
                 }
                 if (addCounter >= 4) {
-                    String refredToName5 = nameReferedTo5.getText().toString();
-                    if (!refredToName5.equals("") && refredToName5.length() > 0) {
-                        code = NameData.get(refredToName5);
+
+                    if (!strReferredTo5Name.equals("") && strReferredTo5Name.length() > 0) {
+                        code = NameData.get(strReferredTo5Name);
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
-                            sbname.append(",").append(refredToName5);
+                            sbname.append(",").append(strReferredTo5Name);
                         }
                     }
                 }
 
                 strReferedTo = String.valueOf(sb);
-                String strRederedBy1 = nameRefredBy.getText().toString();
 
-                if (!strRederedBy1.equals("") && strRederedBy1.length() > 0) {
-                    code = NameData.get(strRederedBy1);
+                if (!strReferredByName.equals("") && strReferredByName.length() > 0) {
+                    code = NameData.get(strReferredByName);
                     if (code != null) {
                         int index = Integer.parseInt(code);
-                        strRederedBy = String.valueOf(index);
+                        strReferedBy = String.valueOf(index);
+                        textRefredByShow.setText("");
+                        textRefredByShow.setText(strReferredByName);
+                    } else {
+                        textRefredByShow.setText("");
                     }
-
                 }
-
                 strReferedTo = String.valueOf(sb);
                 String insertedName = String.valueOf(sbname);
-                TextView textRefredByShow = (TextView) findViewById(R.id.txtrefredby);
-                TextView textRefredToShow = (TextView) findViewById(R.id.txtrefredto);
-                textRefredByShow.setText(strRederedBy + "");
+
                 textRefredToShow.setText(insertedName + "");
                 addCounter = 0;
                 dialog.dismiss();
@@ -772,7 +727,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                     addMore.setVisibility(View.INVISIBLE);
                     Toast.makeText(getApplicationContext(), "Limit Exceed! You can not add more", Toast.LENGTH_LONG).show();
                 }
-
             }
         });
 
@@ -780,216 +734,205 @@ public class AddPatientUpdate extends AppCompatActivity {
         dialog.show();
     }
 
-    private void setCities(String cData[], View f) {
+    private void setCities( View f) {
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                android.R.layout.simple_dropdown_item_1line, cData);
-
-        final AutoCompleteTextView nameRefredBy = (AutoCompleteTextView) f.findViewById(R.id.nameRefredBy);
-        final AutoCompleteTextView nameReferedTo1 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo1);
-        final AutoCompleteTextView nameReferedTo2 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo2);
-        final AutoCompleteTextView nameReferedTo3 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo3);
-        final AutoCompleteTextView nameReferedTo4 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo4);
-        final AutoCompleteTextView nameReferedTo5 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo5);
-
-        nameRefredBy.setThreshold(1);
-        nameRefredBy.setAdapter(adapter);
-        nameReferedTo1.setThreshold(1);
-        nameReferedTo1.setAdapter(adapter);
-        nameReferedTo2.setThreshold(1);
-        nameReferedTo2.setAdapter(adapter);
-        nameReferedTo3.setThreshold(1);
-        nameReferedTo3.setAdapter(adapter);
-        nameReferedTo4.setThreshold(1);
-        nameReferedTo4.setAdapter(adapter);
-        nameReferedTo5.setThreshold(1);
-        nameReferedTo5.setAdapter(adapter);
-
-        final TextView refredtoSpeciality1 = (TextView) f.findViewById(R.id.refredtoSpeciality1);
-        final TextView refredtoSpeciality2 = (TextView) f.findViewById(R.id.refredtoSpeciality2);
-        final TextView refredtoSpeciality3 = (TextView) f.findViewById(R.id.refredtoSpeciality3);
-        final TextView refredtoSpeciality4 = (TextView) f.findViewById(R.id.refredtoSpeciality4);
-        final TextView refredtoSpeciality5 = (TextView) f.findViewById(R.id.refredtoSpeciality5);
-        final TextView refredBySpeciality = (TextView) f.findViewById(R.id.refredBySpeciality);
+        final Spinner nameRefredBySpinner = (Spinner) f.findViewById(R.id.nameRefredBySpinner);
+        final Spinner nameRefredTo1Spinner = (Spinner) f.findViewById(R.id.nameRefredTo1Spinner);
+        final Spinner nameRefredTo2Spinner = (Spinner) f.findViewById(R.id.nameRefredTo2Spinner);
+        final Spinner nameRefredTo3Spinner = (Spinner) f.findViewById(R.id.nameRefredTo3Spinner);
+        final Spinner nameRefredTo4Spinner = (Spinner) f.findViewById(R.id.nameRefredTo4Spinner);
+        final Spinner nameRefredTo5Spinner = (Spinner) f.findViewById(R.id.nameRefredTo5Spinner);
 
 
-        nameRefredBy.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            String val = null;
+        final TextView referredtoSpeciality1 = (TextView) f.findViewById(R.id.refredtoSpeciality1);
+        final TextView referredtoSpeciality2 = (TextView) f.findViewById(R.id.refredtoSpeciality2);
+        final TextView referredtoSpeciality3 = (TextView) f.findViewById(R.id.refredtoSpeciality3);
+        final TextView referredtoSpeciality4 = (TextView) f.findViewById(R.id.refredtoSpeciality4);
+        final TextView referredtoSpeciality5 = (TextView) f.findViewById(R.id.refredtoSpeciality5);
+        final TextView referredBySpeciality = (TextView) f.findViewById(R.id.refredBySpeciality);
+
+
+        try {
+            nameReferralsList = dbController.getReferals();
+
+            if (nameReferralsList.size() > 0) {
+                ArrayAdapter<String> referralName = new ArrayAdapter<>(AddPatientUpdate.this,
+                        android.R.layout.simple_dropdown_item_1line);
+                referralName.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+                referralName.add("Select Referrals");
+                referralName.addAll(nameReferralsList);
+
+                nameRefredBySpinner.setAdapter(referralName);
+                nameRefredTo1Spinner.setAdapter(referralName);
+                nameRefredTo2Spinner.setAdapter(referralName);
+                nameRefredTo3Spinner.setAdapter(referralName);
+                nameRefredTo4Spinner.setAdapter(referralName);
+                nameRefredTo5Spinner.setAdapter(referralName);
+
+            }
+        } catch (ClirNetAppException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+
+
+        nameRefredTo1Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                strReferredTo1Name = (String) parent.getItemAtPosition(position);
+                try {
+                    if (nameRefredTo1Spinner.getSelectedItem() == "Select Referrals") {
+
+                    } else {
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo1Name);
+
+                        //String strReferredTo1Id = list.get(0).get("ID");
+                        String strSpeciality = list.get(0).get("SPECIALITY");
+                        referredtoSpeciality1.setText(strSpeciality);
+                    }
+                } catch (ClirNetAppException e) {
+                    e.printStackTrace();
+                }
+            }
 
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-
-                    val = nameRefredBy.getText() + "";
-                    int index = 0;
-                    String strSpecialty = null;
-                    String code = null;
-                    if (!val.equals("") && val.length() > 0) {
-                        code = NameData.get(val);
-                        if (code != null) {
-                            index = Integer.parseInt(code);
-                        }
-                    }
-                    if (index == 0) {
-                        //  strSpecialty=specialityArray.get(index);
-                    } else {
-                        strSpecialty = specialityArray.get(index - 1);
-                    }
-                    if (val == null) {
-                        nameRefredBy.setError("Invalid Entry");
-                    } else {
-                        refredBySpeciality.setVisibility(View.VISIBLE);
-                        refredBySpeciality.setText(strSpecialty);
-                        // strRederedBy = String.valueOf(index);
-                    }
-                    if (val == null || code == null) {
-                        strRederedBy = null;
-                    }
-                }
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
 
-        nameReferedTo1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        nameRefredTo2Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-                    String val = nameReferedTo1.getText() + "";
-                    int index = 0;
-                    String strSpecialty = null;
-                    String code = null;
-                    if (!val.equals("") && val.length() > 0) {
-                        code = NameData.get(val);
-                        if (code != null) {
-                            index = Integer.parseInt(code);
-                        }
-                    }
-                    if (index == 0) {
-                        //  strSpecialty=specialityArray.get(index);
-                    } else {
-                        strSpecialty = specialityArray.get(index - 1);
-                    }
-                    refredtoSpeciality1.setVisibility(View.VISIBLE);
-                    refredtoSpeciality1.setText(strSpecialty);
-                    // sb.append(index);
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
 
-                    if (code == null) {
-                        nameReferedTo1.setError("Invalid Entry");
-                    }
-                }
-            }
-        });
-        nameReferedTo2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-                    String val = nameReferedTo2.getText() + "";
-                    int index = 0;
-                    String strSpecialty = null;
-                    String code = null;
-                    if (!val.equals("") && val.length() > 0) {
-                        code = NameData.get(val);
-                        if (code != null) {
-                            index = Integer.parseInt(code);
-                        }
-                    }
-                    if (index == 0) {
-                        //  strSpecialty=specialityArray.get(index);
+                strReferredTo2Name = (String) parent.getItemAtPosition(position);
+                try {
+                    if (nameRefredTo2Spinner.getSelectedItem() == "Select Referrals") {
+
                     } else {
-                        strSpecialty = specialityArray.get(index - 1);
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo2Name);
+
+                        //String strReferredTo2Id = list.get(0).get("ID");
+                        String strSpeclty = list.get(0).get("SPECIALITY");
+                        referredtoSpeciality2.setText(strSpeclty);
                     }
-                    refredtoSpeciality2.setVisibility(View.VISIBLE);
-                    refredtoSpeciality2.setText(strSpecialty);
-                    //   sb.append(",").append(index);
-                    if (code == null) {
-                        nameReferedTo2.setError("Invalid Entry");
-                    }
+                } catch (ClirNetAppException e) {
+                    e.printStackTrace();
                 }
             }
-        });
-        nameReferedTo3.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-                    String val = nameReferedTo3.getText() + "";
-                    int index = 0;
-                    String strSpecialty = null;
-                    String code = null;
-                    if (!val.equals("") && val.length() > 0) {
-                        code = NameData.get(val);
-                        if (code != null) {
-                            index = Integer.parseInt(code);
-                        }
-                    }
-                    if (index == 0) {
-                        //  strSpecialty=specialityArray.get(index);
-                    } else {
-                        strSpecialty = specialityArray.get(index - 1);
-                    }
-                    refredtoSpeciality3.setVisibility(View.VISIBLE);
-                    refredtoSpeciality3.setText(strSpecialty);
-                    //sb.append(",").append(index);
-                    if (code == null) {
-                        nameReferedTo3.setError("Invalid Entry");
-                    }
-                }
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
-        nameReferedTo4.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
+        nameRefredTo3Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-                    String val = nameReferedTo4.getText() + "";
-                    int index = 0;
-                    String strSpecialty = null;
-                    String code = null;
-                    if (!val.equals("") && val.length() > 0) {
-                        code = NameData.get(val);
-                        if (code != null) {
-                            index = Integer.parseInt(code);
-                        }
-                    }
-                    if (index == 0) {
-                        //  strSpecialty=specialityArray.get(index);
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                strReferredTo3Name = (String) parent.getItemAtPosition(position);
+                try {
+                    if (nameRefredTo3Spinner.getSelectedItem() == "Select Referrals") {
+
                     } else {
-                        strSpecialty = specialityArray.get(index - 1);
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo3Name);
+
+                        //String strReferredTo3Id = list.get(0).get("ID");
+                        String strSpeclty = list.get(0).get("SPECIALITY");
+                        referredtoSpeciality3.setText(strSpeclty);
                     }
-                    refredtoSpeciality4.setVisibility(View.VISIBLE);
-                    refredtoSpeciality4.setText(strSpecialty);
-                    // sb.append(",").append(index);
-                    if (code == null) {
-                        nameReferedTo2.setError("Invalid Entry");
-                    }
+                } catch (ClirNetAppException e) {
+                    e.printStackTrace();
                 }
             }
-        });
-        nameReferedTo5.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-                    String val = nameReferedTo5.getText() + "";
-                    int index = 0;
-                    String strSpecialty = null;
-                    String code = null;
-                    if (!val.equals("") && val.length() > 0) {
-                        code = NameData.get(val);
-                        if (code != null) {
-                            index = Integer.parseInt(code);
-                        }
-                    }
-                    if (index == 0) {
-                        //  strSpecialty=specialityArray.get(index);
-                    } else {
-                        strSpecialty = specialityArray.get(index - 1);
-                    }
-                    refredtoSpeciality5.setVisibility(View.VISIBLE);
-                    refredtoSpeciality5.setText(strSpecialty);
-                    // sb.append(",").append(index);
-                    if (code == null) {
-                        nameReferedTo5.setError("Invalid Entry");
-                    }
-                }
+            public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+
+        nameRefredTo4Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                strReferredTo4Name = (String) parent.getItemAtPosition(position);
+                try {
+                    if (nameRefredTo4Spinner.getSelectedItem() == "Select Referrals") {
+
+                    } else {
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo4Name);
+
+                        //String strReferredTo4Id = list.get(0).get("ID");
+                        String strSpeclty = list.get(0).get("SPECIALITY");
+                        referredtoSpeciality4.setText(strSpeclty);
+                    }
+                } catch (ClirNetAppException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+        nameRefredTo5Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                strReferredTo5Name = (String) parent.getItemAtPosition(position);
+                try {
+                    if (nameRefredTo5Spinner.getSelectedItem() == "Select Referrals") {
+
+                    } else {
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo5Name);
+
+                        //String  strReferredTo5Id = list.get(0).get("ID");
+                        String strSpeclty = list.get(0).get("SPECIALITY");
+                        referredtoSpeciality5.setText(strSpeclty);
+                    }
+                } catch (ClirNetAppException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        nameRefredBySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                strReferredByName = (String) parent.getItemAtPosition(position);
+                Toast.makeText(AddPatientUpdate.this, "selected State is:" + strReferredByName, Toast.LENGTH_LONG).show();
+                try {
+                    if (nameRefredBySpinner.getSelectedItem() == "Select Referrals") {
+
+                    } else {
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredByName);
+
+                        // String strReferredById = list.get(0).get("ID");
+                        String strSpeclty = list.get(0).get("SPECIALITY");
+                        referredBySpeciality.setText(strSpeclty);
+                    }
+                } catch (ClirNetAppException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
     }
 
     //this will send data to EditPatientUpdate Activity
@@ -1020,7 +963,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
             i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
             i.putExtra("VISITID", registrationModel.getKey_visit_id());
-
+            i.putExtra("VISITDATE", registrationModel.getVisit_date());
             i.putExtra("ADDRESS", registrationModel.getAddress());
             i.putExtra("CITYORTOWN", registrationModel.getCityortown());
             i.putExtra("DISTRICT", registrationModel.getDistrict());
@@ -1087,7 +1030,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         String strSugarFasting = edtInput_sugarfasting.getText().toString().trim();
 
 
-        usersellectedDate = fodtextshow.getText().toString();
+        userSellectedDate = fodtextshow.getText().toString();
 
         if (TextUtils.isEmpty(ailments) && TextUtils.isEmpty(strSymptoms) && TextUtils.isEmpty(strDignosis)) {
             Toast.makeText(getApplicationContext(), "Please enter any of Symptoms or Diagnosis ", Toast.LENGTH_LONG).show();
@@ -1105,10 +1048,8 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         }
 
-
         String visit_id = String.valueOf(maxVisitId + 1);
         String visit_date = addedOnDate;
-
 
         //here we need to convert date it to 1-09-2016 date format to get records in sys date filter list
         sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
@@ -1122,24 +1063,20 @@ public class AddPatientUpdate extends AppCompatActivity {
         String[] diagno = strDignosis.split(delimiter);
              /* print substrings */
         for (String aTemp : diagno) {
-            //System.out.println(temp[i]);
 
             if (!new AppController().isDuplicate(mDiagnosisList, aTemp)) {
 
-                // dbController.addAilment(temp[i]);
                 databaseClass.addDiagnosis(aTemp);
 
             }
         }
 
         String[] symp = strSymptoms.split(delimiter);
-             /* print substrings */
+
         for (String aTemp : symp) {
-            //System.out.println(temp[i]);
 
             if (!new AppController().isDuplicate(mSymptomsList, aTemp)) {
 
-                // dbController.addAilment(temp[i]);
                 databaseClass.addSymptoms(aTemp);
 
             }
@@ -1150,8 +1087,8 @@ public class AddPatientUpdate extends AppCompatActivity {
             visit_date = myFormat.format(fromUser.parse(added_on));
             added_on = myFormat.format(fromUser.parse(addedOnDate));
 
-            if (usersellectedDate != null && !usersellectedDate.equals("")) {
-                usersellectedDate = myFormat.format(fromUser.parse(usersellectedDate));
+            if (userSellectedDate != null && !userSellectedDate.equals("")) {
+                userSellectedDate = myFormat.format(fromUser.parse(userSellectedDate));
             }
 
         } catch (ParseException e) {
@@ -1163,9 +1100,10 @@ public class AddPatientUpdate extends AppCompatActivity {
         String added_by = docId;
         String patientInfoType = "App";
         String action = "added";
+        String record_source="Add Patient Update";
 
-        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, ailments, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
-                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strRederedBy, strReferedTo);
+        dbController.addPatientNextVisitRecord(visit_id, strPatientId, userSellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, ailments, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
+                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo,record_source);
 
         Toast.makeText(getApplicationContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
         //Redirect to navigation Activity
@@ -1178,34 +1116,10 @@ public class AddPatientUpdate extends AppCompatActivity {
     private void setupAnimation() {
 
         try {
-            if (bannerimgNames.size() > 0) {
-                Random r = new Random();
-                int n = r.nextInt(bannerimgNames.size());
+            bannerimgNames = bannerClass.getImageName();
 
-                url = bannerimgNames.get(n);
+            appController.setUpAdd(AddPatientUpdate.this, bannerimgNames, backChangingImages, doctor_membership_number, "Add Patient Update");
 
-                if (AppController.checkifImageExists(url)) {
-
-                    url = bannerimgNames.get(n);
-                    BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-
-                    //Log.e("BitmapDrawable", "" + d);
-                    backChangingImages.setImageDrawable(d);
-
-                    backChangingImages.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            String action = "clicked";
-
-                            appController.showAdDialog(AddPatientUpdate.this, url);
-                            appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action, "Add Patient Update");
-                        }
-                    });
-                    String action = "display";
-                    appController.saveBannerDataIntoDb(url, AddPatientUpdate.this, doctor_membership_number, action, "Add Patient Update");
-                }
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1409,9 +1323,6 @@ public class AddPatientUpdate extends AppCompatActivity {
         if (appController != null) {
             appController = null;
         }
-        if (mAilmemtArrayList != null) {
-            mAilmemtArrayList = null;
-        }
         if (bannerClass != null) {
             bannerClass = null;
         }
@@ -1448,10 +1359,9 @@ public class AddPatientUpdate extends AppCompatActivity {
         strPatientId = null;
         visitDate = null;
         fowSel = null;
-        usersellectedDate = null;
+        userSellectedDate = null;
         monthSel = null;
         sqlController = null;
-        imageViewprescription = null;
         docId = null;
         addedTime = null;
         addedOnDate = null;
@@ -1498,14 +1408,20 @@ public class AddPatientUpdate extends AppCompatActivity {
         strAlternateIsd_code = null;
         mDiagnosisList = null;
         strReferedTo = null;
-        strRederedBy = null;
+        strReferedBy = null;
         NameData = null;
         specialityArray = null;
         patientImagePath = null;
         prescriptionImgPath = null;
-        url = null;
         struid = null;
         strEmail = null;
+        strReferredByName = null;
+        strReferredTo1Name = null;
+        strReferredTo2Name = null;
+        strReferredTo3Name = null;
+        strReferredTo4Name = null;
+        strReferredTo5Name = null;
+        nameReferralsList = null;
 
 
     }
@@ -1585,7 +1501,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                     String dateis = sdf1.format(appController.addDay1(new Date(), val));
                     fodtextshow.setText(dateis);
                     daysSel = value;
-                    usersellectedDate = dateis;
+                    userSellectedDate = dateis;
 
                 } else if (event.getAction() == KeyEvent.ACTION_UP) {
                     days.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
@@ -1635,7 +1551,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 int fVal = (int) (val * 7);
                 buttonSelected = "week";
                 String dateis = sdf1.format(appController.addDay1(new Date(), fVal));
-                usersellectedDate = dateis;
+                userSellectedDate = dateis;
                 fowSel = value;
                 fodtextshow.setText(dateis);
             }
@@ -1671,7 +1587,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 }
                 buttonSelected = "month";
                 String dateis = sdf1.format(appController.addMonth(new Date(), Integer.parseInt(value)));
-                usersellectedDate = dateis;
+                userSellectedDate = dateis;
                 monthSel = value;
                 fodtextshow.setText(dateis);
             }

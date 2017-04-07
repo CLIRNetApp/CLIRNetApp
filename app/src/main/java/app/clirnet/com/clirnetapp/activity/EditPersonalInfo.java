@@ -6,7 +6,6 @@ import android.app.Dialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -47,7 +46,6 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
@@ -970,34 +968,10 @@ public class EditPersonalInfo extends AppCompatActivity {
     private void setupAnimation() {
 
         try {
-            if (bannerimgNames.size() > 0) {
-                Random r = new Random();
-                int n = r.nextInt(bannerimgNames.size());
 
-                url = bannerimgNames.get(n);
+            appController.setUpAdd(EditPersonalInfo.this,bannerimgNames,backChangingImages,doctor_membership_number,"Edit Personal Info");
 
-                if (AppController.checkifImageExists(url)) {
 
-                    url = bannerimgNames.get(n);
-                    BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-
-                    //Log.e("BitmapDrawable", "" + d);
-                    backChangingImages.setImageDrawable(d);
-
-                    backChangingImages.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            String action = "clicked";
-
-                            appController.showAdDialog(EditPersonalInfo.this, url);
-                            appController.saveBannerDataIntoDb(url,EditPersonalInfo.this, doctor_membership_number, action, "Edit Personal Info");
-                        }
-                    });
-                    String action = "display";
-                    appController.saveBannerDataIntoDb(url, EditPersonalInfo.this, doctor_membership_number, action, "Edit Personal Info");
-            }
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }

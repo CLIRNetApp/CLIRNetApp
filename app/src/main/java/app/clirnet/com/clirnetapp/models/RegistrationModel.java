@@ -693,7 +693,7 @@ public class RegistrationModel {
 
     }
 
-    public RegistrationModel(String id, String prescription_image, String added_on, String added_by, String status, String phno, String email) {
+    public RegistrationModel(String id, String prescription_image, String added_on, String added_by, String status, String phno, String email,String strReferredBy,String strReferredTo) {
 
         this.id = id;
         this.pres_img = prescription_image;
@@ -702,6 +702,8 @@ public class RegistrationModel {
         this.status = status;
         this.mobileNumber = phno;
         this.email = email;
+        this.referedBy=strReferredBy;
+        this.referedTo=strReferredTo;
     }
 
     public RegistrationModel(String id, String name, String type, String phoneno, String speciality, String added_on, String modified_counter, String phone_type, String isd_code, String email, String associate_address, String city, String associate_state, String pin_code, String district, String nameTitle) {

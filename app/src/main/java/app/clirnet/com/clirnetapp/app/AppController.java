@@ -10,14 +10,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
+import android.os.Environment;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -39,11 +42,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -55,7 +60,6 @@ import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
 
 import static app.clirnet.com.clirnetapp.R.id.produced_bytxt;
-import static app.clirnet.com.clirnetapp.fragments.HomeFragment.getImage;
 
 public class AppController extends Application {
 
@@ -104,6 +108,7 @@ public class AppController extends Application {
         AnalyticsTrackers analyticsTrackers = AnalyticsTrackers.getInstance();
         return analyticsTrackers.get(AnalyticsTrackers.Target.APP);
     }
+
     /***
      * Tracking screen view
      *
@@ -120,6 +125,7 @@ public class AppController extends Application {
 
         GoogleAnalytics.getInstance(this).dispatchLocalHits();
     }
+
     /***
      * Tracking exception
      *
@@ -213,7 +219,7 @@ public class AppController extends Application {
     //Remove leading zero from the age filed if any
     public static String removeLeadingZeroes(String value) throws ClirNetAppException {
         String val = null;
-        if (value!= null && value.trim().length()>0) {
+        if (value != null && value.trim().length() > 0) {
             try {
                 val = Integer.valueOf(value).toString();
             } catch (Exception e) {
@@ -229,21 +235,6 @@ public class AppController extends Application {
 
     //this will gives you a age from the date
     public int getAge(int year, int monthOfYear, int dayOfMonth) {
-       /* Date now = new Date();
-        int nowMonths = now.getMonth() + 1;
-        int nowDate = now.getDate();
-        int nowYear = now.getYear() + 1900;
-        int result = nowYear - year;
-
-       *//* if (monthOfYear > nowMonths) {
-            result = 0;
-        } else if (dayOfMonth == nowMonths) {
-            if (dayOfMonth > nowDate) {
-                result = 0;
-            }
-
-        }*//*
-        return result;*/
         GregorianCalendar cal = new GregorianCalendar();
         int y, m, d, a;
 
@@ -273,7 +264,6 @@ public class AppController extends Application {
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss", Locale.ENGLISH);
         return (sdf.format(cal.getTime()));
-        //return "22-12-2016 04:05:07"; //for test
     }
 
     public String getDateTimeddmmyyyy() {
@@ -364,23 +354,6 @@ public class AppController extends Application {
         return result.matches(regex);
     }
 
-    public boolean findEmptyString(String value) {
-        return (TextUtils.isEmpty(value.trim()));
-    }
-    //check the input filed has any text or not
-    //return true if it contains text otherwise return false.
-
-    //how to call this function ex.Appcontroller.hasContain(EditText);
-    //if(!AppController.hasText(edittext))ret=false;
-    public static boolean hasContain(EditText editText) {
-        String text = editText.getText().toString().trim();
-        editText.setError(null);
-        if (text.length() == 0) {
-            editText.setText("put some msg here");
-            return false;
-        }
-        return true;
-    }
 
     public Integer findLength(String value) {
 
@@ -398,7 +371,6 @@ public class AppController extends Application {
         try {
 
             frmtedDate = myFormat.format(fromUser.parse(date));
-            //Log.e("reformattedStrqq", "" + frmtedDate);
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -418,6 +390,8 @@ public class AppController extends Application {
 
         } catch (Exception e) {
             e.printStackTrace();
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
         }
 
         return result;
@@ -477,6 +451,7 @@ public class AppController extends Application {
             }
 
         } catch (ParseException e) {
+
             e.printStackTrace();
         }
         return (int) differenceInHours;
@@ -517,9 +492,12 @@ public class AppController extends Application {
 
             } catch (Exception e) {
                 e.printStackTrace();
+                this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
         } catch (SQLException e) {
             e.printStackTrace();
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
         }
 
         final Dialog dialog = new Dialog(context);
@@ -666,6 +644,7 @@ public class AppController extends Application {
                         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(updatedUrl)));
                     } catch (Exception e) {
                         e.printStackTrace();
+
                     }
                    /* Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalLink_to_page));
                     startActivity(browserIntent);*/
@@ -794,7 +773,7 @@ public class AppController extends Application {
                 }
                 boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
                 if (isInternetPresent) {
-                    new AskforSampleAsyncTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, doc_mem_id, selected_id, strQty, strother,getDateTimenew());
+                    new AskforSampleAsyncTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, doc_mem_id, selected_id, strQty, strother, getDateTimenew());
                 } else {
 
                     Toast.makeText(context1, "Please Connect to Internet and try again", Toast.LENGTH_LONG).show();
@@ -912,7 +891,7 @@ public class AppController extends Application {
                 String added_on = request_on;
                 boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
                 if (isInternetPresent) {
-                    new CallMeMeetMeAsynTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, called_from, strDate, from_time, to_time, address, strreason, doc_mem_id,getDateTimenew());
+                    new CallMeMeetMeAsynTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, called_from, strDate, from_time, to_time, address, strreason, doc_mem_id, getDateTimenew());
 
                 }
                  /* dbController.addCallMeetMeData(brand_name, company_id, generic_name, called_from, strDate, from_time, to_time,
@@ -1055,7 +1034,8 @@ public class AppController extends Application {
                 }
         } catch (NullPointerException e) {
             e.printStackTrace();
-            this.appendLog(getDateTime() + "saveBannerDataIntoDb" + e);
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
         }
     }
 
@@ -1115,15 +1095,19 @@ public class AppController extends Application {
         return String.valueOf(i);
     }
 
-    public static boolean checkifImageExists(String imagename) {
+    public boolean checkifImageExists(String imagename) {
         Bitmap b = null;
         try {
             File file = getImage("/" + imagename + ".png");
             String path = null;
-            if (file != null) {
-                path = file.getAbsolutePath();
-            }
 
+            if (file != null) {
+                long length = file.length();
+                length = length / 1024;
+                if (length > 0) {
+                    path = file.getAbsolutePath();
+                }
+            }
             if (path != null)
                 b = BitmapFactory.decodeFile(path);
 
@@ -1134,5 +1118,113 @@ public class AppController extends Application {
         return !(b == null || b.equals(""));
     }
 
+    public File getImage(String imagename) {
+
+        File mediaImage = null;
+        try {
+            String root = Environment.getExternalStorageDirectory().toString();
+            File myDir = new File(root);
+            if (!myDir.exists())
+                return null;
+
+            mediaImage = new File(AppConfig.SDCARD_PATH + imagename);
+        } catch (Exception e) {
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+            e.printStackTrace();
+        }
+        return mediaImage;
+    }
+
+    public Bitmap getBitmap(String url) {
+        // initilize the default HTTP client object
+        try {
+
+            if (url != null) {
+
+                try {
+                    //String path = null;
+                    String imageName = getImage(url) + ".png";
+                    final Bitmap bitmap = BitmapFactory.decodeFile(imageName);
+                    File file = getImage(url + ".png");
+
+                    if (file != null) {
+                        long length = file.length();
+                        length = length / 1024;
+                        if (length > 0) {
+                            // path = file.getAbsolutePath();
+                            return bitmap;
+                        }
+                        System.out.println("File Path : " + file + ", File size : " + length + " KB");
+                    }
+
+                } catch (Exception e) {
+                    // You Could provide a more explicit error message for IOException
+                    this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+                    Log.e("ImageDownloader", "Something went wrong while" +
+                            " retrieving bitmap from " + url + e.toString());
+                }
+
+
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+/*Method to get/display banner image*/
+    public void setUpAdd(final Context context, ArrayList<String> bannerimgNamesList, ImageView backChangingImages, final String doctor_membership_number, final String pageTitle) {
+        final String url;
+        try {
+
+            if (backChangingImages != null) {
+                Random r = new Random();
+                if (bannerimgNamesList.size() > 0) {
+                    int n = r.nextInt(bannerimgNamesList.size());
+
+                    url = bannerimgNamesList.get(n);
+                    if (checkifImageExists(url)) {
+
+                        final BitmapDrawable d = new BitmapDrawable(context.getResources(), AppConfig.SDCARD_PATH + url + ".png"); // path is ur resultant //image
+                        backChangingImages.setImageDrawable(d);
+                        backChangingImages.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+
+                                String action = "clicked";
+
+                                showAdDialog(context, url);
+                                saveBannerDataIntoDb(url, context, doctor_membership_number, action, pageTitle);
+                            }
+                        });
+                        String action = "display";
+                        saveBannerDataIntoDb(url, context, doctor_membership_number, action, pageTitle);
+                    }else{
+                        Log.e("NoImage","No Image to Display");
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    public void setSpinnerPosition(Spinner spinner, String[] some_array, String value ){
+        ArrayList<String> _stateList = new ArrayList<>();
+        Collections.addAll(_stateList, some_array);
+        if (value != null) {
+            int postion = getCategoryPos(_stateList, value);
+            spinner.setSelection(postion);
+        }
+    }
+    private int getCategoryPos(ArrayList<String> _categories, String category) {
+        return _categories.indexOf(category);
+    }
 }
+
+
+
+
 

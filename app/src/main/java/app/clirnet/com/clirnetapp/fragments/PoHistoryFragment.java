@@ -2,7 +2,6 @@ package app.clirnet.com.clirnetapp.fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -32,7 +31,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
@@ -556,34 +554,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private void setupAnimation() {
 
         try {
-            if (bannerimgNames.size() > 0) {
-                Random r = new Random();
-                int n = r.nextInt(bannerimgNames.size());
+            appController.setUpAdd(getContext(),bannerimgNames,backChangingImages,doctor_membership_number,"POHistory Fragment");
 
-                url = bannerimgNames.get(n);
-
-                if (AppController.checkifImageExists(url)) {
-
-                    url = bannerimgNames.get(n);
-                    BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-
-                    //Log.e("BitmapDrawable", "" + d);
-                    backChangingImages.setImageDrawable(d);
-
-                    backChangingImages.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            String action = "clicked";
-
-                            appController.showAdDialog(getContext(), url);
-                            appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action, "POHistory Fragment");
-                        }
-                    });
-                    String action = "display";
-                    appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action, "POHistory Fragment");
-                }
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }

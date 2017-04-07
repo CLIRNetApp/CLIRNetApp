@@ -1,7 +1,6 @@
 package app.clirnet.com.clirnetapp.activity;
 
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
@@ -22,7 +21,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.adapters.ShowPersonalDetailsAdapter;
@@ -347,34 +345,8 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private void setupAnimation() {
 
         try {
-            if (bannerimgNames.size() > 0) {
-                Random r = new Random();
-                int n = r.nextInt(bannerimgNames.size());
+            appController.setUpAdd(ShowPersonalDetailsActivity.this,bannerimgNames,backChangingImages,doctor_membership_number,"Show Personal Details");
 
-                url = bannerimgNames.get(n);
-
-                if (AppController.checkifImageExists(url)) {
-
-                    url = bannerimgNames.get(n);
-                    BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-
-                    //Log.e("BitmapDrawable", "" + d);
-                    backChangingImages.setImageDrawable(d);
-
-                    backChangingImages.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            String action = "clicked";
-
-                            appController.showAdDialog(ShowPersonalDetailsActivity.this, url);
-                            appController.saveBannerDataIntoDb(url,ShowPersonalDetailsActivity.this, doctor_membership_number, action, "Show Personal Details");
-                        }
-                    });
-                    String action = "display";
-                    appController.saveBannerDataIntoDb(url, ShowPersonalDetailsActivity.this, doctor_membership_number, action, "Show Personal Details");
-                }
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }

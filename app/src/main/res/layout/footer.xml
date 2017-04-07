@@ -22,19 +22,20 @@
         android:contentDescription="@string/desc"
         android:src="@drawable/logon" />
 
-    <android.support.design.widget.FloatingActionButton
+    <Button
         android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="60dp"
+        android:layout_height="72dp"
+        android:layout_margin="2dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:src="@drawable/add"
-        app:backgroundTint="@color/colorPrimary"
-        android:visibility="gone" />
+        android:background="@drawable/quickadd"
+        app:fabSize="normal"
+        android:visibility="gone"/>
 
     <TextView
         android:id="@+id/copy"
-        android:layout_width="match_parent"
+        android:layout_width="800dp"
         android:layout_height="wrap_content"
         android:layout_below="@+id/footer_img"
         android:gravity="center"
@@ -53,8 +54,8 @@
         android:text="Quick Add"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:textColor="@color/bg_login"
-        android:textSize="14sp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
         android:visibility="invisible"/>
 
     <TextView

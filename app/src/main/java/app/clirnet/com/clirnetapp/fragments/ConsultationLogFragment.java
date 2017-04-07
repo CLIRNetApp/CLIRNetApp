@@ -3,7 +3,6 @@ package app.clirnet.com.clirnetapp.fragments;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -28,7 +27,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
@@ -467,34 +465,8 @@ public class ConsultationLogFragment extends Fragment {
         backChangingImages = (ImageView) view.findViewById(R.id.backChangingImages);
 
         try {
-            if (bannerimgNames.size() > 0) {
-                Random r = new Random();
-                int n = r.nextInt(bannerimgNames.size());
+            appController.setUpAdd(getContext(),bannerimgNames,backChangingImages,doctor_membership_number,"Consultation Log");
 
-                url = bannerimgNames.get(n);
-
-                if (AppController.checkifImageExists(url)) {
-
-                    url = bannerimgNames.get(n);
-                    BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-
-                    //Log.e("BitmapDrawable", "" + d);
-                    backChangingImages.setImageDrawable(d);
-
-                    backChangingImages.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            String action = "clicked";
-
-                            appController.showAdDialog(getContext(), url);
-                            appController.saveBannerDataIntoDb(url,getContext(), doctor_membership_number, action, "Consultation Log");
-                        }
-                    });
-                    String action = "display";
-                    appController.saveBannerDataIntoDb(url,getContext(), doctor_membership_number, action, "Consultation Log");
-                }
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }

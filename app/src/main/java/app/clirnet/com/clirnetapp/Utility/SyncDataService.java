@@ -5,16 +5,10 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
@@ -28,9 +22,7 @@ import java.util.Map;
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
-import app.clirnet.com.clirnetapp.app.DoctorDeatilsAsynTask;
-import app.clirnet.com.clirnetapp.app.GetBannerImageTask;
-import app.clirnet.com.clirnetapp.app.UploadBannerDataAsyncTask;
+import app.clirnet.com.clirnetapp.app.CallDataFromOne;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.SQLController;
@@ -44,7 +36,7 @@ public class SyncDataService extends Service {
 
     private static final String PREFS_NAME = "SyncFlag";
     private static final String PREF_VALUE = "status";
-    private final Handler handler = new Handler();
+    private Handler handler;
 
     private ConnectionDetector connectionDetector;
     private SQLController sqlController;
@@ -73,6 +65,7 @@ public class SyncDataService extends Service {
 
         connectionDetector = new ConnectionDetector(getApplicationContext());
         appController = new AppController();
+        handler = new Handler();
 
     }
 
@@ -132,7 +125,7 @@ public class SyncDataService extends Service {
             if (imgListSize > 0) {
                 for (int i = 0; i < imgListSize; i++) {
                     String url = bannerimgNames.get(i);
-                    if (!AppController.checkifImageExists(url)) {
+                    if (!appController.checkifImageExists(url)) {
                         bannerClass.updateBannerImgDownloadStatus1(url, "pending");
                     }
                 }
@@ -140,8 +133,6 @@ public class SyncDataService extends Service {
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync DataService: getImageName " + e);
         }
-
-
     }
 
     private void sendDataToServerAsyncTask() throws ClirNetAppException {
@@ -149,48 +140,52 @@ public class SyncDataService extends Service {
         boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
 
         if (isInternetPresent) {
-
-        ArrayList<String> bannerDisplayIds_List;
-        ArrayList<String> bannaerClickedIdsList;
-        //patient and patient history data count
-
-        patientIds_List = sqlController.getPatientIdsFalg0();
-        getPatientVisitIdsList = sqlController.getPatientVisitIdsFalg0();
-        if (doctor_membership_number == null) {
-            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
-        }
-        if (company_id == null) {
-            company_id = sqlController.getCompany_id();
-        }
-
-
-        //banner click and display data count
-        bannerDisplayIds_List = sqlController.getBannerDisplaysFalg0();
-        bannaerClickedIdsList = sqlController.getBannerClickedFalg0();
-
-        patientInfoArayString = String.valueOf(dbController.getResultsForPatientInformation());
-
-        patientVisitHistorArayString = String.valueOf(dbController.getResultsForPatientHistory());
-
-                    /*count no of patient_id occurance od patient and visit string from db*/
-        pat_personal_count = appController.getCharFreq(patientInfoArayString);
-
-        pat_visit_count = appController.getCharFreq(patientVisitHistorArayString);
-                   /*get banner clicked and display data in string*/
-        String bannerDisplayArayString = String.valueOf(dbController.getResultsForBannerDisplay());
-
-
-        String bannerClickedArayString = String.valueOf(dbController.getResultsForBannerClicked());
-
             String start_time = appController.getDateTimenew();
 
+            new CallDataFromOne(getApplicationContext(), mUserName, mPassword, start_time, docId, doctor_membership_number);
+            new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, docId, start_time); //send log file to server
+
+
+         /*   ArrayList<String> bannerDisplayIds_List;
+            ArrayList<String> bannaerClickedIdsList;
+            //patient and patient history data count
+
+            patientIds_List = sqlController.getPatientIdsFalg0();
+            getPatientVisitIdsList = sqlController.getPatientVisitIdsFalg0();
+            if (doctor_membership_number == null) {
+                doctor_membership_number = sqlController.getDoctorMembershipIdNew();
+            }
+            if (company_id == null) {
+                company_id = sqlController.getCompany_id();
+            }
+
+
+            //banner click and display data count
+            bannerDisplayIds_List = sqlController.getBannerDisplaysFalg0();
+            bannaerClickedIdsList = sqlController.getBannerClickedFalg0();
+
+            patientInfoArayString = String.valueOf(dbController.getResultsForPatientInformation());
+
+            patientVisitHistorArayString = String.valueOf(dbController.getResultsForPatientHistory());
+
+                    *//*count no of patient_id occurance od patient and visit string from db*//*
+            pat_personal_count = appController.getCharFreq(patientInfoArayString);
+
+            pat_visit_count = appController.getCharFreq(patientVisitHistorArayString);
+                   *//*get banner clicked and display data in string*//*
+            String bannerDisplayArayString = String.valueOf(dbController.getResultsForBannerDisplay());
+
+
+            String bannerClickedArayString = String.valueOf(dbController.getResultsForBannerClicked());
+
             if (bannaerClickedIdsList.size() > 0 || bannerDisplayIds_List.size() > 0) {
+
                 new UploadBannerDataAsyncTask(mUserName, mPassword, getApplicationContext(), bannerDisplayArayString, bannerClickedArayString, doctor_membership_number, docId, bannerDisplayIds_List, bannaerClickedIdsList, start_time);
             }
 
             if (mUserName != null && mPassword != null) {
 
-                new GetBannerImageTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, company_id,start_time); //send log file to server
+                new GetBannerImageTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, company_id, start_time); //send log file to server
 
             }
 
@@ -209,10 +204,8 @@ public class SyncDataService extends Service {
                 start_time1 = appController.getDateTimenew();
                 appController.appendLog(appController.getDateTime() + " " + " / " + "Sending Data to server from Sync Service" + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
-                sendDataToServer(patientInfoArayString, patientVisitHistorArayString, doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size(),new AppController().getDateTimenew());
-
-                new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword,doctor_membership_number, start_time1); //send log file to server
-            }
+                sendDataToServer(patientInfoArayString, patientVisitHistorArayString, doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size(), new AppController().getDateTimenew());*//*
+*/
         }
     }
 
@@ -227,7 +220,21 @@ public class SyncDataService extends Service {
         super.onDestroy();
 
         handler.removeCallbacks(sendUpdatesToUI);
-      //  Toast.makeText(this, "MyService Stopped", Toast.LENGTH_LONG).show();
+        if (appController != null) {
+            appController = null;
+        }
+        if (connectionDetector != null) {
+            connectionDetector = null;
+        }
+        if (sqlController != null) {
+            sqlController = null;
+        }
+        if (dbController != null) {
+            dbController = null;
+        }
+        if (bannerClass != null) {
+            bannerClass = null;
+        }
         running = false;
         patientIds_List = null;
         getPatientVisitIdsList = null;
@@ -237,6 +244,8 @@ public class SyncDataService extends Service {
         patientVisitHistorArayString = null;
         pat_personal_count = null;
         pat_visit_count = null;
+        mUserName = null;
+        mPassword = null;
 
     }
 
@@ -315,21 +324,7 @@ public class SyncDataService extends Service {
 
             @Override
             public void onErrorResponse(VolleyError error) {
-              // Log.e("ServiceError", "Login Error: " + error.getMessage());
-
-                if (error instanceof TimeoutError) {
-                  //  Log.e("Volley", "TimeoutError");
-                } else if (error instanceof NoConnectionError) {
-                  //  Log.e("Volley", "NoConnectionError");
-                } else if (error instanceof AuthFailureError) {
-                  //  Log.e("Volley", "AuthFailureError");
-                } else if (error instanceof ServerError) {
-                   // Log.e("Volley", "ServerError");
-                } else if (error instanceof NetworkError) {
-                   // Log.e("Volley", "NetworkError");
-                } else if (error instanceof ParseError) {
-                   // Log.e("Volley", "ParseError");
-                }
+                // Log.e("ServiceError", "Login Error: " + error.getMessage());
 
                 appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Data Service Error  " + error + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 

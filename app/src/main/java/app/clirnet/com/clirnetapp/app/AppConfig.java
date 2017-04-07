@@ -2,10 +2,11 @@ package app.clirnet.com.clirnetapp.app;
 
 public class AppConfig {
     // Server user login url
-  //  private static final String LOCAL_DEMO_URL = "http://43.242.212.136/clirnetapplicationv2/public";//49.50.76.125/
+    //private static final String LOCAL_DEMO_URL = "http://43.242.212.136/clirnetapplicationv2/public";//49.50.76.125/
     //  public static final String   LOCAL_DEMO_URL = "http://dev.clirnet.com/";//49.50.76.125/
     // static final String LIVE_MAIN_URL = "http://192.168.1.53/";
     // static final String PRODUCTION_MAIN_URL = "http://104.199.232.104/clirnetapplicationv3/public/doctor/webapi/checkdoctorvalidity";
+
 
     private static final String LOCAL_DEMO_URL = "http://doctor.clirnet.com";
 
@@ -47,5 +48,6 @@ public class AppConfig {
     static final String SAMPLEREQUEST_URL = LOCAL_DEMO_URL + "/doctor/webapi/sendsamplerequestdata";
 
 
-    static final String UPLOAD_BANNER_DATA = LOCAL_DEMO_URL + "/doctor/webapi/bannersstatistics";
+    static final String UPLOAD_BANNER_DATA = LOCAL_DEMO_URL + "/doctor/webapi/bannersstatisticsv2";
+    public static final String SDCARD_PATH = "sdcard/BannerImages/";
 }

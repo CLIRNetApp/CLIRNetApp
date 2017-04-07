@@ -7,20 +7,16 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
-import android.support.v7.view.ContextThemeWrapper;
-import android.support.v7.widget.SearchView;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -54,7 +50,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
@@ -65,9 +60,8 @@ import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
-import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
-import static app.clirnet.com.clirnetapp.R.id.ailments;
+import static app.clirnet.com.clirnetapp.R.id.clinicalNotes;
 import static app.clirnet.com.clirnetapp.R.id.prescriptionImgPath;
 
 public class QuickAddNewRecordsFragment extends Fragment {
@@ -78,11 +72,9 @@ public class QuickAddNewRecordsFragment extends Fragment {
     private final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE1 = 1889;
     private int countvitalsLayout = 1;
     private int countsymtomsanddignostLayout = 1;
-    private int countPrescriptiontLayout = 1;
     private int countAddressLayout = 1;
     private OnFragmentInteractionListener mListener;
     private String strFirstName;
-    private String strMiddleName;
     private String strLastName;
     private EditText firstName;
     private EditText middleName;
@@ -91,15 +83,12 @@ public class QuickAddNewRecordsFragment extends Fragment {
     private EditText date_of_birth;
     private EditText phone_no;
     private EditText age;
-    private ImageView patientimage;
-    private ImageView imageViewprescription;
+
     private EditText clinical_Notes;
 
-    private MultiAutoCompleteTextView multiAutoComplete;
-    private Spinner language;
+
     private Button add;
     private Button cancel;
-    private TextView showfodtext;
     private ImageView backChangingImages;
     private SQLController sqlController;
     private SQLiteHandler dbController;
@@ -116,7 +105,6 @@ public class QuickAddNewRecordsFragment extends Fragment {
     private Intent imageIntent;
     private String usersellectedDate;
     private String daysSel, fowSel, monthSel;
-    private ArrayList<String> mLastNameList;
     private ArrayList<String> mSymptomsList;
     private ArrayList<String> mDiagnosisList;
     private String patientImagePath;
@@ -153,23 +141,18 @@ public class QuickAddNewRecordsFragment extends Fragment {
     private BootstrapEditText inputnumber;
     private String middle_name;
     private String buttonSelected;
-    private String strPatientId;
+
     private MultiAutoCompleteTextView edtSymptoms;
     private MultiAutoCompleteTextView edtDignosis;
-    private MultiAutoCompleteTextView ailments1;
-    private BootstrapEditText edtTest;
-    private BootstrapEditText edtDrugs;
+
     private String prescriptionimgPath;
-    private String strVisitId;
+
     private Uri uriSavedImage;
     private ImageView img;
     private TextView txtsymtomsanddignost;
-    private TextView presciptiontext;
+
     private TextView txtRecord;
-    private MultiAutoCompleteTextView ailment;
-    private SearchView searchView;
-    private ArrayList<RegistrationModel> filteredModelList;
-    private String clickedList;
+
     private int maxPatientIdCount;
     private int maxVisitId;
     private String prescriptionimgId;
@@ -178,15 +161,29 @@ public class QuickAddNewRecordsFragment extends Fragment {
     private BannerClass bannerClass;
     private ArrayList<String> bannerimgNames;
     private String strEmailAddress;
-    private ArrayList<RegistrationModel> mAssociateList;
     private HashMap<String, String> NameData;
     private ArrayList<String> specialityArray;
-    private StringBuilder sb;
     private int addCounter = 0;
     private String strReferedTo;
     private String strReferedBy;
-    private LinearLayout showReferalLayout;
+
     private BootstrapEditText edtEmail_id;
+
+    private TextView textRefredByShow;
+    private TextView textRefredToShow;
+    private String strReferredById;
+    private String strReferredTo1Id;
+    private String strReferredTo2Id;
+    private String strReferredTo3Id;
+    private String strReferredTo4Id;
+    private String strReferredTo5Id;
+    private String strReferredByName;
+    private String strReferredTo1Name;
+    private String strReferredTo2Name;
+    private String strReferredTo3Name;
+    private String strReferredTo4Name;
+    private String strReferredTo5Name;
+    private ArrayList<String> nameReferalsList;
 
     public QuickAddNewRecordsFragment() {
         // Required empty public constructor
@@ -196,7 +193,6 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
     public static QuickAddNewRecordsFragment newInstance(String param1, String param2) {
         QuickAddNewRecordsFragment fragment = new QuickAddNewRecordsFragment();
-        Bundle args = new Bundle();
 
         return fragment;
     }
@@ -209,9 +205,12 @@ public class QuickAddNewRecordsFragment extends Fragment {
             prescriptionimgPath = getArguments().getString("PRESCRIPTIONIMG");
             prescriptionimgId = getArguments().getString("PRESCRIPTIONID");
             phNumber = getArguments().getString("PHNUMBER");
-            Log.e("phNumber",""+phNumber+" "+prescriptionimgId);
-            added_on=getArguments().getString("ADDED_ON");
-            strEmailAddress =getArguments().getString("EMIAL_ADDRESS");
+
+            added_on = getArguments().getString("ADDED_ON");
+            strEmailAddress = getArguments().getString("EMIAL_ADDRESS");
+            strReferedBy = getArguments().getString("REFEREDBY");
+            strReferedTo = getArguments().getString("REFEREDTO");
+
         }
         this.setRetainInstance(true);
     }
@@ -234,16 +233,13 @@ public class QuickAddNewRecordsFragment extends Fragment {
         fodtextshow = (BootstrapEditText) view.findViewById(R.id.fodtextshow);
         txtsymtomsanddignost = (TextView) view.findViewById(R.id.txtsymptomsanddignost);
         txtRecord = (TextView) view.findViewById(R.id.txtRecord);
-      //  presciptiontext = (TextView) view.findViewById(R.id.presciptiontext);
         txtaddress = (TextView) view.findViewById(R.id.txtaddress);
-        ailment = (MultiAutoCompleteTextView) view.findViewById(ailments);
         Button addPatientImgBtn = (Button) view.findViewById(R.id.addPatientImgBtn);
         Button prescriptionBtn = (Button) view.findViewById(R.id.prescriptionBtn);
 
-        clinical_Notes = (EditText) view.findViewById(R.id.clinicalNotes);
+        clinical_Notes = (EditText) view.findViewById(clinicalNotes);
         add = (Button) view.findViewById(R.id.add);
         cancel = (Button) view.findViewById(R.id.cancel);
-        multiAutoComplete = (MultiAutoCompleteTextView) view.findViewById(ailments);
         visitDate = (EditText) view.findViewById(R.id.visitDate);
         address = (BootstrapEditText) view.findViewById(R.id.address);
         city = (BootstrapEditText) view.findViewById(R.id.city);
@@ -268,13 +264,14 @@ public class QuickAddNewRecordsFragment extends Fragment {
         edtInput_bmi = (EditText) view.findViewById(R.id.input_bmi);
         edtSymptoms = (MultiAutoCompleteTextView) view.findViewById(R.id.symptoms);
         edtDignosis = (MultiAutoCompleteTextView) view.findViewById(R.id.dignosis);
-        edtEmail_id=(BootstrapEditText)view.findViewById(R.id.email_id);
-        //  ailments1 = (MultiAutoCompleteTextView) view.findViewById(R.id.ailments1);
+        edtEmail_id = (BootstrapEditText) view.findViewById(R.id.email_id);
+        textRefredByShow = (TextView) view.findViewById(R.id.txtrefredby);
+        textRefredToShow = (TextView) view.findViewById(R.id.txtrefredto);
         edtEmail_id.setText(strEmailAddress);
         phone_no.setText(phNumber);
         phone_no.setInputType(InputType.TYPE_CLASS_NUMBER);//this will do not let user to enter any other text than digit 0-9 only
 
-        TextView edtprescriptionImgPath=(TextView) view.findViewById(prescriptionImgPath);
+        TextView edtprescriptionImgPath = (TextView) view.findViewById(prescriptionImgPath);
         edtprescriptionImgPath.setVisibility(View.VISIBLE);
         edtprescriptionImgPath.setText(prescriptionimgPath);
 
@@ -301,12 +298,48 @@ public class QuickAddNewRecordsFragment extends Fragment {
             if (bannerClass == null) {
                 bannerClass = new BannerClass(getContext());
             }
+
             bannerimgNames = bannerClass.getImageName();
+
+            if (strReferedBy != null && !strReferedBy.equals("")) {
+                String referedBy = sqlController.getNameByIdAssociateMaster(strReferedBy);
+                textRefredByShow.setText(referedBy);
+
+            }
+            if (strReferedTo != null && !strReferedTo.equals("")) {
+
+                if (strReferedTo.length() > 0) {
+                    String delimiter = ",";
+
+                    String[] temp = strReferedTo.split(delimiter);
+                    StringBuilder sbname = new StringBuilder();
+                    ArrayList<String> abc = new ArrayList<>();
+
+                    for (String aTemp : temp) {
+                        String referedto = sqlController.getNameByIdAssociateMaster(aTemp);
+
+                        abc.add(referedto);
+                    }
+
+                    for (int i = 0; i < abc.size(); i++) {
+                        if (i == 0) {
+                            sbname.append(abc.get(0));
+                        } else {
+                            sbname.append(",").append(abc.get(i));
+                        }
+                    }
+                    if (sbname != null) {
+                        textRefredToShow.setText(sbname);
+                    } else {
+                        textRefredToShow.setText("");
+                    }
+                }
+            }
 
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Records Fragment " + e);
         }
 
         addListners();
@@ -325,7 +358,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
         //this date is ued to set update records date in patient history table
         addedTime = sdf.format(todayDate);
-        if(added_on!=null && !added_on.equals("")){
+        if (added_on != null && !added_on.equals("")) {
             visitDate.setText(added_on);
         }
 
@@ -363,7 +396,6 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
         addFollowupdateButtonListner();
         setUpAnimation();
-
 
 
         RadioGroup gndrbutton = (RadioGroup) view.findViewById(R.id.radioGender);
@@ -513,54 +545,80 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
         return view;
     }
+
     private void showReferedDialogBox() {
 
-        final Dialog dialog = new Dialog(new ContextThemeWrapper(getContext(), android.R.style.Theme_DeviceDefault_Light_NoActionBar_Overscan));
-
+        final Dialog dialog = new Dialog(getContext());
         LayoutInflater factory = LayoutInflater.from(getContext());
         final View f = factory.inflate(R.layout.refered_by_dialog, null);
 
-        dialog.setTitle("Refered By-To");
+        dialog.setTitle("Referred By-To");
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(f);
         Button dialogButtonCancel = (Button) f.findViewById(R.id.customDialogCancel);
         Button dialogButtonOk = (Button) f.findViewById(R.id.customDialogOk);
         final Button addMore = (Button) f.findViewById(R.id.addMore);
-        final AutoCompleteTextView nameRefredBy = (AutoCompleteTextView) f.findViewById(R.id.nameRefredBy);
-        final AutoCompleteTextView nameReferedTo1 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo1);
-        final AutoCompleteTextView nameReferedTo2 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo2);
-        final AutoCompleteTextView nameReferedTo3 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo3);
-        final AutoCompleteTextView nameReferedTo4 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo4);
-        final AutoCompleteTextView nameReferedTo5 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo5);
+
+        final Spinner nameRefredBySpinner = (Spinner) f.findViewById(R.id.nameRefredBySpinner);
+        final Spinner nameRefredTo1Spinner = (Spinner) f.findViewById(R.id.nameRefredTo1Spinner);
+
 
         specialityArray = new ArrayList<>();
 
         try {
-            mAssociateList = sqlController.getAssociateDataIdName();
+
             final ArrayList<HashMap<String, String>> list = sqlController.getAllDataAssociateMaster();
 
             NameData = new HashMap<>();
+            ArrayList<String> abc = new ArrayList<>();
 
-           /* for (int im = 0; im < mAssociateList.size(); im++) {
-                String strid = mAssociateList.get(im).getPat_id();
-                String strName = mAssociateList.get(im).getKey_visit_id();
-                NameData.put(strName, strid);
-                // Log.e("str", " " + strName);
-                nameArray.add(strName);
-            }*//**//*
-*/
             for (int im = 0; im < list.size(); im++) {
                 String strid = list.get(im).get("ID");
                 String strName = list.get(im).get("NAME");
                 String str = list.get(im).get("SPECIALITY");
                 specialityArray.add(str);
                 NameData.put(strName, strid);
-                Log.e("str", " " + strName + "  "+strid +" "+str);
 
             }
 
             setCities(NameData.keySet().toArray(
                     new String[0]), f);
+
+            if (strReferedBy != null && !strReferedBy.equals("")) {
+
+                String referedBy = sqlController.getNameByIdAssociateMaster(strReferedBy);
+                String[] some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
+                appController.setSpinnerPosition(nameRefredBySpinner,some_array,referedBy);
+
+                textRefredByShow.setText(referedBy);
+                // testArrayList("Method1:ArrayListOfHashMaps", Integer.parseInt(strReferedBy),list);
+            }
+            if (strReferedTo != null && !strReferedTo.equals("")) {
+
+                if (strReferedTo.length() > 1) {
+                    String delimiter = ",";
+
+                    String[] temp = strReferedTo.split(delimiter);
+
+                    for (String aTemp : temp) {
+                        String referedBy = sqlController.getNameByIdAssociateMaster(aTemp);
+
+                        abc.add(referedBy);
+                    }
+                }
+                int size = abc.size();
+
+                if (size > 0) {
+                    String idNo= abc.get(0);
+                    String[] some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
+                    appController.setSpinnerPosition(nameRefredTo1Spinner,some_array,idNo);
+                } else {
+                    String referedTo = sqlController.getNameByIdAssociateMaster(strReferedTo);
+                    String[] some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
+                    appController.setSpinnerPosition(nameRefredTo1Spinner,some_array,referedTo);
+                }
+
+            }
 
         } catch (ClirNetAppException e) {
             e.printStackTrace();
@@ -583,99 +641,84 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
             String code;
 
+
             @Override
             public void onClick(View v) {
                 StringBuilder sb = new StringBuilder();
                 StringBuilder sbname = new StringBuilder();
-
                 if (addCounter >= 0) {
-                    String refredToName1 = nameReferedTo1.getText().toString();
-                    if (!refredToName1.equals("") && refredToName1.length() > 0) {
-                        code = NameData.get(refredToName1);
-                        if(code==null){
-                            Log.e("NoValForcode","NoValFor code");
-                        }else{
+
+                    if (!strReferredTo1Name.equals("") && strReferredTo1Name.length() > 0) {
+                        code = NameData.get(strReferredTo1Name);
+                        if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(index);
-                            sbname.append(refredToName1);
+                            sbname.append(strReferredTo1Name);
                         }
                     }
-
                 }
                 if (addCounter >= 1) {
-                    String refredToName2 = nameReferedTo2.getText().toString();
-                    if (!refredToName2.equals("") && refredToName2.length() > 0) {
-                        code = NameData.get(refredToName2);
-                        if(code==null){
-                            Log.e("NoValForcode","NoValFor code");
-                        }else{
+
+                    if (!strReferredTo2Name.equals("") && strReferredTo2Name.length() > 0) {
+                        code = NameData.get(strReferredTo2Name);
+                        if (code != null) {
+
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
-                            sbname.append(",").append(refredToName2);
+                            sbname.append(",").append(strReferredTo2Name);
                         }
                     }
                 }
                 if (addCounter >= 2) {
-                    String refredToName3 = nameReferedTo3.getText().toString();
-                    if (!refredToName3.equals("") && refredToName3.length() > 0) {
-                        code = NameData.get(refredToName3);
-                        if(code==null){
-                            Log.e("NoValForcode","NoValFor code");
-                        }else{
+
+                    if (!strReferredTo3Name.equals("") && strReferredTo3Name.length() > 0) {
+                        code = NameData.get(strReferredTo3Name);
+                        if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
-                            sbname.append(",").append(refredToName3);
+                            sbname.append(",").append(strReferredTo3Name);
                         }
                     }
                 }
                 if (addCounter >= 3) {
-                    String refredToName4 = nameReferedTo4.getText().toString();
-                    if (refredToName4 != null && !refredToName4.equals("") && refredToName4.length() > 0) {
-                        code = NameData.get(refredToName4);
-                        if(code==null){
-                            Log.e("NoValForcode","NoValFor code");
-                        }else{
+
+                    if (!strReferredTo4Name.equals("") && strReferredTo4Name.length() > 0) {
+                        code = NameData.get(strReferredTo4Name);
+                        if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
-                            sbname.append(",").append(refredToName4);
+                            sbname.append(",").append(strReferredTo4Name);
                         }
                     }
                 }
                 if (addCounter >= 4) {
-                    String refredToName5 = nameReferedTo5.getText().toString();
-                    if (!refredToName5.equals("") && refredToName5.length() > 0) {
-                        code = NameData.get(refredToName5);
-                        if(code==null){
-                            Log.e("NoValForcode","NoValFor code");
-                        }else{
+
+                    if (!strReferredTo5Name.equals("") && strReferredTo5Name.length() > 0) {
+                        code = NameData.get(strReferredTo5Name);
+                        if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
-                            sbname.append(",").append(refredToName5);
+                            sbname.append(",").append(strReferredTo5Name);
                         }
                     }
                 }
 
                 strReferedTo = String.valueOf(sb);
-                String strRederedBy1 = nameRefredBy.getText().toString();
 
-                if (!strRederedBy1.equals("") && strRederedBy1.length() > 0) {
-                    code = NameData.get(strRederedBy1);
-                    if(code==null){
-                        Log.e("NoValForcode","NoValFor code");
-                    }else{
+                if (!strReferredByName.equals("") && strReferredByName.length() > 0) {
+                    code = NameData.get(strReferredByName);
+                    if (code != null) {
                         int index = Integer.parseInt(code);
                         strReferedBy = String.valueOf(index);
+                        textRefredByShow.setText("");
+                        textRefredByShow.setText(strReferredByName);
+                    } else {
+                        textRefredByShow.setText("");
                     }
                 }
-
-
-               /* Toast.makeText(getApplicationContext(), "  " + strReferedBy, Toast.LENGTH_LONG).show();*/
                 strReferedTo = String.valueOf(sb);
+                String insertedName = String.valueOf(sbname);
 
-                String insertedName=String.valueOf(sbname);
-                TextView textRefredByShow=(TextView)view.findViewById(R.id.txtrefredby) ;
-                TextView textRefredToShow=(TextView)view.findViewById(R.id.txtrefredto) ;
-                textRefredByShow.setText(nameRefredBy.getText() + "");
                 textRefredToShow.setText(insertedName + "");
                 addCounter = 0;
                 dialog.dismiss();
@@ -718,216 +761,204 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
     private void setCities(String cData[], View f) {
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(getContext(),
-                android.R.layout.simple_dropdown_item_1line, cData);
 
-        final AutoCompleteTextView nameRefredBy = (AutoCompleteTextView) f.findViewById(R.id.nameRefredBy);
-        final AutoCompleteTextView nameReferedTo1 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo1);
-        final AutoCompleteTextView nameReferedTo2 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo2);
-        final AutoCompleteTextView nameReferedTo3 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo3);
-        final AutoCompleteTextView nameReferedTo4 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo4);
-        final AutoCompleteTextView nameReferedTo5 = (AutoCompleteTextView) f.findViewById(R.id.nameRefredTo5);
+        final Spinner nameRefredBySpinner = (Spinner) f.findViewById(R.id.nameRefredBySpinner);
+        final Spinner nameRefredTo1Spinner = (Spinner) f.findViewById(R.id.nameRefredTo1Spinner);
+        final Spinner nameRefredTo2Spinner = (Spinner) f.findViewById(R.id.nameRefredTo2Spinner);
+        final Spinner nameRefredTo3Spinner = (Spinner) f.findViewById(R.id.nameRefredTo3Spinner);
+        final Spinner nameRefredTo4Spinner = (Spinner) f.findViewById(R.id.nameRefredTo4Spinner);
+        final Spinner nameRefredTo5Spinner = (Spinner) f.findViewById(R.id.nameRefredTo5Spinner);
 
-        nameRefredBy.setThreshold(1);
-        nameRefredBy.setAdapter(adapter);
-        nameReferedTo1.setThreshold(1);
-        nameReferedTo1.setAdapter(adapter);
-        nameReferedTo2.setThreshold(1);
-        nameReferedTo2.setAdapter(adapter);
-        nameReferedTo3.setThreshold(1);
-        nameReferedTo3.setAdapter(adapter);
-        nameReferedTo4.setThreshold(1);
-        nameReferedTo4.setAdapter(adapter);
-        nameReferedTo5.setThreshold(1);
-        nameReferedTo5.setAdapter(adapter);
+
 
         final TextView refredtoSpeciality1 = (TextView) f.findViewById(R.id.refredtoSpeciality1);
         final TextView refredtoSpeciality2 = (TextView) f.findViewById(R.id.refredtoSpeciality2);
         final TextView refredtoSpeciality3 = (TextView) f.findViewById(R.id.refredtoSpeciality3);
         final TextView refredtoSpeciality4 = (TextView) f.findViewById(R.id.refredtoSpeciality4);
         final TextView refredtoSpeciality5 = (TextView) f.findViewById(R.id.refredtoSpeciality5);
-        final  TextView refredBySpeciality=(TextView)f.findViewById(R.id.refredBySpeciality);
+        final TextView refredBySpeciality = (TextView) f.findViewById(R.id.refredBySpeciality);
+        try {
+            nameReferalsList = dbController.getReferals();
 
-        sb = new StringBuilder();
+            if (nameReferalsList.size() > 0) {
+                ArrayAdapter<String> referralName = new ArrayAdapter<>(getContext(),
+                        android.R.layout.simple_dropdown_item_1line);
 
-        nameRefredBy.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            String val=null;
+                referralName.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+
+                referralName.add("Select Referrals");
+                referralName.addAll(nameReferalsList);
+                nameRefredBySpinner.setAdapter(referralName);
+                nameRefredTo1Spinner.setAdapter(referralName);
+                nameRefredTo2Spinner.setAdapter(referralName);
+                nameRefredTo3Spinner.setAdapter(referralName);
+                nameRefredTo4Spinner.setAdapter(referralName);
+                nameRefredTo5Spinner.setAdapter(referralName);
+
+            }
+        } catch (ClirNetAppException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+
+        nameRefredTo1Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
 
-                    val = nameRefredBy.getText() + "";
-                    int index = 0;
-                    String strSpecialty = null;
-                    String code = null;
-                    if (val != null && !val.equals("") && val.length() > 0) {
-                        code = NameData.get(val);
-                        if(code !=null){
-                        index = Integer.parseInt(code);
-                        }else{
-                            index=0;
-                        }
-                    }
-                    if (index == 0) {
-                        //  strSpecialty=specialityArray.get(index);
-                    } else {
-                        strSpecialty = specialityArray.get(index - 1);
-                    }
-                    if (val == null) {
-                        nameRefredBy.setError("Invalid Entry");
-                    }else{
-                        refredBySpeciality.setVisibility(View.VISIBLE);
-                        refredBySpeciality.setText(strSpecialty);
-                        // strReferedBy = String.valueOf(index);
-                    }
-                    if(val == null || code == null){
-                        strReferedBy =null;
-                    }
+                strReferredTo1Name= (String) parent.getItemAtPosition(position);
+                try {
+                    if(nameRefredTo1Spinner.getSelectedItem() == "Select Referrals")
+                    {
 
+                    }
+                    else {
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo1Name);
 
+                        strReferredTo1Id = list.get(0).get("ID");
+                        String strSpeclty = list.get(0).get("SPECIALITY");
+                        refredtoSpeciality1.setText(strSpeclty);
+                    }
+                } catch (ClirNetAppException e) {
+                    e.printStackTrace();
                 }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        nameRefredTo2Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                strReferredTo2Name= (String) parent.getItemAtPosition(position);
+                try {
+                    if(nameRefredTo2Spinner.getSelectedItem() == "Select Referrals")
+                    {
+
+                    }
+                    else {
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo2Name);
+
+                        strReferredTo2Id = list.get(0).get("ID");
+                        String strSpeclty = list.get(0).get("SPECIALITY");
+                        refredtoSpeciality2.setText(strSpeclty);
+                    }
+                } catch (ClirNetAppException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        nameRefredTo3Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                strReferredTo3Name= (String) parent.getItemAtPosition(position);
+                try {
+                    if(nameRefredTo3Spinner.getSelectedItem() == "Select Referrals")
+                    {
+
+                    }
+                    else {
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo3Name);
+
+                        strReferredTo3Id = list.get(0).get("ID");
+                        String strSpeclty = list.get(0).get("SPECIALITY");
+                        refredtoSpeciality3.setText(strSpeclty);
+                    }
+                } catch (ClirNetAppException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        nameRefredTo4Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                strReferredTo4Name= (String) parent.getItemAtPosition(position);
+                try {
+                    if(nameRefredTo4Spinner.getSelectedItem() == "Select Referrals")
+                    {
+
+                    }
+                    else {
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo4Name);
+
+                        strReferredTo4Id = list.get(0).get("ID");
+                        String strSpeclty = list.get(0).get("SPECIALITY");
+                        refredtoSpeciality4.setText(strSpeclty);
+                    }
+                } catch (ClirNetAppException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+        nameRefredTo5Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                strReferredTo5Name= (String) parent.getItemAtPosition(position);
+                try {
+                    if(nameRefredTo5Spinner.getSelectedItem() == "Select Referrals")
+                    {
+
+                    }
+                    else {
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo5Name);
+
+                        strReferredTo5Id = list.get(0).get("ID");
+                        String strSpeclty = list.get(0).get("SPECIALITY");
+                        refredtoSpeciality5.setText(strSpeclty);
+                    }
+                } catch (ClirNetAppException e) {
+                    e.printStackTrace();
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        nameRefredBySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+
+                strReferredByName = (String) parent.getItemAtPosition(position);
+                try {
+                    if(nameRefredBySpinner.getSelectedItem() == "Select Referrals")
+                    {
+
+                    }
+                    else {
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredByName);
+
+                        strReferredById = list.get(0).get("ID");
+                        String strSpeclty = list.get(0).get("SPECIALITY");
+                        refredBySpeciality.setText(strSpeclty);
+                    }
+                } catch (ClirNetAppException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
-        nameReferedTo1.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-                    String val = nameReferedTo1.getText() + "";
-                    int index = 0;
-                    String strSpecialty = null;
-                    String code = null;
-                    if (!val.equals("") && val.length() > 0) {
-                        code = NameData.get(val);
-                        if(code!=null) {
-                            index = Integer.parseInt(code);
-                        }
-                    }
-                    if (index == 0) {
-                        //  strSpecialty=specialityArray.get(index);
-                    } else {
-                        strSpecialty = specialityArray.get(index-1);
-                    }
-                    refredtoSpeciality1.setVisibility(View.VISIBLE);
-                    refredtoSpeciality1.setText(strSpecialty);
-                    // sb.append(index);
-                    if (code == null) {
-                        nameReferedTo1.setError("Invalid Entry");
-                    }
-                }
-            }
-        });
-        nameReferedTo2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-                    String val = nameReferedTo2.getText() + "";
-                    int index = 0;
-                    String strSpecialty = null;
-                    String code = null;
-                    if (!val.equals("") && val.length() > 0) {
-                        code = NameData.get(val);
-                        if(code!=null) {
-                            index = Integer.parseInt(code);
-                        }
-                    }
-                    if (index == 0) {
-                        //  strSpecialty=specialityArray.get(index);
-                    } else {
-                        strSpecialty = specialityArray.get(index - 1);
-                    }
-                    refredtoSpeciality2.setVisibility(View.VISIBLE);
-                    refredtoSpeciality2.setText(strSpecialty);
-
-                    if (code == null) {
-                        nameReferedTo2.setError("Invalid Entry");
-                    }
-                }
-            }
-        });
-        nameReferedTo3.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-                    String val = nameReferedTo3.getText() + "";
-                    int index = 0;
-                    String strSpecialty = null;
-                    String code = null;
-                    if (!val.equals("") && val.length() > 0) {
-                        code = NameData.get(val);
-                        if(code!=null) {
-                            index = Integer.parseInt(code);
-                        }
-                    }
-                    if (index == 0) {
-                        //  strSpecialty=specialityArray.get(index);
-                    } else {
-                        strSpecialty = specialityArray.get(index - 1);
-                    }
-                    refredtoSpeciality3.setVisibility(View.VISIBLE);
-                    refredtoSpeciality3.setText(strSpecialty);
-                    if (code == null) {
-                        nameReferedTo3.setError("Invalid Entry");
-                    }
-                }
-            }
-        });
-        nameReferedTo4.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-                    String val = nameReferedTo4.getText() + "";
-                    int index = 0;
-                    String strSpecialty = null;
-                    String code = null;
-                    if (!val.equals("") && val.length() > 0) {
-                        code = NameData.get(val);
-                        if(code!=null) {
-                            index = Integer.parseInt(code);
-                        }
-                    }
-                    if (index == 0) {
-                        //  strSpecialty=specialityArray.get(index);
-                    } else {
-                        strSpecialty = specialityArray.get(index - 1);
-                    }
-                    refredtoSpeciality4.setVisibility(View.VISIBLE);
-                    refredtoSpeciality4.setText(strSpecialty);
-
-                    if (code == null) {
-                        nameReferedTo2.setError("Invalid Entry");
-                    }
-                }
-            }
-        });
-        nameReferedTo5.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean hasFocus) {
-                if (!hasFocus) {
-                    String val = nameReferedTo5.getText() + "";
-                    int index = 0;
-                    String strSpecialty = null;
-                    String code = null;
-                    if (!val.equals("") && val.length() > 0) {
-                        code = NameData.get(val);
-                        if(code!=null) {
-                            index = Integer.parseInt(code);
-                        }
-                    }
-                    if (index == 0) {
-                        //  strSpecialty=specialityArray.get(index);
-                    } else {
-                        strSpecialty = specialityArray.get(index - 1);
-                    }
-                    refredtoSpeciality5.setVisibility(View.VISIBLE);
-                    refredtoSpeciality5.setText(strSpecialty);
-
-                    if (code == null) {
-                        nameReferedTo5.setError("Invalid Entry");
-                    }
-                }
-            }
-        });
     }
 
     public void onButtonPressed(Uri uri) {
@@ -1406,7 +1437,6 @@ public class QuickAddNewRecordsFragment extends Fragment {
         });
 
 
-
         inputnumber.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -1462,7 +1492,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
                 String value = inputnumber.getText().toString().trim();
 
                 fodtextshow.setText("");
-                if (buttonSelected != null && value != null && !value.equals("") && value.length() > 0) {
+                if (buttonSelected != null && !value.equals("") && value.length() > 0) {
 
 
                     long val = Long.parseLong(value);
@@ -1760,6 +1790,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
         });
 
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -1767,11 +1798,12 @@ public class QuickAddNewRecordsFragment extends Fragment {
         // Tracking the screen view
         AppController.getInstance().trackScreenView("Quick Add New Records Fragment");
     }
+
     @Override
     public void onDetach() {
         super.onDetach();
-               mListener = null;
-       view=null;
+        mListener = null;
+        view = null;
 // session.setLogin(false);
         if (dbController != null) {
             dbController.close();//Close the all database connection opened here 31/10/2008 By. Ashish
@@ -1787,6 +1819,9 @@ public class QuickAddNewRecordsFragment extends Fragment {
         }
         if (appController != null) {
             appController = null;
+        }
+        if (bannerClass != null) {
+            bannerClass = null;
         }
 
         cleanResources();
@@ -1819,7 +1854,6 @@ public class QuickAddNewRecordsFragment extends Fragment {
         strFirstName = null;
         strLastName = null;
         imageName = null;
-        mLastNameList = null;
         sdf1 = null;
         doctor_membership_number = null;
         docId = null;
@@ -1852,19 +1886,43 @@ public class QuickAddNewRecordsFragment extends Fragment {
         middle_name = null;
         fodtextshow = null;
         buttonSelected = null;
-        strPatientId = null;
+        txtsymtomsanddignost = null;
         edtSymptoms = null;
         edtDignosis = null;
-        edtTest = null;
-        edtDrugs = null;
-        strVisitId = null;
         uriSavedImage = null;
         prescriptionimgPath = null;
         img = null;
+        alternatePhone_no = null;
+        txtRecord = null;
+        prescriptionimgId = null;
+        phNumber = null;
+        added_on = null;
+        bannerimgNames = null;
+        strEmailAddress = null;
+        specialityArray = null;
+        NameData = null;
+        strReferedTo = null;
+        strReferedBy = null;
+        edtEmail_id = null;
+        textRefredByShow=null;
+        textRefredToShow=null;
+        strReferredById= null;
+        strReferredTo1Id= null;
+        strReferredTo2Id= null;
+        strReferredTo3Id= null;
+        strReferredTo4Id= null;
+        strReferredTo5Id= null;
+        strReferredByName= null;
+        strReferredTo1Name= null;
+        strReferredTo2Name= null;
+        strReferredTo3Name= null;
+        strReferredTo4Name= null;
+        strReferredTo5Name= null;
+        nameReferalsList=null;
     }
 
     private void insertIntoDB() {
-        String strailments = null;
+
         strFirstName = firstName.getText().toString().trim();
         middle_name = middleName.getText().toString().trim();
         strLastName = lastName.getText().toString().trim();
@@ -1887,13 +1945,13 @@ public class QuickAddNewRecordsFragment extends Fragment {
         String strSymptoms = edtSymptoms.getText().toString().trim();
         String strDignosis = edtDignosis.getText().toString().trim();
 
-        String strTests =null;
+        String strTests = null;
         String strDrugs = null;
         String stralternatePhone_no = alternatePhone_no.getText().toString().trim();
         String strHeight = edtInput_height.getText().toString().trim();
         String strbmi = edtInput_bmi.getText().toString().trim();
         String strSugarFasting = edtInput_sugarfasting.getText().toString().trim();
-        strEmailAddress=edtEmail_id.getText().toString();
+        strEmailAddress = edtEmail_id.getText().toString();
 
         usersellectedDate = fodtextshow.getText().toString();
         String strUid = uid.getText().toString();
@@ -1986,7 +2044,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
             String value = inputnumber.getText().toString().trim();
 
-            if (buttonSelected != null && value != null && value.length() > 0) {
+            if (buttonSelected != null && value.length() > 0) {
 
                 int val = Integer.parseInt(value);
 
@@ -2060,12 +2118,9 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
                 visit_date = myFormat.format(fromUser.parse(visit_date));
                 added_on = myFormat.format(fromUser.parse(added_on));
-                //usersellectedDate=myFormat.format(fromUser.parse(usersellectedDate));
-                if(usersellectedDate!= null && !usersellectedDate.equals("")) {
+                if (usersellectedDate != null && !usersellectedDate.equals("")) {
                     usersellectedDate = myFormat.format(fromUser.parse(usersellectedDate));
                 }
-                // Log.e("reformattedStrqq", "" + visit_date);
-
             } catch (ParseException e) {
                 e.printStackTrace();
                 appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -2074,22 +2129,23 @@ public class QuickAddNewRecordsFragment extends Fragment {
             String action = "added";
             String patientInfoType = "App";
             String strfollow_up_date = null;
-            strailments = ailment.getText().toString().trim();
+            String strailments = null;
 
 
             String added_by = docId;//INSERTING DOC ID IN ADDED BY COLUMN AS PER PUSHPAL-DA SAID
 
             int patient_id = maxPatientIdCount + 1;
             int visit_id = maxVisitId + 1;
+            String record_source="QuickAdd New Record";
 
             //Add a new patient
-                dbController.addPatientPersonalfromLocal(patient_id, docId, strFirstName, middle_name, strLastName, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, visit_date, doctor_membership_number, flag, patientInfoType, addedTime, added_by, action,
-                        strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, stralternatePhone_no, selectedPhoneTypealternate_no, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, strEmailAddress);
+            dbController.addPatientPersonalfromLocal(patient_id, docId, strFirstName, middle_name, strLastName, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, visit_date, doctor_membership_number, flag, patientInfoType, addedTime, added_by, action,
+                    strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, stralternatePhone_no, selectedPhoneTypealternate_no, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, strEmailAddress);
 
-                dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, strailments, prescriptionimgPath, clinical_note, added_on, visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action,
-                        strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy,strReferedTo);//"" are refredby and to
+            dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, strailments, prescriptionimgPath, clinical_note, added_on, visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action,
+                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo,record_source);//"" are refredby and to
 
-                dbController.deletePrescriptionImageQueue(prescriptionimgId,prescriptionimgPath);
+            dbController.deletePrescriptionImageQueue(prescriptionimgId, prescriptionimgPath);
 
             Toast.makeText(getContext(), "Patient Record Saved", Toast.LENGTH_LONG).show();
 
@@ -2101,7 +2157,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         try {
-//        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
+
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
 
                 if (resultCode == Activity.RESULT_OK) {
@@ -2129,49 +2185,25 @@ public class QuickAddNewRecordsFragment extends Fragment {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
     }
+
     private void setUpAnimation() {
         backChangingImages = (ImageView) view.findViewById(R.id.backChangingImages);
 
-        Random r = new Random();
         try {
-            if (bannerimgNames.size() == 0) {
-                backChangingImages.setVisibility(View.GONE);
+            bannerimgNames = bannerClass.getImageName();
+            appController.setUpAdd(getContext(),bannerimgNames,backChangingImages,doctor_membership_number,"Quick Add New Recods Fragment");
 
-            } else {
-                if (bannerimgNames.size() > 0) {
-                    int n = r.nextInt(bannerimgNames.size());
 
-                    final String url = bannerimgNames.get(n);
-
-                    BitmapDrawable d = new BitmapDrawable(getResources(), "sdcard/BannerImages/" + url + ".png"); // path is ur resultant //image
-                    backChangingImages.setImageDrawable(d);
-
-                    backChangingImages.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-
-                            String action = "clicked";
-
-                            appController.showAdDialog(getContext(), url);
-                            appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action,"Quick Add New Records");
-
-                        }
-                    });
-                    String action = "display";
-                    appController.saveBannerDataIntoDb(url, getContext(), doctor_membership_number, action,"Quick Add New Records");
-                }
-            }
-        } catch (Exception e) {
+        } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
-
         }
     }
+
     private void previewCapturedImage() {
         try {
             patientImagePath = uriSavedImage.getPath().trim();
@@ -2191,10 +2223,11 @@ public class QuickAddNewRecordsFragment extends Fragment {
             appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
+
     private void previewPrescriptionCapturedImage() {
         try {
             prescriptionimgPath = uriSavedImage.getPath();
-            TextView edtprescriptionImgPath=(TextView)view. findViewById(prescriptionImgPath);
+            TextView edtprescriptionImgPath = (TextView) view.findViewById(prescriptionImgPath);
             edtprescriptionImgPath.setVisibility(View.VISIBLE);
             edtprescriptionImgPath.setText(uriSavedImage.toString());
         } catch (NullPointerException e) {
@@ -2202,6 +2235,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
+
     private static Date addDay(Date date, int i) {
 
         Calendar cal = Calendar.getInstance();
@@ -2224,4 +2258,5 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
         super.onCreateOptionsMenu(menu, inflater);
     }
+
 }
