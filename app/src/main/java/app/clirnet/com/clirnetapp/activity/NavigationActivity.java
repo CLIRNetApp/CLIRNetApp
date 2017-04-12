@@ -12,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -74,8 +73,6 @@ public class NavigationActivity extends AppCompatActivity
             msgType = getIntent().getStringExtra("TAG");
             type = getIntent().getStringExtra("TYPE");
             actionPath = getIntent().getStringExtra("ACTION_PATH");
-            Log.e("QUOTE", "QUOTE: " + type + "  " + actionPath);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -140,13 +137,12 @@ public class NavigationActivity extends AppCompatActivity
             bundle2.putString("URL", actionPath);
             fragment.setArguments(bundle2);
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
-        } else if (type != null && !type.equals("") && type.equals("3"))
-          {//for announcement
+        } else if (type != null && !type.equals("") && type.equals("3")) {//for announcement
             fragment = new HomeFragment();
             fragmentManager = getSupportFragmentManager();
             Bundle bundle2 = new Bundle();
             bundle2.putString("SERVICE", "3");
-            bundle2.putString("MESSAGE",msg);
+            bundle2.putString("MESSAGE", msg);
             fragment.setArguments(bundle2);
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
         } else if (type != null && !type.equals("") && type.equals("4")) {//for service

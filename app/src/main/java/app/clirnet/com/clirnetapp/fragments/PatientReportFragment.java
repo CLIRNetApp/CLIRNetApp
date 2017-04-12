@@ -28,8 +28,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,16 +41,8 @@ import app.clirnet.com.clirnetapp.models.Counts;
 import app.clirnet.com.clirnetapp.reports.ChartItem;
 import app.clirnet.com.clirnetapp.reports.LineChartItem;
 
+import static android.content.Context.MODE_PRIVATE;
 
-
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link PatientReportFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the  factory method to
- * create an instance of this fragmenlt.
- */
 //we are calling two seprate fragments for each report ie for daily patient count and age wise report from this fragment class
 public class PatientReportFragment extends Fragment {
 
@@ -116,7 +106,7 @@ public class PatientReportFragment extends Fragment {
         ArrayList<ChartItem> list = new ArrayList<>();
 
 
-        list.add(new LineChartItem(generateDataLine(1), getContext(), fromDate, toDate));
+        list.add(new LineChartItem(generateDataLine(), getContext(), fromDate, toDate));
        //list.add(new BarChartItem(generateDataBarNew(), getContext()));
 
 
@@ -140,7 +130,7 @@ public class PatientReportFragment extends Fragment {
     }
 
 
-    private ChartData<?> generateDataLine(int i) {
+    private ChartData<?> generateDataLine() {
 
         if (appController == null) {
             appController = new AppController();
@@ -161,11 +151,11 @@ public class PatientReportFragment extends Fragment {
 
             if (size > 0) {
                 for (int im = 0; im < size; im++) {
-                    String a = countsNo.get(im).getCount();
-                    String b = countsNo.get(im).getDate().trim();
+                    String strCount = countsNo.get(im).getCount();
+                    String strDate = countsNo.get(im).getDate().trim();
 
-                    nocountsperday.add(a);
-                    dateList.add(b);
+                    nocountsperday.add(strCount);
+                    dateList.add(strDate);
 
                 }
             }
@@ -281,7 +271,7 @@ public class PatientReportFragment extends Fragment {
     }
 
 
-    private void sortDate(ArrayList<String> date) {
+   /* private void sortDate(ArrayList<String> date) {
         Collections.sort(date, new Comparator<String>() {
             DateFormat f = new SimpleDateFormat("dd-MM-yyyy");
             @Override
@@ -293,7 +283,7 @@ public class PatientReportFragment extends Fragment {
                 }
             }
         });
-    }
+    }*/
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -325,22 +315,12 @@ public class PatientReportFragment extends Fragment {
         nocountsperday=null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
     }
 
     public void setValuesSharedPrefrence(String key) {
-        SharedPreferences.Editor editor = getActivity().getSharedPreferences(new AppController().PREFS_NAME, getContext().MODE_PRIVATE).edit();
+        SharedPreferences.Editor editor = getActivity().getSharedPreferences(AppController.PREFS_NAME, MODE_PRIVATE).edit();
         editor.putString("value", key);
         // editor.putInt("idName", 12);
         editor.apply();

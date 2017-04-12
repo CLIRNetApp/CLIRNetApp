@@ -110,6 +110,23 @@ public class RegistrationModel {
 
     private String title;
 
+    private String contactForPatient;
+    private String altContactPatientIsdCodeType;
+    private String selectedContactPhoneType;
+
+    public String getContactForPatient() {
+        return contactForPatient;
+    }
+
+    public String getAltContactPatientIsdCodeType() {
+        return altContactPatientIsdCodeType;
+    }
+
+    public String getSelectedContactPhoneType() {
+        return selectedContactPhoneType;
+    }
+
+
     public String getDrugs() {
         return drugs;
     }
@@ -706,7 +723,7 @@ public class RegistrationModel {
         this.referedTo=strReferredTo;
     }
 
-    public RegistrationModel(String id, String name, String type, String phoneno, String speciality, String added_on, String modified_counter, String phone_type, String isd_code, String email, String associate_address, String city, String associate_state, String pin_code, String district, String nameTitle) {
+    public RegistrationModel(String id, String name, String type, String phoneno, String speciality, String added_on, String modified_counter, String phone_type, String isd_code, String email, String associate_address, String city, String associate_state, String pin_code, String district, String nameTitle,String contactforPatient,String selectedIsd_code_altType,String selectedcontactForPatientType) {
         this.id = id;
         this.name = name;
         this.associateType = type;
@@ -723,6 +740,9 @@ public class RegistrationModel {
         this.pin_code = pin_code;
         this.district = district;
         this.title = nameTitle;
+        this.contactForPatient=contactforPatient;
+        this.altContactPatientIsdCodeType =selectedIsd_code_altType;
+        this.selectedContactPhoneType =selectedcontactForPatientType;
     }
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,

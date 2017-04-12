@@ -1216,11 +1216,23 @@ public class AppController extends Application {
         Collections.addAll(_stateList, some_array);
         if (value != null) {
             int postion = getCategoryPos(_stateList, value);
+            Log.e("postion"," "+postion);
             spinner.setSelection(postion);
         }
     }
+
     private int getCategoryPos(ArrayList<String> _categories, String category) {
         return _categories.indexOf(category);
+    }
+
+    public boolean contains(String haystack, String needle) {
+        haystack = haystack == null ? "" : haystack;
+        needle = needle == null ? "" : needle;
+
+        // Works, but is not the best.
+        //return haystack.toLowerCase().indexOf( needle.toLowerCase() ) > -1
+
+        return haystack.toLowerCase().contains(needle.toLowerCase());
     }
 }
 

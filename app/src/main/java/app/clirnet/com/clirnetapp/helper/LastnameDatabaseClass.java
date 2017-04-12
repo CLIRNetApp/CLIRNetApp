@@ -8,7 +8,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -43,9 +42,9 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             dbHelper = new SQLiteHandler(myContext);
             database = dbHelper.getWritableDatabase();
             appController = new AppController();
-        } else {
+        } /*else {
             Log.e("DB Opended2", "Database is allready opened");
-        }
+        }*/
     }
 
 

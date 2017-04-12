@@ -581,14 +581,16 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
             }
 
-            setCities(NameData.keySet().toArray(
-                    new String[0]), f);
+            setSpinner( f);
+
+            nameReferalsList.add(0,"Select Referrals");
 
             if (strReferedBy != null && !strReferedBy.equals("")) {
 
                 String referedBy = sqlController.getNameByIdAssociateMaster(strReferedBy);
+
                 String[] some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
-                appController.setSpinnerPosition(nameRefredBySpinner,some_array,referedBy);
+                appController.setSpinnerPosition(nameRefredBySpinner, some_array, referedBy);
 
                 textRefredByShow.setText(referedBy);
                 // testArrayList("Method1:ArrayListOfHashMaps", Integer.parseInt(strReferedBy),list);
@@ -609,13 +611,18 @@ public class QuickAddNewRecordsFragment extends Fragment {
                 int size = abc.size();
 
                 if (size > 0) {
-                    String idNo= abc.get(0);
-                    String[] some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
-                    appController.setSpinnerPosition(nameRefredTo1Spinner,some_array,idNo);
+                    String idNo = abc.get(0);
+
+                    String[] some_array ;
+                    some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
+                    appController.setSpinnerPosition(nameRefredTo1Spinner, some_array, idNo);
                 } else {
                     String referedTo = sqlController.getNameByIdAssociateMaster(strReferedTo);
+
                     String[] some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
-                    appController.setSpinnerPosition(nameRefredTo1Spinner,some_array,referedTo);
+
+                   // System.out.println(Arrays.toString(some_array));
+                    appController.setSpinnerPosition(nameRefredTo1Spinner, some_array, referedTo);
                 }
 
             }
@@ -718,6 +725,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
                 }
                 strReferedTo = String.valueOf(sb);
                 String insertedName = String.valueOf(sbname);
+                insertedName = appController.removeCommaOccurance(insertedName);
 
                 textRefredToShow.setText(insertedName + "");
                 addCounter = 0;
@@ -759,7 +767,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
         dialog.show();
     }
 
-    private void setCities(String cData[], View f) {
+    private void setSpinner(View f) {
 
 
         final Spinner nameRefredBySpinner = (Spinner) f.findViewById(R.id.nameRefredBySpinner);
@@ -768,7 +776,6 @@ public class QuickAddNewRecordsFragment extends Fragment {
         final Spinner nameRefredTo3Spinner = (Spinner) f.findViewById(R.id.nameRefredTo3Spinner);
         final Spinner nameRefredTo4Spinner = (Spinner) f.findViewById(R.id.nameRefredTo4Spinner);
         final Spinner nameRefredTo5Spinner = (Spinner) f.findViewById(R.id.nameRefredTo5Spinner);
-
 
 
         final TextView refredtoSpeciality1 = (TextView) f.findViewById(R.id.refredtoSpeciality1);
@@ -806,13 +813,11 @@ public class QuickAddNewRecordsFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                strReferredTo1Name= (String) parent.getItemAtPosition(position);
+                strReferredTo1Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if(nameRefredTo1Spinner.getSelectedItem() == "Select Referrals")
-                    {
+                    if (nameRefredTo1Spinner.getSelectedItem() == "Select Referrals") {
 
-                    }
-                    else {
+                    } else {
                         ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo1Name);
 
                         strReferredTo1Id = list.get(0).get("ID");
@@ -823,8 +828,10 @@ public class QuickAddNewRecordsFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         nameRefredTo2Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -832,13 +839,11 @@ public class QuickAddNewRecordsFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                strReferredTo2Name= (String) parent.getItemAtPosition(position);
+                strReferredTo2Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if(nameRefredTo2Spinner.getSelectedItem() == "Select Referrals")
-                    {
+                    if (nameRefredTo2Spinner.getSelectedItem() == "Select Referrals") {
 
-                    }
-                    else {
+                    } else {
                         ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo2Name);
 
                         strReferredTo2Id = list.get(0).get("ID");
@@ -849,8 +854,10 @@ public class QuickAddNewRecordsFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         nameRefredTo3Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -858,13 +865,11 @@ public class QuickAddNewRecordsFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                strReferredTo3Name= (String) parent.getItemAtPosition(position);
+                strReferredTo3Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if(nameRefredTo3Spinner.getSelectedItem() == "Select Referrals")
-                    {
+                    if (nameRefredTo3Spinner.getSelectedItem() == "Select Referrals") {
 
-                    }
-                    else {
+                    } else {
                         ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo3Name);
 
                         strReferredTo3Id = list.get(0).get("ID");
@@ -875,8 +880,10 @@ public class QuickAddNewRecordsFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         nameRefredTo4Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -884,13 +891,11 @@ public class QuickAddNewRecordsFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                strReferredTo4Name= (String) parent.getItemAtPosition(position);
+                strReferredTo4Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if(nameRefredTo4Spinner.getSelectedItem() == "Select Referrals")
-                    {
+                    if (nameRefredTo4Spinner.getSelectedItem() == "Select Referrals") {
 
-                    }
-                    else {
+                    } else {
                         ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo4Name);
 
                         strReferredTo4Id = list.get(0).get("ID");
@@ -901,21 +906,21 @@ public class QuickAddNewRecordsFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
         nameRefredTo5Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                strReferredTo5Name= (String) parent.getItemAtPosition(position);
+                strReferredTo5Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if(nameRefredTo5Spinner.getSelectedItem() == "Select Referrals")
-                    {
+                    if (nameRefredTo5Spinner.getSelectedItem() == "Select Referrals") {
 
-                    }
-                    else {
+                    } else {
                         ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo5Name);
 
                         strReferredTo5Id = list.get(0).get("ID");
@@ -926,8 +931,10 @@ public class QuickAddNewRecordsFragment extends Fragment {
                     e.printStackTrace();
                 }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         nameRefredBySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -937,11 +944,9 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
                 strReferredByName = (String) parent.getItemAtPosition(position);
                 try {
-                    if(nameRefredBySpinner.getSelectedItem() == "Select Referrals")
-                    {
+                    if (nameRefredBySpinner.getSelectedItem() == "Select Referrals") {
 
-                    }
-                    else {
+                    } else {
                         ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredByName);
 
                         strReferredById = list.get(0).get("ID");
@@ -1904,21 +1909,21 @@ public class QuickAddNewRecordsFragment extends Fragment {
         strReferedTo = null;
         strReferedBy = null;
         edtEmail_id = null;
-        textRefredByShow=null;
-        textRefredToShow=null;
-        strReferredById= null;
-        strReferredTo1Id= null;
-        strReferredTo2Id= null;
-        strReferredTo3Id= null;
-        strReferredTo4Id= null;
-        strReferredTo5Id= null;
-        strReferredByName= null;
-        strReferredTo1Name= null;
-        strReferredTo2Name= null;
-        strReferredTo3Name= null;
-        strReferredTo4Name= null;
-        strReferredTo5Name= null;
-        nameReferalsList=null;
+        textRefredByShow = null;
+        textRefredToShow = null;
+        strReferredById = null;
+        strReferredTo1Id = null;
+        strReferredTo2Id = null;
+        strReferredTo3Id = null;
+        strReferredTo4Id = null;
+        strReferredTo5Id = null;
+        strReferredByName = null;
+        strReferredTo1Name = null;
+        strReferredTo2Name = null;
+        strReferredTo3Name = null;
+        strReferredTo4Name = null;
+        strReferredTo5Name = null;
+        nameReferalsList = null;
     }
 
     private void insertIntoDB() {
@@ -2136,14 +2141,14 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
             int patient_id = maxPatientIdCount + 1;
             int visit_id = maxVisitId + 1;
-            String record_source="QuickAdd New Record";
+            String record_source = "QuickAdd New Record";
 
             //Add a new patient
             dbController.addPatientPersonalfromLocal(patient_id, docId, strFirstName, middle_name, strLastName, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, visit_date, doctor_membership_number, flag, patientInfoType, addedTime, added_by, action,
                     strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, stralternatePhone_no, selectedPhoneTypealternate_no, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, strEmailAddress);
 
             dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, strailments, prescriptionimgPath, clinical_note, added_on, visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action,
-                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo,record_source);//"" are refredby and to
+                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo, record_source);//"" are refredby and to
 
             dbController.deletePrescriptionImageQueue(prescriptionimgId, prescriptionimgPath);
 
@@ -2196,7 +2201,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
         try {
             bannerimgNames = bannerClass.getImageName();
-            appController.setUpAdd(getContext(),bannerimgNames,backChangingImages,doctor_membership_number,"Quick Add New Recods Fragment");
+            appController.setUpAdd(getContext(), bannerimgNames, backChangingImages, doctor_membership_number, "Quick Add New Recods Fragment");
 
 
         } catch (ClirNetAppException e) {

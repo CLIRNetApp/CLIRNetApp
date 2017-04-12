@@ -119,7 +119,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
         return patientList.size();
     }
 
-    public class HistoryViewHolder extends RecyclerView.ViewHolder {
+    class HistoryViewHolder extends RecyclerView.ViewHolder {
 
         public final TextView tv_ailment;
         private final TextView tv_fod;
@@ -130,7 +130,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
         private final LinearLayout linearlayoutDiagnosis;
         private final TextView  tv_diagnosis, tv_symptoms;
 
-        public HistoryViewHolder(View view) {
+        HistoryViewHolder(View view) {
             super(view);
             tv_visit_date = (TextView) view.findViewById(R.id.tv_visit_date);
             tv_ailment = (TextView) view.findViewById(R.id.tv_ailment);

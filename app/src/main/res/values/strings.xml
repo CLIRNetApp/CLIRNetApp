@@ -137,7 +137,7 @@
         <item>Mr.</item>
         <item>Ms.</item>
         <item>Mrs.</item>
-        <item>NA</item>
+        <item>NA.</item>
     </string-array>
 
     <string-array name="name_abbreviations2">
@@ -145,7 +145,7 @@
         <item>Ms.</item>
         <item>Mrs.</item>
         <item>Miss</item>
-        <item>NA</item>
+        <item>NA.</item>
     </string-array>
 
 
@@ -220,6 +220,7 @@
     <string name="settings_pwd_not_equal">Password did not match</string>
     <string name="type">Type</string>
     <string name="phtype">Ph.Type</string>
+    <string name="altphtype">Alt.Type</string>
     <string name="tools">Tools</string>
     <string name="service_area">Service Area</string>
     <string name="firstname">First Name</string>
@@ -232,9 +233,9 @@
     <string name="uid">UID</string>
     <string name="uidtype">UID Type</string>
     <string name="reset">Reset</string>
-    <string name="version">Release Version 1.3.0.3</string>
-    <string name="aboutApp">About App V 1.3.0.3</string>
-    <string name="updateDate">Last Updated Date 05-04-2017</string>
+    <string name="version">Release Version 1.3.0.7</string>
+    <string name="aboutApp">About App V 1.3.0.7</string>
+    <string name="updateDate">Last Updated Date 11-04-2017</string>
     <string name="quickadd">Quick Add</string>
     <string name="title_edit_quick_add">Quick Edit Patient</string>
     <string name="referedby">Add Referals</string>

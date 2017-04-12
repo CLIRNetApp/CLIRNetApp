@@ -41,10 +41,6 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 import app.clirnet.com.clirnetapp.utility.ItemClickListener;
 
-
-/**
- * Created by ${Ashish} on 22-04-2016.
- */
 public class ConsultationLogFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
@@ -72,7 +68,6 @@ public class ConsultationLogFragment extends Fragment {
     private String doctor_membership_number;
 
     private Button searchRecords;
-    private String url;
 
     public ConsultationLogFragment() {
         // this.setHasOptionsMenu(true);
@@ -528,7 +523,7 @@ public class ConsultationLogFragment extends Fragment {
         searchRecords = null;
         filterfodList = null;
         filterVistDateList = null;
-           url=null;
+
     }
 
     //class to implement OnClick Listner

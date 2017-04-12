@@ -22,7 +22,9 @@ import java.util.Map;
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
-import app.clirnet.com.clirnetapp.app.CallDataFromOne;
+import app.clirnet.com.clirnetapp.app.DoctorDeatilsAsynTask;
+import app.clirnet.com.clirnetapp.app.GetBannerImageTask;
+import app.clirnet.com.clirnetapp.app.UploadBannerDataAsyncTask;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.SQLController;
@@ -66,9 +68,7 @@ public class SyncDataService extends Service {
         connectionDetector = new ConnectionDetector(getApplicationContext());
         appController = new AppController();
         handler = new Handler();
-
     }
-
 
     @Override
     public void onStart(Intent intent, int startId) {
@@ -142,11 +142,10 @@ public class SyncDataService extends Service {
         if (isInternetPresent) {
             String start_time = appController.getDateTimenew();
 
-            new CallDataFromOne(getApplicationContext(), mUserName, mPassword, start_time, docId, doctor_membership_number);
-            new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, docId, start_time); //send log file to server
+            //  new CallDataFromOne(getApplicationContext(), mUserName, mPassword, start_time, docId, doctor_membership_number);
+           // new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, docId, start_time); //send log file to server
 
-
-         /*   ArrayList<String> bannerDisplayIds_List;
+            ArrayList<String> bannerDisplayIds_List;
             ArrayList<String> bannaerClickedIdsList;
             //patient and patient history data count
 
@@ -168,11 +167,11 @@ public class SyncDataService extends Service {
 
             patientVisitHistorArayString = String.valueOf(dbController.getResultsForPatientHistory());
 
-                    *//*count no of patient_id occurance od patient and visit string from db*//*
+            /*count no of patient_id occurance od patient and visit string from db*/
             pat_personal_count = appController.getCharFreq(patientInfoArayString);
 
             pat_visit_count = appController.getCharFreq(patientVisitHistorArayString);
-                   *//*get banner clicked and display data in string*//*
+            // get banner clicked and display data in string
             String bannerDisplayArayString = String.valueOf(dbController.getResultsForBannerDisplay());
 
 
@@ -186,13 +185,11 @@ public class SyncDataService extends Service {
             if (mUserName != null && mPassword != null) {
 
                 new GetBannerImageTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, company_id, start_time); //send log file to server
-
             }
 
-            new DoctorDeatilsAsynTask(getApplicationContext(), mUserName, mPassword, start_time);
+            new DoctorDeatilsAsynTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, docId, start_time);
 
             if (patientIds_List.size() != 0 || getPatientVisitIdsList.size() != 0) {
-
 
                 //send data to server after 30 min
 
@@ -204,52 +201,54 @@ public class SyncDataService extends Service {
                 start_time1 = appController.getDateTimenew();
                 appController.appendLog(appController.getDateTime() + " " + " / " + "Sending Data to server from Sync Service" + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
-                sendDataToServer(patientInfoArayString, patientVisitHistorArayString, doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size(), new AppController().getDateTimenew());*//*
-*/
+                sendDataToServer(patientInfoArayString, patientVisitHistorArayString, doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size(), new AppController().getDateTimenew());
+                new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, docId, start_time); //send log file to server
+
+            }
         }
     }
 
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        return null;
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-
-        handler.removeCallbacks(sendUpdatesToUI);
-        if (appController != null) {
-            appController = null;
+        @Override
+        public IBinder onBind (Intent intent){
+            return null;
         }
-        if (connectionDetector != null) {
-            connectionDetector = null;
-        }
-        if (sqlController != null) {
-            sqlController = null;
-        }
-        if (dbController != null) {
-            dbController = null;
-        }
-        if (bannerClass != null) {
-            bannerClass = null;
-        }
-        running = false;
-        patientIds_List = null;
-        getPatientVisitIdsList = null;
-        doctor_membership_number = null;
-        docId = null;
-        patientInfoArayString = null;
-        patientVisitHistorArayString = null;
-        pat_personal_count = null;
-        pat_visit_count = null;
-        mUserName = null;
-        mPassword = null;
 
-    }
+        @Override
+        public void onDestroy () {
+            super.onDestroy();
 
-    //this will send data to server
+            handler.removeCallbacks(sendUpdatesToUI);
+            if (appController != null) {
+                appController = null;
+            }
+            if (connectionDetector != null) {
+                connectionDetector = null;
+            }
+            if (sqlController != null) {
+                sqlController = null;
+            }
+            if (dbController != null) {
+                dbController = null;
+            }
+            if (bannerClass != null) {
+                bannerClass = null;
+            }
+            running = false;
+            patientIds_List = null;
+            getPatientVisitIdsList = null;
+            doctor_membership_number = null;
+            docId = null;
+            patientInfoArayString = null;
+            patientVisitHistorArayString = null;
+            pat_personal_count = null;
+            pat_visit_count = null;
+            mUserName = null;
+            mPassword = null;
+
+        }
+
+        //this will send data to server
+
     private void sendDataToServer(final String patient_details, final String patient_visits, final String docMemId, final String docId, final int patient_visits_count, final int patient_details_count, final String start_time) {
 
         String tag_string_req = "req_sync2";
@@ -403,6 +402,5 @@ public class SyncDataService extends Service {
                 .apply();
 
     }
-
 }
 

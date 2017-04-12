@@ -36,18 +36,9 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
 
     private BarEntry v1e1;
     private BarEntry v2e1;
-    private ArrayList<String> ageBoundlis;
     private BarChart chart;
     private AppController appController;
 
-
-    public static BarChartFragment newInstance(String param1, String param2) {
-        BarChartFragment fragment = new BarChartFragment();
-        Bundle args = new Bundle();
-
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     public BarChartFragment() {
         // Required empty public constructor
@@ -57,7 +48,6 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Typeface mTfRegular = Typeface.createFromAsset(getContext().getAssets(), "OpenSans-Regular.ttf");
     }
 
     @Override
@@ -95,7 +85,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
 
     private void getDataSet() {
 
-        ArrayList<IBarDataSet> dataSets = null;
+        ArrayList<IBarDataSet> dataSets;
         ArrayList<BarEntry> male = new ArrayList<>();
         ArrayList<BarEntry> female = new ArrayList<>();
         ArrayList<String> listSetAgeBound = new ArrayList<>();
@@ -246,9 +236,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
         if (chart != null) {
             chart = null;
         }
-        if (ageBoundlis != null) {
-            ageBoundlis = null;
-        }
+
 
     }
 

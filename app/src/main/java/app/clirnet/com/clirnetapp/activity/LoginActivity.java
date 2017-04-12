@@ -400,7 +400,7 @@ public class LoginActivity extends Activity {
                 try {
                     //check last sync time to check if last sync from server is more than 72 hours or not
                     int lasttimeSync = getLastSyncTime();
-                      Log.e("lasttimeSync"," "+lasttimeSync);
+                     // Log.e("lasttimeSync"," "+lasttimeSync);
 
                     if (lasttimeSync > 72) {
                         showCreatePatientAlertDialog();

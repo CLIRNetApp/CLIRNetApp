@@ -100,7 +100,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
     private String doctor_membership_number;
-    private String url;
 
     public PoHistoryFragment() {
 
@@ -733,7 +732,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         lastName = null;
         phone_no = null;
         genderSpinner = null;
-        url = null;
         // Log.e("onDetach", "onDetach Po hISTORY fRAGMENT Fragment");
     }
 }

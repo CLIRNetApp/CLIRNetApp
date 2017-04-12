@@ -528,8 +528,9 @@ public class QuickAddVisitFragment extends Fragment {
 
             }
 
-            setCities(NameData.keySet().toArray(
-                    new String[0]), f);
+            setSpinner(f);
+
+            nameReferalsList.add(0,"Select Referrals");
 
             if (strReferedBy != null && !strReferedBy.equals("")) {
 
@@ -664,6 +665,7 @@ public class QuickAddVisitFragment extends Fragment {
                 }
                 strReferedTo = String.valueOf(sb);
                 String insertedName = String.valueOf(sbname);
+                insertedName=appController.removeCommaOccurance(insertedName);
 
                 textRefredToShow.setText(insertedName + "");
                 addCounter = 0;
@@ -705,7 +707,7 @@ public class QuickAddVisitFragment extends Fragment {
         dialog.show();
     }
 
-    private void setCities(String cData[], View f) {
+    private void setSpinner( View f) {
 
         final Spinner nameRefredBySpinner = (Spinner) f.findViewById(R.id.nameRefredBySpinner);
         final Spinner nameRefredTo1Spinner = (Spinner) f.findViewById(R.id.nameRefredTo1Spinner);

@@ -22,7 +22,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -39,16 +38,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.NetworkError;
-import com.android.volley.NoConnectionError;
-import com.android.volley.ParseError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
-import com.android.volley.ServerError;
-import com.android.volley.TimeoutError;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.bumptech.glide.Glide;
@@ -175,7 +168,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private TextView incompletedisplay_tv;
     private String pat_personal_count;
     private String pat_visit_count;
-    private String url;
     private LinearLayout nameheader;
     Button fab;
 
@@ -194,10 +186,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             String service = getArguments().getString("SERVICE");
             String message = getArguments().getString("MESSAGE");
-            if(service.equals("true")){
+            if (service.equals("true")) {
                 startService();
-            }else if(service.equals("3")){
-                showNoDataToSendAlert("message",message);
+            } else if (service.equals("3")) {
+                showNoDataToSendAlert("message", message);
             }
         }
 
@@ -270,9 +262,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             }
         });
 
-       fab = (Button) view.findViewById(R.id.fab);
-       // TextView quickaddtxt = (TextView) view.findViewById(R.id.quickaddtxt);
-       // quickaddtxt.setVisibility(View.VISIBLE);
+        fab = (Button) view.findViewById(R.id.fab);
         fab.setVisibility(View.VISIBLE);
         fab.setOnTouchListener(new View.OnTouchListener() {
 
@@ -310,14 +300,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 sqlController.close();
             }
         }
-
-       /* new Thread(new Runnable() {
-            @Override
-            public void run() {
-                Glide.get(getContext()).clearDiskCache();
-            }
-        }).start();
-*/
         sync.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -372,7 +354,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         String associateMasterDataList = String.valueOf(dbController.getAssociateMasterDataDisplay());
                         //Log.e("getAssociateMaster", "" + associateMasterDataList);
 
-                        new CallDataFromOne(getContext(),savedUserName,savedUserPassword, process_start_time,docId,doctor_membership_number);
+                        new CallDataFromOne(getContext(), savedUserName, savedUserPassword, process_start_time, docId, doctor_membership_number);
 
                         /*if (bannaerClickedIdsList.size() > 0 || bannerDisplayIds_List.size() > 0) {
                             new UploadBannerDataAsyncTask(savedUserName, savedUserPassword, getContext(), bannerDisplayArayString, bannerClickedArayString, doctor_membership_number, docId, bannerDisplayIds_List, bannaerClickedIdsList, new AppController().getDateTimenew());
@@ -464,7 +446,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 incompletedisplay_tv.setVisibility(View.VISIBLE);
                 nameheader = (LinearLayout) view.findViewById(R.id.nameheader);
                 nameheader.setVisibility(View.VISIBLE);
-                View view1 = (View) view.findViewById(R.id.view);
+                View view1 = view.findViewById(R.id.view);
                 view1.setVisibility(View.VISIBLE);
                 IncompleteRecordsAdapter incompleteRecordsAdapter = new IncompleteRecordsAdapter(incompleteRecordList);
                 incomplete_recordsRecyclerview.setVisibility(View.VISIBLE);
@@ -598,7 +580,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         CallAsynOnce cao = new CallAsynOnce();
         String asynTaskValue = cao.getValue();
-       //  Log.e("asynTaskValue",""+asynTaskValue);
+        //  Log.e("asynTaskValue",""+asynTaskValue);
         boolean isInternetPresent = connectionDetector.isConnectingToInternet();
 
         //used to fetch patient data only once in lifetime of app from server
@@ -617,9 +599,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         }
 
                         // new LastNameAsynTask(getContext(), savedUserName, savedUserPassword, appController.getDateTime());
-                        getPatientRecords(savedUserName, savedUserPassword, doctor_membership_number,docId);
+                        getPatientRecords(savedUserName, savedUserPassword, doctor_membership_number, docId);
 
-                   }
+                    }
                 }
             }
         }
@@ -665,7 +647,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("UID", registrationModel.getUid());
 
         startActivity(i);
-        //       Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
     }
 
     private void afterDateEditPatientUpdate(int position) {
@@ -786,7 +767,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         try {
             if (searchView == null)
                 //no inspection Constant Conditions
-             searchView = new SearchView(((NavigationActivity) getActivity()).getSupportActionBar().getThemedContext());
+                searchView = new SearchView(((NavigationActivity) getActivity()).getSupportActionBar().getThemedContext());
             searchView.setIconifiedByDefault(false);
             searchView.setInputType(InputType.TYPE_CLASS_NUMBER);//this will do not let user to enter any other text than digit 0-9 only
             searchView.setQueryHint(getResources().getString(R.string.hint_search));
@@ -897,7 +878,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     Date date1 = sdf1.parse(visit_date);
 
                     Date currentdate = sdf1.parse(String.valueOf(sysdate));
-                    Log.e("currentdate","  "+currentdate);
 
                     if (date1.after(currentdate) || date1.equals(currentdate)) {
 
@@ -1065,7 +1045,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         dialog.setContentView(R.layout.custom_alert_profile);
 
         dialog.setTitle("Please Confirm");
-         dialog.setCancelable(false);
+        dialog.setCancelable(false);
         //dialog.setContentView(f);
 
         Button dialogButtonCancel = (Button) dialog.findViewById(R.id.customDialogCancel);
@@ -1107,7 +1087,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         try {
             bannerimgNames = bannerClass.getImageName();
 
-            appController.setUpAdd(getContext(),bannerimgNames,backChangingImages,doctor_membership_number,"Patient Central");
+            appController.setUpAdd(getContext(), bannerimgNames, backChangingImages, doctor_membership_number, "Patient Central");
         } catch (ClirNetAppException e) {
             e.printStackTrace();
         }
@@ -1265,7 +1245,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             @Override
             public void onClick(View v) {
 
-
                 String newPass = password.getText().toString().trim();
 
 
@@ -1367,7 +1346,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         lastSyncTime(time);
 
                         dbController.addAsynctascRun_status("Data Synced", send_data_start_time, time, "");
-                        dbController.addSyncStatus(time,patient_details_count,patient_visits_count,msg,time);
+                        dbController.addSyncStatus(time, patient_details_count, patient_visits_count, msg, time);
                         hideDialog();
                         makeToast("Data Sent Successfully to Server");
 
@@ -1393,21 +1372,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                 // As of f605da3 the following should work
                 hideDialog();
-
-                if (error instanceof TimeoutError) {
-                    //Log.e("Volley", "TimeoutError");
-                } else if (error instanceof NoConnectionError) {
-                    // Log.e("Volley", "NoConnectionError");
-                } else if (error instanceof AuthFailureError) {
-                    // Log.e("Volley", "AuthFailureError");
-                } else if (error instanceof ServerError) {
-                    //Log.e("Volley", "ServerError");
-                } else if (error instanceof NetworkError) {
-                    //Log.e("Volley", "NetworkError");
-                } else if (error instanceof ParseError) {
-                    // Log.e("Volley", "ParseError");
-                }
-
                 appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment Error while sending data to server " + error + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             }
@@ -1465,7 +1429,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     //this will get Patient Records from server
 
-    private void getPatientRecords(final String savedUserName, final String savedUserPassword, final String docMemId,final String docId) {
+    private void getPatientRecords(final String savedUserName, final String savedUserPassword, final String docMemId, final String docId) {
         // Tag used to cancel the request
         String tag_string_req = "req_patientdata";
 
@@ -1857,7 +1821,19 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         incompletedisplay_tv = null;
         docId = null;
         company_id = null;
-        url = null;
+        nameheader = null;
+        sync = null;
+        fab = null;
+        pat_visit_count = null;
+        mLayoutManager = null;
+        todays_patient_updatetxt = null;
+        patientIds_List = null;
+        getPatientVisitIdsList = null;
+        getAssociateMasterList = null;
+        sdf1 = null;
+        sva = null;
+        filteredModelList = null;
+        sysdate = null;
     }
 
     @Override
@@ -1911,8 +1887,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         String loginTime = pref.getString("loginTime", null);
 
         int hrs = AppController.hoursAgo(loginTime);
-        //    Log.e("loginTime", "" + loginTime + " hours " + hrs);
-
         if (hrs >= 8) {
             Intent i = new Intent(getContext().getApplicationContext(), LoginActivity.class);
             startActivity(i);
@@ -1946,7 +1920,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 String msg = user.getString("msg");
                 String responce = user.getString("response");
                 String response_end_time = user.getString("process_end_time");
-                //  Log.e("strresponse", " " + responce + " " + response_end_time);
                 appController.appendLog(appController.getDateTime() + " " + "/ " + "Initial Patient Data :  Message :" + msg + "  Response : " + responce + "   Response End Time:  " + response_end_time + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                 JSONArray jsonArray = user.getJSONArray("doctor_patient_relation");
@@ -1996,7 +1969,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             int visibleItemCount = mLayoutManager.getChildCount();
             int totalItemCount = mLayoutManager.getItemCount();
             int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
-            // Log.e("visibleItemCount", "" + visibleItemCount + " totalItemCount  " + totalItemCount + " firstVisibleItemPosition " + firstVisibleItemPosition);
 
             if (!isLoading && !isLastPage) {
                 if ((visibleItemCount + firstVisibleItemPosition) >= totalItemCount
@@ -2053,6 +2025,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         return pref1.getString("lastSyncTime", null);
     }
+
     public void startService() {
         String apiKey = getResources().getString(R.string.apikey);
         Intent serviceIntent = new Intent(getContext(), SyncDataService.class);
@@ -2060,6 +2033,5 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         serviceIntent.putExtra("password", savedUserName);
         serviceIntent.putExtra("apikey", apiKey);
         getContext().startService(serviceIntent);
-        Log.e("startService","startService started");
     }
 }

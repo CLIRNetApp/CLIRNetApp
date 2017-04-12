@@ -83,46 +83,6 @@ public class SQLController {
         return loginList;
     }
 
-   /* //get all the patient imp data from db, which will used in Consultation fragments and home fragments
-    public ArrayList<RegistrationModel> getPatientList() throws ClirNetAppException {
-
-        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
-        SQLiteDatabase database1 = null;
-        Cursor cursor = null;
-        try {
-            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id order by ph.key_visit_id desc";
-
-            database1 = dbHelper.getReadableDatabase();
-            cursor = database1.rawQuery(selectQuery, null);
-
-            if (cursor.moveToFirst()) {
-                do {
-                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
-                            cursor.getString(7), cursor.getString(8),
-                            cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
-                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21));
-
-                    hotelList.add(user);
-
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-
-            throw new ClirNetAppException("Something went wrong while getting getPatientList");
-        } finally {
-            //create method & pass cursor & db1 ref.
-            if (cursor != null) {
-                cursor.close();
-            }
-            if (database1 != null) {
-                database1.close();
-            }
-        }
-
-        return hotelList;
-
-    }
-*/
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments
     public ArrayList<RegistrationModel> getPatientList(String date) throws ClirNetAppException {
 
@@ -166,7 +126,6 @@ public class SQLController {
 
     }
 
-
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments
     public ArrayList<RegistrationModel> getPatientListnew(String date) throws ClirNetAppException {
 
@@ -182,11 +141,7 @@ public class SQLController {
 
             if (cursor.moveToFirst()) {
                 do {
-                   /* RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
-                            cursor.getString(7), cursor.getString(8),
-                            cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
-                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21));
-*/
+
                     RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
                             cursor.getString(7), cursor.getString(8),
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
@@ -222,8 +177,6 @@ public class SQLController {
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
-            //  String selectQuery ="SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date like '"+ "%" + date +"'order by ph.key_visit_id  desc limit 25";
-            //  String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' order by ph.key_visit_id  desc";
             String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' order by ph.key_visit_id  desc ";
 
             database1 = dbHelper.getReadableDatabase();
@@ -231,10 +184,6 @@ public class SQLController {
 
             if (cursor.moveToFirst()) {
                 do {
-                   /* RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
-                            cursor.getString(7), cursor.getString(8),
-                            cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
-                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21));*/
                     RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
                             cursor.getString(7), cursor.getString(8),
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
@@ -272,7 +221,6 @@ public class SQLController {
 
         try {
             db1 = dbHelper.getReadableDatabase();
-            //stmt = db1.compileStatement("select max(patient_id) from patient");
             cursor = db1.rawQuery("select max(patient_id) from patient", null);
             if (cursor.moveToFirst()) {
                 returnValue = cursor.getInt(0);
@@ -299,7 +247,6 @@ public class SQLController {
 
         try {
             db1 = dbHelper.getReadableDatabase();
-            //stmt = db1.compileStatement("select max(patient_id) from patient");
             cursor = db1.rawQuery("select max(key_visit_id) from patient_history", null);
             if (cursor.moveToFirst()) {
                 returnValue = cursor.getInt(0);
@@ -330,7 +277,6 @@ public class SQLController {
 
             String countQuery = "select  COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id ";
 
-            //  String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action from patient p,patient_history ph   where p.patient_id=ph.patient_id and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%' and ( p.gender like '%" + male + "%' or p.gender like '%" + female + "%' and p.gender like '%" + other + "%' or p.gender like '%" + na + "%' )and p.phonenumber like '%" + phoneno + "%' and p.age like '%" + age + "%'  order by ph.key_visit_id desc limit 30;";
             if (fname != null) {
                 selectQuery = selectQuery.concat(" and p.first_name like '%" + fname + "%'");
                 countQuery = countQuery.concat(" and p.first_name like '%" + fname + "%'");
@@ -364,8 +310,6 @@ public class SQLController {
                     if (part2.equals("Above")) {
                         part2 = "300";
                     }
-                    // int val= Integer.parseInt(part1);
-                    // int val2= Integer.parseInt(part2);
                     if (i != 0) {
 
                         selectQuery = selectQuery.concat(" OR cast(p.age as INTEGER) BETWEEN " + part1 + " and " + part2 + " ");
@@ -390,8 +334,7 @@ public class SQLController {
                         selectQuery = selectQuery.concat(" OR  ph.ailment like '%" + value + "%'" + " OR  ph.symptoms like '%" + value + "%'" + " OR  ph.diagnosis like '%" + value + "%'");
 
                         countQuery = countQuery.concat(" OR  ph.ailment like '%" + value + "%'" + " OR  ph.symptoms like '%" + value + "%'" + " OR  ph.diagnosis like '%" + value + "%'");
-                        //countQuery = countQuery.concat(" OR  ph.symptoms like '%" + value + "%'");
-                        // countQuery = countQuery.concat(" OR  ph.diagnosis like '%" + value + "%'");
+
                     } else {
                         selectQuery = selectQuery.concat(" AND ( ph.ailment like '%" + value + "%'" + " OR  ph.symptoms like '%" + value + "%'" + " OR  ph.diagnosis like '%" + value + "%'");
 
@@ -468,10 +411,7 @@ public class SQLController {
         SQLiteDatabase db1 = dbHelper.getReadableDatabase();
         int numRows = 0;
         try {
-
             numRows = (int) DatabaseUtils.longForQuery(db1, "SELECT Count(*) FROM associate_master", null);
-                //   Log.d("count", "" + countQuery + "  " + numRows);
-
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -490,12 +430,8 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {                                                                                                                                                                                                                                                                                                                                                                                          //p.first_name like '%" + fname + "%'
-            // String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date  from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like  '% " + number + " %'  group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc " ;
-
 
             String countQuery = "select COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id and p.phonenumber like '%" + number + "%' order by ph.key_visit_id desc ";
-
-          //  String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,ph.tests,p.email,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,ph.refered_by,ph.refered_to from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like '%" + number + "%' group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc limit " + page + " , " + limit + ";";
 
             String selectQuery = "select p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,\n" +
                     " p.age,p.phonenumber,p.gender,p.language,p.photo,\n" +
@@ -512,7 +448,6 @@ public class SQLController {
 
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-            //Log.d("selectQuery", "" + selectQuery);
 
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
@@ -550,7 +485,6 @@ public class SQLController {
         int numRows = 0;
         try {
             String countQuery = new Counts().getCountQueryforHomeFragmentNoFilter();
-            // Log.d("count", "" + countQuery);
 
             if (countQuery.length() > 1) {
 
@@ -579,7 +513,6 @@ public class SQLController {
             String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,ph.symptoms,ph.diagnosis  from patient_history  ph , patient p where p.patient_id=" + patient_id + " and  p.patient_id=ph.patient_id order by ph.key_visit_id desc ";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-            //Log.d("cursor", "" + cursor.getCount());
 
             // looping through all rows and adding to list
 
@@ -615,8 +548,6 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {
-
-            //   String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,ph.tests,ph.drugs,ph.bmi,ph.height,p.alternate_no,sugar_fasting,p.alternate_phone_type  from patient_history  ph , patient p where p.patient_id=" + patient_id + " and  p.patient_id=ph.patient_id order by ph.key_visit_id desc ";
 
             String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms, ph.diagnosis,p.email,p.uid,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd ,ph.refered_by,ph.refered_to from patient_history  ph, patient p where p.patient_id=" + patient_id + " and  p.patient_id=ph.patient_id order by ph.key_visit_id desc ";
             db1 = dbHelper.getReadableDatabase();
@@ -832,9 +763,7 @@ public class SQLController {
             // stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
             String query = "select phonenumber from doctor_perInfo order by phonenumber desc limit 1";
 
-
             cursor = db1.rawQuery(query, null);
-
 
             if (cursor.moveToFirst()) {
                 returnString = cursor.getString(cursor.getColumnIndex("phonenumber"));
@@ -851,9 +780,7 @@ public class SQLController {
             if (db1 != null) {
                 db1.close();
             }
-
         }
-
         return returnString;
     }
 
@@ -867,13 +794,9 @@ public class SQLController {
         try {
             db1 = dbHelper.getReadableDatabase();
 
-
-            // stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
             String query = "select email from doctor_perInfo order by email desc limit 1";
 
-
             cursor = db1.rawQuery(query, null);
-
 
             if (cursor.moveToFirst()) {
                 returnString = cursor.getString(cursor.getColumnIndex("email"));
@@ -885,7 +808,6 @@ public class SQLController {
             throw new ClirNetAppException("something went wrong while getting getDocdoctorEmail");
         } finally {
             if (cursor != null) {
-                //close statment
                 cursor.close();
             }
             if (db1 != null) {
@@ -902,10 +824,8 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         try {
             db1 = dbHelper.getReadableDatabase();
-            // stmt = db1.compileStatement("select value from async order by id desc limit 1");
 
             String query = "select value from async order by id desc limit 1";
-
 
             cursor = db1.rawQuery(query, null);
 
@@ -960,10 +880,8 @@ public class SQLController {
             if (db1 != null) {
                 db1.close();
             }
-
         }
         return count > 0;
-
     }
 
 
@@ -978,8 +896,6 @@ public class SQLController {
                     " date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) Between Date('" + fromdate + "') AND Date('" + todate + "') GROUP BY pvd.visit_date";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-
-
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
                 do {
@@ -1011,7 +927,6 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {
-            // String selectQuery = "SELECT pvd.ailment as ailment FROM patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0 AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2))  Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date LIMIT 0 , 30";
             String selectQuery = "SELECT pvd.symptoms as symptoms FROM \n" +
                     "patient dpr , patient_history pvd \n" +
                     "WHERE dpr.patient_id = pvd.patient_id \n" +
@@ -1020,7 +935,6 @@ public class SQLController {
 
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-
 
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
@@ -1052,7 +966,7 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {
-            // String selectQuery = "SELECT pvd.ailment as ailment FROM patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0 AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2))  Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date LIMIT 0 , 30";
+
             String selectQuery = "SELECT pvd.diagnosis as diagnosis FROM \n" +
                     "patient dpr , patient_history pvd \n" +
                     "WHERE dpr.patient_id = pvd.patient_id \n" +
@@ -1093,7 +1007,6 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {
-            // String selectQuery = "SELECT pvd.ailment as ailment FROM patient dpr , patient_history pvd WHERE dpr.patient_id = pvd.patient_id and pvd.is_deleted = 0 and pvd.is_disabled = 0 AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2))  Between Date('"+fromdate+"') AND Date('"+todate+"') GROUP BY pvd.visit_date LIMIT 0 , 30";
             String selectQuery = "SELECT pvd.ailment as ailment FROM \n" +
                     "patient dpr , patient_history pvd \n" +
                     "WHERE dpr.patient_id = pvd.patient_id \n" +
@@ -1255,7 +1168,6 @@ public class SQLController {
             }
         }
 
-
         return user;
     }
 
@@ -1264,7 +1176,6 @@ public class SQLController {
 
         SQLiteDatabase db = null;
         Cursor cursor = null;
-
 
         try {
             String query = "select first_name,last_name,phonenumber,email,doctor_id,doc_mem_id from doctor_perInfo order by doctor_id desc limit 1 ";
@@ -1306,7 +1217,6 @@ public class SQLController {
 
         try {
             db1 = dbHelper.getReadableDatabase();
-            //stmt = db1.compileStatement("select max(patient_id) from patient");
             cursor = db1.rawQuery("SELECT COUNT(*) FROM patient", null);
             if (cursor.moveToFirst()) {
                 returnValue = cursor.getInt(0);
@@ -1331,7 +1241,6 @@ public class SQLController {
 
         try {
             db1 = dbHelper.getReadableDatabase();
-            //stmt = db1.compileStatement("select max(patient_id) from patient");
             cursor = db1.rawQuery("SELECT COUNT(*) FROM patient_history", null);
             if (cursor.moveToFirst()) {
                 returnValue = cursor.getInt(0);
@@ -1395,7 +1304,6 @@ public class SQLController {
 
         try {
             db1 = dbHelper.getReadableDatabase();
-            //stmt = db1.compileStatement("select max(patient_id) from patient");
             cursor = db1.rawQuery("select banner_id from company_banners where image_name ='" + banner_image + "'", null);
             if (cursor.moveToFirst()) {
                 returnValue = cursor.getInt(0);
@@ -1420,7 +1328,6 @@ public class SQLController {
 
         try {
             db1 = dbHelper.getReadableDatabase();
-            //stmt = db1.compileStatement("select max(patient_id) from patient");
             cursor = db1.rawQuery("select folder_name from company_banners where image_name ='" + banner_image + "'", null);
             if (cursor.moveToFirst()) {
                 returnValue = cursor.getString(0);
@@ -1517,12 +1424,9 @@ public class SQLController {
 
         try {
             db1 = dbHelper.getReadableDatabase();
-            // stmt = db1.compileStatement("select phonenumber from doctor_perInfo order by phonenumber desc limit 1");
             String query = "select company_id from company_banners order by company_id desc limit 1";
 
-
             cursor = db1.rawQuery(query, null);
-
 
             if (cursor.moveToFirst()) {
                 returnString = cursor.getString(cursor.getColumnIndex("company_id"));
@@ -1556,7 +1460,6 @@ public class SQLController {
 
         try {
             db1 = dbHelper.getReadableDatabase();
-            //stmt = db1.compileStatement("select max(patient_id) from patient");
             cursor = db1.rawQuery("select banner_type from company_banners where image_name ='" + banner_image + "'", null);
             if (cursor.moveToFirst()) {
                 returnValue = cursor.getInt(0);
@@ -1583,7 +1486,6 @@ public class SQLController {
 
         try {
             db1 = dbHelper.getReadableDatabase();
-            //stmt = db1.compileStatement("select max(patient_id) from patient");
             cursor = db1.rawQuery("select count(banner_id) from company_banners where start_time<= DateTime('now') and end_time >= DateTime('now');", null);
             if (cursor.moveToFirst()) {
                 returnValue = cursor.getInt(0);
@@ -1610,7 +1512,6 @@ public class SQLController {
 
         try {
             db1 = dbHelper.getReadableDatabase();
-            //stmt = db1.compileStatement("select max(patient_id) from patient");
             cursor = db1.rawQuery("select count(prescription)from patient_history where length(prescription)>0;", null);
             if (cursor.moveToFirst()) {
                 returnValue = cursor.getInt(0);
@@ -1638,8 +1539,6 @@ public class SQLController {
             String selectQuery = "select process, start_time,end_time from asynctascrun_status ";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-
-
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
                 do {
@@ -1660,9 +1559,7 @@ public class SQLController {
                 db1.close();
             }
         }
-
         return VisitidList;
-
     }
 
     //get all patients  visits data which is yet to send to server
@@ -1675,7 +1572,6 @@ public class SQLController {
             String selectQuery = "select banner_id,image_name,img_download_start_time,img_download_end_time from company_banners ";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-
 
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
@@ -1781,7 +1677,6 @@ public class SQLController {
         try {
             db = dbHelper.getWritableDatabase();
 
-
             ContentValues values = new ContentValues();
             values.put("visit_date", visit_date);
             values.put("actual_follow_up_date", actual_follow_up_date);
@@ -1831,14 +1726,14 @@ public class SQLController {
         Cursor cursor = null;
         try {
             String selectQuery = "select id,name,associate_type,phonenumber,speciality,added_on,modified_counter,phone_type,isd_code,email,associate_address,city,associate_state" +
-                    ",pin_code,district,title from associate_master limit " + page + "," + limit + ";";
+                    ",pin_code,district,title,contactforpatient,selectedIsd_code_altType,selectedcontactForPatientType from associate_master limit " + page + "," + limit + ";";
 
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
 
             if (cursor.moveToFirst()) {
                 do {
-                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getString(7),cursor.getString(8),cursor.getString(9),cursor.getString(10),cursor.getString(11),cursor.getString(12),cursor.getString(13),cursor.getString(14),cursor.getString(15));
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getString(7),cursor.getString(8),cursor.getString(9),cursor.getString(10),cursor.getString(11),cursor.getString(12),cursor.getString(13),cursor.getString(14),cursor.getString(15),cursor.getString(16),cursor.getString(17),cursor.getString(18));
 
                     associateList.add(user);
 
@@ -1868,7 +1763,6 @@ public class SQLController {
             String selectQuery = "select id,name,speciality from associate_master";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-
 
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
@@ -1930,14 +1824,20 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         String returnString = ""; // Your default if none is found
-        try {            db1 = dbHelper.getReadableDatabase();
-            String query = "select name from associate_master  where id='" + id + "' limit 1";
+        try {
+            db1 = dbHelper.getReadableDatabase();
+            String query = "select title,name from associate_master  where id='" + id + "' limit 1";
 
 
             cursor = db1.rawQuery(query, null);
 
             if (cursor.moveToFirst()) {
+                /*String nameAlias=cursor.getString(0);
+                if (nameAlias == null) {
+                    nameAlias = "";
+                }*/
                 returnString = cursor.getString(cursor.getColumnIndex("name"));
+                //returnString=nameAlias+""+returnString;
             }
 
         } catch (Exception e) {

@@ -384,6 +384,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
+
         try {
             mDiagnosisList = lastNamedb.getDiagnosis();
             if (mDiagnosisList.size() > 0) {
@@ -623,9 +624,9 @@ public class AddPatientUpdate extends AppCompatActivity {
                 StringBuilder sb = new StringBuilder();
                 StringBuilder sbname = new StringBuilder();
                 if (addCounter >= 0) {
-
                     if (!strReferredTo1Name.equals("") && strReferredTo1Name.length() > 0) {
-                        code = NameData.get(strReferredTo1Name);
+                        code = NameData.get(strReferredTo1Name.trim());
+
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(index);
@@ -636,7 +637,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 if (addCounter >= 1) {
 
                     if (!strReferredTo2Name.equals("") && strReferredTo2Name.length() > 0) {
-                        code = NameData.get(strReferredTo2Name);
+                        code = NameData.get(strReferredTo2Name.trim());
                         if (code != null) {
 
                             int index = Integer.parseInt(code);
@@ -648,7 +649,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 if (addCounter >= 2) {
 
                     if (!strReferredTo3Name.equals("") && strReferredTo3Name.length() > 0) {
-                        code = NameData.get(strReferredTo3Name);
+                        code = NameData.get(strReferredTo3Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
@@ -659,7 +660,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 if (addCounter >= 3) {
 
                     if (!strReferredTo4Name.equals("") && strReferredTo4Name.length() > 0) {
-                        code = NameData.get(strReferredTo4Name);
+                        code = NameData.get(strReferredTo4Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
@@ -670,7 +671,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 if (addCounter >= 4) {
 
                     if (!strReferredTo5Name.equals("") && strReferredTo5Name.length() > 0) {
-                        code = NameData.get(strReferredTo5Name);
+                        code = NameData.get(strReferredTo5Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
@@ -682,7 +683,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 strReferedTo = String.valueOf(sb);
 
                 if (!strReferredByName.equals("") && strReferredByName.length() > 0) {
-                    code = NameData.get(strReferredByName);
+                    code = NameData.get(strReferredByName.trim());
                     if (code != null) {
                         int index = Integer.parseInt(code);
                         strReferedBy = String.valueOf(index);
@@ -694,8 +695,9 @@ public class AddPatientUpdate extends AppCompatActivity {
                 }
                 strReferedTo = String.valueOf(sb);
                 String insertedName = String.valueOf(sbname);
-
+                insertedName = appController.removeCommaOccurance(insertedName);
                 textRefredToShow.setText(insertedName + "");
+                //  Log.e("RemoveComma",""+appController.removeCommaOccurance(insertedName));
                 addCounter = 0;
                 dialog.dismiss();
             }
@@ -734,7 +736,7 @@ public class AddPatientUpdate extends AppCompatActivity {
         dialog.show();
     }
 
-    private void setCities( View f) {
+    private void setCities(View f) {
 
         final Spinner nameRefredBySpinner = (Spinner) f.findViewById(R.id.nameRefredBySpinner);
         final Spinner nameRefredTo1Spinner = (Spinner) f.findViewById(R.id.nameRefredTo1Spinner);
@@ -753,7 +755,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
 
         try {
-            nameReferralsList = dbController.getReferals();
+            nameReferralsList = dbController.getReferalsnew();
 
             if (nameReferralsList.size() > 0) {
                 ArrayAdapter<String> referralName = new ArrayAdapter<>(AddPatientUpdate.this,
@@ -782,15 +784,25 @@ public class AddPatientUpdate extends AppCompatActivity {
                                        int position, long id) {
 
                 strReferredTo1Name = (String) parent.getItemAtPosition(position);
+
                 try {
                     if (nameRefredTo1Spinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo1Name);
+                        if (appController.contains(strReferredTo1Name, ".") ) {
+                            String[] parts = strReferredTo1Name.split(". ", 2);
+                            String string1 = parts[0];//namealias
+                            strReferredTo1Name = parts[1].trim();//actual name
+
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo1Name.trim());
+
 
                         //String strReferredTo1Id = list.get(0).get("ID");
-                        String strSpeciality = list.get(0).get("SPECIALITY");
-                        referredtoSpeciality1.setText(strSpeciality);
+                        if (list.size() > 0) {
+                            String strSpeciality = list.get(0).get("SPECIALITY");
+                            referredtoSpeciality1.setText(strSpeciality);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
@@ -812,11 +824,17 @@ public class AddPatientUpdate extends AppCompatActivity {
                     if (nameRefredTo2Spinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo2Name);
+                        if (appController.contains(strReferredTo2Name, ".")) {
+                            String[] parts = strReferredTo2Name.split(". ", 2);
+                            String string1 = parts[0];//namealias
+                            strReferredTo2Name = parts[1];//actual name
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo2Name.trim());
 
-                        //String strReferredTo2Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        referredtoSpeciality2.setText(strSpeclty);
+                        if (list.size() > 0) {
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            referredtoSpeciality2.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
@@ -838,11 +856,18 @@ public class AddPatientUpdate extends AppCompatActivity {
                     if (nameRefredTo3Spinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo3Name);
+                        if (appController.contains(strReferredTo3Name, ".")) {
+                            String[] parts = strReferredTo3Name.split(". ", 2);
+                            String string1 = parts[0];//namealias
+                            strReferredTo3Name = parts[1];//actual name
+                        }
 
-                        //String strReferredTo3Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        referredtoSpeciality3.setText(strSpeclty);
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo3Name.trim());
+
+                        if (list.size() > 0) {
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            referredtoSpeciality3.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
@@ -864,11 +889,18 @@ public class AddPatientUpdate extends AppCompatActivity {
                     if (nameRefredTo4Spinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo4Name);
+                        if (appController.contains(strReferredTo4Name, ".")) {
+                            String[] parts = strReferredTo4Name.split(". ", 2);
+                            String string1 = parts[0];//namealias
+                            strReferredTo4Name = parts[1];//actual name
+                        }
 
-                        //String strReferredTo4Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        referredtoSpeciality4.setText(strSpeclty);
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo4Name.trim());
+
+                        if (list.size() > 0) {
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            referredtoSpeciality4.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
@@ -889,11 +921,18 @@ public class AddPatientUpdate extends AppCompatActivity {
                     if (nameRefredTo5Spinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo5Name);
+                        if (appController.contains(strReferredTo5Name, ".")) {
+                            String[] parts = strReferredTo5Name.split(". ", 2);
+                            String string1 = parts[0];//namealias
+                            strReferredTo5Name = parts[1];//actual name
+                        }
 
-                        //String  strReferredTo5Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        referredtoSpeciality5.setText(strSpeclty);
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo5Name.trim());
+
+                        if (list.size() > 0) {
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            referredtoSpeciality5.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
@@ -911,16 +950,23 @@ public class AddPatientUpdate extends AppCompatActivity {
                                        int position, long id) {
 
                 strReferredByName = (String) parent.getItemAtPosition(position);
-                Toast.makeText(AddPatientUpdate.this, "selected State is:" + strReferredByName, Toast.LENGTH_LONG).show();
                 try {
                     if (nameRefredBySpinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredByName);
+                        if (appController.contains(strReferredByName, ".")) {
+
+                            String[] parts = strReferredByName.split(". ", 2);
+                            String string1 = parts[0];//namealias
+                            strReferredByName = parts[1];//actual name
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredByName.trim());
 
                         // String strReferredById = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        referredBySpeciality.setText(strSpeclty);
+                        if(list.size()> 0) {
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            referredBySpeciality.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
@@ -939,6 +985,7 @@ public class AddPatientUpdate extends AppCompatActivity {
     private void sendDataToEditPatientUpdate() {
 
         if (patientHistoryData.size() > 0) {
+
             RegistrationModel registrationModel = patientHistoryData.get(0);
 
             Intent i = new Intent(getApplicationContext(), EditPatientUpdate.class);
@@ -1100,10 +1147,10 @@ public class AddPatientUpdate extends AppCompatActivity {
         String added_by = docId;
         String patientInfoType = "App";
         String action = "added";
-        String record_source="Add Patient Update";
+        String record_source = "Add Patient Update";
 
         dbController.addPatientNextVisitRecord(visit_id, strPatientId, userSellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, ailments, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
-                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo,record_source);
+                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo, record_source);
 
         Toast.makeText(getApplicationContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
         //Redirect to navigation Activity
@@ -1159,20 +1206,6 @@ public class AddPatientUpdate extends AppCompatActivity {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
-
-        try {
-
-            patientImagePath = uriSavedImage.getPath();
-
-            if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
-
-                //setUpGlide(patientImagePath, imageViewprescription);
-            }
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "AddPatientUpdate" + e);
-        }
-
     }
 
     private void goToNavigation() {
@@ -1201,14 +1234,13 @@ public class AddPatientUpdate extends AppCompatActivity {
 
 
     private void shpwDialog(int id) {
+        final Calendar c1 = Calendar.getInstance();
+        int mYear1 = c1.get(Calendar.YEAR);
+        int mMonth1 = c1.get(Calendar.MONTH);
+        int mDay1 = c1.get(Calendar.DAY_OF_MONTH);
         switch (id) {
 
             case DATE_DIALOG_ID1: //for visit date
-
-                final Calendar c1 = Calendar.getInstance();
-                int mYear1 = c1.get(Calendar.YEAR);
-                int mMonth1 = c1.get(Calendar.MONTH);
-                int mDay1 = c1.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog dpd2 = new DatePickerDialog(AddPatientUpdate.this,
                         new DatePickerDialog.OnDateSetListener() {
@@ -1235,10 +1267,6 @@ public class AddPatientUpdate extends AppCompatActivity {
 
             case DATE_DIALOG_ID2: //for fod
 
-                final Calendar c3 = Calendar.getInstance();
-                int mYear3 = c3.get(Calendar.YEAR);
-                int mMonth3 = c3.get(Calendar.MONTH);
-                int mDay3 = c3.get(Calendar.DAY_OF_MONTH);
 
                 DatePickerDialog dpd3 = new DatePickerDialog(AddPatientUpdate.this,
                         new DatePickerDialog.OnDateSetListener() {
@@ -1256,10 +1284,10 @@ public class AddPatientUpdate extends AppCompatActivity {
                                 CleanFollowup();
 
                             }
-                        }, mYear3, mMonth3, mDay3);
-                c3.add(Calendar.DATE, 1);
+                        }, mYear1, mMonth1, mDay1);
+                c1.add(Calendar.DATE, 1);
 
-                Date newDate3 = c3.getTime();
+                Date newDate3 = c1.getTime();
                 dpd3.getDatePicker().setMinDate(newDate3.getTime());
 
                 dpd3.show();
@@ -1284,20 +1312,17 @@ public class AddPatientUpdate extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //Log.d("lifecycle","onResume invoked");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // Log.d("lifecycle","onPause invoked");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
         setupAnimation();
-        // Log.d("lifecycle","onRestart invoked");
     }
 
     @Override
@@ -1441,9 +1466,9 @@ public class AddPatientUpdate extends AppCompatActivity {
                     txtRecord.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
                     countvitalsLayout = 1;
                 }
-                //  txtRecord.setBackground(R.drawable.);
             }
         });
+
         txtsymtomsanddignost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -1457,7 +1482,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                     txtsymtomsanddignost.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
                     countsymtomsanddignostLayout = 1;
                 }
-                //  txtRecord.setBackground(R.drawable.);
+
             }
         });
 
@@ -1509,8 +1534,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                         week.setBackground(getResources().getDrawable(R.drawable.circle));
                         month.setBackground(getResources().getDrawable(R.drawable.circle));
                     }
-
-
                 }
                 return false;
             }
@@ -1530,7 +1553,6 @@ public class AddPatientUpdate extends AppCompatActivity {
                     month.setBackground(getResources().getDrawable(R.drawable.circle));
                     btnclear.setBackground(getResources().getDrawable(R.drawable.circle));
                 }
-
                 value = inputnumber.getText().toString().trim();
 
                 if (TextUtils.isEmpty(value)) {
@@ -1656,4 +1678,6 @@ public class AddPatientUpdate extends AppCompatActivity {
         });
 
     }
+
+
 }

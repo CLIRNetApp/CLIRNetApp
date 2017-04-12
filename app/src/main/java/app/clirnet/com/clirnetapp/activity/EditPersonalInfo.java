@@ -210,7 +210,8 @@ public class EditPersonalInfo extends AppCompatActivity {
         uid.setText(strUid);
         edtEmail_id.setText(strEmail);
 
-        editmobile_no.setInputType(InputType.TYPE_CLASS_NUMBER);//this will do not let user to enter any other text than digit 0-9 only
+        editmobile_no.setInputType(InputType.TYPE_CLASS_NUMBER);
+        alternatemobile_no.setInputType(InputType.TYPE_CLASS_NUMBER);//this will do not let user to enter any other text than digit 0-9 only
         editmobile_no.setText(strPhone);
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);

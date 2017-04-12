@@ -49,5 +49,6 @@ public class AppConfig {
 
 
     static final String UPLOAD_BANNER_DATA = LOCAL_DEMO_URL + "/doctor/webapi/bannersstatisticsv2";
+
     public static final String SDCARD_PATH = "sdcard/BannerImages/";
 }
