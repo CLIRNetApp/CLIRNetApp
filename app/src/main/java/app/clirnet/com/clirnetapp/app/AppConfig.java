@@ -2,7 +2,7 @@ package app.clirnet.com.clirnetapp.app;
 
 public class AppConfig {
     // Server user login url
-    //private static final String LOCAL_DEMO_URL = "http://43.242.212.136/clirnetapplicationv2/public";//49.50.76.125/
+   // private static final String LOCAL_DEMO_URL = "http://43.242.212.136/clirnetapplicationv2/public";//49.50.76.125/
     //  public static final String   LOCAL_DEMO_URL = "http://dev.clirnet.com/";//49.50.76.125/
     // static final String LIVE_MAIN_URL = "http://192.168.1.53/";
     // static final String PRODUCTION_MAIN_URL = "http://104.199.232.104/clirnetapplicationv3/public/doctor/webapi/checkdoctorvalidity";

@@ -6,7 +6,8 @@
     <color name="hint_color">#2CA3E9</color>
     <color name="black">#000000</color>
     <color name="red">#FF0000</color>
-      <color name="light_grey">#DCDCDC</color>
+    <color name="light_grey">#DCDCDC</color>
+    <color name="light_greytransparant">#66DCDCDC</color>
     <color name="bg_login">#26ae90</color>
     <color name="bg_register">#2e3237</color>
     <color name="bg_main">#428bca</color>
@@ -25,8 +26,8 @@
     <color name="bg_list_row">#0a599d</color>
     <color name="text_background">#90000000</color>
     <color name="rate">#0a599d</color>
-    <color name= "bg_login1">#85b1d8</color>
-    <color name= "btn_back_sbmt">#50BAA0</color>
+    <color name="bg_login1">#85b1d8</color>
+    <color name="btn_back_sbmt">#50BAA0</color>
     <color name="cancelbtn">#c0c0c0</color>
 
     <color name="transparent_background">#00FF0000</color>

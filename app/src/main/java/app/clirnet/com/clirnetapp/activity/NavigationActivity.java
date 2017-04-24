@@ -59,23 +59,46 @@ public class NavigationActivity extends AppCompatActivity
     private String docName;
     private String emailId;
     private AppController appController;
-    private String msgType, type, actionPath;
-    private String msg;
+    private String type, actionPath;
+    private String msg, headerMsg;
+    private MenuItem id;
+
+  /*  @Override
+    public void onConfigurationChanged(Configuration newConfig)
+    {
+        super.onConfigurationChanged(newConfig);
 
 
+    }
     @Override
+    protected void onRestoreInstanceState(Bundle savedState) {
+        super.onRestoreInstanceState(savedState);
+
+    }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i("user", " onSaveInstanceState.");
+        savedInstanceState.putString("greeting", ""+id);
+        Log.e("id"," "+id);
+    }
+*/
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
             /*message from fcm service*/
             msg = getIntent().getStringExtra("MSG");
-            //
-            msgType = getIntent().getStringExtra("TAG");
+
             type = getIntent().getStringExtra("TYPE");
             actionPath = getIntent().getStringExtra("ACTION_PATH");
+            headerMsg = getIntent().getStringExtra("HEADER");
         } catch (Exception e) {
-            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
         }
+       /* String greeting = (savedInstanceState != null) ? savedInstanceState.getString("greeting") : "null";
+        Log.i("tag", " onCreate2: " + greeting);*/
+
         setContentView(R.layout.activity_navigation);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -117,46 +140,49 @@ public class NavigationActivity extends AppCompatActivity
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
             if (sqlController != null) {
                 sqlController.close();
             }
         }
 
-        Fragment fragment;
+        Fragment fragment=null;
 
+         /*Handle push notification messages*/
         if (type != null && !type.equals("") && actionPath != null && !actionPath.equals("") && type.equals("2")) {
             //for web-page
             callAction(actionPath);
+
         } else if (type != null && !type.equals("") && actionPath != null && !actionPath.equals("") && type.equals("1")) {
             //for app-page
             fragment = new KnowledgeFragment();
-            fragmentManager = getSupportFragmentManager();
+
             Bundle bundle2 = new Bundle();
             bundle2.putString("URL", actionPath);
             fragment.setArguments(bundle2);
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+
         } else if (type != null && !type.equals("") && type.equals("3")) {//for announcement
             fragment = new HomeFragment();
-            fragmentManager = getSupportFragmentManager();
             Bundle bundle2 = new Bundle();
             bundle2.putString("SERVICE", "3");
             bundle2.putString("MESSAGE", msg);
+            bundle2.putString("HEADER", headerMsg);
             fragment.setArguments(bundle2);
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+
         } else if (type != null && !type.equals("") && type.equals("4")) {//for service
             fragment = new HomeFragment();
-            fragmentManager = getSupportFragmentManager();
             Bundle bundle2 = new Bundle();
-            bundle2.putString("SERVICE", "true");
+            bundle2.putString("SERVICE", "START");
             fragment.setArguments(bundle2);
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+            onNavigationItemSelected(navigationView.getMenu().getItem(0));
+
         } else {
             fragment = new HomeFragment();
-            fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+            onNavigationItemSelected(navigationView.getMenu().getItem(0));
         }
+        fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
         // subscribeToPushService();
     }
 
@@ -208,8 +234,6 @@ public class NavigationActivity extends AppCompatActivity
             case R.id.nav_po:
                 fragment = new HomeFragment();
                 AppController.getInstance().trackEvent("Patient Central", "Navigation", "Track event");
-
-
                 break;
 
             case R.id.nav_consultLog:
@@ -272,6 +296,7 @@ public class NavigationActivity extends AppCompatActivity
 
 
         drawer.closeDrawers();
+        id=item;
 
     }
 
@@ -286,31 +311,20 @@ public class NavigationActivity extends AppCompatActivity
     public void onFragmentInteraction(Uri uri) {
 
     }
-    /** Called just before the activity is destroyed. */
-    /** Called when the activity is no longer visible. */
-    /**
-     * Called when another activity is taking focus.
-     */
+
     @Override
     protected void onResume() {
         super.onResume();
-        //  Log.d(msg, "The onResume() event");
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        //  Log.d(msg, "The onPause() event");
-
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        //  Log.d(msg, "The onStop() event");
-
-        System.gc();
     }
 
     @Override
@@ -333,7 +347,7 @@ public class NavigationActivity extends AppCompatActivity
         }
 
         cleanResources();
-        System.gc();
+
     }
 
     private void cleanResources() {
@@ -341,9 +355,9 @@ public class NavigationActivity extends AppCompatActivity
         docName = null;
         emailId = null;
         msg = null;
-        msgType = null;
         actionPath = null;
         type = null;
+        headerMsg = null;
     }
 
     public void setActionBarTitle(String title) {
@@ -352,29 +366,30 @@ public class NavigationActivity extends AppCompatActivity
 
 
     public void callAction(String action) {
-        Fragment fragment = null;
+        Fragment mFragment = null;
+        fragmentManager = getSupportFragmentManager();
         switch (action) {
             case "HomeFragment":
-                fragment = new HomeFragment();
+                mFragment = new HomeFragment();
                 AppController.getInstance().trackEvent("Patient Central", "Navigation", "Track event");
 
                 break;
 
             case "ConsultationLogFragment":
-                fragment = new ConsultationLogFragment();
+                mFragment = new ConsultationLogFragment();
                 AppController.getInstance().trackEvent("Consultation Log", "Navigation", "Track event");
 
                 break;
 
             case "PoHistoryFragment":
-                fragment = new PoHistoryFragment();
+                mFragment = new PoHistoryFragment();
                 AppController.getInstance().trackEvent("Patient History", "Navigation", "Track event");
 
                 break;
 
             case "ReportFragment":
 
-                fragment = new ReportFragment();
+                mFragment = new ReportFragment();
                 AppController.getInstance().trackEvent("Patient Report", "Navigation", "Track event");
 
                 break;
@@ -382,27 +397,28 @@ public class NavigationActivity extends AppCompatActivity
             case "KnowledgeFragment":
                 AppController.getInstance().trackEvent("Knowledge", "Navigation", "Track event");
 
-                fragment = new KnowledgeFragment();
+                mFragment = new KnowledgeFragment();
                 break;
             case "IncompleteListFragment":
                 AppController.getInstance().trackEvent("Prsecription", "Navigation", "Track event");
 
-                fragment = new IncompleteListFragment();
+                mFragment = new IncompleteListFragment();
                 break;
 
             case "AssociatesFragment":
                 AppController.getInstance().trackEvent("Associates", "Navigation", "Track event");
 
-                fragment = new AssociatesFragment();
+                mFragment = new AssociatesFragment();
                 break;
 
 
             default:
-                fragment = new HomeFragment();
+                mFragment = new HomeFragment();
 
         }
-        fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).commit();
+
+            fragmentManager.beginTransaction().replace(R.id.flContent, mFragment).commit();
+
     }
 
 }

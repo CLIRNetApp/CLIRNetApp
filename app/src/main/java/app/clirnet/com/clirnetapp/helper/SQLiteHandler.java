@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -1309,7 +1310,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(REFERED_BY, referedBy);
             values.put(REFERED_TO, referedTo);
 
-
             // Inserting Row
             db.insert("prescription_queue", null, values);
         } catch (Exception e) {
@@ -1571,8 +1571,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     public ArrayList<String> getAllCompanyBanner() throws ClirNetAppException {
-        ArrayList<String> wordList;
-        wordList = new ArrayList<>();
+        ArrayList<String> bannerList;
+        bannerList = new ArrayList<>();
         String selectQuery = "select banner_id,banner_image1  from company_banners where status_name= 'Active'";
         SQLiteDatabase database = null;
         Cursor cursor = null;
@@ -1584,7 +1584,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
 
-                    wordList.add(cursor.getString(0));
+                    bannerList.add(cursor.getString(0));
 
                 } while (cursor.moveToNext());
             }
@@ -1598,7 +1598,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 database.close();
             }
         }
-        return wordList;
+        return bannerList;
     }
 
     //update the flag once data send to server successfully
@@ -1663,7 +1663,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(RESPONSE_TIME, responseTime);
 
             // Inserting Row
-            long id = db.insert(TABLE_SYNC_STATUS, null, values);
+           long id= db.insert(TABLE_SYNC_STATUS, null, values);
+            Log.e("Valuesis",""+id);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -477,7 +477,6 @@
                         android:text="Terms and Conditions"
                         android:textColor="@color/bg_login" />
 
-
                 </RelativeLayout>
             </LinearLayout>
 

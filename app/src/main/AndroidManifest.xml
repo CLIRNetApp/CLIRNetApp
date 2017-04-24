@@ -39,6 +39,7 @@
         <activity
             android:name=".activity.NavigationActivity"
             android:configChanges="screenSize|orientation"
+            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_navigation"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
@@ -64,6 +65,7 @@
 
         <service
             android:name=".utility.SyncDataService"
+            android:theme="@style/AppTheme.NoActionBar"
             android:enabled="true" />
 
         <activity android:name=".activity.MailActivity" />
@@ -75,12 +77,14 @@
 
         <activity android:name=".activity.TermsCondition" />
 
-        <activity android:name=".activity.RegistrationActivityNew" />
+        <activity android:name=".activity.RegistrationActivityNew"
+            android:theme="@style/AppTheme.NoActionBar"/>
 
 
         <activity
             android:name=".activity.ShowPrescriptionImageActivity"
             android:configChanges="orientation|screenSize"
+            android:theme="@style/AppTheme.NoActionBar"
             android:launchMode="singleTask" />
 
 
@@ -96,6 +100,8 @@
         <activity
             android:name=".quickAdd.EditIncompleteRecordsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:launchMode="singleTask"
             android:label="@string/title_edit_quick_add" />
         <!-- android:configChanges="orientation|screenSize|keyboardHidden"-->
         <!--  Commented this service for test build-->
@@ -104,6 +110,7 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <service android:name=".fcm.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />

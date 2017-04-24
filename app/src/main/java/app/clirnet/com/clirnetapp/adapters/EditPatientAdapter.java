@@ -74,6 +74,12 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
         holder.tv_visit_date.setText(model.getVisit_date());
 
         holder.tv_ailment.setText(model.getAilments());
+        String mAilment=model.getAilments();
+        if (mAilment != null && !mAilment.equals("") && mAilment.length()>0) {
+            holder.tv_ailment.setText(mAilment);
+        }else{
+            holder.linearlayoutAilment.setVisibility(View.GONE);
+        }
 
 
         String clinicalNotes = model.getClinicalNotes().trim();
@@ -118,7 +124,7 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
 
             } else {
                 holder.imgText.setBackgroundColor(mContext.getResources().getColor(R.color.grey));
-                holder.imgText.setTextColor(mContext.getResources().getColor(R.color.bg_list_row));
+                holder.imgText.setTextColor(mContext.getResources().getColor(R.color.white));
                 holder.imgText.setText("No Prescription Attached");
             }
         } catch (NullPointerException e) {
@@ -171,7 +177,7 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
         private final TextView imgText, tv_diagnosis, tv_symptoms;
         private final LinearLayout linearlayoutSymptoms;
         private final LinearLayout linearlayoutDiagnosis;
-        private final LinearLayout llayout;
+        private final LinearLayout linearlayoutAilment,llayout;
 
 
         HistoryViewHolder(View view) {
@@ -188,6 +194,7 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
             linearlayoutSymptoms = (LinearLayout) view.findViewById(R.id.linearlayoutSymptoms);
             linearlayoutDiagnosis = (LinearLayout) view.findViewById(R.id.linearlayoutDiagnosis);
             llayout=(LinearLayout)view.findViewById(R.id.llayout);
+            linearlayoutAilment = (LinearLayout) view.findViewById(R.id.linearlayoutAilment);
 
         }
     }

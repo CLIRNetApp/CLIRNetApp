@@ -18,7 +18,6 @@ import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
-
 public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpdateAdapter.HistoryViewHolder> {
 
     private final List<RegistrationModel> patientList;
@@ -65,6 +64,13 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
         holder.tv_visit_date.setText(model.getVisit_date());
 
         holder.tv_ailment.setText(model.getAilments());
+        String mAilment=model.getAilments();
+       // Log.e("mAilment","  "+mAilment);
+        if (mAilment != null && !mAilment.equals("") && mAilment.length()>0) {
+            holder.tv_ailment.setText(mAilment);
+        }else{
+            holder.linearlayoutAilment.setVisibility(View.GONE);
+        }
 
 
         String clinicalNotes = model.getClinicalNotes().trim();
@@ -92,7 +98,8 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
         try {
             final String imgPath = patientList.get(position).getPres_img();
             if (!TextUtils.isEmpty(imgPath)) {
-
+                holder.imgText.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimaryDark));
+                holder.imgText.setTextColor(mContext.getResources().getColor(R.color.white));
                 holder.imgText.setText("View Prescription");
                 holder.imgText.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -105,7 +112,10 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
                 });
 
             }else{
-                holder.imgText.setText("No Prescription Attached");
+                    holder.imgText.setBackgroundColor(mContext.getResources().getColor(R.color.grey));
+                    holder.imgText.setTextColor(mContext.getResources().getColor(R.color.white));
+                    holder.imgText.setText("No Prescription Attached");
+
             }
         } catch (NullPointerException e) {
             e.printStackTrace();
@@ -127,7 +137,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
         private final TextView tv_clinical_notes;
         private final TextView imgText;
         private final LinearLayout linearlayoutSymptoms;
-        private final LinearLayout linearlayoutDiagnosis;
+        private final LinearLayout linearlayoutDiagnosis,linearlayoutAilment;
         private final TextView  tv_diagnosis, tv_symptoms;
 
         HistoryViewHolder(View view) {
@@ -142,6 +152,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
 
             linearlayoutSymptoms = (LinearLayout) view.findViewById(R.id.linearlayoutSymptoms);
             linearlayoutDiagnosis = (LinearLayout) view.findViewById(R.id.linearlayoutDiagnosis);
+            linearlayoutAilment = (LinearLayout) view.findViewById(R.id.linearlayoutAilment);
 
         }
     }

@@ -69,11 +69,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private String strState;
     private String strAlternatenumber;
     private String strAlternatephtype;
-    private String strPhoneTpe;
-    private String strVisitDate;
-    private String struid;
-    private String strEmail;
-    private String url;
+
 
 
     @Override
@@ -120,10 +116,10 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         strAlternatenumber = getIntent().getStringExtra("ALTERNATENUMBER");
 
         strAlternatephtype = getIntent().getStringExtra("ALTERNATENUMBERTYPE");
-        strPhoneTpe = getIntent().getStringExtra("PHONETYPE");
-        strVisitDate=getIntent().getStringExtra("VISITDATE");
-        struid = getIntent().getStringExtra("UID");
-        strEmail=getIntent().getStringExtra("EMAIL");
+    /*    String strPhoneTpe = getIntent().getStringExtra("PHONETYPE");
+        String strVisitDate = getIntent().getStringExtra("VISITDATE");
+        String struid = getIntent().getStringExtra("UID");
+        String strEmail = getIntent().getStringExtra("EMAIL");*/
 
 
         TextView txtSysDate = (TextView) findViewById(R.id.sysdate);
@@ -201,7 +197,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Show patient Details" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Show patient Details" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         //To changes backgound images on time slot
 
@@ -348,7 +344,8 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             appController.setUpAdd(ShowPersonalDetailsActivity.this,bannerimgNames,backChangingImages,doctor_membership_number,"Show Personal Details");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Show patient Details" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
         }
 
     }
@@ -402,13 +399,11 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         strState = null;
         strAlternatenumber = null;
         strAlternatephtype = null;
-        strPhoneTpe = null;
         editpatientName= null;
         editage= null;
         editmobileno= null;
         editgender= null;
         editlang= null;
-        url=null;
         // System.gc();
     }
 
@@ -433,18 +428,15 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //Log.d("lifecycle","onResume invoked");
     }
     @Override
     protected void onPause() {
         super.onPause();
-        // Log.d("lifecycle","onPause invoked");
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
         setupAnimation();
-        // Log.d("lifecycle","onRestart invoked");
     }
 }

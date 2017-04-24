@@ -2,6 +2,7 @@ package app.clirnet.com.clirnetapp.fragments;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -72,7 +73,11 @@ public class ReportFragment extends Fragment {
 
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
+    }
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -154,7 +159,7 @@ public class ReportFragment extends Fragment {
 
                 } catch (ParseException e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Report Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
 
                 if (diffInHours <= 0) {
@@ -269,7 +274,7 @@ public class ReportFragment extends Fragment {
 
         } catch (ParseException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Report Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 

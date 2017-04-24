@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:gravity="bottom">
+
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/input_register"
+        android:paddingBottom="10dp" />
+
+    <Button
+        android:id="@+id/fab"
+        android:layout_width="60dp"
+        android:layout_height="72dp"
+        android:layout_margin="2dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/quickadd"
+        app:fabSize="normal"
+        android:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/copy"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/footer_img"
+        android:gravity="center"
+        android:padding="10dp"
+        android:text="\u00a9 Copyright CLIRNet Services Private Limited 2016. All Rights Reserved."
+        android:textColor="@color/input_register"
+        android:textSize="14sp"
+        android:layout_toLeftOf="@+id/quickaddtxt"
+        android:layout_toStartOf="@+id/quickaddtxt" />
+
+    <TextView
+        android:id="@+id/quickaddtxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/copy"
+        android:gravity="right"
+        android:padding="2dp"
+        android:text="Quick Add"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
+        android:visibility="invisible"/>
+
+    <TextView
+        android:id="@+id/privacyPolicy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/copy"
+        android:layout_toLeftOf="@+id/termsandCondition"
+        android:layout_toStartOf="@+id/termsandCondition"
+        android:gravity="center"
+        android:padding="3dp"
+        android:text="Privacy Policy"
+        android:textColor="@color/bg_login" />
+
+    <TextView
+        android:id="@+id/termsandCondition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/copy"
+        android:layout_toLeftOf="@+id/quickaddtxt"
+        android:layout_toStartOf="@+id/quickaddtxt"
+        android:gravity="center"
+        android:padding="3dp"
+        android:text="Terms and Conditions"
+        android:textColor="@color/bg_login" />
+
+    <ImageView
+        android:id="@+id/footer_img"
+        android:layout_width="wrap_content"
+        android:layout_height="55dp"
+        android:layout_gravity="center"
+        android:contentDescription="@string/desc"
+        android:src="@drawable/logon"
+        android:foregroundGravity="center"
+        android:layout_below="@+id/fab"
+        android:layout_centerHorizontal="true" />
+
+
+</RelativeLayout>

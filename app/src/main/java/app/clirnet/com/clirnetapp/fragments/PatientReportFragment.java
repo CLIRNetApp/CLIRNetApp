@@ -2,6 +2,7 @@ package app.clirnet.com.clirnetapp.fragments;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -63,7 +64,11 @@ public class PatientReportFragment extends Fragment {
         // Required empty public constructor
         setHasOptionsMenu(true);
     }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -210,7 +215,7 @@ public class PatientReportFragment extends Fragment {
             } catch (ParseException e) {
 
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "PatientReportFragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "PatientReportFragment" + e +" Line Number: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
             int size1 = newcount.size();
@@ -227,7 +232,7 @@ public class PatientReportFragment extends Fragment {
 
         } catch (Exception e) {
             e.printStackTrace();
-            new AppController().appendLog(new AppController().getDateTime() + " " + "/ " + "PatientReportFragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            new AppController().appendLog(new AppController().getDateTime() + " " + "/ " + "PatientReportFragment" + e +" Line Number: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         LineDataSet set1;

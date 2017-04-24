@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -115,13 +114,13 @@ public class AppController extends Application {
      * @param screenName screen name to be displayed on GA dashboard
      */
     public void trackScreenView(String screenName) {
-        Tracker t = getGoogleAnalyticsTracker();
+        Tracker tracker = getGoogleAnalyticsTracker();
 
         // Set screen name.
-        t.setScreenName(screenName);
+        tracker.setScreenName(screenName);
 
         // Send a screen view.
-        t.send(new HitBuilders.ScreenViewBuilder().build());
+        tracker.send(new HitBuilders.ScreenViewBuilder().build());
 
         GoogleAnalytics.getInstance(this).dispatchLocalHits();
     }
@@ -201,6 +200,8 @@ public class AppController extends Application {
 
                 logFile.getParentFile().mkdirs(); // Will create parent directories if not exists
                 logFile.createNewFile();
+
+
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -225,7 +226,6 @@ public class AppController extends Application {
             } catch (Exception e) {
                 e.printStackTrace();
                 throw new ClirNetAppException("Remove leading zeros");
-
             }
         }
 
@@ -374,7 +374,7 @@ public class AppController extends Application {
 
         } catch (ParseException e) {
             e.printStackTrace();
-            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         return frmtedDate;
     }
@@ -390,7 +390,7 @@ public class AppController extends Application {
 
         } catch (Exception e) {
             e.printStackTrace();
-            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         }
 
@@ -492,11 +492,11 @@ public class AppController extends Application {
 
             } catch (Exception e) {
                 e.printStackTrace();
-                this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         }
 
@@ -523,7 +523,7 @@ public class AppController extends Application {
         Button btnseedrugProfile = (Button) dialog.findViewById(R.id.seedrugProfile);
         Button btnseeclinical_trial = (Button) dialog.findViewById(R.id.seeclinical_trial);
 
-        if (!product_image_name.equals("") && product_image_url != null && product_image_url.trim().length() > 0 && product_image_name.trim().length() > 0) {
+        if (product_image_url != null && !product_image_name.equals("") && product_image_url.trim().length() > 0 && product_image_name.trim().length() > 0) {
 
             BitmapDrawable d = new BitmapDrawable(context.getResources(), "sdcard/BannerImages/" + product_image_name + ".png"); // path is ur resultant //image
 
@@ -531,7 +531,7 @@ public class AppController extends Application {
         } else {
             productImage.setImageResource(R.drawable.brand);
         }
-        if (banner_type.equals("product")) {
+        if (banner_type!=null && banner_type.equals("product")) {
             dialog.setTitle("Product Details");
             mktByText.setVisibility(View.VISIBLE);
             brand_nameText.setVisibility(View.VISIBLE);
@@ -644,6 +644,7 @@ public class AppController extends Application {
                         context.startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(updatedUrl)));
                     } catch (Exception e) {
                         e.printStackTrace();
+                        appendLog(getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                     }
                    /* Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalLink_to_page));
@@ -808,6 +809,8 @@ public class AppController extends Application {
             }
 
         } catch (Exception e) {
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
             e.printStackTrace();
         }
 
@@ -855,10 +858,7 @@ public class AppController extends Application {
                 String strreason = reason.getText().toString();
                 String strDate = date.getText().toString();
                 String brand_name = null, generic_name = null;
-                String company_id = null, doctor_id = null, doc_mem_id = null, modified_on = null, is_deleted = null;
-                String deleted_on = null, is_disabled = null, disabled_by = null, disabled_on = null;
-                String request_on = getDateTimenew();//get current time stamp
-
+                String company_id = null, doc_mem_id = null;
 
                 if (strDate.length() <= 0) {
                     date.setError("Please Enter Date");
@@ -874,29 +874,21 @@ public class AppController extends Application {
 
                 String from_time = fromtime.getText().toString();
                 String to_time = totime.getText().toString();
-                String reqest_fullfilled = null;
 
-                String modified_by = null;
-                String flag = "0";
                 if (listBannerInformation.size() > 0) {
 
                     brand_name = listBannerInformation.get("brand_name");
                     generic_name = listBannerInformation.get("generic_name");
                     company_id = listBannerInformation.get("company_id");
-                    doctor_id = listBannerInformation.get("doctor_id");
                     doc_mem_id = listBannerInformation.get("doc_mem_id");
-
                 }
-                String added_by = doctor_id;
-                String added_on = request_on;
+
                 boolean isInternetPresent = connectionDetector.isConnectingToInternet();//chk internet
                 if (isInternetPresent) {
                     new CallMeMeetMeAsynTask(context1, savedUserName, savedUserPassword, brand_name, company_id, generic_name, called_from, strDate, from_time, to_time, address, strreason, doc_mem_id, getDateTimenew());
 
                 }
-                 /* dbController.addCallMeetMeData(brand_name, company_id, generic_name, called_from, strDate, from_time, to_time,
-                        address, strreason, doctor_id, doc_mem_id, request_on, reqest_fullfilled, modified_on, modified_by, is_deleted, is_disabled, disabled_by, disabled_on,deleted_on,flag,added_on,added_by);*/
-                //Toast.makeText(context1,"Message send  you will recieve responce soon",Toast.LENGTH_LONG).show();
+
                 dialog.dismiss();
             }
 
@@ -1019,7 +1011,7 @@ public class AppController extends Application {
             //Log.e("banner_id", "  " + banner_id+""+banner_folder);
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
-            appendLog(getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         try {
             if (dbController != null)
@@ -1034,7 +1026,7 @@ public class AppController extends Application {
                 }
         } catch (NullPointerException e) {
             e.printStackTrace();
-            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         }
     }
@@ -1058,7 +1050,7 @@ public class AppController extends Application {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appendLog(getDateTime() + " " + "/ " + "AppController" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
 
             if (sqlController1 != null) {
@@ -1114,6 +1106,8 @@ public class AppController extends Application {
             //  return !(b == null || b.equals(""));
         } catch (Exception e) {
             e.printStackTrace();
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
         }
         return !(b == null || b.equals(""));
     }
@@ -1129,7 +1123,7 @@ public class AppController extends Application {
 
             mediaImage = new File(AppConfig.SDCARD_PATH + imagename);
         } catch (Exception e) {
-            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             e.printStackTrace();
         }
@@ -1155,15 +1149,12 @@ public class AppController extends Application {
                             // path = file.getAbsolutePath();
                             return bitmap;
                         }
-                        System.out.println("File Path : " + file + ", File size : " + length + " KB");
                     }
 
                 } catch (Exception e) {
                     // You Could provide a more explicit error message for IOException
-                    this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
-                    Log.e("ImageDownloader", "Something went wrong while" +
-                            " retrieving bitmap from " + url + e.toString());
                 }
 
 
@@ -1200,9 +1191,9 @@ public class AppController extends Application {
                         });
                         String action = "display";
                         saveBannerDataIntoDb(url, context, doctor_membership_number, action, pageTitle);
-                    }else{
-                        Log.e("NoImage","No Image to Display");
-                    }
+                    }/*else{
+                      //  Log.e("NoImage","No Image to Display");
+                    }*/
                 }
             }
 
@@ -1216,7 +1207,6 @@ public class AppController extends Application {
         Collections.addAll(_stateList, some_array);
         if (value != null) {
             int postion = getCategoryPos(_stateList, value);
-            Log.e("postion"," "+postion);
             spinner.setSelection(postion);
         }
     }
@@ -1233,6 +1223,11 @@ public class AppController extends Application {
         //return haystack.toLowerCase().indexOf( needle.toLowerCase() ) > -1
 
         return haystack.toLowerCase().contains(needle.toLowerCase());
+    }
+
+    public boolean getImageFromPath(String filePath ){
+        File file = new File(filePath);
+        return file.exists();
     }
 }
 

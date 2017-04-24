@@ -2,6 +2,7 @@ package app.clirnet.com.clirnetapp.fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -55,7 +56,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private EditText firstName;
     private EditText lastName;
     private EditText phone_no;
-    private TextView age;
     private String sex;
     private String strfname;
     private String strlname;
@@ -112,7 +112,11 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         rootview = null;
 
     }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -632,13 +636,15 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         if (end <= queryCount) {
             try {
                 memberList = sqlController.getFilterDatanew(strfname, strlname, sex, strpno, strage, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit);
-            } catch (ClirNetAppException e) {
+            } catch (ClirNetAppException | NullPointerException e) {
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "PhHistory Fragment" + e + " Line Number:  " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                 e.printStackTrace();
             }
             try {
                 poHistoryAdapter.addAll(memberList);
             } catch (Exception e) {
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "PhHistory Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                 e.printStackTrace();
             }

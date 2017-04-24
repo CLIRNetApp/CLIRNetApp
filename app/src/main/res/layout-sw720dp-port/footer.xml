@@ -15,10 +15,10 @@
 
     <ImageView
         android:id="@+id/footer_img"
-        android:layout_width="800dp"
+        android:layout_width="match_parent"
         android:layout_height="55dp"
         android:layout_below="@+id/view"
-        android:layout_gravity="center"
+        android:gravity="center"
         android:contentDescription="@string/desc"
         android:src="@drawable/logon" />
 
@@ -30,12 +30,11 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:background="@drawable/quickadd"
-        app:fabSize="normal"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/copy"
-        android:layout_width="800dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/footer_img"
         android:gravity="center"
@@ -44,19 +43,6 @@
         android:textColor="@color/input_register"
         android:textSize="14sp" />
 
-    <TextView
-        android:id="@+id/quickaddtxt"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/copy"
-        android:gravity="right"
-        android:padding="2dp"
-        android:text="Quick Add"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:textColor="@color/colorPrimary"
-        android:textSize="16sp"
-        android:visibility="invisible"/>
 
     <TextView
         android:id="@+id/privacyPolicy"
@@ -67,16 +53,16 @@
         android:layout_toStartOf="@+id/termsandCondition"
         android:gravity="center"
         android:padding="3dp"
-        android:text="Privacy Policy "
+        android:text="Privacy Policy"
         android:textColor="@color/bg_login" />
 
     <TextView
         android:id="@+id/termsandCondition"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
         android:layout_below="@+id/copy"
-        android:layout_toLeftOf="@+id/quickaddtxt"
-        android:layout_toStartOf="@+id/quickaddtxt"
         android:gravity="center"
         android:padding="3dp"
         android:text="Terms and Conditions"

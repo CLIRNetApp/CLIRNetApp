@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
@@ -95,7 +94,6 @@ public class EditPersonalInfo extends AppCompatActivity {
     private String modifiedTime;
     private ImageView backChangingImages;
     private LastnameDatabaseClass lastNamedb;
-    private String middle_name;
     private Spinner phType;
     private AppController appController;
     private Button save;
@@ -136,7 +134,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         getSupportActionBar().setTitle(Html.fromHtml("<font color='white'>Edit Personal Information</font>"));
@@ -191,7 +189,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         edtCity = (BootstrapEditText) findViewById(R.id.city);
         edtDistrict = (BootstrapEditText) findViewById(R.id.district);
         edtPin = (BootstrapEditText) findViewById(R.id.pin);
-        edtEmail_id=(BootstrapEditText)findViewById(R.id.email_id);
+        edtEmail_id = (BootstrapEditText) findViewById(R.id.email_id);
 
         save = (Button) findViewById(R.id.save);
         backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
@@ -217,7 +215,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         Date todayDate = new Date();
 
-        SimpleDateFormat sdf1 = new SimpleDateFormat("dd MMMM,yyyy",Locale.ENGLISH);
+        SimpleDateFormat sdf1 = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
         Date todayDate1 = new Date();
 
         String dd = sdf1.format(todayDate1);
@@ -228,7 +226,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         modified_on_date = sdf.format(todayDate);
 
 
-        SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss",Locale.ENGLISH);
+        SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
         Date todayDate3 = new Date();
 
 
@@ -270,7 +268,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
             if (sqlController != null) {
                 sqlController.close();
@@ -325,7 +323,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         }).start();
 
         //this is to check of image url is null or not for handle null pointer exception 13-8-16 Ashish
-        if (strPatientPhoto != null && !TextUtils.isEmpty(strPatientPhoto)) {
+        if (strPatientPhoto != null && !TextUtils.isEmpty(strPatientPhoto) && appController.getImageFromPath(strPatientPhoto)) {
 
             setUpGlide(strPatientPhoto, patientImage);
 
@@ -350,13 +348,12 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         //set Language value to  spinner
         // setLanguageSpinnerAdapters();
 
-        Cursor cursor = null;
         try {
 
             if (sqlController == null) {
@@ -369,17 +366,12 @@ public class EditPersonalInfo extends AppCompatActivity {
 
             mLastNameList = lastNamedb.getLastNameNew();
 
-            if (mLastNameList.size() > 0) {
-                setLastnameSpinner();
-            }
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + " Edit Personal Info " + e + "  " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " Edit Personal Info " + e + "  Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
+
             if (lastNamedb != null) {
                 lastNamedb.close();
             }
@@ -520,7 +512,6 @@ public class EditPersonalInfo extends AppCompatActivity {
                 imagesFolder = new File(Environment.getExternalStorageDirectory(), "PatientsImages");
                 imagesFolder.mkdirs();
                 first_name = editfirstname.getText().toString().trim();
-                middle_name = editmiddlename.getText().toString().trim();
                 last_name = editlasttname.getText().toString().trim();
 
 
@@ -615,7 +606,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 String strCity = edtCity.getText().toString().trim();
                 String strDistrict = edtDistrict.getText().toString().trim();
                 String strPin = edtPin.getText().toString().trim();
-                String strEmailId=edtEmail_id.getText().toString();
+                String strEmailId = edtEmail_id.getText().toString();
                 //Removes  leading zeros from age filed  11-11-2016 By.Ashish
                 int length = 0;
                 int age = 0;
@@ -626,7 +617,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                         age = Integer.parseInt(editAge);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration Page : " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration Page : " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                     }
                 }
                 //   editAge = AppController.removeLeadingZeroes(editAge);
@@ -660,10 +651,9 @@ public class EditPersonalInfo extends AppCompatActivity {
                     return;
                 }
                 Boolean valuenew = appController.PhoneNumberValidation(editPno);
-                //  Log.e("value", "  "+value);
+
                 if (!valuenew) {
                     editmobile_no.setError("Enter Valid Mobile Number");
-                    // Toast.makeText(getApplicationContext(), "Mobile Number should be 10 digits", Toast.LENGTH_LONG).show();
                     return;
                 }
                 if (TextUtils.isEmpty(editPno)) {
@@ -689,34 +679,31 @@ public class EditPersonalInfo extends AppCompatActivity {
                     // Toast.makeText(getApplicationContext(), "Mobile Number should be 10 digits", Toast.LENGTH_LONG).show();
                     return;
                 }
-                SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
-                SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+                SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
-
-                // Log.e("added_on","  "+added_on + "  "+sysdate.toString());
                 //convert visit date from 2016-11-1 to 2016-11-01
                 try {
                     modified_on_date = myFormat.format(fromUser.parse(modified_on_date));
 
-
                 } catch (ParseException e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
                 String strUid = uid.getText().toString();
 
                 String modified_by = docId;
                 String action = "modified";
                 String flag = "0";
-                String status=null;
+                String status = null;
                 try {
 
                     if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
 
-                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType,status,strEmailId);
+                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, status, strEmailId);
                         // Log.e("kt", "1");
                     } else {
-                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType,status,strEmailId);
+                        dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, status, strEmailId);
                         //Log.e("bt", "2");
                     }
 
@@ -725,7 +712,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 } finally {
                     if (dbController != null) {
                         dbController.close();
@@ -734,7 +721,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         });
 
-         setupAnimation();
+        setupAnimation();
     }
 
 
@@ -777,8 +764,8 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         });
 
-       /////////////////////////////////////////////////////
-         isd_code = (Spinner) findViewById(R.id.isd_code);
+        /////////////////////////////////////////////////////
+        isd_code = (Spinner) findViewById(R.id.isd_code);
         isd_code.setPrompt("Select Type");
 
         // Creating adapter for spinner
@@ -807,7 +794,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         });
 /////////////////////////////////////////////////////
-        Spinner isd_code2=(Spinner)findViewById(R.id.isd_code2);
+        Spinner isd_code2 = (Spinner) findViewById(R.id.isd_code2);
         isd_code2.setPrompt("Select Type");
 
         // Creating adapter for spinner
@@ -827,10 +814,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                //   Log.v("item", (String) parent.getItemAtPosition(position));
-
                 selectedAlternateNoIsd_codeType = (String) parent.getItemAtPosition(position);
-                // Toast.makeText(RegistrationActivityNew.this, "selected State is:" + selectedState, Toast.LENGTH_LONG).show();
             }
 
             @Override
@@ -840,12 +824,6 @@ public class EditPersonalInfo extends AppCompatActivity {
         });
 
     }
-
-    private void setLastnameSpinner() {
-
-
-    }
-
 
     private void showCancelAlertDialog() {
 
@@ -901,7 +879,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 
@@ -920,7 +898,7 @@ public class EditPersonalInfo extends AppCompatActivity {
             //  patientImage.setImageBitmap(bitmap);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Personal Info" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
     }
@@ -970,7 +948,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
         try {
 
-            appController.setUpAdd(EditPersonalInfo.this,bannerimgNames,backChangingImages,doctor_membership_number,"Edit Personal Info");
+            appController.setUpAdd(EditPersonalInfo.this, bannerimgNames, backChangingImages, doctor_membership_number, "Edit Personal Info");
 
 
         } catch (Exception e) {
@@ -993,11 +971,13 @@ public class EditPersonalInfo extends AppCompatActivity {
         startActivity(i);
         finish();
     }
+
     @Override
     protected void onResume() {
         super.onResume();
         //Log.d("lifecycle","onResume invoked");
     }
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -1008,13 +988,11 @@ public class EditPersonalInfo extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         setupAnimation();
-        // Log.d("lifecycle","onRestart invoked");
+
     }
 
     @Override
     protected void onDestroy() {
-        //android.os.Process.killProcess(android.os.Process.myPid());
-
         super.onDestroy();
         if (bitmap != null) {
             bitmap.recycle();
@@ -1039,8 +1017,6 @@ public class EditPersonalInfo extends AppCompatActivity {
         doctor_membership_number = null;
         bannerimgNames = null;
         cleanResources();
-        System.gc();
-
     }
 
     private void cleanResources() {
@@ -1070,7 +1046,6 @@ public class EditPersonalInfo extends AppCompatActivity {
         modified_on_date = null;
         docId = null;
         modifiedTime = null;
-        middle_name = null;
         phType = null;
 
         selectedState = null;
@@ -1087,14 +1062,14 @@ public class EditPersonalInfo extends AppCompatActivity {
         selectedPhoneTypealternate_no = null;
         alternatemobile_no = null;
         isd_code = null;
-        edtEmail_id=null;
-        url=null;
-        backChangingImages=null;
-        mLastNameList=null;
-        phType=null;
+        edtEmail_id = null;
+        url = null;
+        backChangingImages = null;
+        mLastNameList = null;
+        phType = null;
 
-        fromWhere=null;
-        selectedPhoneType=null;
+        fromWhere = null;
+        selectedPhoneType = null;
     }
 
 

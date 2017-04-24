@@ -17,6 +17,7 @@ import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -171,12 +172,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
     private TextView textRefredByShow;
     private TextView textRefredToShow;
-    private String strReferredById;
-    private String strReferredTo1Id;
-    private String strReferredTo2Id;
-    private String strReferredTo3Id;
-    private String strReferredTo4Id;
-    private String strReferredTo5Id;
+
     private String strReferredByName;
     private String strReferredTo1Name;
     private String strReferredTo2Name;
@@ -339,7 +335,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Records Fragment " + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
         }
 
         addListners();
@@ -375,7 +372,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         try {
             mDiagnosisList = lastNamedb.getDiagnosis();
@@ -390,7 +387,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -581,55 +578,58 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
             }
 
-            setSpinner( f);
+            setSpinner(f);
 
-            nameReferalsList.add(0,"Select Referrals");
+            nameReferalsList.add(0, "Select Referrals");
 
             if (strReferedBy != null && !strReferedBy.equals("")) {
 
                 String referedBy = sqlController.getNameByIdAssociateMaster(strReferedBy);
+                String title = sqlController.getTitleByNameAssociateMaster(referedBy);
 
                 String[] some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
-                appController.setSpinnerPosition(nameRefredBySpinner, some_array, referedBy);
+                appController.setSpinnerPosition(nameRefredBySpinner, some_array, title + " " + referedBy);
 
                 textRefredByShow.setText(referedBy);
                 // testArrayList("Method1:ArrayListOfHashMaps", Integer.parseInt(strReferedBy),list);
             }
+
             if (strReferedTo != null && !strReferedTo.equals("")) {
 
-                if (strReferedTo.length() > 1) {
+                if (strReferedTo.length() > 0) {
                     String delimiter = ",";
 
                     String[] temp = strReferedTo.split(delimiter);
 
                     for (String aTemp : temp) {
-                        String referedBy = sqlController.getNameByIdAssociateMaster(aTemp);
-
-                        abc.add(referedBy);
+                        String referedTo = sqlController.getNameByIdAssociateMaster(aTemp);
+                       // Log.e("strReferedTo0", "" + referedTo);
+                        abc.add(referedTo);
                     }
                 }
                 int size = abc.size();
 
                 if (size > 0) {
-                    String idNo = abc.get(0);
-
-                    String[] some_array ;
+                    String strName = abc.get(0);
+                  //  Log.e("strReferedTo0", " " + strName);
+                    String title = sqlController.getTitleByNameAssociateMaster(strName);
+                    String[] some_array;
                     some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
-                    appController.setSpinnerPosition(nameRefredTo1Spinner, some_array, idNo);
-                } else {
+                    appController.setSpinnerPosition(nameRefredTo1Spinner, some_array, title + " " + strName);
+                } /*else {
                     String referedTo = sqlController.getNameByIdAssociateMaster(strReferedTo);
 
                     String[] some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
 
-                   // System.out.println(Arrays.toString(some_array));
+                    // System.out.println(Arrays.toString(some_array));
                     appController.setSpinnerPosition(nameRefredTo1Spinner, some_array, referedTo);
                 }
-
+*/
             }
 
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAddNewRecords Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -655,8 +655,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
                 StringBuilder sbname = new StringBuilder();
                 if (addCounter >= 0) {
 
-                    if (!strReferredTo1Name.equals("") && strReferredTo1Name.length() > 0) {
-                        code = NameData.get(strReferredTo1Name);
+                    if (strReferredTo1Name!=null &&  !strReferredTo1Name.equals("") && strReferredTo1Name.length() > 0) {
+                        code = NameData.get(strReferredTo1Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(index);
@@ -666,8 +666,9 @@ public class QuickAddNewRecordsFragment extends Fragment {
                 }
                 if (addCounter >= 1) {
 
-                    if (!strReferredTo2Name.equals("") && strReferredTo2Name.length() > 0) {
-                        code = NameData.get(strReferredTo2Name);
+                    if (strReferredTo2Name!=null && !strReferredTo2Name.equals("") && strReferredTo2Name.length() > 0) {
+                        code = NameData.get(strReferredTo2Name.trim());
+                        Log.e("code"," "+code);
                         if (code != null) {
 
                             int index = Integer.parseInt(code);
@@ -678,8 +679,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
                 }
                 if (addCounter >= 2) {
 
-                    if (!strReferredTo3Name.equals("") && strReferredTo3Name.length() > 0) {
-                        code = NameData.get(strReferredTo3Name);
+                    if (strReferredTo3Name!=null &&  !strReferredTo3Name.equals("") && strReferredTo3Name.length() > 0) {
+                        code = NameData.get(strReferredTo3Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
@@ -689,8 +690,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
                 }
                 if (addCounter >= 3) {
 
-                    if (!strReferredTo4Name.equals("") && strReferredTo4Name.length() > 0) {
-                        code = NameData.get(strReferredTo4Name);
+                    if (strReferredTo4Name!=null &&  !strReferredTo4Name.equals("") && strReferredTo4Name.length() > 0) {
+                        code = NameData.get(strReferredTo4Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
@@ -700,8 +701,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
                 }
                 if (addCounter >= 4) {
 
-                    if (!strReferredTo5Name.equals("") && strReferredTo5Name.length() > 0) {
-                        code = NameData.get(strReferredTo5Name);
+                    if (strReferredTo5Name!=null &&  !strReferredTo5Name.equals("") && strReferredTo5Name.length() > 0) {
+                        code = NameData.get(strReferredTo5Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
@@ -712,8 +713,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
                 strReferedTo = String.valueOf(sb);
 
-                if (!strReferredByName.equals("") && strReferredByName.length() > 0) {
-                    code = NameData.get(strReferredByName);
+                if (strReferredByName!=null && !strReferredByName.equals("") && strReferredByName.length() > 0) {
+                    code = NameData.get(strReferredByName.trim());
                     if (code != null) {
                         int index = Integer.parseInt(code);
                         strReferedBy = String.valueOf(index);
@@ -785,7 +786,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
         final TextView refredtoSpeciality5 = (TextView) f.findViewById(R.id.refredtoSpeciality5);
         final TextView refredBySpeciality = (TextView) f.findViewById(R.id.refredBySpeciality);
         try {
-            nameReferalsList = dbController.getReferals();
+            nameReferalsList = dbController.getReferalsnew();
 
             if (nameReferalsList.size() > 0) {
                 ArrayAdapter<String> referralName = new ArrayAdapter<>(getContext(),
@@ -805,7 +806,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         nameRefredTo1Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -818,14 +819,23 @@ public class QuickAddNewRecordsFragment extends Fragment {
                     if (nameRefredTo1Spinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo1Name);
+                        if (appController.contains(strReferredTo1Name, ".")) {
+                            String[] parts = strReferredTo1Name.split(". ", 2);
+                            //    String string1 = parts[0];//namealias
+                            strReferredTo1Name = parts[1].trim();//actual name
 
-                        strReferredTo1Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        refredtoSpeciality1.setText(strSpeclty);
+                        }
+
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo1Name.trim());
+                        if (list.size() > 0) {
+                           // strReferredTo1Id = list.get(0).get("ID");
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            refredtoSpeciality1.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
             }
 
@@ -844,13 +854,20 @@ public class QuickAddNewRecordsFragment extends Fragment {
                     if (nameRefredTo2Spinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo2Name);
-
-                        strReferredTo2Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        refredtoSpeciality2.setText(strSpeclty);
+                        if (appController.contains(strReferredTo2Name, ".")) {
+                            String[] parts = strReferredTo2Name.split(". ", 2);
+                            //    String string1 = parts[0];//namealias
+                            strReferredTo2Name = parts[1].trim();//actual name
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo2Name.trim());
+                      if(list.size()>0) {
+                          //strReferredTo2Id = list.get(0).get("ID");
+                          String strSpeclty = list.get(0).get("SPECIALITY");
+                          refredtoSpeciality2.setText(strSpeclty);
+                      }
                     }
                 } catch (ClirNetAppException e) {
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                     e.printStackTrace();
                 }
             }
@@ -870,14 +887,21 @@ public class QuickAddNewRecordsFragment extends Fragment {
                     if (nameRefredTo3Spinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo3Name);
-
-                        strReferredTo3Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        refredtoSpeciality3.setText(strSpeclty);
+                        if (appController.contains(strReferredTo3Name, ".")) {
+                            String[] parts = strReferredTo3Name.split(". ", 2);
+                            //    String string1 = parts[0];//namealias
+                            strReferredTo3Name = parts[1].trim();//actual name
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo3Name.trim());
+                        if (list.size() > 0) {
+                            //strReferredTo3Id = list.get(0).get("ID");
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            refredtoSpeciality3.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
             }
 
@@ -896,14 +920,21 @@ public class QuickAddNewRecordsFragment extends Fragment {
                     if (nameRefredTo4Spinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo4Name);
-
-                        strReferredTo4Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        refredtoSpeciality4.setText(strSpeclty);
+                        if (appController.contains(strReferredTo4Name, ".")) {
+                            String[] parts = strReferredTo4Name.split(". ", 2);
+                            //    String string1 = parts[0];//namealias
+                            strReferredTo4Name = parts[1].trim();//actual name
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo4Name.trim());
+                        if (list.size() > 0) {
+                            //strReferredTo4Id = list.get(0).get("ID");
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            refredtoSpeciality4.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
             }
 
@@ -921,14 +952,21 @@ public class QuickAddNewRecordsFragment extends Fragment {
                     if (nameRefredTo5Spinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo5Name);
-
-                        strReferredTo5Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        refredtoSpeciality5.setText(strSpeclty);
+                        if (appController.contains(strReferredTo5Name, ".")) {
+                            String[] parts = strReferredTo5Name.split(". ", 2);
+                            //    String string1 = parts[0];//namealias
+                            strReferredTo5Name = parts[1].trim();//actual name
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo5Name.trim());
+                        if (list.size() > 0) {
+                           // strReferredTo5Id = list.get(0).get("ID");
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            refredtoSpeciality5.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
             }
 
@@ -947,14 +985,21 @@ public class QuickAddNewRecordsFragment extends Fragment {
                     if (nameRefredBySpinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredByName);
-
-                        strReferredById = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        refredBySpeciality.setText(strSpeclty);
+                        if (appController.contains(strReferredByName, ".")) {
+                            String[] parts = strReferredByName.split(". ", 2);
+                            //    String string1 = parts[0];//namealias
+                            strReferredByName = parts[1].trim();//actual name
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredByName.trim());
+                        if (list.size() > 0) {
+                            //strReferredById = list.get(0).get("ID");
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            refredBySpeciality.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
             }
 
@@ -1911,12 +1956,6 @@ public class QuickAddNewRecordsFragment extends Fragment {
         edtEmail_id = null;
         textRefredByShow = null;
         textRefredToShow = null;
-        strReferredById = null;
-        strReferredTo1Id = null;
-        strReferredTo2Id = null;
-        strReferredTo3Id = null;
-        strReferredTo4Id = null;
-        strReferredTo5Id = null;
         strReferredByName = null;
         strReferredTo1Name = null;
         strReferredTo2Name = null;
@@ -1989,6 +2028,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
         }
         if (TextUtils.isEmpty(strFirstName)) {
             firstName.setError("Please enter First Name");
@@ -2023,7 +2064,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         if (TextUtils.isEmpty(strFirstName) || TextUtils.isEmpty(strLastName) || TextUtils.isEmpty(phone_number) || phone_number.length() < 10 || TextUtils.isEmpty(current_age)) {
@@ -2128,7 +2169,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
             String action = "added";
@@ -2174,7 +2215,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         try {
@@ -2190,7 +2231,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -2206,6 +2247,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
         } catch (ClirNetAppException e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
         }
     }
 
@@ -2225,7 +2268,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 
@@ -2237,7 +2280,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             edtprescriptionImgPath.setText(uriSavedImage.toString());
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd New Record Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " QuickAdd New Records Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 

@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -183,11 +184,17 @@ public class AddPatientUpdate extends AppCompatActivity {
         appController = new AppController();
 
         try {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            //getSupportActionBar().setDisplayShowHomeEnabled(true);
+            final ActionBar ab = getSupportActionBar();
+            //ab.setHomeAsUpIndicator(R.drawable.ic_menu); // set a custom icon for the default home button
+            ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
+            ab.setDisplayShowTitleEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         if (databaseClass == null) {
@@ -382,7 +389,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         try {
@@ -398,7 +405,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -598,7 +605,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient Update" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient Update" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         // Click cancel to dismiss android custom dialog box
@@ -624,7 +631,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 StringBuilder sb = new StringBuilder();
                 StringBuilder sbname = new StringBuilder();
                 if (addCounter >= 0) {
-                    if (!strReferredTo1Name.equals("") && strReferredTo1Name.length() > 0) {
+                    if (strReferredTo1Name!=null && !strReferredTo1Name.equals("") && strReferredTo1Name.length() > 0) {
                         code = NameData.get(strReferredTo1Name.trim());
 
                         if (code != null) {
@@ -636,7 +643,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 }
                 if (addCounter >= 1) {
 
-                    if (!strReferredTo2Name.equals("") && strReferredTo2Name.length() > 0) {
+                    if (strReferredTo2Name!=null && !strReferredTo2Name.equals("") && strReferredTo2Name.length() > 0) {
                         code = NameData.get(strReferredTo2Name.trim());
                         if (code != null) {
 
@@ -648,7 +655,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 }
                 if (addCounter >= 2) {
 
-                    if (!strReferredTo3Name.equals("") && strReferredTo3Name.length() > 0) {
+                    if (strReferredTo3Name!=null && !strReferredTo3Name.equals("") && strReferredTo3Name.length() > 0) {
                         code = NameData.get(strReferredTo3Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
@@ -659,7 +666,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 }
                 if (addCounter >= 3) {
 
-                    if (!strReferredTo4Name.equals("") && strReferredTo4Name.length() > 0) {
+                    if (strReferredTo4Name!=null && !strReferredTo4Name.equals("") && strReferredTo4Name.length() > 0) {
                         code = NameData.get(strReferredTo4Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
@@ -670,7 +677,7 @@ public class AddPatientUpdate extends AppCompatActivity {
                 }
                 if (addCounter >= 4) {
 
-                    if (!strReferredTo5Name.equals("") && strReferredTo5Name.length() > 0) {
+                    if (strReferredTo5Name!=null && !strReferredTo5Name.equals("") && strReferredTo5Name.length() > 0) {
                         code = NameData.get(strReferredTo5Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
@@ -682,7 +689,7 @@ public class AddPatientUpdate extends AppCompatActivity {
 
                 strReferedTo = String.valueOf(sb);
 
-                if (!strReferredByName.equals("") && strReferredByName.length() > 0) {
+                if (strReferredByName!=null && !strReferredByName.equals("") && strReferredByName.length() > 0) {
                     code = NameData.get(strReferredByName.trim());
                     if (code != null) {
                         int index = Integer.parseInt(code);
@@ -774,7 +781,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
 
@@ -1191,7 +1198,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 
@@ -1204,7 +1211,7 @@ public class AddPatientUpdate extends AppCompatActivity {
             edtprescriptionImgPath.setText(uriSavedImage.toString());
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "AddPatientUpdate" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 

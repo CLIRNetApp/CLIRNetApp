@@ -16,7 +16,6 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -60,7 +59,6 @@ import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
-import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 import static app.clirnet.com.clirnetapp.R.id.sysdate;
 
@@ -81,7 +79,6 @@ public class QuickAddVisitFragment extends Fragment {
     private String daysSel;
     private TextView txtRecord;
     private TextView txtsymtomsanddignost;
-    private TextView presciptiontext;
     private Button addUpdate;
     private Button cancel;
     private EditText edtInput_sugarfasting;
@@ -90,12 +87,7 @@ public class QuickAddVisitFragment extends Fragment {
     private Button btnclear;
     private ImageView backChangingImages;
     private EditText clinicalNotes;
-    private String strAlternatenumber;
-    private String strAlternatephtype;
-    private String strIsd_code;
-    private String strAlternateIsd_code;
-    private String patientImagePath;
-    private String prescriptionImgPath;
+
     private EditText visitDate;
     private EditText edtInput_weight;
     private EditText edtInput_pulse;
@@ -124,11 +116,8 @@ public class QuickAddVisitFragment extends Fragment {
     private int maxVisitId;
     private BannerClass bannerClass;
     private ArrayList<String> bannerimgNames;
-    private ArrayList<String> mAilmemtArrayList;
     private ArrayList<String> mSymptomsList;
     private AppController appController;
-    private EditText ailments;
-    private ImageView imageViewprescription;
     private String fowSel = null;
     private String usersellectedDate;
     private String monthSel = null;
@@ -137,32 +126,21 @@ public class QuickAddVisitFragment extends Fragment {
 
     private int countvitalsLayout = 1;
     private int countsymtomsanddignostLayout = 1;
-    private int countPrescriptiontLayout = 1;
     private String prescriptionimgPath;
     private String prescriptionimgId;
     private String added_on;
-    private ArrayList<RegistrationModel> mAssociateList;
     private HashMap<String, String> NameData;
-    private ArrayList<String> specialityArray;
-    private StringBuilder sb;
     private int addCounter = 0;
     private String strReferedTo;
     private String strReferedBy;
     private Intent imageIntent;
     private File imagesFolder;
     private Uri uriSavedImage;
-    private String PrescriptionimageName;
     private TextView edtprescriptionImgPath;
-    private String url;
 
     private TextView textRefredByShow;
     private TextView textRefredToShow;
-    private String strReferredById;
-    private String strReferredTo1Id;
-    private String strReferredTo2Id;
-    private String strReferredTo3Id;
-    private String strReferredTo4Id;
-    private String strReferredTo5Id;
+
     private String strReferredByName;
     private String strReferredTo1Name;
     private String strReferredTo2Name;
@@ -173,15 +151,6 @@ public class QuickAddVisitFragment extends Fragment {
 
     public QuickAddVisitFragment() {
         // Required empty public constructor
-    }
-
-
-    public static QuickAddVisitFragment newInstance(String param1, String param2) {
-        QuickAddVisitFragment fragment = new QuickAddVisitFragment();
-        Bundle args = new Bundle();
-
-        fragment.setArguments(args);
-        return fragment;
     }
 
     @Override
@@ -198,12 +167,9 @@ public class QuickAddVisitFragment extends Fragment {
             prescriptionimgPath = getArguments().getString("PRESCRIPTIONIMG");
 
             prescriptionimgId = getArguments().getString("PRESCRIPTIONID");
-            added_on=getArguments().getString("ADDED_ON");
-            strReferedBy=getArguments().getString("REFEREDBY");
-            strReferedTo=getArguments().getString("REFEREDTO");
-            Log.e("QuckAddVisit"," "+strReferedBy +" "+strReferedTo );
-
-
+            added_on = getArguments().getString("ADDED_ON");
+            strReferedBy = getArguments().getString("REFEREDBY");
+            strReferedTo = getArguments().getString("REFEREDTO");
             mPhNo = getArguments().getString("PHONE");
             mAge = getArguments().getString("AGE");
             mLang = getArguments().getString("LANGUAGE");
@@ -230,7 +196,7 @@ public class QuickAddVisitFragment extends Fragment {
         addUpdate = (Button) view.findViewById(R.id.addUpdate);
         txtRecord = (TextView) view.findViewById(R.id.txtRecord);
         txtsymtomsanddignost = (TextView) view.findViewById(R.id.txtsymptomsanddignost);
-      // presciptiontext = (TextView) view.findViewById(R.id.presciptiontext);
+        // presciptiontext = (TextView) view.findViewById(R.id.presciptiontext);
         TextView privacyPolicy = (TextView) view.findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) view.findViewById(R.id.termsandCondition);
 
@@ -256,13 +222,12 @@ public class QuickAddVisitFragment extends Fragment {
 
         clinicalNotes = (EditText) view.findViewById(R.id.clinicalNotes);
 
-        imageViewprescription = (ImageView) view.findViewById(R.id.imageViewprescription);
 
         edtSymptoms = (MultiAutoCompleteTextView) view.findViewById(R.id.symptoms);
         edtDignosis = (MultiAutoCompleteTextView) view.findViewById(R.id.dignosis);
 
-        textRefredByShow=(TextView)view.findViewById(R.id.txtrefredby) ;
-        textRefredToShow=(TextView)view.findViewById(R.id.txtrefredto) ;
+        textRefredByShow = (TextView) view.findViewById(R.id.txtrefredby);
+        textRefredToShow = (TextView) view.findViewById(R.id.txtrefredto);
 
         if (databaseClass == null) {
             databaseClass = new DatabaseClass(getActivity().getApplicationContext());
@@ -309,7 +274,7 @@ public class QuickAddVisitFragment extends Fragment {
         int day1 = c.get(Calendar.DAY_OF_MONTH);
 
         addedOnDate = String.valueOf(new StringBuilder().append(day1).append("-").append(month1 + 1).append("-").append(year1).append(""));
-       // visitDate.setText(addedOnDate);
+        // visitDate.setText(addedOnDate);
 
         editpatientName.setText(strName);
         editmobileno.setText(mPhNo);
@@ -384,7 +349,7 @@ public class QuickAddVisitFragment extends Fragment {
             }
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         } finally {
             if (sqlController != null) {
@@ -406,7 +371,7 @@ public class QuickAddVisitFragment extends Fragment {
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
         try {
             ArrayList<String> mDiagnosisList = lastNamedb.getDiagnosis();
@@ -421,7 +386,7 @@ public class QuickAddVisitFragment extends Fragment {
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         cancel.setOnTouchListener(new View.OnTouchListener() {
@@ -491,6 +456,7 @@ public class QuickAddVisitFragment extends Fragment {
         return view;
 
     }
+
     private void showReferedDialogBox() {
 
         final Dialog dialog = new Dialog(new ContextThemeWrapper(getContext(), android.R.style.Theme_DeviceDefault_Light_NoActionBar_Overscan));
@@ -508,11 +474,9 @@ public class QuickAddVisitFragment extends Fragment {
 
         final Spinner nameRefredBySpinner = (Spinner) f.findViewById(R.id.nameRefredBySpinner);
         final Spinner nameRefredTo1Spinner = (Spinner) f.findViewById(R.id.nameRefredTo1Spinner);
-        specialityArray = new ArrayList<>();
+
 
         try {
-
-            mAssociateList = sqlController.getAssociateDataIdName();
             final ArrayList<HashMap<String, String>> list = sqlController.getAllDataAssociateMaster();
 
             NameData = new HashMap<>();
@@ -521,57 +485,53 @@ public class QuickAddVisitFragment extends Fragment {
             for (int im = 0; im < list.size(); im++) {
                 String strid = list.get(im).get("ID");
                 String strName = list.get(im).get("NAME");
-                String str = list.get(im).get("SPECIALITY");
-                specialityArray.add(str);
-                NameData.put(strName, strid);
-              //  Log.e("str", " " + strName + "  " + strid + " " + str);
+              //  String str = list.get(im).get("SPECIALITY");
 
+                NameData.put(strName, strid);
             }
 
             setSpinner(f);
 
-            nameReferalsList.add(0,"Select Referrals");
+            nameReferalsList.add(0, "Select Referrals");
 
             if (strReferedBy != null && !strReferedBy.equals("")) {
 
                 String referedBy = sqlController.getNameByIdAssociateMaster(strReferedBy);
+                String title = sqlController.getTitleByNameAssociateMaster(referedBy);
                 String[] some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
-                appController.setSpinnerPosition(nameRefredBySpinner,some_array,referedBy);
+                appController.setSpinnerPosition(nameRefredBySpinner, some_array, title + " " + referedBy);
 
                 textRefredByShow.setText(referedBy);
             }
             if (strReferedTo != null && !strReferedTo.equals("")) {
 
-                if (strReferedTo.length() > 1) {
+                if (strReferedTo.length() > 0) {
                     String delimiter = ",";
 
                     String[] temp = strReferedTo.split(delimiter);
 
                     for (String aTemp : temp) {
-                        String referedBy = sqlController.getNameByIdAssociateMaster(aTemp);
-
-                        abc.add(referedBy);
+                        String referedTo = sqlController.getNameByIdAssociateMaster(aTemp);
+                        abc.add(referedTo);
                     }
                 }
                 int size = abc.size();
 
                 if (size > 0) {
 
-                    String idNo= abc.get(0);
-                    String[] some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
-                    appController.setSpinnerPosition(nameRefredTo1Spinner,some_array,idNo);
-                } else {
-                    String referedTo = sqlController.getNameByIdAssociateMaster(strReferedTo);
-                    String[] some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
-                    appController.setSpinnerPosition(nameRefredTo1Spinner,some_array,referedTo);
-                }
+                    String strName = abc.get(0);
 
+                    String title = sqlController.getTitleByNameAssociateMaster(strName);
+                    String[] some_array;
+                    some_array = nameReferalsList.toArray(new String[nameReferalsList.size()]);
+                    appController.setSpinnerPosition(nameRefredTo1Spinner, some_array, title + " " + strName);
+                }
             }
 
 
-            } catch (ClirNetAppException e) {
+        } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         // Click cancel to dismiss android custom dialog box
@@ -595,8 +555,8 @@ public class QuickAddVisitFragment extends Fragment {
                 StringBuilder sbname = new StringBuilder();
                 if (addCounter >= 0) {
 
-                    if (!strReferredTo1Name.equals("") && strReferredTo1Name.length() > 0) {
-                        code = NameData.get(strReferredTo1Name);
+                    if (strReferredTo1Name != null && !strReferredTo1Name.equals("") && strReferredTo1Name.length() > 0) {
+                        code = NameData.get(strReferredTo1Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(index);
@@ -606,8 +566,8 @@ public class QuickAddVisitFragment extends Fragment {
                 }
                 if (addCounter >= 1) {
 
-                    if (!strReferredTo2Name.equals("") && strReferredTo2Name.length() > 0) {
-                        code = NameData.get(strReferredTo2Name);
+                    if (strReferredTo2Name != null && !strReferredTo2Name.equals("") && strReferredTo2Name.length() > 0) {
+                        code = NameData.get(strReferredTo2Name.trim());
                         if (code != null) {
 
                             int index = Integer.parseInt(code);
@@ -618,8 +578,8 @@ public class QuickAddVisitFragment extends Fragment {
                 }
                 if (addCounter >= 2) {
 
-                    if (!strReferredTo3Name.equals("") && strReferredTo3Name.length() > 0) {
-                        code = NameData.get(strReferredTo3Name);
+                    if (strReferredTo3Name != null && !strReferredTo3Name.equals("") && strReferredTo3Name.length() > 0) {
+                        code = NameData.get(strReferredTo3Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
@@ -629,8 +589,8 @@ public class QuickAddVisitFragment extends Fragment {
                 }
                 if (addCounter >= 3) {
 
-                    if (!strReferredTo4Name.equals("") && strReferredTo4Name.length() > 0) {
-                        code = NameData.get(strReferredTo4Name);
+                    if (strReferredTo4Name != null && !strReferredTo4Name.equals("") && strReferredTo4Name.length() > 0) {
+                        code = NameData.get(strReferredTo4Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
@@ -640,8 +600,8 @@ public class QuickAddVisitFragment extends Fragment {
                 }
                 if (addCounter >= 4) {
 
-                    if (!strReferredTo5Name.equals("") && strReferredTo5Name.length() > 0) {
-                        code = NameData.get(strReferredTo5Name);
+                    if (strReferredTo5Name != null && !strReferredTo5Name.equals("") && strReferredTo5Name.length() > 0) {
+                        code = NameData.get(strReferredTo5Name.trim());
                         if (code != null) {
                             int index = Integer.parseInt(code);
                             sb.append(",").append(index);
@@ -652,8 +612,8 @@ public class QuickAddVisitFragment extends Fragment {
 
                 strReferedTo = String.valueOf(sb);
 
-                if (!strReferredByName.equals("") && strReferredByName.length() > 0) {
-                    code = NameData.get(strReferredByName);
+                if (strReferredByName != null && !strReferredByName.equals("") && strReferredByName.length() > 0) {
+                    code = NameData.get(strReferredByName.trim());
                     if (code != null) {
                         int index = Integer.parseInt(code);
                         strReferedBy = String.valueOf(index);
@@ -665,7 +625,7 @@ public class QuickAddVisitFragment extends Fragment {
                 }
                 strReferedTo = String.valueOf(sb);
                 String insertedName = String.valueOf(sbname);
-                insertedName=appController.removeCommaOccurance(insertedName);
+                insertedName = appController.removeCommaOccurance(insertedName);
 
                 textRefredToShow.setText(insertedName + "");
                 addCounter = 0;
@@ -707,7 +667,7 @@ public class QuickAddVisitFragment extends Fragment {
         dialog.show();
     }
 
-    private void setSpinner( View f) {
+    private void setSpinner(View f) {
 
         final Spinner nameRefredBySpinner = (Spinner) f.findViewById(R.id.nameRefredBySpinner);
         final Spinner nameRefredTo1Spinner = (Spinner) f.findViewById(R.id.nameRefredTo1Spinner);
@@ -717,15 +677,15 @@ public class QuickAddVisitFragment extends Fragment {
         final Spinner nameRefredTo5Spinner = (Spinner) f.findViewById(R.id.nameRefredTo5Spinner);
 
 
-
         final TextView refredtoSpeciality1 = (TextView) f.findViewById(R.id.refredtoSpeciality1);
         final TextView refredtoSpeciality2 = (TextView) f.findViewById(R.id.refredtoSpeciality2);
         final TextView refredtoSpeciality3 = (TextView) f.findViewById(R.id.refredtoSpeciality3);
         final TextView refredtoSpeciality4 = (TextView) f.findViewById(R.id.refredtoSpeciality4);
         final TextView refredtoSpeciality5 = (TextView) f.findViewById(R.id.refredtoSpeciality5);
         final TextView refredBySpeciality = (TextView) f.findViewById(R.id.refredBySpeciality);
+
         try {
-            nameReferalsList = dbController.getReferals();
+            nameReferalsList = dbController.getReferalsnew();
 
             if (nameReferalsList.size() > 0) {
                 ArrayAdapter<String> referralName = new ArrayAdapter<>(getContext(),
@@ -752,25 +712,34 @@ public class QuickAddVisitFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                strReferredTo1Name= (String) parent.getItemAtPosition(position);
+                strReferredTo1Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if(nameRefredTo1Spinner.getSelectedItem() == "Select Referrals")
-                    {
+                    if (nameRefredTo1Spinner.getSelectedItem() == "Select Referrals") {
 
-                    }
-                    else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo1Name);
+                    } else {
+                        if (appController.contains(strReferredTo1Name, ".")) {
+                            String[] parts = strReferredTo1Name.split(". ", 2);
+                            //    String string1 = parts[0];//namealias
+                            strReferredTo1Name = parts[1].trim();//actual name
 
-                        strReferredTo1Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        refredtoSpeciality1.setText(strSpeclty);
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo1Name.trim());
+                        if (list.size() > 0) {
+                            //strReferredTo1Id = list.get(0).get("ID");
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            refredtoSpeciality1.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
                 }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         nameRefredTo2Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -778,25 +747,33 @@ public class QuickAddVisitFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                strReferredTo2Name= (String) parent.getItemAtPosition(position);
+                strReferredTo2Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if(nameRefredTo2Spinner.getSelectedItem() == "Select Referrals")
-                    {
+                    if (nameRefredTo2Spinner.getSelectedItem() == "Select Referrals") {
 
-                    }
-                    else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo2Name);
-
-                        strReferredTo2Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        refredtoSpeciality2.setText(strSpeclty);
+                    } else {
+                        if (appController.contains(strReferredTo2Name, ".")) {
+                            String[] parts = strReferredTo2Name.split(". ", 2);
+                            //    String string1 = parts[0];//namealias
+                            strReferredTo2Name = parts[1].trim();//actual name
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo2Name.trim());
+                        if (list.size() > 0) {
+                            //strReferredTo2Id = list.get(0).get("ID");
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            refredtoSpeciality2.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
                 }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         nameRefredTo3Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -804,24 +781,32 @@ public class QuickAddVisitFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                strReferredTo3Name= (String) parent.getItemAtPosition(position);
+                strReferredTo3Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if(nameRefredTo3Spinner.getSelectedItem() == "Select Referrals")
-                    {
+                    if (nameRefredTo3Spinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo3Name);
-
-                        strReferredTo3Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        refredtoSpeciality3.setText(strSpeclty);
+                        if (appController.contains(strReferredTo3Name, ".")) {
+                            String[] parts = strReferredTo3Name.split(". ", 2);
+                            //    String string1 = parts[0];//namealias
+                            strReferredTo3Name = parts[1].trim();//actual name
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo3Name.trim());
+                        if (list.size() > 0) {
+                            //strReferredTo3Id = list.get(0).get("ID");
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            refredtoSpeciality3.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         nameRefredTo4Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -829,49 +814,64 @@ public class QuickAddVisitFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                strReferredTo4Name= (String) parent.getItemAtPosition(position);
+                strReferredTo4Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if(nameRefredTo4Spinner.getSelectedItem() == "Select Referrals")
-                    {
+                    if (nameRefredTo4Spinner.getSelectedItem() == "Select Referrals") {
 
                     } else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo4Name);
-
-                        strReferredTo4Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        refredtoSpeciality4.setText(strSpeclty);
+                        if (appController.contains(strReferredTo4Name, ".")) {
+                            String[] parts = strReferredTo4Name.split(". ", 2);
+                            //    String string1 = parts[0];//namealias
+                            strReferredTo4Name = parts[1].trim();//actual name
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo4Name.trim());
+                        if (list.size() > 0) {
+                            // strReferredTo4Id = list.get(0).get("ID");
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            refredtoSpeciality4.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
                 }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
         nameRefredTo5Spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
 
-                strReferredTo5Name= (String) parent.getItemAtPosition(position);
+                strReferredTo5Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if(nameRefredTo5Spinner.getSelectedItem() == "Select Referrals")
-                    {
+                    if (nameRefredTo5Spinner.getSelectedItem() == "Select Referrals") {
 
-                    }
-                    else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo5Name);
-
-                        strReferredTo5Id = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        refredtoSpeciality5.setText(strSpeclty);
+                    } else {
+                        if (appController.contains(strReferredTo2Name, ".")) {
+                            String[] parts = strReferredTo2Name.split(". ", 2);
+                            //    String string1 = parts[0];//namealias
+                            strReferredTo2Name = parts[1].trim();//actual name
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo5Name.trim());
+                        if (list.size() > 0) {
+                            //strReferredTo5Id = list.get(0).get("ID");
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            refredtoSpeciality5.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
                 }
             }
+
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {}
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
         });
 
         nameRefredBySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -881,19 +881,26 @@ public class QuickAddVisitFragment extends Fragment {
 
                 strReferredByName = (String) parent.getItemAtPosition(position);
                 try {
-                    if(nameRefredBySpinner.getSelectedItem() == "Select Referrals")
-                    {
+                    if (nameRefredBySpinner.getSelectedItem() == "Select Referrals") {
 
-                    }
-                    else {
-                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredByName);
+                    } else {
+                        if (appController.contains(strReferredByName, ".")) {
+                            String[] parts = strReferredByName.split(". ", 2);
+                            //    String string1 = parts[0];//namealias
+                            strReferredByName = parts[1].trim();//actual name
 
-                        strReferredById = list.get(0).get("ID");
-                        String strSpeclty = list.get(0).get("SPECIALITY");
-                        refredBySpeciality.setText(strSpeclty);
+                        }
+                        ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredByName.trim());
+                        if (list.size() > 0) {
+                            //strReferredById = list.get(0).get("ID");
+                            String strSpeclty = list.get(0).get("SPECIALITY");
+                            refredBySpeciality.setText(strSpeclty);
+                        }
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
                 }
             }
 
@@ -903,6 +910,7 @@ public class QuickAddVisitFragment extends Fragment {
             }
         });
     }
+
     //saved the user enetred data to db
     private void saveData() {
 
@@ -970,7 +978,7 @@ public class QuickAddVisitFragment extends Fragment {
 
         } catch (ParseException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         String flag = "0";
@@ -978,11 +986,11 @@ public class QuickAddVisitFragment extends Fragment {
         String patientInfoType = "App";
         String action = "added";
         String strTests = null, strDrugs = null, ailment = null;
-        String record_source="QuickAdd New Visit";
+        String record_source = "QuickAdd New Visit";
 
         //  dbController.updatePatientPersonalforNewVisit(strPatientId, "2", modified_on.toString());//thiis will update pateint data for new visit
         dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionimgPath, ailment, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
-                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy,strReferedTo,record_source);
+                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo, record_source);
 
         dbController.deletePrescriptionImageQueue(prescriptionimgId, prescriptionimgPath);
 
@@ -1308,17 +1316,19 @@ public class QuickAddVisitFragment extends Fragment {
                 break;
         }
     }
+
     private void setUpAnimation() {
         backChangingImages = (ImageView) view.findViewById(R.id.backChangingImages);
 
         try {
             bannerimgNames = bannerClass.getImageName();
-            appController.setUpAdd(getContext(),bannerimgNames,backChangingImages,doctor_membership_number,"Quick Add New Records");
+            appController.setUpAdd(getContext(), bannerimgNames, backChangingImages, doctor_membership_number, "Quick Add New Records");
 
         } catch (ClirNetAppException e) {
             e.printStackTrace();
         }
     }
+
     private void CleanFollowup() {
 
         month.setTextColor(getResources().getColor(R.color.black));
@@ -1348,6 +1358,7 @@ public class QuickAddVisitFragment extends Fragment {
                     + " must implement OnFragmentInteractionListener");
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -1360,7 +1371,7 @@ public class QuickAddVisitFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-         view=null;
+        view = null;
         if (databaseClass != null) {
             databaseClass.close();
             databaseClass = null;
@@ -1377,11 +1388,11 @@ public class QuickAddVisitFragment extends Fragment {
             bannerClass.close();
             bannerClass = null;
         }
-        if(appController!=null){
-            appController=null;
+        if (appController != null) {
+            appController = null;
         }
-        backChangingImages=null;
-        mSymptomsList=null;
+        backChangingImages = null;
+        mSymptomsList = null;
         doctor_membership_number = null;
         docId = null;
         sdf1 = null;
@@ -1392,27 +1403,21 @@ public class QuickAddVisitFragment extends Fragment {
         mGender = null;
         addedOnDate = null;
         strPatientPhoto = null;
-
         clinicalNotes = null;
-
         strPatientId = null;
         visitDate = null;
         fowSel = null;
         usersellectedDate = null;
         monthSel = null;
         sqlController = null;
-        imageViewprescription = null;
         docId = null;
         addedTime = null;
         addedOnDate = null;
-
         prescriptionimgPath = null;
         prescriptionimgId = null;
         backChangingImages = null;
-
         addUpdate = null;
         cancel = null;
-
         edtInput_weight = null;
         edtInput_pulse = null;
         edtInput_bp = null;
@@ -1421,7 +1426,6 @@ public class QuickAddVisitFragment extends Fragment {
         edtInput_sugar = null;
         edtSymptoms = null;
         edtDignosis = null;
-
         fodtextshow = null;
         days = null;
         week = null;
@@ -1431,40 +1435,27 @@ public class QuickAddVisitFragment extends Fragment {
         daysSel = null;
         txtRecord = null;
         txtsymtomsanddignost = null;
-        presciptiontext = null;
         edtInput_sugarfasting = null;
         edtInput_bmi = null;
         edtInput_height = null;
         btnclear = null;
-        strAlternatenumber = null;
-        strAlternatephtype = null;
-        strIsd_code = null;
-        strAlternateIsd_code = null;
-        edtprescriptionImgPath=null;
-        url=null;
-
-        textRefredByShow=null;
-        textRefredToShow=null;
-        strReferredById= null;
-        strReferredTo1Id= null;
-        strReferredTo2Id= null;
-        strReferredTo3Id= null;
-        strReferredTo4Id= null;
-        strReferredTo5Id= null;
-        strReferredByName= null;
-        strReferredTo1Name= null;
-        strReferredTo2Name= null;
-        strReferredTo3Name= null;
-        strReferredTo4Name= null;
-        strReferredTo5Name= null;
-        nameReferalsList=null;
+        edtprescriptionImgPath = null;
+        textRefredByShow = null;
+        textRefredToShow = null;
+        strReferredByName = null;
+        strReferredTo1Name = null;
+        strReferredTo2Name = null;
+        strReferredTo3Name = null;
+        strReferredTo4Name = null;
+        strReferredTo5Name = null;
+        nameReferalsList = null;
     }
-
 
     public interface OnFragmentInteractionListener {
 
         void onFragmentInteraction(Uri uri);
     }
+
     //Image capture code
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -1474,27 +1465,25 @@ public class QuickAddVisitFragment extends Fragment {
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
 
                 if (resultCode == Activity.RESULT_OK) {
-                    // successfully captured the image
-                    // display it in image view
-
+                    // successfully captured the image display it in image view
                     previewCapturedImage();
-
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
+
     //this will show captured image to image view
     private void previewCapturedImage() {
         try {
-            prescriptionImgPath = uriSavedImage.getPath();
+            String prescriptionImgPath = uriSavedImage.getPath();
             edtprescriptionImgPath.setVisibility(View.VISIBLE);
             edtprescriptionImgPath.setText(prescriptionImgPath);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "AddPatientUpdate" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
 

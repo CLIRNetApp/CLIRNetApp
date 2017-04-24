@@ -484,12 +484,11 @@ public class SQLController {
         SQLiteDatabase db1 = dbHelper.getReadableDatabase();
         int numRows = 0;
         try {
-            String countQuery = new Counts().getCountQueryforHomeFragmentNoFilter();
+            String countQuery =  Counts.getCountQueryforHomeFragmentNoFilter();
 
             if (countQuery.length() > 1) {
 
                 numRows = (int) DatabaseUtils.longForQuery(db1, countQuery, null);
-                /// Log.d("count", "" + countQuery + "  " + numRows);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -624,10 +623,9 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery = "select patient_id, key_visit_id from patient_history where flag = 0  ";
+            String selectQuery = "select patient_id, key_visit_id from patient_history where flag = 0 ";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-
 
             // looping through all rows and adding to list
             if (cursor.moveToFirst()) {
@@ -662,7 +660,6 @@ public class SQLController {
         try {
             db1 = dbHelper.getReadableDatabase();
             String query = "select doc_mem_id from doctor_perInfo order by doc_mem_id desc limit 1";
-
 
             cursor = db1.rawQuery(query, null);
 
@@ -867,10 +864,10 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         try {
             db1 = dbHelper.getReadableDatabase();
+            count = c.getCount();
             c = db1.rawQuery(
                     "SELECT * FROM " + SQLiteHandler.TABLE_USER + " WHERE ("
                             + SQLiteHandler.KEY_NAME + "='" + username + "' OR " + SQLiteHandler.PHONE_NUMBER + "='" + phoneNumber + "' )AND " + SQLiteHandler.KEY_PASSWORD + "='" + password + "'", null);
-            count = c.getCount();
         } catch (Exception e) {
             throw new ClirNetAppException("Not able to search records while validateUser ");
         } finally {
@@ -1633,6 +1630,43 @@ public class SQLController {
         return incompletePrescrList;
 
     }
+    //get all the patient imp data from db, which will used in Consultation fragments and home fragments 111
+    public ArrayList<RegistrationModel> getIncompleteRecordList() throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> incompletePrescrList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "select id,prescription,added_on,added_by,status,phonenumber,email,refered_by,refered_to from prescription_queue;";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getString(7),cursor.getString(8));
+
+                    incompletePrescrList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+
+            throw new ClirNetAppException("Something went wrong while getting getPatientList");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+
+        return incompletePrescrList;
+
+    }
+
 
 
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments
@@ -1945,6 +1979,38 @@ public class SQLController {
             }
         }
         return wordList;
+    }
+    public String getTitleByNameAssociateMaster(String name) throws ClirNetAppException {
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        String returnString = ""; // Your default if none is found
+        try {
+            db1 = dbHelper.getReadableDatabase();
+            String query = "select title from associate_master  where name='" + name + "' limit 1";
+
+
+            cursor = db1.rawQuery(query, null);
+
+            if (cursor.moveToFirst()) {
+                /*String nameAlias=cursor.getString(0);
+                if (nameAlias == null) {
+                    nameAlias = "";
+                }*/
+                returnString = cursor.getString(cursor.getColumnIndex("title"));
+                //returnString=nameAlias+""+returnString;
+            }
+
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getNameByIdAssociateMaster");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return returnString;
     }
 }
 

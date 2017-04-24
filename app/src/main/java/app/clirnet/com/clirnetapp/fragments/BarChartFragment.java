@@ -1,6 +1,7 @@
 package app.clirnet.com.clirnetapp.fragments;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
@@ -43,7 +44,11 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
     public BarChartFragment() {
         // Required empty public constructor
     }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -61,13 +66,11 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
         mToDate = getArguments().getString("TODATE");
 
         //set the data to chart
-        getDataSet();
-
-        //////////////////////
         if (appController == null) {
             appController = new AppController();
         }
 
+        getDataSet();
 
         Utils.init(getResources());
         Utils.init(getContext());
@@ -180,12 +183,9 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
 
             chart.setData(data);
             chart.setDescription(null);//this will not show the chart description
-
             //  chart.invalidate();
-
-
         } catch (Exception e) {
-            //  appController.appendLog(appController.getDateTime() + " " + "/ " + "BarChartFragment" + e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+             appController.appendLog(appController.getDateTime() + " " + "/ " + "BarChartFragment" + e+ "  Line Number: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
             e.printStackTrace();
         }
 

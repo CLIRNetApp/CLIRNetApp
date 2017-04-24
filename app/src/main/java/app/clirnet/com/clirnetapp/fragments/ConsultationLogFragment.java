@@ -3,9 +3,11 @@ package app.clirnet.com.clirnetapp.fragments;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.GestureDetector;
@@ -68,29 +70,36 @@ public class ConsultationLogFragment extends Fragment {
     private String doctor_membership_number;
 
     private Button searchRecords;
+    public final String USER = "saved_user";
 
     public ConsultationLogFragment() {
         // this.setHasOptionsMenu(true);
 
     }
 
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-
-            setRetainInstance(true);//used to save instance on screen rotation
-
-        }
+        String greeting = (savedInstanceState != null) ? savedInstanceState.getString("greeting2") : "null";
+        //Log.i(USER, " onViewStateRestoredfrag: " + greeting);
+        setRetainInstance(true);//used to save instance on screen rotation
     }
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        super.onSaveInstanceState(savedInstanceState);
+        /*Log.i(USER, " onSaveInstanceState.");
+        savedInstanceState.putString("greeting2", "Hello");*/
+    }
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
 
+    }
     @Override
     public void onDestroyView() {
         super.onDestroyView();
         view = null; // now cleaning up!
         //No leak found by leak canary lib   tested on 28-01-2017 2:36pm
-
     }
 
     @Override
@@ -106,6 +115,8 @@ public class ConsultationLogFragment extends Fragment {
         searchRecords = (Button) view.findViewById(R.id.search);
         TextView currdate = (TextView) view.findViewById(R.id.sysdate);
         recycler_view = (RecyclerView) view.findViewById(R.id.recycler_view);
+        recycler_view.setLayoutManager(new LinearLayoutManager(getContext()));
+        recycler_view.setHasFixedSize(true);
 
         backChangingImages = (ImageView) view.findViewById(R.id.backChangingImages);
 
@@ -119,9 +130,6 @@ public class ConsultationLogFragment extends Fragment {
         String dd = sdf.format(todayDate);
         currdate.setText("Today's Date " + dd);
 
-
-        followUpDateSearchAdapter = new FollowUpDateSearchAdapter(filterfodList);
-        rvAdapterforUpdateDate = new RVAdapterforUpdateDate(filterfodList);
         bannerClass = new BannerClass(getContext());
 
         TextView privacyPolicy = (TextView) view.findViewById(R.id.privacyPolicy);
@@ -156,7 +164,7 @@ public class ConsultationLogFragment extends Fragment {
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Consultation Log" + e);
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Consultation Log" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         Calendar c = Calendar.getInstance();
@@ -220,7 +228,7 @@ public class ConsultationLogFragment extends Fragment {
                     reformattedStr = myFormat.format(fromUser.parse(searchdate));
                 } catch (ParseException e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTimenew() + " " + "/ " + "Consultation Log" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Consultation Log" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
 
                 if (TextUtils.isEmpty(searchdate)) {
@@ -238,7 +246,7 @@ public class ConsultationLogFragment extends Fragment {
 
                     if (date1.after(currentdate) || date1.equals(currentdate)) {
 
-                        if (filterVistDateList != null && filterVistDateList.size()>0) {
+                        if (filterVistDateList != null && filterVistDateList.size() > 0) {
 
                             filterVistDateList.clear();
 
@@ -248,14 +256,17 @@ public class ConsultationLogFragment extends Fragment {
 
                         filterfodList = sqlController.getPatientListnew(reformattedStr);
 
+
                         int filterModelSize = filterfodList.size();
 
                         if (filterModelSize > 0) {
+                            followUpDateSearchAdapter = new FollowUpDateSearchAdapter(filterfodList);
                             norecordtv.setVisibility(View.GONE);
                             txtfod.setVisibility(View.GONE);
                             recycler_view.setVisibility(View.VISIBLE);
                             txtupdateDate.setVisibility(View.VISIBLE);
                             followUpDateSearchAdapter.setFilter(filterfodList);
+                            recycler_view.setLayoutManager(new LinearLayoutManager(getContext()));
                             recycler_view.setAdapter(followUpDateSearchAdapter);
 
                         }
@@ -280,7 +291,7 @@ public class ConsultationLogFragment extends Fragment {
                         //  Toast.makeText(getContext(), "Date1 is after sysdate", Toast.LENGTH_LONG).show();
                     } else if (date1.before(currentdate)) {
 
-                        if (filterfodList !=null && filterfodList.size() > 0) {
+                        if (filterfodList != null && filterfodList.size() > 0) {
 
                             filterfodList.clear();
 
@@ -294,13 +305,15 @@ public class ConsultationLogFragment extends Fragment {
 
                         if (filterModelSize > 0) {
                             norecordtv.setVisibility(View.GONE);
+                            rvAdapterforUpdateDate = new RVAdapterforUpdateDate(filterfodList);
+                            recycler_view.setLayoutManager(new LinearLayoutManager(getContext()));
+                            txtfod.setVisibility(View.VISIBLE);
+                            txtupdateDate.setVisibility(View.GONE);
+                            recycler_view.setVisibility(View.VISIBLE);
+                            rvAdapterforUpdateDate.setFilter(filterVistDateList);
+                            recycler_view.setAdapter(rvAdapterforUpdateDate);
                         }
 
-                        txtfod.setVisibility(View.VISIBLE);
-                        txtupdateDate.setVisibility(View.GONE);
-                        recycler_view.setVisibility(View.VISIBLE);
-                        rvAdapterforUpdateDate.setFilter(filterVistDateList);
-                        recycler_view.setAdapter(rvAdapterforUpdateDate);
 
                         //   Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
                         if (filterModelSize > 0) {
@@ -325,7 +338,8 @@ public class ConsultationLogFragment extends Fragment {
 
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Consultation Log" + e);
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Consultation Log" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
                 }
 
             }
@@ -460,10 +474,10 @@ public class ConsultationLogFragment extends Fragment {
         backChangingImages = (ImageView) view.findViewById(R.id.backChangingImages);
 
         try {
-            appController.setUpAdd(getContext(),bannerimgNames,backChangingImages,doctor_membership_number,"Consultation Log");
+            appController.setUpAdd(getContext(), bannerimgNames, backChangingImages, doctor_membership_number, "Consultation Log");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Consultation Log" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 //
     }
@@ -475,6 +489,7 @@ public class ConsultationLogFragment extends Fragment {
         inputMethodManager.hideSoftInputFromWindow(date.getWindowToken(), 0);
         super.onPause();
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -482,6 +497,7 @@ public class ConsultationLogFragment extends Fragment {
         // Tracking the screen view
         AppController.getInstance().trackScreenView("ConsultationLog Fragment");
     }
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -507,9 +523,6 @@ public class ConsultationLogFragment extends Fragment {
         bannerimgNames = null;
 
         doctor_membership_number = null;
-
-        recycler_view.setOnClickListener(null);
-
         norecordtv = null;
 
         searchdate = null;

@@ -213,7 +213,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             c = db1.query("last_name_master", cols, null,
                     null, null, null, null);
         } catch (Exception e) {
-            appController.appendLog(appController.getDateTime()+"" +"/"+"LastNamedatabase"+e);
+            appController.appendLog(appController.getDateTime()+"" +"/"+"LastNamedatabase"+e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             throw new ClirNetAppException("Error getting last name");
         }finally {
             if(c!=null){
@@ -249,7 +249,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            appController.appendLog(appController.getDateTime()+"" +"/"+"LastNamedatabase"+e);
+            appController.appendLog(appController.getDateTime()+"" +"/"+"LastNamedatabase"+e+ " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             throw new ClirNetAppException("Something went wrong while getting login records");
         } finally {
@@ -278,7 +278,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             id =db.insertWithOnConflict("last_name_master", null, values, SQLiteDatabase.CONFLICT_REPLACE);
             // id = db.insert("last_name_master", null, values);
         }   catch (Exception e) {
-            appController.appendLog(appController.getDateTime()+"" +"/"+"LastNamedatabase"+e);
+            appController.appendLog(appController.getDateTime()+"" +"/"+"LastNamedatabase"+e+ " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             e.printStackTrace();
         } finally {
             if (db != null) {
@@ -324,6 +324,8 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
 
         }   catch (Exception e) {
             e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + "" + "/" + "LastNamedatabase getSymptoms" + e+ " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
             throw new ClirNetAppException("Something went wrong while storing last name id db");
 
         } finally {
@@ -352,7 +354,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            appController.appendLog(appController.getDateTime() + "" + "/" + "LastNamedatabase getSymptoms" + e);
+            appController.appendLog(appController.getDateTime() + "" + "/" + "LastNamedatabase getSymptoms" + e+ " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             throw new ClirNetAppException("Something went wrong while getting getSymptoms records");
         } finally {
             //create method & pass cursor & db1 ref.
