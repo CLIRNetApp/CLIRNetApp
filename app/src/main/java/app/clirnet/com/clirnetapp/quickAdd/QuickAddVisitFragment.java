@@ -49,6 +49,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import app.clirnet.com.clirnetapp.R;
+import app.clirnet.com.clirnetapp.activity.EditPersonalInfo;
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
 import app.clirnet.com.clirnetapp.activity.PrivacyPolicy;
 import app.clirnet.com.clirnetapp.activity.TermsCondition;
@@ -59,8 +60,6 @@ import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
-
-import static app.clirnet.com.clirnetapp.R.id.sysdate;
 
 
 public class QuickAddVisitFragment extends Fragment {
@@ -81,20 +80,13 @@ public class QuickAddVisitFragment extends Fragment {
     private TextView txtsymtomsanddignost;
     private Button addUpdate;
     private Button cancel;
-    private EditText edtInput_sugarfasting;
-    private EditText edtInput_bmi;
-    private EditText edtInput_height;
+
     private Button btnclear;
     private ImageView backChangingImages;
     private EditText clinicalNotes;
 
     private EditText visitDate;
-    private EditText edtInput_weight;
-    private EditText edtInput_pulse;
-    private EditText edtInput_bp;
-    private EditText edtLowBp;
-    private EditText edtInput_temp;
-    private EditText edtInput_sugar;
+
     private MultiAutoCompleteTextView edtSymptoms;
     private MultiAutoCompleteTextView edtDignosis;
     private String strPatientId;
@@ -124,8 +116,6 @@ public class QuickAddVisitFragment extends Fragment {
     private String addedTime;
     private SimpleDateFormat sdf1;
 
-    private int countvitalsLayout = 1;
-    private int countsymtomsanddignostLayout = 1;
     private String prescriptionimgPath;
     private String prescriptionimgId;
     private String added_on;
@@ -149,6 +139,52 @@ public class QuickAddVisitFragment extends Fragment {
     private String strReferredTo5Name;
     private ArrayList<String> nameReferalsList;
 
+    private EditText edtInput_weight;
+    private EditText edtInput_pulse;
+    private EditText edtInput_bp;
+    private EditText edtLowBp;
+    private EditText edtInput_temp;
+    private EditText edtInput_sugar;
+    private EditText edtInput_sugarfasting;
+    private EditText edtInput_bmi;
+    private EditText edtInput_height;
+
+    private TextView txtReferredTo,txtReferredBy;
+
+    private String strWeight;
+    private String strPulse ;
+    private String strBp;
+    private String strLowBp ;
+    private String strTemp ;
+    private String strSugar;
+    private String strHeight ;
+    private String strbmi ;
+    private String strSugarFasting;
+
+    private TextView txtLabelWeight,txtWeight;
+    private TextView txtLabelHeight,txtHeight;
+    private TextView txtLabelBmi,txtBmi;
+    private TextView txtLabelPulse,txtPulse;
+    private TextView txtLabelSystole,txtSystole;
+    private TextView txtLabelTemp,txtTemp;
+    private TextView txtLabelDistole,txtDistole;
+    private TextView txtLabelSugarpp,txtSugarPp;
+    private TextView txtLabelSugarFast,txtSugarFast;
+
+    private  LinearLayout showReferrals,showVitals;
+    private String strEmail;
+    private String strPhoneType;
+    private String strFirstName,strMiddleName,strLastName;
+    private String strDob;
+    private String strAddress;
+    private String strCityorTown;
+    private String strDistrict;
+    private String strPinNo,strState;
+    private String strAlternatenumber,strAlternatephtype;
+    private String strIsd_code,strUid;
+    private String strAlternateIsd_code;
+
+
     public QuickAddVisitFragment() {
         // Required empty public constructor
     }
@@ -162,10 +198,23 @@ public class QuickAddVisitFragment extends Fragment {
             this.setRetainInstance(true);
 
             strName = getArguments().getString("NAME");
+            strFirstName= getArguments().getString("FIRSTTNAME");
+            strMiddleName= getArguments().getString("MIDDLENAME");
+            strLastName= getArguments().getString("LASTNAME");
+            strDob=getArguments().getString("DOB");
+            strAddress =getArguments().getString("ADDRESS");
+            strCityorTown=getArguments().getString("CITYORTOWN");
+            strDistrict=getArguments().getString("DISTRICT");
+            strPinNo=getArguments().getString("CITYORTOWN");
+            strState=getArguments().getString("STATE");
+            strAlternatenumber=getArguments().getString("ALTERNATENUMBER");
+            strAlternatephtype=getArguments().getString("ALTERNATENUMBERTYPE");
+            strIsd_code=getArguments().getString("ISDCODE");
+            strAlternateIsd_code=getArguments().getString("ALTERNATEISDCODE");
+            strUid=getArguments().getString("UID");
             strPatientId = getArguments().getString("PATIENTID");
             strPatientPhoto = getArguments().getString("PATIENTPHOTO");
             prescriptionimgPath = getArguments().getString("PRESCRIPTIONIMG");
-
             prescriptionimgId = getArguments().getString("PRESCRIPTIONID");
             added_on = getArguments().getString("ADDED_ON");
             strReferedBy = getArguments().getString("REFEREDBY");
@@ -174,6 +223,8 @@ public class QuickAddVisitFragment extends Fragment {
             mAge = getArguments().getString("AGE");
             mLang = getArguments().getString("LANGUAGE");
             mGender = getArguments().getString("GENDER");
+            strEmail = getArguments().getString("EMAIL");
+            strPhoneType = getArguments().getString("PHONETYPE");
         }
     }
 
@@ -183,20 +234,24 @@ public class QuickAddVisitFragment extends Fragment {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_quick_add_visit_fraagment, container, false);
 
-        ImageView patientImage = (ImageView) view.findViewById(R.id.patientImage);
-        TextView date = (TextView) view.findViewById(sysdate);
+
+        //TextView date = (TextView) view.findViewById(R.id.sysdate);
+        ImageView patientImage = (ImageView)view. findViewById(R.id.patientImage);
+        // TextView date = (TextView) findViewById(R.id.sysdate);
         TextView editpatientName = (TextView) view.findViewById(R.id.patientName);
-        TextView editage = (TextView) view.findViewById(R.id.age1);
-        TextView editmobileno = (TextView) view.findViewById(R.id.mobileno);
-        TextView editgender = (TextView) view.findViewById(R.id.gender);
-        TextView editlang = (TextView) view.findViewById(R.id.lang);
-        Button prescriptionBtn = (Button) view.findViewById(R.id.prescriptionBtn);
-        ImageView imgEdit = (ImageView) view.findViewById(R.id.editPersonalInfo);
+        TextView editAge = (TextView) view.findViewById(R.id.age);
+        TextView editmobileno = (TextView)view. findViewById(R.id.mobileno);
+        TextView phoneType = (TextView)view. findViewById(R.id.phoneType);
+        TextView email = (TextView)view .findViewById(R.id.email);
+        TextView txteMail=(TextView)view.findViewById(R.id.txtEmail);
+
+
+        Button addPatientprescriptionBtn = (Button) view.findViewById(R.id.addPatientprescriptionBtn);
+
         cancel = (Button) view.findViewById(R.id.cancel);
         addUpdate = (Button) view.findViewById(R.id.addUpdate);
         txtRecord = (TextView) view.findViewById(R.id.txtRecord);
         txtsymtomsanddignost = (TextView) view.findViewById(R.id.txtsymptomsanddignost);
-        // presciptiontext = (TextView) view.findViewById(R.id.presciptiontext);
         TextView privacyPolicy = (TextView) view.findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) view.findViewById(R.id.termsandCondition);
 
@@ -219,9 +274,43 @@ public class QuickAddVisitFragment extends Fragment {
         edtInput_bmi = (EditText) view.findViewById(R.id.input_bmi);
         edtInput_height = (EditText) view.findViewById(R.id.input_height);
 
+        txtReferredBy=(TextView)view.findViewById(R.id.txtReferredBy);
+        txtReferredTo=(TextView)view.findViewById(R.id.txtReferredTo);
+
+        showReferrals=(LinearLayout) view.findViewById(R.id.showReferrals);
+        showVitals=(LinearLayout)view.findViewById(R.id.showVitals);
 
         clinicalNotes = (EditText) view.findViewById(R.id.clinicalNotes);
 
+        Button refered = (Button) view.findViewById(R.id.buttonReferrals);
+        Button buttonVital = (Button) view.findViewById(R.id.buttonVital);
+        Button buttonHistory=(Button)view.findViewById(R.id.buttonHistory);
+        buttonHistory.setVisibility(View.GONE);
+
+        txtLabelWeight=(TextView) view.findViewById(R.id.txtLabelWeight);
+        txtWeight=(TextView) view.findViewById(R.id.txtWeight);
+        txtLabelHeight=(TextView)view.findViewById(R.id.txtLabelHeight);
+        txtHeight=(TextView)view.findViewById(R.id.txtHeight);
+
+        txtLabelBmi=(TextView) view.findViewById(R.id.txtLabelBmi);
+        txtBmi=(TextView) view.findViewById(R.id.txtBmi);
+        txtLabelPulse=(TextView)view.findViewById(R.id.txtLabelPulse);
+        txtPulse=(TextView)view.findViewById(R.id.txtPulse);
+
+        txtLabelSystole=(TextView) view.findViewById(R.id.txtLabelSystole);
+        txtSystole=(TextView) view.findViewById(R.id.txtSystole);
+        txtLabelTemp=(TextView)view.findViewById(R.id.txtLabelTemp);
+        txtTemp=(TextView)view.findViewById(R.id.txtTemp);
+
+        txtLabelDistole=(TextView) view.findViewById(R.id.txtLabelDistole);
+        txtDistole=(TextView) view.findViewById(R.id.txtDistole);
+        txtLabelSugarpp=(TextView)view.findViewById(R.id.txtLabelSugarpp);
+        txtSugarPp=(TextView)view.findViewById(R.id.txtSugarPp);
+        txtLabelSugarFast=(TextView)view.findViewById(R.id.txtLabelSugarFast);
+        txtSugarFast=(TextView)view.findViewById(R.id.txtSugarFast);
+
+        LinearLayout linearlayoutEdit = (LinearLayout) view.findViewById(R.id.linearlayoutEdit);
+        //linearlayoutEdit.setVisibility(View.GONE); //we are hiding edit button which redirect to edit personal info page  04-05-2017
 
         edtSymptoms = (MultiAutoCompleteTextView) view.findViewById(R.id.symptoms);
         edtDignosis = (MultiAutoCompleteTextView) view.findViewById(R.id.dignosis);
@@ -252,13 +341,15 @@ public class QuickAddVisitFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+
         sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
-        Date todayDate = new Date();
+        //SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
+        //  Date todayDate = new Date();
 
-        String dd = sdf.format(todayDate);
-        date.setText("Today's Date " + dd);
+       // String dd = sdf.format(todayDate);
+       // date.setText("Today's Date " + dd);
 
         SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
         Date todayDate3 = new Date();
@@ -278,10 +369,28 @@ public class QuickAddVisitFragment extends Fragment {
 
         editpatientName.setText(strName);
         editmobileno.setText(mPhNo);
-        editage.setText(mAge);
-        editlang.setText(mLang);
-        editgender.setText(mGender);
+        //txtReferredBy.setText(strReferedBy);
+         txtReferredTo.setText(strReferedTo);
+
         visitDate.setText(added_on);
+
+        if(strPhoneType!=null) {
+            phoneType.setText(strPhoneType + " :");
+        }else{
+            phoneType.setText("Mobile :");
+        }
+
+        if(strEmail!=null &&!TextUtils.isEmpty(strEmail) ){
+            txteMail.setVisibility(View.VISIBLE);
+            email.setText(strEmail);
+        }
+        if(mGender!=null && mGender.equals("Male")){
+            editAge.setText("( M - "+ mAge + " )");
+        }else if(mGender!=null && mGender.equals("Female")) {
+            editAge.setText("( F - "+ mAge + " )");
+        }else if(mGender!=null && mGender.equals("Trans")) {
+            editAge.setText("( T - "+ mAge + " )");
+        }
 
         edtprescriptionImgPath = (TextView) view.findViewById(R.id.prescriptionImgPath);
         edtprescriptionImgPath.setVisibility(View.VISIBLE);
@@ -315,7 +424,11 @@ public class QuickAddVisitFragment extends Fragment {
             bannerimgNames = bannerClass.getImageName();
             if (strReferedBy != null && !strReferedBy.equals("")) {
                 String referedBy = sqlController.getNameByIdAssociateMaster(strReferedBy);
+                showReferrals.setVisibility(View.VISIBLE);
+                textRefredByShow.setVisibility(View.VISIBLE);
+                txtReferredBy.setVisibility(View.VISIBLE);
                 textRefredByShow.setText(referedBy);
+
 
             }
             if (strReferedTo != null && !strReferedTo.equals("")) {
@@ -341,9 +454,13 @@ public class QuickAddVisitFragment extends Fragment {
                         }
                     }
                     if (sbname != null) {
+                        showReferrals.setVisibility(View.VISIBLE);
+                        textRefredToShow.setVisibility(View.VISIBLE);
+                        txtReferredTo.setVisibility(View.VISIBLE);
                         textRefredToShow.setText(sbname);
                     } else {
-                        textRefredToShow.setText("");
+                        textRefredToShow.setVisibility(View.GONE);
+                        txtReferredTo.setVisibility(View.GONE);
                     }
                 }
             }
@@ -356,7 +473,6 @@ public class QuickAddVisitFragment extends Fragment {
                 sqlController.close();
             }
         }
-
 
         try {
             mSymptomsList = lastNamedb.getSymptoms();
@@ -396,8 +512,8 @@ public class QuickAddVisitFragment extends Fragment {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
                     cancel.setBackgroundColor(getResources().getColor(R.color.cancelbtn));
-                    goToNavigation();
 
+                    goToNavigation();
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -426,7 +542,8 @@ public class QuickAddVisitFragment extends Fragment {
             }
 
         });
-        prescriptionBtn.setOnClickListener(new View.OnClickListener() {
+
+        addPatientprescriptionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -443,12 +560,52 @@ public class QuickAddVisitFragment extends Fragment {
 
             }
         });
-        Button refered = (Button) view.findViewById(R.id.referedby);
+
         refered.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 showReferedDialogBox();
+            }
+        });
+        buttonVital.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                addVitalsDialog();
+            }
+        });
+        linearlayoutEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Intent i = new Intent(getContext(), EditPersonalInfo.class);
+
+                i.putExtra("PATIENTPHOTO", strPatientPhoto);
+                i.putExtra("ID", strPatientId);
+                i.putExtra("FIRSTNAME", strFirstName);
+                i.putExtra("MIDDLEAME", strMiddleName);
+                i.putExtra("LASTNAME", strLastName);
+                i.putExtra("PHONE", mPhNo);
+                i.putExtra("DOB", strDob);
+                i.putExtra("AGE", mAge);
+                i.putExtra("LANGUAGE", mLang);
+                i.putExtra("GENDER", mGender);
+                i.putExtra("ADDRESS", strAddress);
+                i.putExtra("CITYORTOWN", strCityorTown);
+                i.putExtra("DISTRICT", strDistrict);
+                i.putExtra("PIN", strPinNo);
+                i.putExtra("STATE", strState);
+                i.putExtra("ALTERNATENUMBER", strAlternatenumber);
+                i.putExtra("ALTERNATENUMBERTYPE", strAlternatephtype);
+                i.putExtra("ISDCODE", strIsd_code);
+                i.putExtra("ALTERNATEISDCODE", strAlternateIsd_code);
+                i.putExtra("UID", strUid);
+                i.putExtra("EMAIL", strEmail);
+                i.putExtra("PHONETYPE",strPhoneType);
+
+                startActivity(i);
+                // finish();
             }
         });
 
@@ -621,11 +778,25 @@ public class QuickAddVisitFragment extends Fragment {
                         textRefredByShow.setText(strReferredByName);
                     } else {
                         textRefredByShow.setText("");
+                        textRefredByShow.setVisibility(View.GONE);
+                        txtReferredBy.setVisibility(View.GONE);
                     }
                 }
+
+                showReferrals.setVisibility(View.VISIBLE);
+
                 strReferedTo = String.valueOf(sb);
                 String insertedName = String.valueOf(sbname);
                 insertedName = appController.removeCommaOccurance(insertedName);
+
+                if (insertedName != null && !insertedName.equals("") && insertedName.length() > 0) {
+                    textRefredToShow.setVisibility(View.VISIBLE);
+                    txtReferredTo.setVisibility(View.VISIBLE);
+                    textRefredToShow.setText(insertedName + "");
+                }else{
+                    textRefredToShow.setVisibility(View.INVISIBLE);
+                    txtReferredTo.setVisibility(View.INVISIBLE);
+                }
 
                 textRefredToShow.setText(insertedName + "");
                 addCounter = 0;
@@ -714,9 +885,8 @@ public class QuickAddVisitFragment extends Fragment {
 
                 strReferredTo1Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo1Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo1Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo1Name, ".")) {
                             String[] parts = strReferredTo1Name.split(". ", 2);
                             //    String string1 = parts[0];//namealias
@@ -749,9 +919,8 @@ public class QuickAddVisitFragment extends Fragment {
 
                 strReferredTo2Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo2Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo2Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo2Name, ".")) {
                             String[] parts = strReferredTo2Name.split(". ", 2);
                             //    String string1 = parts[0];//namealias
@@ -783,9 +952,8 @@ public class QuickAddVisitFragment extends Fragment {
 
                 strReferredTo3Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo3Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo3Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo3Name, ".")) {
                             String[] parts = strReferredTo3Name.split(". ", 2);
                             //    String string1 = parts[0];//namealias
@@ -816,9 +984,8 @@ public class QuickAddVisitFragment extends Fragment {
 
                 strReferredTo4Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo4Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo4Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo4Name, ".")) {
                             String[] parts = strReferredTo4Name.split(". ", 2);
                             //    String string1 = parts[0];//namealias
@@ -847,9 +1014,8 @@ public class QuickAddVisitFragment extends Fragment {
 
                 strReferredTo5Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo5Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo5Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo2Name, ".")) {
                             String[] parts = strReferredTo2Name.split(". ", 2);
                             //    String string1 = parts[0];//namealias
@@ -881,9 +1047,7 @@ public class QuickAddVisitFragment extends Fragment {
 
                 strReferredByName = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredBySpinner.getSelectedItem() == "Select Referrals") {
-
-                    } else {
+                    if (nameRefredBySpinner.getSelectedItem() != "Select Referrals") {
                         if (appController.contains(strReferredByName, ".")) {
                             String[] parts = strReferredByName.split(". ", 2);
                             //    String string1 = parts[0];//namealias
@@ -914,29 +1078,12 @@ public class QuickAddVisitFragment extends Fragment {
     //saved the user enetred data to db
     private void saveData() {
 
-        // String daysSel = null;
         monthSel = null;
         fowSel = null;
-
         String clinical_note = clinicalNotes.getText().toString().trim();
-        //String follow_up_dates = follow_up_date.getText().toString().trim();
         String follow_up_dates = null;
-
-        String strWeight = edtInput_weight.getText().toString().trim();
-        String strPulse = edtInput_pulse.getText().toString().trim();
-        String strBp = edtInput_bp.getText().toString().trim();
-        String strLowBp = edtLowBp.getText().toString().trim();
-        String strTemp = edtInput_temp.getText().toString().trim();
-        String strSugar = edtInput_sugar.getText().toString().trim();
         String strSymptoms = edtSymptoms.getText().toString().trim();
         String strDignosis = edtDignosis.getText().toString().trim();
-        // String strTests = edtTest.getText().toString().trim();
-        //  String strDrugs = edtDrugs.getText().toString().trim();
-
-        String strHeight = edtInput_height.getText().toString().trim();
-        String strbmi = edtInput_bmi.getText().toString().trim();
-        String strSugarFasting = edtInput_sugarfasting.getText().toString().trim();
-
 
         usersellectedDate = fodtextshow.getText().toString();
 
@@ -946,16 +1093,6 @@ public class QuickAddVisitFragment extends Fragment {
             return;
         }
 
-
-        if (strTemp.length() > 0) {
-            int intTemp = Integer.parseInt(strTemp);
-            if (intTemp > 110) {
-                edtInput_temp.setError("Temp can not be more than 110 ");
-                return;
-            } else {
-                edtInput_temp.setError(null);
-            }
-        }
 
 
         String visit_id = String.valueOf(maxVisitId + 1);
@@ -988,7 +1125,6 @@ public class QuickAddVisitFragment extends Fragment {
         String strTests = null, strDrugs = null, ailment = null;
         String record_source = "QuickAdd New Visit";
 
-        //  dbController.updatePatientPersonalforNewVisit(strPatientId, "2", modified_on.toString());//thiis will update pateint data for new visit
         dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionimgPath, ailment, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
                 strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo, record_source);
 
@@ -1020,40 +1156,6 @@ public class QuickAddVisitFragment extends Fragment {
     }
 
     private void addFollowupdateButtonListner() {
-
-        txtRecord.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayout vitalsLayout = (LinearLayout) view.findViewById(R.id.vitalsLayout);
-                if (countvitalsLayout == 1) {
-                    vitalsLayout.setVisibility(View.VISIBLE);
-                    txtRecord.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0);//set drawable right to text view
-                    countvitalsLayout = 2;
-                } else {
-                    vitalsLayout.setVisibility(View.GONE);
-                    txtRecord.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
-                    countvitalsLayout = 1;
-                }
-                //  txtRecord.setBackground(R.drawable.);
-            }
-        });
-        txtsymtomsanddignost.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LinearLayout symptomsdigosislayout = (LinearLayout) view.findViewById(R.id.symptomsdigosislayout);
-                if (countsymtomsanddignostLayout == 1) {
-                    symptomsdigosislayout.setVisibility(View.VISIBLE);
-                    txtsymtomsanddignost.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
-                    countsymtomsanddignostLayout = 2;
-                } else {
-                    symptomsdigosislayout.setVisibility(View.GONE);
-                    txtsymtomsanddignost.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
-                    countsymtomsanddignostLayout = 1;
-                }
-                //  txtRecord.setBackground(R.drawable.);
-            }
-        });
-
 
         days.setOnTouchListener(new View.OnTouchListener() {
 
@@ -1228,25 +1330,6 @@ public class QuickAddVisitFragment extends Fragment {
 
             }
         });
-
-        edtInput_height.addTextChangedListener(new TextWatcher() {
-
-            public void afterTextChanged(Editable s) {
-
-                edtInput_height.setError(null);
-            }
-
-            public void beforeTextChanged(CharSequence s, int start,
-                                          int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start,
-                                      int before, int count) {
-                String bmi = appController.CalculateBMI(edtInput_weight.getText().toString(), edtInput_height.getText().toString());
-                edtInput_bmi.setText(bmi);
-            }
-        });
-
 
     }
 
@@ -1485,6 +1568,163 @@ public class QuickAddVisitFragment extends Fragment {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
+    }
+
+    private void addVitalsDialog() {
+
+        final Dialog dialog;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            dialog = new Dialog(new ContextThemeWrapper(getContext(), android.R.style.Theme_DeviceDefault_Light_NoActionBar_Overscan));
+            LayoutInflater factory = LayoutInflater.from(getContext());
+
+            final View f = factory.inflate(R.layout.vitals_in_dialog, null);
+
+            Button cancel = (Button) f.findViewById(R.id.customDialogCancel);
+            Button save = (Button) f.findViewById(R.id.customDialogOk);
+            edtInput_weight = (EditText)f. findViewById(R.id.input_weight);
+            edtInput_pulse = (EditText)f. findViewById(R.id.input_pulse);
+            edtInput_bp = (EditText) f.findViewById(R.id.input_bp);
+            edtLowBp = (EditText) f.findViewById(R.id.lowBp);
+            edtInput_temp = (EditText)f. findViewById(R.id.input_temp);
+            edtInput_sugar = (EditText) f.findViewById(R.id.input_sugar);
+            edtInput_sugarfasting = (EditText)f. findViewById(R.id.input_sugarfasting);
+            edtInput_bmi = (EditText)f. findViewById(R.id.input_bmi);
+            edtInput_height = (EditText) f.findViewById(R.id.input_height);
+
+            dialog.setTitle(" Add Vitals ");
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.setContentView(f);
+            cancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    dialog.dismiss();
+                }
+            });
+            save.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    strWeight = edtInput_weight.getText().toString().trim();
+                    strPulse = edtInput_pulse.getText().toString().trim();
+                    strBp = edtInput_bp.getText().toString().trim();
+                    strLowBp = edtLowBp.getText().toString().trim();
+                    strTemp = edtInput_temp.getText().toString().trim();
+                    strSugar = edtInput_sugar.getText().toString().trim();
+                    strSugarFasting = edtInput_sugarfasting.getText().toString().trim();
+
+                    strHeight = edtInput_height.getText().toString().trim();
+                    strbmi = edtInput_bmi.getText().toString().trim();
+
+                    if (strTemp.length() > 0) {
+                        int intTemp = Integer.parseInt(strTemp);
+                        if (intTemp > 110) {
+                            edtInput_temp.setError(" Temp can not be more than 110 ");
+                            return;
+                        } else {
+                            edtInput_temp.setError(null);
+                        }
+                    }
+                    showVitals.setVisibility(View.VISIBLE);
+                    if (strWeight != null && !strWeight.equals("") && strWeight.length()>0) {
+                        txtLabelWeight.setVisibility(View.VISIBLE);
+                        txtWeight.setVisibility(View.VISIBLE);
+                        txtWeight.setText(strWeight+ " Kgs");
+                    } else {
+                        txtLabelWeight.setVisibility(View.GONE);
+                        txtWeight.setVisibility(View.GONE);
+                    }
+
+                    if (strHeight != null && !strHeight.equals("") && strHeight.length()>0) {
+                        txtLabelHeight.setVisibility(View.VISIBLE);
+                        txtHeight.setVisibility(View.VISIBLE);
+                        txtHeight.setText(strHeight + " Cms");
+                    } else {
+                        txtLabelHeight.setVisibility(View.GONE);
+                        txtHeight.setVisibility(View.GONE);
+                    }
+
+                    if (strbmi != null && !strbmi.equals("") && strbmi.length()>0) {
+                        txtLabelBmi.setVisibility(View.VISIBLE);
+                        txtBmi.setVisibility(View.VISIBLE);
+                        txtBmi.setText(strbmi + " Bmi");
+                    } else {
+                        txtLabelBmi.setVisibility(View.GONE);
+                        txtBmi.setVisibility(View.GONE);
+                    }
+
+                    if (strPulse != null && !strPulse.equals("") && strPulse.length()>0) {
+                        txtLabelPulse.setVisibility(View.VISIBLE);
+                        txtPulse.setVisibility(View.VISIBLE);
+                        txtPulse.setText(strPulse + " bmp");
+                    } else {
+                        txtLabelPulse.setVisibility(View.GONE);
+                        txtPulse.setVisibility(View.GONE);
+                    }
+                    if (strBp != null && !strBp.equals("") && strBp.length()>0) {
+                        txtLabelSystole.setVisibility(View.VISIBLE);
+                        txtSystole.setVisibility(View.VISIBLE);
+                        txtSystole.setText(strBp + " mmhg");
+                    } else {
+                        txtLabelSystole.setVisibility(View.GONE);
+                        txtSystole.setVisibility(View.GONE);
+                    }
+                    if (strLowBp != null && !strLowBp.equals("") && strLowBp.length()>0) {
+                        txtLabelDistole.setVisibility(View.VISIBLE);
+                        txtDistole.setVisibility(View.VISIBLE);
+                        txtDistole.setText(strLowBp + " mmhg");
+                    } else {
+                        txtLabelDistole.setVisibility(View.GONE);
+                        txtDistole.setVisibility(View.GONE);
+                    }
+                    if (strTemp != null && !strTemp.equals("") && strTemp.length()>0) {
+                        txtLabelTemp.setVisibility(View.VISIBLE);
+                        txtTemp.setVisibility(View.VISIBLE);
+                        txtTemp.setText(strTemp + ""+ getResources().getString(R.string.degree));
+                    } else {
+                        txtLabelTemp.setVisibility(View.GONE);
+                        txtTemp.setVisibility(View.GONE);
+                    }
+
+
+                    if (strSugar != null && !strSugar.equals("") && strSugar.length()>0) {
+                        txtLabelSugarpp.setVisibility(View.VISIBLE);
+                        txtSugarPp.setVisibility(View.VISIBLE);
+                        txtSugarPp.setText(strSugar +" mg/dl");
+                    } else {
+                        txtLabelSugarpp.setVisibility(View.GONE);
+                        txtSugarPp.setVisibility(View.GONE);
+                    }
+                    if (strSugarFasting != null && !strSugarFasting.equals("") && strSugarFasting.length()>0) {
+                        txtLabelSugarFast.setVisibility(View.VISIBLE);
+                        txtSugarFast.setVisibility(View.VISIBLE);
+                        txtSugarFast.setText(strSugarFasting+" mg/dl");
+                    } else {
+                        txtLabelSugarFast.setVisibility(View.GONE);
+                        txtSugarFast.setVisibility(View.GONE);
+                    }
+
+                    dialog.dismiss();
+                }
+            });
+
+            dialog.show();
+        }
+        edtInput_height.addTextChangedListener(new TextWatcher() {
+
+            public void afterTextChanged(Editable s) {
+
+                edtInput_height.setError(null);
+            }
+
+            public void beforeTextChanged(CharSequence s, int start,
+                                          int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start,
+                                      int before, int count) {
+                String bmi = appController.CalculateBMI(edtInput_weight.getText().toString(), edtInput_height.getText().toString());
+                edtInput_bmi.setText(bmi);
+            }
+        });
     }
 
 }

@@ -7,6 +7,7 @@ package app.clirnet.com.clirnetapp.models;
 public class RegistrationModel {
 
 
+
     private String uid;
 
 
@@ -21,9 +22,6 @@ public class RegistrationModel {
     public String getModiedCounter() {
         return modiedCounter;
     }
-
-    private String name;
-
 
     private String email;
     private String action;
@@ -99,6 +97,9 @@ public class RegistrationModel {
     private String bmi;
     private String alternatePhoneType;
     private String alternatePhoneNumber;
+
+
+
     private String height;
     private String sugarFasting;
     private String alternate_isd_code;
@@ -107,12 +108,22 @@ public class RegistrationModel {
     private String banner_image_name;
     private String banner_id;
 
-
     private String title;
+    private String name;
 
     private String contactForPatient;
     private String altContactPatientIsdCodeType;
     private String selectedContactPhoneType;
+    private  String distole;
+    private  String systole;
+
+    public String getDistole() {
+        return distole;
+    }
+
+    public String getSystole() {
+        return systole;
+    }
 
     public String getContactForPatient() {
         return contactForPatient;
@@ -443,7 +454,9 @@ public class RegistrationModel {
     public RegistrationModel(String id) {
         this.pat_id = id;
     }
+    public RegistrationModel(){
 
+    }
     public String getTitle() { return title; }
 
     public RegistrationModel(String id, String visitId) {
@@ -807,5 +820,63 @@ public class RegistrationModel {
         this.referedTo = referedTo;
         this.email = email;
     }
+   /* public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
+                             String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
+                             String sugar, String symptoms, String dignosis, String email, String uid, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo,String systole,String distole) {
 
+        this.pat_id = id;
+        this.firstName = first_name;
+        this.middleName = middle_name;
+        this.lastName = last_name;
+        this.dob = strdate_of_birth;
+        this.gender = gender;
+
+        this.age = current_age;
+        this.mobileNumber = phone_number;
+        this.language = selectedLanguage;
+        this.photo = patientImagePath;
+        this.followUpDate = follow_up_date;
+
+        this.followUpdays = daysSel;
+        this.followUpWeek = weekSel;
+        this.followUpMonth = monthSel;
+        this.ailments = ailmentList;
+        this.pres_img = prescriptionImgPath;
+        this.clinicalNotes = clinical_note;
+        this.added_on = added_on;
+        this.visit_date = visit_date;
+        this.modified_on = modified_on;
+        this.key_visit_id = key_visit_id;
+        this.actualFollowupDate = actFolDate;
+
+        this.address = address;
+        this.cityortown = city;
+        this.district = district;
+        this.pin_code = pin;
+        this.state = state;
+
+        this.weight = weight;
+        this.pulse = pulse;
+        this.bp = bp;
+        this.lowBp = mmhg;
+        this.temprature = temprature;
+        this.sugar = sugar;
+        this.symptoms = symptoms;
+        this.dignosis = dignosis;
+        this.email = email;
+        this.uid = uid;
+        this.bmi = bmi;
+        this.height = height;
+        this.alternatePhoneNumber = altername_no;
+        this.alternatePhoneType = altternate_phType;
+        this.sugarFasting = sugar_fasting;
+        this.phone_type = phone_type;
+        this.isd_code = isd_code;
+        this.alternate_isd_code = alternate_noisd_code;
+        this.referedBy = referedBy;
+        this.referedTo = referedTo;
+        this.systole = systole;
+        this.distole = distole;
+
+    }*/
 }

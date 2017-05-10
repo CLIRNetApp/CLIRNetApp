@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -265,7 +266,8 @@ public class SQLController {
     }
 
     //used to fileter data from Patient history module
-    public ArrayList<RegistrationModel> getFilterDatanew(String fname, String lname, String gender, String phoneno, String age, ArrayList sex, ArrayList ageGap, ArrayList ailment, int page, int limit) throws ClirNetAppException {
+    public ArrayList<RegistrationModel> getFilterDatanew(String fname, String lname,  String phoneno,  ArrayList sex, ArrayList ageGap, ArrayList ailment, int page, int limit,Integer weightMinValue,Integer weightMaxValue,Integer heightMinValue,Integer heightMaxValue,Integer bmiMinValue,Integer bmiMaxValue,Integer pulseMinValue,Integer pulseMaxValue,Integer tempMinValue,Integer tempMaxValue,Integer systoleMinValue,Integer systoleMaxValue,
+              Integer distoleMinValue,Integer distoleMaxValue,Integer sugarFpgMinValue,Integer sugarFpgMaxValue,Integer sugarPpgMinValue,Integer sugarPpgMaxValue) throws ClirNetAppException {
 
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
@@ -345,6 +347,53 @@ public class SQLController {
                 selectQuery = selectQuery.concat(" ) ");
                 countQuery = countQuery.concat(" ) ");
             }
+
+           if(weightMinValue!=null && weightMaxValue!=null) {
+
+               selectQuery = selectQuery.concat(" AND cast(ph.weight as INTEGER) BETWEEN " + weightMinValue + " and " + weightMaxValue + " ");
+               countQuery = countQuery.concat(" AND cast(ph.weight as INTEGER) BETWEEN " + weightMinValue + " and " + weightMaxValue + " ");
+            }
+
+            if(heightMinValue!=null && heightMaxValue!=null) {
+                selectQuery = selectQuery.concat(" AND cast(ph.height as INTEGER) BETWEEN " + heightMinValue + " and " + heightMaxValue + " ");
+                countQuery = countQuery.concat(" AND cast(ph.height as INTEGER) BETWEEN " + heightMinValue + " and " + heightMaxValue + " ");
+            }
+            //bmi filter query
+            if(bmiMinValue!=null && bmiMaxValue!=null) {
+                selectQuery = selectQuery.concat(" AND cast(ph.bmi as INTEGER) BETWEEN " + bmiMinValue + " and " + bmiMaxValue + " ");
+                countQuery = countQuery.concat(" AND cast(ph.bmi as INTEGER) BETWEEN " + bmiMinValue + " and " + bmiMaxValue + " ");
+            }
+
+            if(pulseMinValue!=null && pulseMaxValue!=null) {
+                selectQuery = selectQuery.concat(" AND cast(ph.pulse as INTEGER) BETWEEN " + pulseMinValue + " and " + pulseMaxValue + " ");
+                countQuery = countQuery.concat(" AND cast(ph.pulse as INTEGER) BETWEEN " + pulseMinValue + " and " + pulseMaxValue + " ");
+            }
+
+            if(tempMinValue!=null && tempMaxValue!=null) {
+                selectQuery = selectQuery.concat(" AND cast(ph.temperature as INTEGER) BETWEEN " + tempMinValue + " and " + tempMaxValue + " ");
+                countQuery = countQuery.concat(" AND cast(ph.temperature as INTEGER) BETWEEN " + tempMinValue + " and " + tempMaxValue + " ");
+            }
+
+
+            if(systoleMinValue!=null && systoleMaxValue!=null) {
+                selectQuery = selectQuery.concat(" AND cast(ph.bp_low as INTEGER) BETWEEN " + systoleMinValue + " and " + systoleMaxValue + " ");
+                countQuery = countQuery.concat(" AND cast(ph.bp_low as INTEGER) BETWEEN " + systoleMinValue + " and " + systoleMaxValue + " ");
+            }
+
+            if(distoleMinValue!=null && distoleMaxValue!=null) {
+                selectQuery = selectQuery.concat(" AND cast(ph.bp_high as INTEGER) BETWEEN " + distoleMinValue + " and " + distoleMaxValue + " ");
+                countQuery = countQuery.concat(" AND cast(ph.bp_high as INTEGER) BETWEEN " + distoleMinValue + " and " + distoleMaxValue + " ");
+            }
+
+            if(sugarFpgMinValue!=null && sugarFpgMaxValue!=null) {
+                selectQuery = selectQuery.concat(" AND cast(ph.sugar as INTEGER) BETWEEN " + sugarFpgMinValue + " and " + sugarFpgMaxValue + " ");
+                countQuery = countQuery.concat(" AND cast(ph.sugar as INTEGER) BETWEEN " + sugarFpgMinValue + " and " + sugarFpgMaxValue + " ");
+            }
+            if(sugarPpgMinValue!=null && sugarPpgMaxValue!=null) {
+                selectQuery = selectQuery.concat(" AND cast(ph.sugar as INTEGER) BETWEEN " + sugarPpgMinValue + " and " + sugarPpgMaxValue + " ");
+                countQuery = countQuery.concat(" AND cast(ph.sugar as INTEGER) BETWEEN " + sugarPpgMinValue + " and " + sugarPpgMaxValue + " ");
+            }
+
             //count query here to get no of records fetch by query for pagination in page.
             countQuery = countQuery.concat("  and p.phonenumber like '%" + phoneno + "%' order by ph.key_visit_id desc ");
             //   String queryforCount=selectQuery.concat("  and p.phonenumber like '%" + phoneno + "%' order by ph.key_visit_id desc ");
@@ -353,7 +402,7 @@ public class SQLController {
 
             new Counts().setCountQuery(countQuery);
 
-            //  Log.e("selectQuery", "" + selectQuery);
+              Log.e("selectQuery", "" + selectQuery);
             // Log.e("countQueryQuery", "" + countQuery);
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
@@ -864,10 +913,10 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         try {
             db1 = dbHelper.getReadableDatabase();
-            count = c.getCount();
             c = db1.rawQuery(
                     "SELECT * FROM " + SQLiteHandler.TABLE_USER + " WHERE ("
                             + SQLiteHandler.KEY_NAME + "='" + username + "' OR " + SQLiteHandler.PHONE_NUMBER + "='" + phoneNumber + "' )AND " + SQLiteHandler.KEY_PASSWORD + "='" + password + "'", null);
+            count = c.getCount();
         } catch (Exception e) {
             throw new ClirNetAppException("Not able to search records while validateUser ");
         } finally {
@@ -1006,7 +1055,7 @@ public class SQLController {
         try {
             String selectQuery = "SELECT pvd.ailment as ailment FROM \n" +
                     "patient dpr , patient_history pvd \n" +
-                    "WHERE dpr.patient_id = pvd.patient_id \n" +
+                    "WHERE dpr.patient_id = pvd.patient_id  and pvd.ailment != 'null' \n" +
                     "AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) \n" +
                     "Between Date('" + fromdate + "') AND Date('" + todate + "')\n";
 
@@ -1862,14 +1911,10 @@ public class SQLController {
             db1 = dbHelper.getReadableDatabase();
             String query = "select title,name from associate_master  where id='" + id + "' limit 1";
 
-
             cursor = db1.rawQuery(query, null);
 
             if (cursor.moveToFirst()) {
-                /*String nameAlias=cursor.getString(0);
-                if (nameAlias == null) {
-                    nameAlias = "";
-                }*/
+
                 returnString = cursor.getString(cursor.getColumnIndex("name"));
                 //returnString=nameAlias+""+returnString;
             }
@@ -2012,6 +2057,129 @@ public class SQLController {
         }
         return returnString;
     }
+    public ArrayList<HashMap<String, Integer>> getMinMaxVitals() throws ClirNetAppException {
+        ArrayList<HashMap<String, Integer>> vitalsList;
+        vitalsList = new ArrayList<>();
+        String selectQuery = "select min(cast(weight as INTEGER))  as minWeight,max(cast(weight as INTEGER))  as maxWeight,min(cast(height as INTEGER))  as minHeight, max(cast(height as INTEGER)) " +
+                "as maxHeight, ROUND(min(cast(bmi as FLOAT)))  as minBmi , ROUND(max(cast(bmi as FLOAT))) as maxBmi,min(cast(pulse as INTEGER))  as minPulse,max(cast(pulse as INTEGER))  as maxPulse,min(cast(temperature as integer))  as minTemp,max(cast(temperature as integer))  as maxTemp,min(cast(bp_low as integer))  as minSystole,max(cast(bp_low as integer))  as maxSystole,min(cast(bp_high as integer))  as minDistole,max(cast(bp_high as integer))  as maxDistole, min(cast(sugar as integer))  as minSugarFPG,max(cast(sugar as integer))  as maxSugarFPG, min(cast(sugar_fasting as integer))  as minSugarPPG,max(cast(sugar_fasting as integer))  as maxSugarPPG    from patient_history";
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        Cursor cursor=null;
+        try{
+            cursor = database.rawQuery(selectQuery, null);
+            Integer returnStringMin,returnStringMax;
+            if (cursor.moveToFirst()) {
+                do {
+                    HashMap<String, Integer> map = new HashMap<>();
+                    returnStringMin = cursor.getInt(cursor.getColumnIndex("minWeight"));
+                    returnStringMax = cursor.getInt(cursor.getColumnIndex("maxWeight"));
+                    int returnStringMax1 = cursor.getInt(cursor.getColumnIndex("maxWeight"));
+                    Log.e("returnStringMax1","  " + returnStringMin + "  " + returnStringMax1);
+                    if(returnStringMin != null && !returnStringMin.equals("")){
+                        map.put("MINWEIGHT", returnStringMin);
+                        map.put("MAXWEIGHT", returnStringMax);
+                    }else{
+                        map.put("MINWEIGHT", 0);
+                        map.put("MAXWEIGHT", returnStringMax);
+                    }
+                    Integer minHeight=cursor.getInt(cursor.getColumnIndex("minHeight"));
+                    Integer maxHeight=cursor.getInt(cursor.getColumnIndex("maxHeight"));
+                    if(minHeight != null && !minHeight.equals("")){
+                        map.put("MINHEIGHT", minHeight);
+                        map.put("MAXHEIGHT", maxHeight);
+                    }else{
+                        map.put("MINHEIGHT", 0);
+                        map.put("MAXHEIGHT", maxHeight);
+                    }
+                   Integer minBmi=cursor.getInt(cursor.getColumnIndex("minBmi"));
+                    Integer maxBmi=cursor.getInt(cursor.getColumnIndex("maxBmi"));
+
+                    if(minBmi != null && !minBmi.equals("") && !maxBmi.equals("")){
+                        map.put("MINBMI", minBmi);
+                        map.put("MAXBMI", maxBmi);
+                    }else{
+                        map.put("MINBMI", 0);
+                        map.put("MAXBMI", 0);
+                    }
+
+                    Integer minPulse=cursor.getInt(cursor.getColumnIndex("minPulse"));
+                    Integer maxPulse=cursor.getInt(cursor.getColumnIndex("maxPulse"));
+
+                    if(minPulse != null && !minPulse.equals("") && !maxPulse.equals("")){
+                        map.put("MINPULSE", minPulse);
+                        map.put("MAXPULSE", maxPulse);
+                    }else{
+                        map.put("MINPULSE", 0);
+                        map.put("MAXPULSE", 0);
+                    }
+                    Integer minTemp=cursor.getInt(cursor.getColumnIndex("minTemp"));
+                    Integer maxTemp=cursor.getInt(cursor.getColumnIndex("maxTemp"));
+
+                    if(minTemp != null && !minTemp.equals("") && !maxTemp.equals("")){
+                        map.put("MINTEMP", minTemp);
+                        map.put("MAXTEMP", maxTemp);
+                    }else{
+                        map.put("MINTEMP", 0);
+                        map.put("MAXTEMP", 0);
+                    }
+
+                    Integer minSystole=cursor.getInt(cursor.getColumnIndex("minSystole"));
+                    Integer maxSystole=cursor.getInt(cursor.getColumnIndex("maxSystole"));
+
+                    if(minSystole != null && !minSystole.equals("") && !maxSystole.equals("")){
+                        map.put("MINSYSTOLE", minSystole);
+                        map.put("MAXSYSTOLE", maxSystole);
+                    }else{
+                        map.put("MINSYSTOLE", 0);
+                        map.put("MAXSYSTOLE", 0);
+                    }
+
+                    Integer minDistole=cursor.getInt(cursor.getColumnIndex("minDistole"));
+                    Integer maxDistole=cursor.getInt(cursor.getColumnIndex("maxDistole"));
+
+                    if(minDistole != null && !minDistole.equals("") && !maxDistole.equals("")){
+                        map.put("MINDISTOLE", minDistole);
+                        map.put("MAXDISTOLE", maxDistole);
+                    }else{
+                        map.put("MINSISTOLE", 0);
+                        map.put("MAXDISTOLE", 0);
+                    }
+                    Integer minSugarFPG=cursor.getInt(cursor.getColumnIndex("minSugarFPG"));
+                    Integer maxSugarFPG=cursor.getInt(cursor.getColumnIndex("maxSugarFPG"));
+
+                    if(minSugarFPG != null && !minSugarFPG.equals("") && !maxSugarFPG.equals("")){
+                        map.put("MINSUGARFPG", minSugarFPG);
+                        map.put("MAXSUGARFPG", maxSugarFPG);
+                    }else{
+                        map.put("MINSUGARFPG", 0);
+                        map.put("MAXSUGARFPG", 0);
+                    }
+                    Integer minSugarPPG=cursor.getInt(cursor.getColumnIndex("minSugarPPG"));
+                    Integer maxSugarPPG=cursor.getInt(cursor.getColumnIndex("maxSugarPPG"));
+
+                    if(minSugarPPG != null && !minSugarPPG.equals("") && !maxSugarPPG.equals("")){
+                        map.put("MINSUGARPPG", minSugarPPG);
+                        map.put("MAXSUGARPPG", maxSugarPPG);
+                    }else{
+                        map.put("MINSUGARPPG", 0);
+                        map.put("MAXSUGARPPG", 0);
+                    }
+                    vitalsList.add(map);
+                } while (cursor.moveToNext());
+            }
+        }catch (Exception e){
+            throw new ClirNetAppException("Something went wrong while geting getAllDataAssociateMaster");
+        }
+        finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database != null) {
+                database.close();
+            }
+        }
+        return vitalsList;
+    }
+
 }
 
 

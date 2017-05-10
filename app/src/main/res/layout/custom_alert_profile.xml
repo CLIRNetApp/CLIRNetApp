@@ -21,7 +21,6 @@
         android:padding="16dp"
         android:layout_gravity="center"
         android:textColor="@color/black"
-        style="@style/Base.TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"
         android:textSize="16sp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Mobile Number Not Found!!!"/>
@@ -33,7 +32,6 @@
         android:padding="16dp"
         android:layout_gravity="center"
         android:textColor="@color/black"
-        style="@style/Base.TextAppearance.AppCompat.Light.Widget.PopupMenu.Large"
         android:textSize="14sp"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Search Again or Add a New Patient Records"/>

@@ -36,6 +36,7 @@ import app.clirnet.com.clirnetapp.fragments.ReportFragmentViewPagerSetup;
 import app.clirnet.com.clirnetapp.fragments.TopTenAilmentFragment;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
+import app.clirnet.com.clirnetapp.helper.SessionManager;
 import app.clirnet.com.clirnetapp.utility.SyncDataService;
 
 /*import com.google.firebase.iid.FirebaseInstanceId;
@@ -50,8 +51,6 @@ public class NavigationActivity extends AppCompatActivity
 
     private FragmentManager fragmentManager;
 
-
-    //private  String msg = "Android : ";
     private SQLiteHandler dbController;
     private SQLController sqlController;
 
@@ -61,28 +60,8 @@ public class NavigationActivity extends AppCompatActivity
     private AppController appController;
     private String type, actionPath;
     private String msg, headerMsg;
-    private MenuItem id;
-
-  /*  @Override
-    public void onConfigurationChanged(Configuration newConfig)
-    {
-        super.onConfigurationChanged(newConfig);
 
 
-    }
-    @Override
-    protected void onRestoreInstanceState(Bundle savedState) {
-        super.onRestoreInstanceState(savedState);
-
-    }
-    @Override
-    public void onSaveInstanceState(Bundle savedInstanceState) {
-        super.onSaveInstanceState(savedInstanceState);
-        Log.i("user", " onSaveInstanceState.");
-        savedInstanceState.putString("greeting", ""+id);
-        Log.e("id"," "+id);
-    }
-*/
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try {
@@ -92,12 +71,11 @@ public class NavigationActivity extends AppCompatActivity
             type = getIntent().getStringExtra("TYPE");
             actionPath = getIntent().getStringExtra("ACTION_PATH");
             headerMsg = getIntent().getStringExtra("HEADER");
+
         } catch (Exception e) {
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         }
-       /* String greeting = (savedInstanceState != null) ? savedInstanceState.getString("greeting") : "null";
-        Log.i("tag", " onCreate2: " + greeting);*/
 
         setContentView(R.layout.activity_navigation);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -147,7 +125,7 @@ public class NavigationActivity extends AppCompatActivity
             }
         }
 
-        Fragment fragment=null;
+        Fragment fragment = null;
 
          /*Handle push notification messages*/
         if (type != null && !type.equals("") && actionPath != null && !actionPath.equals("") && type.equals("2")) {
@@ -296,11 +274,13 @@ public class NavigationActivity extends AppCompatActivity
 
 
         drawer.closeDrawers();
-        id=item;
 
     }
 
     private void goToLoginActivity() {
+        /*SETTING LOGIN SESSION FALSE*/
+        new SessionManager(this).setLogin(false);
+
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivity(intent);
         finish();
@@ -330,7 +310,6 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     public void onDestroy() {
         super.onDestroy();
-        //  Log.d(msg, "The onDestroy() event");
         // session.setLogin(false);
         //Close the all database connection opened here 31/10/2008 By. Ashish
         if (sqlController != null) {
@@ -417,7 +396,7 @@ public class NavigationActivity extends AppCompatActivity
 
         }
 
-            fragmentManager.beginTransaction().replace(R.id.flContent, mFragment).commit();
+        fragmentManager.beginTransaction().replace(R.id.flContent, mFragment).commit();
 
     }
 

@@ -48,11 +48,14 @@ import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
+import app.clirnet.com.clirnetapp.helper.SessionManager;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.utility.MD5;
 import app.clirnet.com.clirnetapp.utility.SyncDataService;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
@@ -63,9 +66,17 @@ public class LoginActivity extends Activity {
     private static final String PREF_PASSWORD = "password";
     private static final String LOGIN_TIME = "loginTime";
     private static final String LOGIN_COUNT = "firstTimeLogin";
+    @InjectView(R.id.email)
+    EditText inputEmail;
+    @InjectView(R.id.password)
+    EditText inputPassword;
+    @InjectView(R.id.btnLogin)
+    Button btnLogin;
 
-    private EditText inputEmail;
-    private EditText inputPassword;
+    private EditText oldPassword;
+    private EditText newPassword;
+    private EditText confirmPassword;
+
     private ProgressDialog pDialog;
     private String name;
     private MD5 md5;
@@ -76,11 +87,9 @@ public class LoginActivity extends Activity {
 
     private SQLController sqlController;
     private AppController appController;
-    private Button btnLogin;
+
     private String phoneNumber;
-    private EditText oldPassword;
-    private EditText newPassword;
-    private EditText confirmPassword;
+
     private String username;
     private String doctor_membership_number;
 
@@ -90,15 +99,31 @@ public class LoginActivity extends Activity {
     private static String BASE_URL = "http://192.168.1.7/server_side_code/register.php";
     private SQLiteHandler sInstance;
     private String docId;
+    private String type, actionPath;
+    private String msg, headerMsg;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_login);
 
-        inputEmail = (EditText) findViewById(R.id.email);
-        inputPassword = (EditText) findViewById(R.id.password);
-        btnLogin = (Button) findViewById(R.id.btnLogin);
+        ButterKnife.inject(this);
+        try {
+            /*message from fcm service*/
+            msg = getIntent().getStringExtra("MSG");
+
+            type = getIntent().getStringExtra("TYPE");
+            actionPath = getIntent().getStringExtra("ACTION_PATH");
+            headerMsg = getIntent().getStringExtra("HEADER");
+
+        } catch (Exception e) {
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+        }
+        //inputEmail = (EditText) findViewById(R.id.email);
+        //inputPassword = (EditText) findViewById(R.id.password);
+        // btnLogin = (Button) findViewById(R.id.btnLogin);
 
         TextView btnLinkToForgetScreen = (TextView) findViewById(R.id.btnLinkToForgetScreen);
         //  TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
@@ -137,11 +162,9 @@ public class LoginActivity extends Activity {
 
         new CallAsynOnce().setValue("1");//this set value which helps to call asyntask only once while app is running.
 
-
         // Progress dialog
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
-
 
         connectionDetector = new ConnectionDetector(getApplicationContext());
 
@@ -191,7 +214,6 @@ public class LoginActivity extends Activity {
             }
         }
 
-
         try {
 
             lastnameDatabaseClass.createDataBase();
@@ -200,14 +222,11 @@ public class LoginActivity extends Activity {
 
             appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
-
             throw new Error("Unable to create database");
         }
-
         try {
 
             lastnameDatabaseClass.openDataBase();
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -239,7 +258,6 @@ public class LoginActivity extends Activity {
                     //to authenticate user credentials
                     LoginAuthentication();
 
-
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
                     btnLogin.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
@@ -250,14 +268,15 @@ public class LoginActivity extends Activity {
         });
 
         /*We are updating visit date format*/
-        updateVisitDateFormat();
+       // updateVisitDateFormat(); //Commented on  10-05-2017
 
+        //Commented on  10-05-2017
         /*  Updateing banner stats flag to 0 build no 1.3+  */
-        String bannerUpdateFlag = getupdateBannerClickVisitFlag0();
+        /*String bannerUpdateFlag = getupdateBannerClickVisitFlag0();
         if (bannerUpdateFlag == null) {
             updateBannerTableDataFlag();
         }
-
+*/
         // Link to Register Screen
         btnLinkToForgetScreen.setOnClickListener(new View.OnClickListener()
 
@@ -373,6 +392,7 @@ public class LoginActivity extends Activity {
                 new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber, doctor_membership_number, docId, start_time);
                 //startService();
                 savedLoginCounter("true");//to save shrd pref to update login counter
+                new SessionManager(this).setLogin(true);
                 //registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
 
                 //update last sync time if sync from server
@@ -398,9 +418,12 @@ public class LoginActivity extends Activity {
                         if (isLogin) {
 
                             Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_LONG).show();
+
                             goToNavigation();
 
                             startService();
+
+                            new SessionManager(this).setLogin(true);
 
                         } else {
                             Toast.makeText(getApplicationContext(), "Username/Password Mismatch", Toast.LENGTH_LONG).show();
@@ -508,8 +531,20 @@ public class LoginActivity extends Activity {
 
     private void goToNavigation() {
 
-        Intent intent = new Intent(getApplicationContext(),
-                NavigationActivity.class);
+        Intent intent = new Intent(this, NavigationActivity.class);
+        if (msg != null) {
+            intent.putExtra("MSG", msg);
+            intent.putExtra("TYPE", type);
+            intent.putExtra("ACTION_PATH", actionPath);
+            intent.putExtra("HEADER", headerMsg);
+        }
+       /* Intent intent = new Intent(this, NewRegistrationPage.class);
+        if (msg != null) {
+            intent.putExtra("MSG", msg);
+            intent.putExtra("TYPE", type);
+            intent.putExtra("ACTION_PATH", actionPath);
+            intent.putExtra("HEADER", headerMsg);
+        }*/
         startActivity(intent);
         //overridePendingTransition(R.anim.slide_out, R.anim.slide_in);
         finish();
@@ -688,7 +723,7 @@ public class LoginActivity extends Activity {
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         return pref.getString("bannerflag", null);
     }
-
+/*Demo Code to register fcm with imy local machine to test*/
     private void registerToServer(final String name, final String email) {
         // Tag used to cancel the request
         String tag_string_req = "req_register";
@@ -786,23 +821,19 @@ public class LoginActivity extends Activity {
 
                 if (symptomscount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("Symptoms.sql"));
-
                 }
                 if (Diagnosiscount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("Diagnosis.sql"));
-
                 }
                 if (Specialitycount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("Speciality.sql"));
-
                 }
                 if (last_name_masterCount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("last_name_master.sql"));
-
                 }
-                //Toast.makeText(this, "Rows loaded from file= " + insertCount, Toast.LENGTH_SHORT).show();
+
             } catch (IOException | ClirNetAppException e) {
-                appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page  " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             }
             return null;

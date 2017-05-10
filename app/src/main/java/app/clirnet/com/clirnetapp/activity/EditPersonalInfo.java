@@ -32,7 +32,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.beardedhen.androidbootstrap.BootstrapEditText;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.signature.StringSignature;
@@ -52,8 +51,6 @@ import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
-
-import static app.clirnet.com.clirnetapp.R.id.sysdate;
 
 public class EditPersonalInfo extends AppCompatActivity {
 
@@ -97,27 +94,27 @@ public class EditPersonalInfo extends AppCompatActivity {
     private Spinner phType;
     private AppController appController;
     private Button save;
-    private String fromWhere;
+
     private String selectedPhoneType;
     private String selectedState;
-    private BootstrapEditText edtAddress;
-    private BootstrapEditText edtCity;
-    private BootstrapEditText edtDistrict;
-    private BootstrapEditText edtPin;
+    private EditText edtAddress;
+    private EditText edtCity;
+    private EditText edtDistrict;
+    private EditText edtPin;
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
     private String doctor_membership_number;
     private String selectedPhoneTypealternate_no;
-    private BootstrapEditText alternatemobile_no;
+    private EditText alternatemobile_no;
     private Spinner stateSpinner;
     private Spinner phoneTypeSpinner2;
     private String selectedUidType;
-    private BootstrapEditText uid;
+    private EditText uid;
     private String selectedIsd_codeType;
     private String selectedAlternateNoIsd_codeType;
     private Spinner isd_code;
     private int position1;
-    private BootstrapEditText edtEmail_id;
+    private EditText edtEmail_id;
     private String url;
 
 
@@ -165,7 +162,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         String strUid = getIntent().getStringExtra("UID");
         String strEmail = getIntent().getStringExtra("EMAIL");
 
-        fromWhere = getIntent().getStringExtra("FROMWHERE");
+
         String strAlternatenumber = getIntent().getStringExtra("ALTERNATENUMBER");
 
         String strAlternatephtype = getIntent().getStringExtra("ALTERNATENUMBERTYPE");
@@ -181,19 +178,19 @@ public class EditPersonalInfo extends AppCompatActivity {
         radioSexGroup = (RadioGroup) findViewById(R.id.radioGender);
         RadioGroup radioLanguage = (RadioGroup) findViewById(R.id.radioLanguage);
         phType = (Spinner) findViewById(R.id.phoneTypeSpinner);
-        alternatemobile_no = (BootstrapEditText) findViewById(R.id.alternatemobile_no);
-        uid = (BootstrapEditText) findViewById(R.id.uid);
+        alternatemobile_no = (EditText) findViewById(R.id.alternatemobile_no);
+        uid = (EditText) findViewById(R.id.uid);
 
 
-        edtAddress = (BootstrapEditText) findViewById(R.id.address);
-        edtCity = (BootstrapEditText) findViewById(R.id.city);
-        edtDistrict = (BootstrapEditText) findViewById(R.id.district);
-        edtPin = (BootstrapEditText) findViewById(R.id.pin);
-        edtEmail_id = (BootstrapEditText) findViewById(R.id.email_id);
+        edtAddress = (EditText) findViewById(R.id.address);
+        edtCity = (EditText) findViewById(R.id.city);
+        edtDistrict = (EditText) findViewById(R.id.district);
+        edtPin = (EditText) findViewById(R.id.pin);
+        edtEmail_id = (EditText) findViewById(R.id.email_id);
 
         save = (Button) findViewById(R.id.save);
         backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
-        TextView date = (TextView) findViewById(sysdate);
+        TextView date = (TextView) findViewById(R.id.sysdate);
 
         editfirstname.setText(strFirstName);
         editmiddlename.setText(strMiddleName);
@@ -234,7 +231,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         modifiedTime = sdf3.format(todayDate3);
 
         setPhoneTypeSpinnerAdapters();
-//open database controller class for further operations on database
+        //open database controller class for further operations on database
         try {
             if (lastNamedb == null) {
                 lastNamedb = new LastnameDatabaseClass(getApplicationContext());
@@ -247,7 +244,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
             dbController = SQLiteHandler.getInstance(getApplicationContext());
             docId = sqlController.getDoctorId();
-            //   Log.e("docId", "" + docId);
+
             String sbdob;
             //if we get date in wrong format
             if (strDob.equals("30-11-0002")) {
@@ -286,11 +283,11 @@ public class EditPersonalInfo extends AppCompatActivity {
             case "Female":
                 radioSexGroup.check(R.id.radioFemale);
                 break;
-            case "OTHR":
-                radioSexGroup.check(R.id.radioOther);
+            case "Trans":
+                radioSexGroup.check(R.id.radioTrans);
                 break;
             default:
-                radioSexGroup.check(R.id.radioNa);
+                radioSexGroup.check(R.id.radioMale);
                 break;
         }
 
@@ -469,13 +466,10 @@ public class EditPersonalInfo extends AppCompatActivity {
                     case R.id.radioFemale:
                         sex = "Female";
                         break;
-                    case R.id.radioOther:
-                        sex = "Other";
+                    case R.id.radioTrans:
+                        sex = "Trans";
                         break;
 
-                    case R.id.radioNa:
-                        sex = "NA";
-                        break;
                     default:
                         break;
                 }
@@ -620,7 +614,6 @@ public class EditPersonalInfo extends AppCompatActivity {
                         appController.appendLog(appController.getDateTime() + " " + "/ " + "Registration Page : " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                     }
                 }
-                //   editAge = AppController.removeLeadingZeroes(editAge);
 
                 if (selectedState.equals("Select State")) {
                     selectedState = null;
@@ -967,7 +960,6 @@ public class EditPersonalInfo extends AppCompatActivity {
     private void goToNavigation() {
 
         Intent i = new Intent(getApplicationContext(), NavigationActivity.class);
-        i.putExtra("FROMWHERE", fromWhere);
         startActivity(i);
         finish();
     }
@@ -1067,8 +1059,6 @@ public class EditPersonalInfo extends AppCompatActivity {
         backChangingImages = null;
         mLastNameList = null;
         phType = null;
-
-        fromWhere = null;
         selectedPhoneType = null;
     }
 

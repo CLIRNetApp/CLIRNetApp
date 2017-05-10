@@ -622,14 +622,11 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
 
-
         // Log.d(TAG, "New patient inserted into sqlite: " + id);
-
-
     }
 
     //add  new patient records into db from registration page
-    public void addHistoryPatientRecords(int visit_id, int patient_id, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String ailments, String prescriptionImgPath, String clinical_note, String added_on_date, String visit_date, String doc_id, String doc_mem_id, String flag, String addedTime, String patientInfoType, String added_by, String action,
+    public void addHistoryPatientRecords(int visit_id, int patient_id, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String prescriptionImgPath, String clinical_note, String added_on_date, String visit_date, String doc_id, String doc_mem_id, String flag, String addedTime, String patientInfoType, String added_by, String action,
                                          String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String bmi, String strSugarFasting, String referedBy, String referedto, String rec_source) {
 
         SQLiteDatabase db = this.getWritableDatabase();
@@ -644,7 +641,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(WEEKS, fowSel);
 
             values.put(MONTHS, monthSel);
-            values.put(AILMENT, ailments);
             values.put(PRESCRIPTION, prescriptionImgPath);
             values.put(CLINICAL_NOTES, clinical_note);
             values.put(ADDED_ON, added_on_date);
@@ -674,7 +670,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(RECORD_SOURCE, rec_source);
 
 
-            db.insert(TABLE_PATIENT_HISTORY, null, values);
+           long id= db.insert(TABLE_PATIENT_HISTORY, null, values);
+            Log.e("id"," "+id);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -35,10 +35,8 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private SQLController sqlController;
     private ArrayList<RegistrationModel> patientPersonalData;
 
-    private String strName;
     private String strgender;
     private String strPatientPhoto;
-
 
     private String strId;
     private String strFirstName;
@@ -49,11 +47,6 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private String strDob;
     private String strLanguage;
     private ImageView backChangingImages;
-    private TextView editpatientName;
-    private TextView editage;
-    private TextView editmobileno;
-    private TextView editgender;
-    private TextView editlang;
     private AppController appController;
     private String fromWhere;
 
@@ -69,22 +62,23 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private String strState;
     private String strAlternatenumber;
     private String strAlternatephtype;
-
+    private String strEmail;
+    private String strUid;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_show_personal_details);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
 
         setSupportActionBar(toolbar);
         appController = new AppController();
 
         try {
-            //noinspection ConstantConditions
+            //no inspection ConstantConditions
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
@@ -94,7 +88,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
         strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
 
-        strName = getIntent().getStringExtra("NAME");
+        String strName = getIntent().getStringExtra("NAME");
         strId = getIntent().getStringExtra("ID");
         strFirstName = getIntent().getStringExtra("FIRSTTNAME");
         strMiddleName = getIntent().getStringExtra("MIDDLENAME");
@@ -116,24 +110,48 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         strAlternatenumber = getIntent().getStringExtra("ALTERNATENUMBER");
 
         strAlternatephtype = getIntent().getStringExtra("ALTERNATENUMBERTYPE");
-    /*    String strPhoneTpe = getIntent().getStringExtra("PHONETYPE");
-        String strVisitDate = getIntent().getStringExtra("VISITDATE");
-        String struid = getIntent().getStringExtra("UID");
-        String strEmail = getIntent().getStringExtra("EMAIL");*/
+        strEmail = getIntent().getStringExtra("EMAIL");
+         strPhoneType = getIntent().getStringExtra("PHONETYPE");
+         strUid = getIntent().getStringExtra("UID");
+
 
 
         TextView txtSysDate = (TextView) findViewById(R.id.sysdate);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         ImageView editPersonalInfo = (ImageView) findViewById(R.id.editPersonalInfo);
-        ImageView patientImage = (ImageView) findViewById(R.id.patientImage);
-        editpatientName = (TextView) findViewById(R.id.patientName);
-        editage = (TextView) findViewById(R.id.age1);
-        editmobileno = (TextView) findViewById(R.id.mobileno);
-        editgender = (TextView) findViewById(R.id.gender);
-        editlang = (TextView) findViewById(R.id.lang);
-        editlastUpdate = (Button) findViewById(R.id.editlastUpdate);
 
+        editlastUpdate = (Button) findViewById(R.id.editlastUpdate);
+        backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
+
+        ImageView patientImage = (ImageView) findViewById(R.id.patientImage);
+        // TextView date = (TextView) findViewById(R.id.sysdate);
+        TextView editpatientName = (TextView) findViewById(R.id.patientName);
+        TextView editAge = (TextView) findViewById(R.id.age);
+        TextView editmobileno = (TextView) findViewById(R.id.mobileno);
+        TextView phoneType = (TextView) findViewById(R.id.phoneType);
+        TextView email = (TextView) findViewById(R.id.email);
+        TextView txteMail=(TextView)findViewById(R.id.txtEmail);
+
+        editpatientName.setText(strName);
+        editmobileno.setText(strPhone);
+
+
+        if(strPhoneType!=null) {
+            phoneType.setText(strPhoneType + " :");
+        }else{
+            phoneType.setText("Mobile :");
+        }
+
+        if(strEmail!=null &&!TextUtils.isEmpty(strEmail) ){
+            txteMail.setVisibility(View.VISIBLE);
+            email.setText(strEmail);
+        }
+        if(strgender!=null && strgender.equals("Male")){
+            editAge.setText("( M - "+ strAge + " )");
+        }else if(strgender!=null && strgender.equals("Female")) {
+            editAge.setText("( F - "+ strAge + " )");
+        }
 
         TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
@@ -147,7 +165,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
             }
         });
-     //open Terms and Condition page
+        //open Terms and Condition page
         termsandCondition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -157,7 +175,6 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
             }
         });
-
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -167,6 +184,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
                 //  Toast.makeText(EditPatientUpdate.this,"back is pressed",Toast.LENGTH_SHORT).show();
             }
         });
+
         setDatatoText();
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);//it will show date as 10 sep,2016
@@ -175,7 +193,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         String dd = sdf.format(todayDate);
         txtSysDate.setText("Today's Date " + dd);
         try {
-
+            //getLoaderManager().initLoader(THE_LOADER, null, this).forceLoad();
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
 
@@ -212,6 +230,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
 
         });
+
         editlastUpdate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -219,7 +238,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
                 //   Toast.makeText(getApplicationContext(), "There is no history to update!!!", Toast.LENGTH_LONG).show();
                 if (patientPersonalData.size() > 0) {
                     RegistrationModel registrationModel = patientPersonalData.get(0); //0 will get first record from the list
-                    Intent i = new Intent(getApplicationContext(), EditPatientUpdate.class);
+                    Intent i = new Intent(getApplicationContext(), NewEditPatientUpdate.class);
 
                     i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
                     i.putExtra("ID", registrationModel.getPat_id());
@@ -306,7 +325,6 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
         i.putExtra("PATIENTPHOTO", strPatientPhoto);
         i.putExtra("ID", strId);
-
         i.putExtra("FIRSTNAME", strFirstName);
         i.putExtra("MIDDLEAME", strMiddleName);
         i.putExtra("LASTNAME", strLastName);
@@ -324,16 +342,18 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         i.putExtra("STATE", strState);
         i.putExtra("ALTERNATENUMBER", strAlternatenumber);
         i.putExtra("ALTERNATENUMBERTYPE", strAlternatephtype);
+        i.putExtra("UID",strUid);
+        i.putExtra("EMAIL",strEmail);
         startActivity(i);
         // finish();
     }
 
     private void setDatatoText() {
-        editpatientName.setText(strName);
+       /* editpatientName.setText(strName);
         editmobileno.setText(strPhone);
         editage.setText(strAge);
         editlang.setText(strLanguage);
-        editgender.setText(strgender);
+        editgender.setText(strgender);*/
     }
 
 
@@ -355,7 +375,6 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         super.onStop();
 
         if (backChangingImages != null) {
-            // backChangingImages=null;
             backChangingImages.setImageDrawable(null);
         }
     }
@@ -399,11 +418,6 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         strState = null;
         strAlternatenumber = null;
         strAlternatephtype = null;
-        editpatientName= null;
-        editage= null;
-        editmobileno= null;
-        editgender= null;
-        editlang= null;
         // System.gc();
     }
 

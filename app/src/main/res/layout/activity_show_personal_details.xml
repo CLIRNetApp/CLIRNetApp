@@ -19,7 +19,8 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_show_personal_details" />
+  <include layout="@layout/content_show_personal_details" />
+
 
 
 

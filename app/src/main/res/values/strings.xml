@@ -198,8 +198,10 @@
     <string name="pulse">Pulse</string>
     <string name="bp">B.P</string>
     <string name="symptomsanddignosis">Symptoms and Diagnosis</string>
+    <string name="dignosis">Diagnosis</string>
+    <string name="symptoms">Symptoms</string>
     <string name="prescription">Prescription</string>
-    <string name="addimage">Prescription Image</string>
+    <string name="addimage">Add Prescription</string>
     <string name="changeimage">Change Prescription</string>
     <string name="visitDate">Visit Date</string>
     <string name="day">Day(s)</string>
@@ -233,9 +235,9 @@
     <string name="uid">UID</string>
     <string name="uidtype">UID Type</string>
     <string name="reset">Reset</string>
-    <string name="version">Release Version 1.3.1</string>
-    <string name="aboutApp">About App V 1.3.1</string>
-    <string name="updateDate">Last Updated Date 19-04-2017</string>
+    <string name="version">Release Version 1.3.1.1</string>
+    <string name="aboutApp">About App V 1.3.1.1</string>
+    <string name="updateDate">Last Updated Date 06-05-2017</string>
     <string name="quickadd">Quick Add</string>
     <string name="title_edit_quick_add">Quick Edit Patient</string>
     <string name="referedby">Add Referals</string>
@@ -250,6 +252,23 @@
     <string name="referedto">Referred To</string>
     <string name="noExist">Phone Number Already exist</string>
     <string name="servicePassword">clirnet123</string>
+    <string name="vitals">Vitals</string>
+    <string name="history">History</string>
+    <string name="images">Images</string>
+    <string name="referrals">Referrals</string>
+    <string name="weight">Weight</string>
+    <string name="Height" />
+    <string name="bmi">Bmi</string>
+    <string name="temp">Temp</string>
+    <string name="systole">Systole</string>
+    <string name="distole">Distole</string>
+    <string name="sugarpp">Sugar(FPG)</string>
+    <string name="sugarfast">Sugar(PPG)</string>
+    <string name="title_activity_new_registration_page">Add New Patient</string>
+    <string name="transgender">T</string>
+    <string name="primarytype">Primary Phone</string>
+    <string name="alternateNumber">Alternate Number</string>
+    <string name="degree">"&#xb0;F"</string><!--Degree Sign-->
 
 
 </resources>

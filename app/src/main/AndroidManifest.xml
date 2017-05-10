@@ -2,11 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="app.clirnet.com.clirnetapp">
 
-
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="ANDROID.PERMISSION.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_MEDIA_STORAGE"/>
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -14,7 +11,6 @@
     <uses-permission android:name="android.hardware.camera" />
     <uses-permission android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.READ_LOGS" />
-
 
     <application
         android:name=".app.AppController"
@@ -39,8 +35,8 @@
         <activity
             android:name=".activity.NavigationActivity"
             android:configChanges="screenSize|orientation"
-            android:theme="@style/AppTheme.NoActionBar"
             android:label="@string/title_activity_navigation"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".activity.EditPatientUpdate"
@@ -57,7 +53,6 @@
             android:label="@string/title_activity_add_patient_update"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <activity
             android:name=".activity.ShowPersonalDetailsActivity"
             android:label="@string/title_activity_show_personal_details"
@@ -65,52 +60,53 @@
 
         <service
             android:name=".utility.SyncDataService"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:enabled="true" />
+            android:enabled="true"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity android:name=".activity.MailActivity" />
-
         <activity
             android:name=".activity.PrivacyPolicy"
             android:label="@string/title_activity_privacy_policy"
             android:theme="@style/AppTheme.NoActionBar" />
-
         <activity android:name=".activity.TermsCondition" />
-
-        <activity android:name=".activity.RegistrationActivityNew"
-            android:theme="@style/AppTheme.NoActionBar"/>
-
-
+        <activity
+            android:name=".activity.RegistrationActivityNew"
+            android:label="@string/title_activity_new_registration_page"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ShowPrescriptionImageActivity"
             android:configChanges="orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:launchMode="singleTask" />
-
-
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".activity.ServiceArea"
             android:label="Service Area" />
-
         <activity
             android:name=".quickAdd.QuickAddActivity"
             android:configChanges="screenSize|orientation"
             android:label="@string/quickadd" />
-
         <activity
             android:name=".quickAdd.EditIncompleteRecordsActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
-            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_edit_quick_add"
             android:launchMode="singleTask"
-            android:label="@string/title_edit_quick_add" />
-        <!-- android:configChanges="orientation|screenSize|keyboardHidden"-->
-        <!--  Commented this service for test build-->
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.NewRegistrationPage"
+            android:label="@string/title_activity_new_registration_page"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".activity.NewEditPatientUpdate"
+            android:label="@string/title_activity_patient_update"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <!-- android:configChanges="orientation|screenSize|keyboardHidden" -->
+        <!-- Commented this service for test build -->
         <service android:name=".fcm.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <service android:name=".fcm.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -146,6 +142,7 @@
         </receiver>
 
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
+
     </application>
 
 </manifest>

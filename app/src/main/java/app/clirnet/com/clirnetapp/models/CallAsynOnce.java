@@ -6,7 +6,7 @@ package app.clirnet.com.clirnetapp.models;
 public class CallAsynOnce {
 
     private static String value;
-    private static String loginResult;
+
 
     public void setValue(String t) {
         value = t;

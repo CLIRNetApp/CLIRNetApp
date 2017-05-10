@@ -3,6 +3,7 @@ package app.clirnet.com.clirnetapp.helper;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+
 //class is used to store the session for app
 public class SessionManager {
 	// LogCat tag
@@ -17,6 +18,8 @@ public class SessionManager {
 	private static final String PREF_NAME = "Login";
 	
 	private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
+	private final Context mContext;
+
 
 	public SessionManager(Context context) {
 
@@ -24,6 +27,7 @@ public class SessionManager {
 		pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
 		editor = pref.edit();
 		editor.apply();
+		mContext=context;
 	}
 
 	public void setLogin(boolean isLoggedIn) {
@@ -39,4 +43,6 @@ public class SessionManager {
 	public boolean isLoggedIn(){
 		return pref.getBoolean(KEY_IS_LOGGED_IN, false);
 	}
+
+
 }

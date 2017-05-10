@@ -22,7 +22,7 @@ import app.clirnet.com.clirnetapp.R;
 public class LineChartItem extends ChartItem {
 
     private Typeface mTf;
-    Context mContext;
+    private Context mContext;
     private ArrayList<String> date;
     private ArrayList<String> nocountsperday;
     private ArrayList<String> mDate;

@@ -297,12 +297,12 @@ public class ReportFragment extends Fragment {
                 fromdate.setText(date);
                 break;
             case "2":   //came form last month
-                date = appController.addDay(new Date(), -30);
+                date = AppController.addDay(new Date(), -30);
                 fromdate.setText(date);
 
                 break;
             case "3":       //came form last quarter
-                date = appController.addDay(new Date(), -90);
+                date = AppController.addDay(new Date(), -90);
                 fromdate.setText(date);
                 break;
         }
@@ -425,9 +425,6 @@ public class ReportFragment extends Fragment {
                             String date = dayOfMonth + "-"
                                     + (monthOfYear + 1) + "-" + year;
 
-                          /*  fromdate.setText(dayOfMonth + "-"
-                                    + (monthOfYear + 1) + "-" + year);*/
-
                             fromdate.setText(year + "-" + (monthOfYear + 1) + "-"
                                     + dayOfMonth);
                         } else {
@@ -503,8 +500,6 @@ public class ReportFragment extends Fragment {
         lastquarter = null;
         startDate = null;
         endDate = null;
-
-
     }
 
 

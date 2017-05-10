@@ -1026,7 +1026,7 @@ public class AppController extends Application {
                 }
         } catch (NullPointerException e) {
             e.printStackTrace();
-            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller  " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         }
     }

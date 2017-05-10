@@ -181,6 +181,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
     private String strReferredTo5Name;
     private ArrayList<String> nameReferalsList;
 
+
     public QuickAddNewRecordsFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
@@ -242,6 +243,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
         district = (BootstrapEditText) view.findViewById(R.id.district);
         pin = (BootstrapEditText) view.findViewById(R.id.pin);
         uid = (BootstrapEditText) view.findViewById(R.id.uid);
+
         backChangingImages = (ImageView) view.findViewById(R.id.backChangingImages);
 
         days = (Button) view.findViewById(R.id.days);
@@ -392,6 +394,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
 
         addFollowupdateButtonListner();
+
         setUpAnimation();
 
 
@@ -2188,7 +2191,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             dbController.addPatientPersonalfromLocal(patient_id, docId, strFirstName, middle_name, strLastName, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, visit_date, doctor_membership_number, flag, patientInfoType, addedTime, added_by, action,
                     strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, stralternatePhone_no, selectedPhoneTypealternate_no, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, strEmailAddress);
 
-            dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, strailments, prescriptionimgPath, clinical_note, added_on, visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action,
+            dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, prescriptionimgPath, clinical_note, added_on, visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action,
                     strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo, record_source);//"" are refredby and to
 
             dbController.deletePrescriptionImageQueue(prescriptionimgId, prescriptionimgPath);

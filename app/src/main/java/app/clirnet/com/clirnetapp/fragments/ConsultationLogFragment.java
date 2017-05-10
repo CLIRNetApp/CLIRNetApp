@@ -70,7 +70,6 @@ public class ConsultationLogFragment extends Fragment {
     private String doctor_membership_number;
 
     private Button searchRecords;
-    public final String USER = "saved_user";
 
     public ConsultationLogFragment() {
         // this.setHasOptionsMenu(true);
@@ -239,7 +238,6 @@ public class ConsultationLogFragment extends Fragment {
                 try {
                     SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
                     Date date1 = sdf1.parse(searchdate);
-                    //  Log.e("date1","   "+date1);
 
                     Date currentdate = sdf1.parse(String.valueOf(sysdate));
 
@@ -254,7 +252,7 @@ public class ConsultationLogFragment extends Fragment {
 
                         filterfodList = new ArrayList<>();
 
-                        filterfodList = sqlController.getPatientListnew(reformattedStr);
+                        filterfodList = sqlController.getPatientList(reformattedStr);
 
 
                         int filterModelSize = filterfodList.size();
@@ -379,6 +377,7 @@ public class ConsultationLogFragment extends Fragment {
             i.putExtra("PRESCRIPTION", book.getPres_img());
             i.putExtra("ISDCODE", book.getIsd_code());
             i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
+            i.putExtra("EMAIL", book.getEmail());
             i.putExtra("FROMWHERE", "2");
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
@@ -415,6 +414,8 @@ public class ConsultationLogFragment extends Fragment {
             i.putExtra("PRESCRIPTION", book.getPres_img());
             i.putExtra("ISDCODE", book.getIsd_code());
             i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
+            i.putExtra("UID", book.getUid());
+            i.putExtra("EMAIL", book.getEmail());
             i.putExtra("FROMWHERE", "2");
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             //i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);

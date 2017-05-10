@@ -1,5 +1,6 @@
 package app.clirnet.com.clirnetapp.fragments;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -7,8 +8,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +33,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -48,6 +52,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 import app.clirnet.com.clirnetapp.utility.ItemClickListener;
 import app.clirnet.com.clirnetapp.utility.MultiSpinner;
 import app.clirnet.com.clirnetapp.utility.MultiSpinner2;
+import app.clirnet.com.clirnetapp.utility.RangeSeekBar;
 
 
 public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpinnerListener, MultiSpinner2.MultiSpinnerListener {
@@ -56,11 +61,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private EditText firstName;
     private EditText lastName;
     private EditText phone_no;
-    private String sex;
     private String strfname;
     private String strlname;
     private String strpno;
-    private String strage;
 
     private SQLController sqlController;
 
@@ -68,7 +71,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private RecyclerView recyclerView;
     private ImageView backChangingImages;
     private ArrayList<RegistrationModel> patientData = new ArrayList<>();
-    //private ArrayList<RegistrationModel> patientData1 = new ArrayList<>();
     private LinearLayout norecordtv;
     private View rootview;
     private AppController appController;
@@ -100,6 +102,36 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
     private String doctor_membership_number;
+    private Button selectVitals;
+    private Integer weightMinValue, weightMaxValue;
+    private Integer heightMinValue, heightMaxValue;
+    private Integer bmiMinValue, bmiMaxValue;
+    private Integer pulseMinValue, pulseMaxValue;
+    private Integer tempMinValue, tempMaxValue;
+    private Integer systoleMinValue, systoleMaxValue;
+    private Integer distoleMinValue, distoleMaxValue;
+    private Integer sugarFpgMinValue, sugetFpgMaxValue;
+    private Integer sugarPpgMinValue, sugetPpgMaxValue;
+
+    private Integer strMinWeight;
+    private Integer strMaxWeight;
+    private Integer strMinHeight;
+    private Integer strMaxHeight;
+    private Integer strMinBmi;
+    private Integer strMaxBmi;
+    private Integer strMinPulse;
+    private Integer strMaxPulse;
+    private Integer strMinTemp;
+    private Integer strMaxTemp;
+    private Integer strMinSystole;
+    private Integer strMaxSystole;
+    private Integer strMinDistole;
+    private Integer strMaxDistole;
+    private Integer strMinSugarFPG;
+    private Integer strMaxSugarFPG;
+    private Integer strMinSugarPPG;
+    private Integer strMaxSugarPPG;
+
 
     public PoHistoryFragment() {
 
@@ -110,8 +142,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         super.onDestroyView();
 
         rootview = null;
-
     }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -153,6 +185,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         phone_no = (EditText) rootview.findViewById(R.id.mobile_no);
 
+        selectVitals = (Button) rootview.findViewById(R.id.selectVitals);
+
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
         Date todayDate = new Date();
         String dd = sdf.format(todayDate);
@@ -172,8 +206,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             }
         });
-        //open Terms and Condition page
 
+        //open Terms and Condition page
         termsandCondition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,9 +217,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             }
         });
 
-
         try {
-
             sqlController = new SQLController(getContext().getApplicationContext());
             sqlController.open();
             if (databaseClass == null) {
@@ -198,18 +230,38 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 appController = new AppController();
             }
             bannerimgNames = bannerClass.getImageName();
-
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
+            ArrayList<HashMap<String, Integer>> demoList = sqlController.getMinMaxVitals();
+            if (demoList.size() > 0) {
+                strMinWeight = demoList.get(0).get("MINWEIGHT");
+                strMaxWeight = demoList.get(0).get("MAXWEIGHT");
+                strMinHeight = demoList.get(0).get("MINHEIGHT");
+                strMaxHeight = demoList.get(0).get("MAXHEIGHT");
+                strMinBmi = demoList.get(0).get("MINBMI");
+                strMaxBmi = demoList.get(0).get("MAXBMI");
+                strMinPulse = demoList.get(0).get("MINPULSE");
+                strMaxPulse = demoList.get(0).get("MAXPULSE");
+                strMinTemp = demoList.get(0).get("MINTEMP");
+                strMaxTemp = demoList.get(0).get("MAXTEMP");
+                strMinSystole = demoList.get(0).get("MINSYSTOLE");
+                strMaxSystole = demoList.get(0).get("MAXSYSTOLE");
+                strMinDistole = demoList.get(0).get("MINDISTOLE");
+                strMaxDistole = demoList.get(0).get("MAXDISTOLE");
+                strMinSugarFPG = demoList.get(0).get("MINSUGARFPG");
+                strMaxSugarFPG = demoList.get(0).get("MAXSUGARFPG");
+                strMinSugarPPG = demoList.get(0).get("MINSUGARPPG");
+                strMaxSugarPPG = demoList.get(0).get("MAXSUGARPPG");
+                Log.e("strMin", " " + strMinSugarFPG + " " + strMaxSugarFPG + " " + strMinSugarPPG + "  " + strMaxSugarPPG + "  " + strMinBmi + "  " + strMaxBmi);
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Frgament" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
-
         patientData.clear(); //This method will clear all previous data from  Array list  24-8-2016
-        setAilmentData();
 
+        setAilmentData();
 
         submit = (Button) rootview.findViewById(R.id.submit);
 
@@ -229,6 +281,26 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             }
 
         });
+        selectVitals.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+
+                    showReferedDialogBox();
+
+                    selectVitals.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    selectVitals.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
+            }
+
+        });
+
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -248,9 +320,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 //Remove spaces between text if more than 2 white spaces found 12-12-2016
                 strAilment = strAilment.replaceAll("\\s+", " ");
 
-
-                //This method will clear all previous data from  Array list  24-8-2016
-
                 String delimiter = ",";
                 String[] temp = strAilment.split(delimiter);
                 selectedAilmentList = new ArrayList();
@@ -262,7 +331,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     ival = 0;
                     loadLimit = 25;
-                    patientData = (sqlController.getFilterDatanew(strfname, strlname, sex, strpno, strage, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit));
+                    patientData = (sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
+                            pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugetFpgMaxValue, sugarPpgMinValue, sugetPpgMaxValue));
                     //    patientData = sqlController.getFilterDatanew(strfname, strlname, selectedListGender.get(i).toString(), strpno, strage);
                     queryCount = sqlController.getCountResult();
                     //  Log.e("queryCount", "" + queryCount );
@@ -295,6 +365,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                         recyclerView.setVisibility(View.VISIBLE);
                         norecordtv.setVisibility(View.GONE);
+
 
                         poHistoryAdapter = new PoHistoryAdapter(patientData, queryCount);
 
@@ -375,8 +446,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         genderList = new ArrayList();
         genderList.add("Male");
         genderList.add("Female");
-        genderList.add("Other");
-        genderList.add("NA");
+        genderList.add("Trans");
+
         genderSpinner.setItems(genderList, "Select Gender", this);
 
         genderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -557,7 +628,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private void setupAnimation() {
 
         try {
-            appController.setUpAdd(getContext(),bannerimgNames,backChangingImages,doctor_membership_number,"POHistory Fragment");
+            appController.setUpAdd(getContext(), bannerimgNames, backChangingImages, doctor_membership_number, "POHistory Fragment");
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -635,16 +706,17 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         if (end <= queryCount) {
             try {
-                memberList = sqlController.getFilterDatanew(strfname, strlname, sex, strpno, strage, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit);
+                memberList = sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
+                        pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugetFpgMaxValue, sugarPpgMinValue, sugetPpgMaxValue);
             } catch (ClirNetAppException | NullPointerException e) {
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "PhHistory Fragment" + e + " Line Number:  " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "PhHistory Fragment " + e + " Line Number:  " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                 e.printStackTrace();
             }
             try {
                 poHistoryAdapter.addAll(memberList);
             } catch (Exception e) {
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "PhHistory Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "PhHistory Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                 e.printStackTrace();
             }
@@ -710,12 +782,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         norecordtv = null;
 
         recyclerView = null;
-        sex = null;
         strfname = null;
         strlname = null;
         strpno = null;
-        strage = null;
-
         submit = null;
         selectedListGender = null;
         selectedAgeList = null;
@@ -727,9 +796,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         selectedItems = null;
         selectedItems2 = null;
         genderList = null;
-        selectedListGender = null;
-        selectedAgeList = null;
-        ageGapSpinner = null;
         selectedAilmentList = null;
         mLayoutManager = null;
         doctor_membership_number = null;
@@ -738,7 +804,287 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         lastName = null;
         phone_no = null;
         genderSpinner = null;
-        // Log.e("onDetach", "onDetach Po hISTORY fRAGMENT Fragment");
+        clearVitalsValue();
+        Log.e("onDetach", "onDetach Po hISTORY fRAGMENT Fragment");
+    }
+
+    private void showReferedDialogBox() {
+        final Dialog dialog = new Dialog(new ContextThemeWrapper(getContext(), android.R.style.Theme_DeviceDefault_Light_NoActionBar_Overscan));
+        LayoutInflater factory = LayoutInflater.from(getContext());
+
+        final View f = factory.inflate(R.layout.filter_vitals_dialog_pohistory, null);
+
+        /* Clear The entered viatls for next search*/
+        clearVitalsValue();
+
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(f);
+
+        dialog.setTitle("Referred By-To");
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(f);
+        Button dialogButtonCancel = (Button) f.findViewById(R.id.customDialogCancel);
+        Button dialogButtonOk = (Button) f.findViewById(R.id.customDialogOk);
+
+        RangeSeekBar seekbarWeight = (RangeSeekBar) f.findViewById(R.id.seekbarWeight);
+        RangeSeekBar seekbarHeight = (RangeSeekBar) f.findViewById(R.id.seekbarHeight);
+        RangeSeekBar seekbarBmi = (RangeSeekBar) f.findViewById(R.id.seekbarBmi);
+        RangeSeekBar seekbarPulse = (RangeSeekBar) f.findViewById(R.id.seekbarPulse);
+        RangeSeekBar seekbarTemp = (RangeSeekBar) f.findViewById(R.id.seekbarTemp);
+        RangeSeekBar seekbarSystole = (RangeSeekBar) f.findViewById(R.id.seekbarSystole);
+        RangeSeekBar seekbarDiastole = (RangeSeekBar) f.findViewById(R.id.seekbarDiastole);
+        RangeSeekBar seekbarSugarFpg = (RangeSeekBar) f.findViewById(R.id.seekbarSugarFpg);
+        RangeSeekBar seekbarSugarPpg = (RangeSeekBar) f.findViewById(R.id.seekbarSugarPpg);
+
+        final  EditText input_min_weight=(EditText)f.findViewById(R.id.input_min_weight);
+        final EditText input_max_weight=(EditText)f.findViewById(R.id.input_max_weight);
+        final  EditText input_min_height=(EditText)f.findViewById(R.id.input_min_height);
+        final EditText input_max_height=(EditText)f.findViewById(R.id.input_max_height);
+        final  EditText input_min_bmi=(EditText)f.findViewById(R.id.input_min_bmi);
+        final EditText input_max_bmi=(EditText)f.findViewById(R.id.input_max_bmi);
+        final  EditText input_min_pulse=(EditText)f.findViewById(R.id.input_min_pulse);
+        final EditText input_max_pulse=(EditText)f.findViewById(R.id.input_max_pulse);
+        final  EditText input_min_temp=(EditText)f.findViewById(R.id.input_min_temp);
+        final EditText input_max_temp=(EditText)f.findViewById(R.id.input_max_temp);
+        final  EditText input_min_systole=(EditText)f.findViewById(R.id.input_min_systole);
+        final EditText input_max_systole=(EditText)f.findViewById(R.id.input_max_systole);
+        final  EditText input_min_distole=(EditText)f.findViewById(R.id.input_min_distole);
+        final EditText input_max_distole=(EditText)f.findViewById(R.id.input_max_distole);
+        final  EditText input_min_sugarfpg=(EditText)f.findViewById(R.id.input_min_sugarfpg);
+        final EditText  input_max_sugarfpg=(EditText)f.findViewById(R.id.input_max_sugarfpg);
+        final  EditText input_min_sugarppg=(EditText)f.findViewById(R.id.input_min_sugarppg);
+        final EditText  input_max_sugarppg=(EditText)f.findViewById(R.id.input_max_sugarppg);
+
+
+
+
+        //strMaxWeight=0;
+        if(strMinWeight==0 && strMaxWeight==0){
+            seekbarWeight.setVisibility(View.GONE);
+        }else{
+            seekbarWeight.setRangeValues(strMinWeight, strMaxWeight); // if we want to set progrmmatically set range of seekbar
+            seekbarWeight.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+
+
+                @Override
+                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+                    Log.e("value", minValue + "  " + maxValue);
+                   // weightMinValue = minValue;
+                   // weightMaxValue = maxValue;
+                    input_min_weight.setText(minValue.toString());
+                    input_max_weight.setText(maxValue.toString());
+                }
+
+            });
+        }
+
+        if(strMinHeight==0 && strMaxHeight==0){
+            seekbarHeight.setVisibility(View.GONE);
+        }else {
+            seekbarHeight.setRangeValues(strMinHeight, strMaxHeight);
+            seekbarHeight.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+
+
+                @Override
+                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+
+                    input_min_height.setText(minValue.toString());
+                    input_max_height.setText(maxValue.toString());
+                }
+
+            });
+        }
+        if(strMinBmi==0 && strMaxBmi==0){
+            seekbarBmi.setVisibility(View.GONE);
+        }else {
+            seekbarBmi.setRangeValues(strMinBmi, strMaxBmi);
+            seekbarBmi.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+                @Override
+                public void onRangeSeekBarValuesChanged(RangeSeekBar bar, Integer minValue, Integer maxValue) {
+
+                    input_min_bmi.setText(minValue.toString());
+                    input_max_bmi.setText(maxValue.toString());
+
+                }
+            });
+        }
+        if(strMinPulse==0 && strMaxPulse==0){
+            seekbarPulse.setVisibility(View.GONE);
+        }else {
+            seekbarPulse.setRangeValues(strMinPulse, strMaxPulse);
+            seekbarPulse.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+                @Override
+                public void onRangeSeekBarValuesChanged(RangeSeekBar bar, Integer minValue, Integer maxValue) {
+                    input_min_pulse.setText(minValue.toString());
+                    input_max_pulse.setText(maxValue.toString());
+
+                }
+            });
+        }
+        if(strMinTemp==0 && strMaxTemp==0){
+            seekbarTemp.setVisibility(View.GONE);
+        }else {
+            seekbarTemp.setRangeValues(strMinTemp, strMaxTemp);
+            seekbarTemp.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+                @Override
+                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+                    input_min_temp.setText(minValue.toString());
+                    input_max_temp.setText(maxValue.toString());
+                }
+            });
+        }
+        if(strMinSystole==0 && strMaxSystole==0){
+            seekbarSystole.setVisibility(View.GONE);
+        }else {
+            seekbarSystole.setRangeValues(strMinSystole, strMaxSystole);
+            seekbarSystole.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+                @Override
+                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+                    input_min_systole.setText(minValue.toString());
+                    input_max_systole.setText(maxValue.toString());
+                }
+            });
+        }
+        if(strMinDistole==0 && strMaxDistole==0){
+            seekbarDiastole.setVisibility(View.GONE);
+        }else {
+            seekbarDiastole.setRangeValues(strMinDistole, strMaxDistole);
+            seekbarDiastole.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+                @Override
+                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+                    input_min_distole.setText(minValue.toString());
+                    input_max_distole.setText(maxValue.toString());
+                }
+            });
+        }
+        if(strMinSugarFPG==0 && strMaxSugarFPG==0){
+            seekbarSugarFpg.setVisibility(View.GONE);
+        }else {
+            seekbarSugarFpg.setRangeValues(strMinSugarFPG, strMaxSugarFPG);
+            seekbarSugarFpg.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+                @Override
+                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+                    input_min_sugarfpg.setText(minValue.toString());
+                    input_max_sugarfpg.setText(maxValue.toString());
+
+                }
+            });
+        }
+        if(strMinSugarPPG==0 && strMaxSugarPPG==0){
+            seekbarSugarPpg.setVisibility(View.GONE);
+        }else {
+            seekbarSugarPpg.setRangeValues(strMinSugarPPG, strMaxSugarPPG);
+            seekbarSugarPpg.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
+                @Override
+                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+                    input_min_sugarppg.setText(minValue.toString());
+                    input_max_sugarppg.setText(maxValue.toString());
+
+                }});
+        }
+        // Click cancel to dismiss android custom dialog box
+        dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                dialog.dismiss();
+
+            }
+        });
+        dialogButtonOk.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                String valMinWeight=input_min_weight.getText().toString();
+                String valMaxWeight=input_max_weight.getText().toString();
+                if(valMinWeight!=null && !valMinWeight.equals("") && !valMaxWeight.equals("")) {
+
+                    weightMinValue = Integer.valueOf(valMinWeight);
+                    weightMaxValue = Integer.valueOf(valMaxWeight);
+                }
+                String valMinHeight=input_min_height.getText().toString();
+                String valMaxHeight=input_max_height.getText().toString();
+                if(valMinHeight!=null && !valMinHeight.equals("") && !valMaxHeight.equals("")) {
+
+                    heightMinValue = Integer.valueOf(valMinHeight);
+                    heightMaxValue = Integer.valueOf(valMaxHeight);
+                }
+                String valMinBmi=input_min_bmi.getText().toString();
+                String valMaxBmi=input_max_bmi.getText().toString();
+                if(valMinBmi!=null && !valMinBmi.equals("") && !valMaxBmi.equals("")) {
+
+                    bmiMinValue = Integer.valueOf(valMinBmi);
+                    bmiMaxValue = Integer.valueOf(valMaxBmi);
+                }
+                String valMinPulse=input_min_pulse.getText().toString();
+                String valMaxPulse=input_max_pulse.getText().toString();
+                if(valMinPulse!=null && !valMinPulse.equals("") && !valMaxPulse.equals("")) {
+
+                    pulseMinValue = Integer.valueOf(valMinPulse);
+                    pulseMaxValue = Integer.valueOf(valMaxPulse);
+                }
+                String valMinTemp=input_min_temp.getText().toString();
+                String valMaxTemp=input_max_temp.getText().toString();
+                if(valMinTemp!=null && !valMinTemp.equals("") && !valMaxTemp.equals("")) {
+
+                    pulseMinValue = Integer.valueOf(valMinTemp);
+                    pulseMaxValue = Integer.valueOf(valMaxTemp);
+                }
+                String valMinSystole=input_min_systole.getText().toString();
+                String valMaxSystole=input_max_systole.getText().toString();
+                if(valMinSystole!=null && !valMinSystole.equals("") && !valMaxSystole.equals("")) {
+
+                    systoleMinValue = Integer.valueOf(valMinSystole);
+                    systoleMaxValue = Integer.valueOf(valMaxSystole);
+                }
+                String valMinDistole=input_min_systole.getText().toString();
+                String valMaxDistole=input_max_systole.getText().toString();
+                if(valMinDistole!=null && !valMinDistole.equals("") && !valMaxDistole.equals("")) {
+
+                    distoleMinValue = Integer.valueOf(valMinDistole);
+                    distoleMaxValue = Integer.valueOf(valMaxDistole);
+                }
+                String valMinSugarFpg=input_min_sugarfpg.getText().toString();
+                String valMaxSugarFpg=input_max_sugarfpg.getText().toString();
+                if(valMinSugarFpg!=null && !valMinSugarFpg.equals("") && !valMaxSugarFpg.equals("")) {
+
+                    sugarFpgMinValue = Integer.valueOf(valMinSugarFpg);
+                    sugetFpgMaxValue = Integer.valueOf(valMaxSugarFpg);
+                }
+                String valMinSugarPpg=input_min_sugarppg.getText().toString();
+                String valMaxSugarPpg=input_max_sugarppg.getText().toString();
+                if(valMinSugarPpg!=null && !valMinSugarPpg.equals("") && !valMaxSugarPpg.equals("")) {
+
+                    sugarPpgMinValue = Integer.valueOf(valMinSugarPpg);
+                    sugetPpgMaxValue = Integer.valueOf(valMaxSugarPpg);
+                }
+                //weightMinValue=
+                dialog.dismiss();
+            }
+        });
+
+        dialog.show();
+    }
+
+    private void clearVitalsValue() {
+        weightMinValue = null;
+        weightMaxValue = null;
+        heightMinValue = null;
+        heightMaxValue = null;
+        bmiMinValue = null;
+        bmiMaxValue = null;
+        pulseMinValue = null;
+        pulseMaxValue = null;
+        tempMinValue = null;
+        tempMaxValue = null;
+        systoleMinValue = null;
+        systoleMaxValue = null;
+        distoleMinValue = null;
+        distoleMaxValue = null;
+        sugarFpgMinValue = null;
+        sugetFpgMaxValue = null;
+        sugarPpgMinValue = null;
+        sugetPpgMaxValue = null;
     }
 }
 

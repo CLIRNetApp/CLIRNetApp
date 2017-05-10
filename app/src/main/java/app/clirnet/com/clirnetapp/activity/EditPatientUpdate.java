@@ -1,6 +1,5 @@
 package app.clirnet.com.clirnetapp.activity;
 
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -75,7 +74,6 @@ public class EditPatientUpdate extends AppCompatActivity {
 
     private String strgender;
     private String strPatientPhoto;
-    // private MultiAutoCompleteTextView ailments1;
     private EditText clinicalNotes;
     private String strFirstName;
     private String strMiddleName;
@@ -84,7 +82,7 @@ public class EditPatientUpdate extends AppCompatActivity {
     private String strId;
     private String fowSel;
     private String usersellectedDate = null;
-    private String monthSel;
+
 
     private SQLController sqlController;
     private SQLiteHandler dbController;
@@ -117,6 +115,7 @@ public class EditPatientUpdate extends AppCompatActivity {
     private String value;
     private String buttonSelected;
     private String daysSel;
+    private String monthSel;
 
     private EditText edtInput_weight;
     private EditText edtInput_pulse;
@@ -173,7 +172,6 @@ public class EditPatientUpdate extends AppCompatActivity {
     private ArrayList<String> nameReferalsList;
 
 
-    @TargetApi(Build.VERSION_CODES.KITKAT)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -193,11 +191,10 @@ public class EditPatientUpdate extends AppCompatActivity {
             databaseClass = new DatabaseClass(getApplicationContext());
             dbController = SQLiteHandler.getInstance(getApplicationContext());
         }
-        if (validator != null) {
+        if (validator == null) {
             validator = new Validator(getApplicationContext());
         }
         strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
-
         String strName = getIntent().getStringExtra("NAME");
         strId = getIntent().getStringExtra("ID");
 
@@ -215,7 +212,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         strEmail = getIntent().getStringExtra("EMAIL");
         String strActualFollowUpDate = getIntent().getStringExtra("ACTUALFOD");
 
-        String strAilment = getIntent().getStringExtra("AILMENT");
+
         String strFollowupDays = getIntent().getStringExtra("FOLLOWDAYS");
         String strFollowupWeeks = getIntent().getStringExtra("FOLLOWWEEKS");
 
@@ -381,7 +378,6 @@ public class EditPatientUpdate extends AppCompatActivity {
         editage.setText(strAge);
         editlang.setText(strLanguage);
         editgender.setText(strgender);
-        //ailments1.setText(strAilment);
         clinicalNotes.setText(strClinicalNotes);
         edtInput_weight.setText(strWeight);
         edtInput_pulse.setText(strPulse);
@@ -400,6 +396,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         edtInput_bmi.setText(strbmi);
         edtInput_height.setText(height);
         edtInput_sugarfasting.setText(sugarfasting);
+
         if (strActualFollowUpDate == null || strActualFollowUpDate.equals("0000-00-00") || strActualFollowUpDate.equals("30-11-0002") || strActualFollowUpDate.equals("")) {
             fodtextshow.setText("");//add selected date to date text view
             CleanFollowup();
@@ -432,7 +429,6 @@ public class EditPatientUpdate extends AppCompatActivity {
         }
 
         try {
-           /* expListView = (ExpandableListView) findViewById(R.id.lvExp);*/
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
             docId = sqlController.getDoctorId();
@@ -607,7 +603,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                 i.putExtra("EMAIL", strEmail);
                 i.putExtra("FROMWHERE", "editpatient");
                 startActivity(i);
-                // finish();
+
             }
         });
 
@@ -714,7 +710,6 @@ public class EditPatientUpdate extends AppCompatActivity {
         Button dialogButtonOk = (Button) f.findViewById(R.id.customDialogOk);
         final Button addMore = (Button) f.findViewById(R.id.addMore);
 
-
         final Spinner nameRefredBySpinner = (Spinner) f.findViewById(R.id.nameRefredBySpinner);
         final Spinner nameRefredTo1Spinner = (Spinner) f.findViewById(R.id.nameRefredTo1Spinner);
         final Spinner nameRefredTo2Spinner = (Spinner) f.findViewById(R.id.nameRefredTo2Spinner);
@@ -723,19 +718,19 @@ public class EditPatientUpdate extends AppCompatActivity {
         final Spinner nameRefredTo5Spinner = (Spinner) f.findViewById(R.id.nameRefredTo5Spinner);
 
         try {
-
             NameData = new HashMap<>();
             ArrayList<String> NameList = new ArrayList<>();
 
             for (int im = 0; im < list.size(); im++) {
                 String strid = list.get(im).get("ID");
                 String strName = list.get(im).get("NAME");
-                String str = list.get(im).get("SPECIALITY");
+                //String str = list.get(im).get("SPECIALITY");
                 NameData.put(strName, strid);
             }
             nameReferalsList = dbController.getReferalsnew();
             setSpinnerValue(f);
             nameReferalsList.add(0, "Select Referrals");
+
             if (strReferedBy != null && !strReferedBy.equals("")) {
 
                 String referedBy = sqlController.getNameByIdAssociateMaster(strReferedBy);
@@ -803,7 +798,7 @@ public class EditPatientUpdate extends AppCompatActivity {
 
         } catch (ClirNetAppException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "EditPatientUpdate" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "EditPatientUpdate " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         // Click cancel to dismiss android custom dialog box
@@ -973,7 +968,7 @@ public class EditPatientUpdate extends AppCompatActivity {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + " AddPatientUpdate" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + " Edit PatientUpdate " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         nameRefredBySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -984,13 +979,11 @@ public class EditPatientUpdate extends AppCompatActivity {
                 strReferredByName = (String) parent.getItemAtPosition(position);
 
                 try {
-                    if (nameRefredBySpinner.getSelectedItem() == "Select Referrals") {
-
-                    } else {
+                    if (nameRefredBySpinner.getSelectedItem() != "Select Referrals") {
                         if (appController.contains(strReferredByName, ".")) {
 
                             String[] parts = strReferredByName.split(". ", 2);
-                             String string1 = parts[0];//namealias
+                             //String string1 = parts[0];//namealias
                             strReferredByName = parts[1];//actual name
                         }
                         ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredByName.trim());
@@ -1018,13 +1011,12 @@ public class EditPatientUpdate extends AppCompatActivity {
 
                 strReferredTo1Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo1Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo1Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo1Name, ".")) {
 
                             String[] parts = strReferredTo1Name.split(". ", 2);
-                            String string1 = parts[0];//namealias
+                           // String string1 = parts[0];//namealias
                             strReferredTo1Name = parts[1];//actual name
                         }
                         ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo1Name.trim());
@@ -1051,13 +1043,12 @@ public class EditPatientUpdate extends AppCompatActivity {
 
                 strReferredTo2Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo2Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo2Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo2Name, ".")) {
 
                             String[] parts = strReferredTo2Name.split(". ", 2);
-                            String string1 = parts[0];//namealias
+                           // String string1 = parts[0];//namealias
                             strReferredTo2Name = parts[1];//actual name
                         }
                         ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo2Name.trim());
@@ -1084,13 +1075,12 @@ public class EditPatientUpdate extends AppCompatActivity {
 
                 strReferredTo3Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo3Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo3Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo3Name, ".")) {
 
                             String[] parts = strReferredTo3Name.split(". ", 2);
-                            String string1 = parts[0];//namealias
+                           // String string1 = parts[0];//namealias
                             strReferredTo3Name = parts[1];//actual name
                         }
                         ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo3Name.trim());
@@ -1117,9 +1107,8 @@ public class EditPatientUpdate extends AppCompatActivity {
 
                 strReferredTo4Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo4Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo4Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo4Name, ".")) {
 
                             String[] parts = strReferredTo4Name.split(". ", 2);
@@ -1149,9 +1138,8 @@ public class EditPatientUpdate extends AppCompatActivity {
 
                 strReferredTo5Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo5Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo5Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo5Name, ".")) {
 
                             String[] parts = strReferredTo5Name.split(". ", 2);
@@ -1543,16 +1531,13 @@ public class EditPatientUpdate extends AppCompatActivity {
             appController.setUpAdd(EditPatientUpdate.this, bannerimgNames, backChangingImages, doctor_membership_number, "Edit Patient Update");
 
         } catch (Exception e) {
-            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Edit Patient Update " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
         }
-
-
     }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         try {
-//        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
 
                 if (resultCode == Activity.RESULT_OK) {
