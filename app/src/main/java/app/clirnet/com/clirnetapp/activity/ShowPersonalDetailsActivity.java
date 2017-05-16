@@ -64,6 +64,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private String strAlternatephtype;
     private String strEmail;
     private String strUid;
+    private String calledFrom;
 
 
     @Override
@@ -89,7 +90,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
 
         String strName = getIntent().getStringExtra("NAME");
-        strId = getIntent().getStringExtra("ID");
+        strId = getIntent().getStringExtra("ID");//patient id
         strFirstName = getIntent().getStringExtra("FIRSTTNAME");
         strMiddleName = getIntent().getStringExtra("MIDDLENAME");
         strLastName = getIntent().getStringExtra("LASTNAME");
@@ -113,6 +114,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         strEmail = getIntent().getStringExtra("EMAIL");
          strPhoneType = getIntent().getStringExtra("PHONETYPE");
          strUid = getIntent().getStringExtra("UID");
+        calledFrom=getIntent().getStringExtra("CALLEDFROM");
 
 
 
@@ -287,8 +289,11 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
                     i.putExtra("REFEREDTO", registrationModel.getReferedTo());
                     i.putExtra("UID",registrationModel.getUid());
                     i.putExtra("EMAIL",registrationModel.getEmail());
+                    i.putExtra("CALLEDFROM",calledFrom);
+                   // i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                   // i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                     startActivity(i);
-                    //finish();
+                   // finish();
                 }
             }
 

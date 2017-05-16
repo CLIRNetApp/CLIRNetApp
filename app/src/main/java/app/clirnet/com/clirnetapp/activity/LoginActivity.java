@@ -96,7 +96,7 @@ public class LoginActivity extends Activity {
     private BannerClass bannerClass;
 
     private Dialog dialog;
-    private static String BASE_URL = "http://192.168.1.7/server_side_code/register.php";
+    private static String BASE_URL = "http://192.168.1.6/server_side_code/register.php";
     private SQLiteHandler sInstance;
     private String docId;
     private String type, actionPath;
@@ -134,6 +134,14 @@ public class LoginActivity extends Activity {
         bannerClass = new BannerClass(getApplicationContext());
         LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
         appController = new AppController();
+
+       /* WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+
+        if (wifiInfo != null) {
+            Integer linkSpeed = wifiInfo.getLinkSpeed(); //measured using WifiInfo.LINK_SPEED_UNITS
+            Log.e("linkSpeed"," "+linkSpeed);
+        }*/
 
       /*  privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,7 +185,22 @@ public class LoginActivity extends Activity {
                 doctor_membership_number = sqlController.getDoctorMembershipIdNew();
                 docId = sqlController.getDoctorId();
             }
-
+          //  File imagesFolder = new File(Environment.getExternalStorageDirectory(), "PatientsImages");
+           // String PrescriptionimageName = "prescription_Demo_Gill94_19-04-2017_16:43:43.png";
+           // File imageFile = new File(imagesFolder, PrescriptionimageName);
+           // new ImageCompression(this,imageFile.getPath().toString()).execute("/storage/emulated/0/PatientsImages/prescription_Demo_Gill94_19-04-2017_16:43:43.png");
+           /* File imagesFolder = new File(Environment.getExternalStorageDirectory(), "PatientsImages");
+            ArrayList<String> imageList = sqlController.getImages();
+            for (String img:imageList){
+              Boolean exist=  appController.getImageFromPath(img);
+                if(exist){
+                    String PrescriptionimageName =  img.replaceAll("/storage/emulated/0/PatientsImages/", "");//"prescription_Demo_Gill94_19-04-2017_16:43:43.png";
+                    Log.e("PrescriptionimageName","  "+img + "  "+PrescriptionimageName);
+                    File imageFile = new File(imagesFolder, PrescriptionimageName);
+                   new ImageCompression(this,imageFile.getPath()).execute(img);
+                }
+            }
+*/
         } catch (Exception e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTimenew() + " " + "/ " + "Login Page" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -393,7 +416,7 @@ public class LoginActivity extends Activity {
                 //startService();
                 savedLoginCounter("true");//to save shrd pref to update login counter
                 new SessionManager(this).setLogin(true);
-                //registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
+               //registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
 
                 //update last sync time if sync from server
                 // update last login time
@@ -775,6 +798,8 @@ public class LoginActivity extends Activity {
                 Map<String, String> params = new HashMap<>();
 
                 String fcm_id = FirebaseInstanceId.getInstance().getToken();
+               // Log.e("fcm_id","  "+fcm_id);
+                appController.appendLog(fcm_id);
 
                 params.put("tag", "register");
                 params.put("name", name);
@@ -842,6 +867,6 @@ public class LoginActivity extends Activity {
         protected void onPostExecute(String e) {
             //  Toast.makeText(getApplicationContext(),"Rows loaded from file", Toast.LENGTH_SHORT).show();
         }
-
     }
+
 }

@@ -1031,7 +1031,6 @@ public class AppController extends Application {
         }
     }
 
-
     private void getUsernamePasswordFromDatabase(Context context) {
         SQLController sqlController1 = null;
         try {
@@ -1039,14 +1038,12 @@ public class AppController extends Application {
             sqlController1 = new SQLController(context);
             sqlController1.open();
 
-
             ArrayList<LoginModel> al;
             al = sqlController1.getUserLoginRecrodsNew();
             if (al.size() != 0) {
                 savedUserName = al.get(0).getUserName();
                 savedUserPassword = al.get(0).getPassowrd();
             }
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -1068,9 +1065,7 @@ public class AppController extends Application {
             float weight = Float.parseFloat(strWeight);
             float height = Float.parseFloat(strHeight) / 100;
 
-
             bmi = weight / (height * height);
-
         }
 
         return String.valueOf(bmi);
@@ -1153,11 +1148,9 @@ public class AppController extends Application {
 
                 } catch (Exception e) {
                     // You Could provide a more explicit error message for IOException
-                    this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    this.appendLog(this.getDateTime() + " " + "/ " + "App Controller " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                 }
-
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -1229,6 +1222,7 @@ public class AppController extends Application {
         File file = new File(filePath);
         return file.exists();
     }
+
 }
 
 

@@ -552,7 +552,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                         if (savedUserName != null && savedUserPassword != null) {
 
-                            new GetBannerImageTask(getContext(), savedUserName, savedUserPassword, doctor_membership_number, company_id, new AppController().getDateTimenew()); //send log file to server
+                          new GetBannerImageTask(getContext(), savedUserName, savedUserPassword, doctor_membership_number, company_id, new AppController().getDateTimenew()); //send log file to server
 
                         }
                         getPatientRecords(savedUserName, savedUserPassword, doctor_membership_number, docId);
@@ -1314,7 +1314,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     private void setPatientPersonalList(JSONArray jsonArray) throws JSONException {
 
-
+        String flag = "1";
         List<RegistrationModel> inputPatientData = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
@@ -1322,7 +1322,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             JSONObject jsonProsolveObject = jsonArray.getJSONObject(i);
 
             String pat_id = jsonProsolveObject.getString("pat_id");
-            String flag = "1";
 
             String doctor_id = jsonProsolveObject.getString("doctor_id");
             String doc_membership_id = jsonProsolveObject.getString("doc_membership_id");
@@ -1355,23 +1354,37 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String deleted_by = jsonProsolveObject.getString("deleted_by");
             String deleted_on = jsonProsolveObject.getString("deleted_on");
 
+
+            String email =jsonProsolveObject.getString("email");
+           // String status =jsonProsolveObject.getString("status");
+            String alternateNoIsd =jsonProsolveObject.getString("alternative_no_isd");
+            String alternateNumber =jsonProsolveObject.getString("alternative_phone_no");
+            String uidType =jsonProsolveObject.getString("uid_type");
+            String uid =jsonProsolveObject.getString("uid");
+            String alternatePhoneType =jsonProsolveObject.getString("alternative_phone_type");
+            String isdCode =jsonProsolveObject.getString("isd_code");
+            String phoneType =jsonProsolveObject.getString("phone_type");
+            String status =null;
+
             String convertedDate = null;
             String convertedTime = null;
             String converteddobDate = null;
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
             SimpleDateFormat dobsdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-
+            Date formatDateOB = null;
+            SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+            SimpleDateFormat sd2 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
             try {
-                Date formatDate = sdf.parse(added_on);
-                Date formatDateOB = dobsdf.parse(pat_date_of_birth);
-
-                SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-                convertedDate = sd1.format(formatDate);
-                converteddobDate = sd1.format(formatDateOB);
-
-                SimpleDateFormat sd2 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
-                convertedTime = sd2.format(formatDate);
-
+                if(added_on!=null && !added_on.equals("")){
+                    Date formatDate = sdf.parse(added_on);
+                    convertedDate = sd1.format(formatDate);
+                    convertedTime = sd2.format(formatDate);
+                }
+               // Date formatDate = sdf.parse(added_on);
+                if(pat_date_of_birth!=null && !pat_date_of_birth.equals("")){
+                    formatDateOB   = dobsdf.parse(pat_date_of_birth);
+                    converteddobDate = sd1.format(formatDateOB);
+                }
             } catch (ParseException e) {
                 e.printStackTrace();
                 appController.appendLog(" Home Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1379,7 +1392,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             dbController.addPatientPersoanlRecords(pat_id, doctor_id, doc_membership_id, patient_info_type_form, pat_first_name, pat_middle_name, pat_last_name,
                     pat_gender, converteddobDate, pat_age, pat_mobile_no, pat_address, pat_city_town, pat_pincode, pat_district, pref_lang, photo_name, consent,
-                    special_instruction, added_by, convertedDate, convertedTime, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, flag);
+                    special_instruction, added_by, convertedDate, convertedTime, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, flag,status,email,phoneType,isdCode,alternateNumber, alternatePhoneType,uid, uidType,
+                    alternateNoIsd);
 
             inputPatientData.add(new RegistrationModel(pat_id, doctor_id, doc_membership_id, patient_info_type_form, pat_first_name, pat_middle_name, pat_last_name,
                     pat_gender, converteddobDate, pat_age, pat_mobile_no, pat_address, pat_city_town, pat_pincode, pat_district, pref_lang, photo_name, consent,
@@ -1414,9 +1428,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String follow_up_weeks = jsonPatientHistoryObject.getString("follow_up_weeks");
 
             String follow_up_months = jsonPatientHistoryObject.getString("follow_up_months");
+
             String act_follow_up_date = jsonPatientHistoryObject.getString("act_follow_up_date");
 
             String notes = jsonPatientHistoryObject.getString("notes");
+
             String weight = jsonPatientHistoryObject.getString("weight");
             String pulse = jsonPatientHistoryObject.getString("pulse");
             String bp_high = jsonPatientHistoryObject.getString("bp_high");
@@ -1445,6 +1461,14 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String deleted_by = jsonPatientHistoryObject.getString("deleted_by");
             String deleted_on = jsonPatientHistoryObject.getString("deleted_on");
 
+            String height = jsonPatientHistoryObject.getString("height");
+            String bmi = jsonPatientHistoryObject.getString("bmi");
+            //String recordSource=jsonPatientHistoryObject.getString("rec_source");
+
+            String referredBy = jsonPatientHistoryObject.getString("ref_by");
+            String referredTo = jsonPatientHistoryObject.getString("ref_to");
+            String sugarFast = jsonPatientHistoryObject.getString("sugar_fasting");
+            String recordSource = null;
             String convertedActualfodDate = null;
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
@@ -1473,7 +1497,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             } catch (ParseException e) {
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
             //This will convert visit date format into dd-MM-yyyy format 17-9-2016
@@ -1489,14 +1513,15 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             } catch (ParseException e) {
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
-            String patient_info_type_form = "Electronics"; //need to add this if records are added from web service to identify the data...........
+            String patient_info_type_form = "Server"; //need to add this if records are added from web service to identify the data...........
 
             dbController.addPatientHistoryRecords(visit_id, pat_id, ailment, convertedVisitDate, follow_up_date, follow_up_days,
                     follow_up_weeks, follow_up_months, convertedActualfodDate, notes, added_by, convertedAddedonDate, convertedAddedonTime, modified_by, modified_on, is_disabled, disabled_by, disabled_on,
-                    is_deleted, deleted_by, deleted_on, flag, patient_info_type_form, prescription, weight, pulse, bp_high, bp_low, temp, sugar, symptoms, dihnosis, tests, drugs, doctor_membership_number, docId);
+                    is_deleted, deleted_by, deleted_on, flag, patient_info_type_form, prescription, weight, pulse, bp_high, bp_low, temp, sugar, symptoms, dihnosis, tests, drugs, doctor_membership_number, docId,
+                     height, bmi,recordSource,sugarFast,referredBy , referredTo);
 
         }
 

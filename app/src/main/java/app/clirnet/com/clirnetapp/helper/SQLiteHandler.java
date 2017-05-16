@@ -442,7 +442,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                           String photo_name, String consent, String special_instruction, String added_by,
                                           String added_on, String addedTime, String modified_by, String modified_on,
                                           String is_disabled, String disabled_by, String disabled_on, String is_deleted,
-                                          String deleted_by, String deleted_on, String flag) {
+                                          String deleted_by, String deleted_on, String flag,String status,String email,String phoneType,String isdCode,String alternateNumber,String alternatePhoneType,String uid,String uidType,
+                                          String alternateNoIsd) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         try {
@@ -487,6 +488,19 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             contentValue.put(DELETED_ON, deleted_on);
             contentValue.put(SYCHRONIZED, flag);
 
+            contentValue.put(KEY_EMAIL, email);
+            contentValue.put(PHONE_TYPE, phoneType);
+            contentValue.put(ISD_CODE, isdCode);
+            contentValue.put(ALTERNATE_PHONE_NO, alternateNumber);
+            contentValue.put(ALTERNATE_PHONE_TYPE, alternatePhoneType);
+            contentValue.put(ATERNATE_NO_ISD_CODE, alternateNoIsd);
+
+            contentValue.put(UID, uid);
+            contentValue.put(UIDTYPE, uidType);
+            contentValue.put(STATUS, status);
+
+
+
 
             db.delete(TABLE_PATIENT, KEY_PATIENT_ID + " = ?" + " AND " + DOB + " = ? " + " AND " + PHONE_NUMBER + " = ? " + " AND " + ADDED_ON + " = ? ", new String[]{pat_id, pat_date_of_birth, pat_mobile_no, added_on});
             // Inserting Row
@@ -507,7 +521,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                                          String act_follow_up_date, String notes, String added_by, String added_on, String addedTime,
                                          String modified_by, String modified_on, String is_disabled, String disabled_by,
                                          String disabled_on, String is_deleted, String deleted_by, String deleted_on, String flag, String patient_info_type_form,
-                                         String precription, String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String doc_mem_id, String doc_id) {
+                                         String precription, String weight, String pulse, String bphigh, String bplow, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String doc_mem_id, String doc_id,
+                                         String height,String bmi,String recordSource,String sugarFast,String referredBy ,String referredTo) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -555,6 +570,12 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             contentValue.put(DOCTOR_MEMBERSHIP_ID, doc_mem_id);
             contentValue.put(DOCTOR_ID, doc_id);
 
+            contentValue.put(HEIGHT,height);
+            contentValue.put(BMI,bmi);
+            contentValue.put(RECORD_SOURCE,recordSource);
+            contentValue.put(SUGAR_FASTING,sugarFast);
+            contentValue.put(REFERED_BY,referredBy);
+            contentValue.put(REFERED_TO,referredTo);
 
             db.delete(TABLE_PATIENT_HISTORY, KEY_PATIENT_ID + " = ?" + " AND " + KEY_VISIT_ID + " = ? ", new String[]{pat_id, visit_id});
             // Inserting Row
@@ -1257,9 +1278,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
         } finally {
-            if (db != null) {
+            /*if (db != null) {
                 db.close();
-            }
+            }*/
         }
     }
 
@@ -1661,7 +1682,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
             // Inserting Row
            long id= db.insert(TABLE_SYNC_STATUS, null, values);
-            Log.e("Valuesis",""+id);
+           // Log.e("Valuesis",""+id);
 
         } catch (Exception e) {
             e.printStackTrace();

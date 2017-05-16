@@ -83,17 +83,20 @@ public class ConsultationLogFragment extends Fragment {
         //Log.i(USER, " onViewStateRestoredfrag: " + greeting);
         setRetainInstance(true);//used to save instance on screen rotation
     }
+
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
         /*Log.i(USER, " onSaveInstanceState.");
         savedInstanceState.putString("greeting2", "Hello");*/
     }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -241,7 +244,7 @@ public class ConsultationLogFragment extends Fragment {
 
                     Date currentdate = sdf1.parse(String.valueOf(sysdate));
 
-
+                             /*Search Patient By Follow up date */
                     if (date1.after(currentdate) || date1.equals(currentdate)) {
 
                         if (filterVistDateList != null && filterVistDateList.size() > 0) {
@@ -251,8 +254,8 @@ public class ConsultationLogFragment extends Fragment {
                         }
 
                         filterfodList = new ArrayList<>();
-
-                        filterfodList = sqlController.getPatientList(reformattedStr);
+                        //get records from database vai entered follow up date
+                        filterfodList = sqlController.getPatientListnew(reformattedStr);
 
 
                         int filterModelSize = filterfodList.size();
@@ -287,6 +290,7 @@ public class ConsultationLogFragment extends Fragment {
                         }
 
                         //  Toast.makeText(getContext(), "Date1 is after sysdate", Toast.LENGTH_LONG).show();
+                         /*Search Patient By Follow up date */
                     } else if (date1.before(currentdate)) {
 
                         if (filterfodList != null && filterfodList.size() > 0) {
@@ -378,7 +382,15 @@ public class ConsultationLogFragment extends Fragment {
             i.putExtra("ISDCODE", book.getIsd_code());
             i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
             i.putExtra("EMAIL", book.getEmail());
-            i.putExtra("FROMWHERE", "2");
+            i.putExtra("ADDRESS", book.getAddress());
+            i.putExtra("CITYORTOWN", book.getCityortown());
+            i.putExtra("DISTRICT", book.getDistrict());
+            i.putExtra("PIN", book.getPin_code());
+            i.putExtra("STATE", book.getState());
+            i.putExtra("ALTERNATENUMBER", book.getAlternatePhoneNumber());
+            i.putExtra("ALTERNATENUMBERTYPE", book.getAlternatePhoneType());
+            i.putExtra("PHONETYPE", book.getPhone_type());
+            i.putExtra("UID", book.getUid());
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
             startActivity(i);
@@ -393,7 +405,6 @@ public class ConsultationLogFragment extends Fragment {
 
             i.putExtra("PATIENTPHOTO", book.getPhoto());
             i.putExtra("ID", book.getPat_id());
-            // Log.e("book.getPat_id()", "" + book.getPat_id());
             i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
             i.putExtra("FIRSTTNAME", book.getFirstName());
             i.putExtra("MIDDLENAME", book.getMiddleName());
@@ -416,7 +427,16 @@ public class ConsultationLogFragment extends Fragment {
             i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
             i.putExtra("UID", book.getUid());
             i.putExtra("EMAIL", book.getEmail());
-            i.putExtra("FROMWHERE", "2");
+            i.putExtra("ADDRESS", book.getAddress());
+            i.putExtra("CITYORTOWN", book.getCityortown());
+            i.putExtra("DISTRICT", book.getDistrict());
+            i.putExtra("PIN", book.getPin_code());
+            i.putExtra("STATE", book.getState());
+            i.putExtra("ALTERNATENUMBER", book.getAlternatePhoneNumber());
+            i.putExtra("ALTERNATENUMBERTYPE", book.getAlternatePhoneType());
+            i.putExtra("PHONETYPE", book.getPhone_type());
+            i.putExtra("UID", book.getUid());
+            i.putExtra("CALLEDFROM","2");
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             //i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(i);

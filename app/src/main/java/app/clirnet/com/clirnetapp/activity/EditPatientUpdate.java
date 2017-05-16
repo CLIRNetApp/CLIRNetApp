@@ -212,7 +212,6 @@ public class EditPatientUpdate extends AppCompatActivity {
         strEmail = getIntent().getStringExtra("EMAIL");
         String strActualFollowUpDate = getIntent().getStringExtra("ACTUALFOD");
 
-
         String strFollowupDays = getIntent().getStringExtra("FOLLOWDAYS");
         String strFollowupWeeks = getIntent().getStringExtra("FOLLOWWEEKS");
 

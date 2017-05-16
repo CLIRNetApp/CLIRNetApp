@@ -47,7 +47,7 @@ public class LineChartItem extends ChartItem {
     @Override
     public View getView(int position, View convertView, Context c) {
 
-        ViewHolder holder = null;
+        ViewHolder holder;
 
         if (convertView == null) {
 
@@ -62,8 +62,6 @@ public class LineChartItem extends ChartItem {
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
-
-
         //  holder.chart.getDescription().setEnabled(false);
         holder.chart.setDrawGridBackground(false);
         Utils.init(mContext.getResources());

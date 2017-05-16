@@ -35,7 +35,7 @@ public class SQLController {
     public synchronized SQLController open() throws SQLException {
 
         if (dbHelper == null) {
-            dbHelper =new  SQLiteHandler(ourcontext);
+            dbHelper = new SQLiteHandler(ourcontext);
             database = dbHelper.getWritableDatabase();
         }
         return this;
@@ -91,7 +91,7 @@ public class SQLController {
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,p.uid,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,ph.refered_by,ph.refered_to,p.email  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' and ph.added_on = '" + date + "' or ph.modified_on='"+date+"' order by ph.key_visit_id desc";
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,p.uid,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,ph.refered_by,ph.refered_to,p.email  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' and ph.added_on = '" + date + "' or ph.modified_on='" + date + "' order by ph.key_visit_id desc";
 
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
@@ -104,7 +104,7 @@ public class SQLController {
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
                             cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41),
-                            cursor.getString(42), cursor.getString(43), cursor.getString(44),cursor.getString(45),cursor.getString(46),cursor.getString(47));
+                            cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47));
 
                     hotelList.add(user);
 
@@ -127,7 +127,7 @@ public class SQLController {
 
     }
 
-    //get all the patient imp data from db, which will used in Consultation fragments and home fragments
+    //get all the patient imp data from db, via fod which will used in Consultation fragments and home fragments
     public ArrayList<RegistrationModel> getPatientListnew(String date) throws ClirNetAppException {
 
         ArrayList<RegistrationModel> hotelList = new ArrayList<>();
@@ -136,7 +136,7 @@ public class SQLController {
         try {
 
             // String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.actual_follow_up_date = '" + date + "' order by ph.key_visit_id  desc";
-            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.actual_follow_up_date = '" + date + "' order by ph.key_visit_id  desc ";
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,ph.refered_by,ph.refered_to,p.email FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.actual_follow_up_date = '" + date + "' order by ph.key_visit_id  desc ";
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
 
@@ -148,7 +148,7 @@ public class SQLController {
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
-                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44));
+                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47));
 
                     hotelList.add(user);
 
@@ -266,8 +266,8 @@ public class SQLController {
     }
 
     //used to fileter data from Patient history module
-    public ArrayList<RegistrationModel> getFilterDatanew(String fname, String lname,  String phoneno,  ArrayList sex, ArrayList ageGap, ArrayList ailment, int page, int limit,Integer weightMinValue,Integer weightMaxValue,Integer heightMinValue,Integer heightMaxValue,Integer bmiMinValue,Integer bmiMaxValue,Integer pulseMinValue,Integer pulseMaxValue,Integer tempMinValue,Integer tempMaxValue,Integer systoleMinValue,Integer systoleMaxValue,
-              Integer distoleMinValue,Integer distoleMaxValue,Integer sugarFpgMinValue,Integer sugarFpgMaxValue,Integer sugarPpgMinValue,Integer sugarPpgMaxValue) throws ClirNetAppException {
+    public ArrayList<RegistrationModel> getFilterDatanew(String fname, String lname, String phoneno, ArrayList sex, ArrayList ageGap, ArrayList ailment, int page, int limit, Integer weightMinValue, Integer weightMaxValue, Integer heightMinValue, Integer heightMaxValue, Integer bmiMinValue, Integer bmiMaxValue, Integer pulseMinValue, Integer pulseMaxValue, Integer tempMinValue, Integer tempMaxValue, Integer systoleMinValue, Integer systoleMaxValue,
+                                                         Integer distoleMinValue, Integer distoleMaxValue, Integer sugarFpgMinValue, Integer sugarFpgMaxValue, Integer sugarPpgMinValue, Integer sugarPpgMaxValue) throws ClirNetAppException {
 
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
@@ -277,7 +277,11 @@ public class SQLController {
             open();
             String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,p.alternate_no,p.alternate_phone_type,p.phone_type,ph.visit_date,p.email,p.uid  from patient p,patient_history ph   where p.patient_id=ph.patient_id";//and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
 
-            String countQuery = "select  COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id ";
+            // String countQuery = "select  COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id ";
+
+                     /*Selecting count of query for the pagination filter*/
+            String countQuery = "select count(distinct(p.patient_id)) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id ";
+
 
             if (fname != null) {
                 selectQuery = selectQuery.concat(" and p.first_name like '%" + fname + "%'");
@@ -348,48 +352,48 @@ public class SQLController {
                 countQuery = countQuery.concat(" ) ");
             }
 
-           if(weightMinValue!=null && weightMaxValue!=null) {
+            if (weightMinValue != null && weightMaxValue != null) {
 
-               selectQuery = selectQuery.concat(" AND cast(ph.weight as INTEGER) BETWEEN " + weightMinValue + " and " + weightMaxValue + " ");
-               countQuery = countQuery.concat(" AND cast(ph.weight as INTEGER) BETWEEN " + weightMinValue + " and " + weightMaxValue + " ");
+                selectQuery = selectQuery.concat(" AND cast(ph.weight as INTEGER) BETWEEN " + weightMinValue + " and " + weightMaxValue + " ");
+                countQuery = countQuery.concat(" AND cast(ph.weight as INTEGER) BETWEEN " + weightMinValue + " and " + weightMaxValue + " ");
             }
 
-            if(heightMinValue!=null && heightMaxValue!=null) {
+            if (heightMinValue != null && heightMaxValue != null) {
                 selectQuery = selectQuery.concat(" AND cast(ph.height as INTEGER) BETWEEN " + heightMinValue + " and " + heightMaxValue + " ");
                 countQuery = countQuery.concat(" AND cast(ph.height as INTEGER) BETWEEN " + heightMinValue + " and " + heightMaxValue + " ");
             }
             //bmi filter query
-            if(bmiMinValue!=null && bmiMaxValue!=null) {
+            if (bmiMinValue != null && bmiMaxValue != null) {
                 selectQuery = selectQuery.concat(" AND cast(ph.bmi as INTEGER) BETWEEN " + bmiMinValue + " and " + bmiMaxValue + " ");
                 countQuery = countQuery.concat(" AND cast(ph.bmi as INTEGER) BETWEEN " + bmiMinValue + " and " + bmiMaxValue + " ");
             }
 
-            if(pulseMinValue!=null && pulseMaxValue!=null) {
+            if (pulseMinValue != null && pulseMaxValue != null) {
                 selectQuery = selectQuery.concat(" AND cast(ph.pulse as INTEGER) BETWEEN " + pulseMinValue + " and " + pulseMaxValue + " ");
                 countQuery = countQuery.concat(" AND cast(ph.pulse as INTEGER) BETWEEN " + pulseMinValue + " and " + pulseMaxValue + " ");
             }
 
-            if(tempMinValue!=null && tempMaxValue!=null) {
+            if (tempMinValue != null && tempMaxValue != null) {
                 selectQuery = selectQuery.concat(" AND cast(ph.temperature as INTEGER) BETWEEN " + tempMinValue + " and " + tempMaxValue + " ");
                 countQuery = countQuery.concat(" AND cast(ph.temperature as INTEGER) BETWEEN " + tempMinValue + " and " + tempMaxValue + " ");
             }
 
 
-            if(systoleMinValue!=null && systoleMaxValue!=null) {
+            if (systoleMinValue != null && systoleMaxValue != null) {
                 selectQuery = selectQuery.concat(" AND cast(ph.bp_low as INTEGER) BETWEEN " + systoleMinValue + " and " + systoleMaxValue + " ");
                 countQuery = countQuery.concat(" AND cast(ph.bp_low as INTEGER) BETWEEN " + systoleMinValue + " and " + systoleMaxValue + " ");
             }
 
-            if(distoleMinValue!=null && distoleMaxValue!=null) {
+            if (distoleMinValue != null && distoleMaxValue != null) {
                 selectQuery = selectQuery.concat(" AND cast(ph.bp_high as INTEGER) BETWEEN " + distoleMinValue + " and " + distoleMaxValue + " ");
                 countQuery = countQuery.concat(" AND cast(ph.bp_high as INTEGER) BETWEEN " + distoleMinValue + " and " + distoleMaxValue + " ");
             }
 
-            if(sugarFpgMinValue!=null && sugarFpgMaxValue!=null) {
+            if (sugarFpgMinValue != null && sugarFpgMaxValue != null) {
                 selectQuery = selectQuery.concat(" AND cast(ph.sugar as INTEGER) BETWEEN " + sugarFpgMinValue + " and " + sugarFpgMaxValue + " ");
                 countQuery = countQuery.concat(" AND cast(ph.sugar as INTEGER) BETWEEN " + sugarFpgMinValue + " and " + sugarFpgMaxValue + " ");
             }
-            if(sugarPpgMinValue!=null && sugarPpgMaxValue!=null) {
+            if (sugarPpgMinValue != null && sugarPpgMaxValue != null) {
                 selectQuery = selectQuery.concat(" AND cast(ph.sugar as INTEGER) BETWEEN " + sugarPpgMinValue + " and " + sugarPpgMaxValue + " ");
                 countQuery = countQuery.concat(" AND cast(ph.sugar as INTEGER) BETWEEN " + sugarPpgMinValue + " and " + sugarPpgMaxValue + " ");
             }
@@ -398,12 +402,12 @@ public class SQLController {
             countQuery = countQuery.concat("  and p.phonenumber like '%" + phoneno + "%' order by ph.key_visit_id desc ");
             //   String queryforCount=selectQuery.concat("  and p.phonenumber like '%" + phoneno + "%' order by ph.key_visit_id desc ");
 
-            selectQuery = selectQuery.concat("  and p.phonenumber like '%" + phoneno + "%' order by ph.key_visit_id desc limit " + page + "," + limit + ";");
+            selectQuery = selectQuery.concat("  and p.phonenumber like '%" + phoneno + "%' group by p.patient_id order by ph.key_visit_id desc limit " + page + "," + limit + ";");
 
             new Counts().setCountQuery(countQuery);
 
-              Log.e("selectQuery", "" + selectQuery);
-            // Log.e("countQueryQuery", "" + countQuery);
+           // Log.e("selectQuery", "" + selectQuery);
+           // Log.e("countQueryQuery", "" + countQuery);
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
 
@@ -414,7 +418,7 @@ public class SQLController {
                             cursor.getString(7), cursor.getString(8),
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21), cursor.getString(22), cursor.getString(23),
-                            cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28),cursor.getString(29),cursor.getString(30),cursor.getString(31));
+                            cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31));
 
                     pList1.add(user);
 
@@ -456,6 +460,7 @@ public class SQLController {
 
         return numRows;
     }
+
     public int getCountResultforAssociate() {
         SQLiteDatabase db1 = dbHelper.getReadableDatabase();
         int numRows = 0;
@@ -502,13 +507,13 @@ public class SQLController {
             if (cursor.moveToFirst()) {
                 do {
 
-                    RegistrationModel user = new RegistrationModel (cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
                             cursor.getString(7), cursor.getString(8),
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
                             cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38),
-                            cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44),cursor.getString(45),cursor.getString(46),cursor.getString(47));
+                            cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47));
 
                     hotelList.add(user);
 
@@ -533,7 +538,7 @@ public class SQLController {
         SQLiteDatabase db1 = dbHelper.getReadableDatabase();
         int numRows = 0;
         try {
-            String countQuery =  Counts.getCountQueryforHomeFragmentNoFilter();
+            String countQuery = Counts.getCountQueryforHomeFragmentNoFilter();
 
             if (countQuery.length() > 1) {
 
@@ -610,7 +615,7 @@ public class SQLController {
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
-                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44),cursor.getString(45),cursor.getString(46));
+                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46));
                     hotelList.add(user);
 
                 } while (cursor.moveToNext());
@@ -1643,6 +1648,7 @@ public class SQLController {
         return VisitidList;
 
     }
+
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments 111
     public ArrayList<RegistrationModel> getIncompleteRecordList(String formatedDate) throws ClirNetAppException {
 
@@ -1657,7 +1663,7 @@ public class SQLController {
 
             if (cursor.moveToFirst()) {
                 do {
-                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getString(7),cursor.getString(8));
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7), cursor.getString(8));
 
                     incompletePrescrList.add(user);
 
@@ -1679,6 +1685,7 @@ public class SQLController {
         return incompletePrescrList;
 
     }
+
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments 111
     public ArrayList<RegistrationModel> getIncompleteRecordList() throws ClirNetAppException {
 
@@ -1693,7 +1700,7 @@ public class SQLController {
 
             if (cursor.moveToFirst()) {
                 do {
-                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getString(7),cursor.getString(8));
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7), cursor.getString(8));
 
                     incompletePrescrList.add(user);
 
@@ -1715,7 +1722,6 @@ public class SQLController {
         return incompletePrescrList;
 
     }
-
 
 
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments
@@ -1732,7 +1738,7 @@ public class SQLController {
 
             if (cursor.moveToFirst()) {
                 do {
-                    LoginModel user = new LoginModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3));
+                    LoginModel user = new LoginModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3));
 
                     hotelList.add(user);
 
@@ -1753,8 +1759,9 @@ public class SQLController {
 
         return hotelList;
     }
+
     //update the flag once data send to server successfully
-    public void updateVisitDate(String visit_date,String key_visit_id,String actual_follow_up_date, String added_on){
+    public void updateVisitDate(String visit_date, String key_visit_id, String actual_follow_up_date, String added_on) {
         SQLiteDatabase db = null;
 
         try {
@@ -1775,6 +1782,7 @@ public class SQLController {
             }
         }
     }
+
     //get max count of patient id
     public int getPrescriptionQueueCount() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
@@ -1816,7 +1824,7 @@ public class SQLController {
 
             if (cursor.moveToFirst()) {
                 do {
-                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3),cursor.getString(4),cursor.getString(5),cursor.getString(6),cursor.getString(7),cursor.getString(8),cursor.getString(9),cursor.getString(10),cursor.getString(11),cursor.getString(12),cursor.getString(13),cursor.getString(14),cursor.getString(15),cursor.getString(16),cursor.getString(17),cursor.getString(18));
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7), cursor.getString(8), cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15), cursor.getString(16), cursor.getString(17), cursor.getString(18));
 
                     associateList.add(user);
 
@@ -1836,6 +1844,7 @@ public class SQLController {
 
         return associateList;
     }
+
     public ArrayList<RegistrationModel> getAssociateDataIdName() throws ClirNetAppException {
 
         ArrayList<RegistrationModel> associateList = new ArrayList<>();
@@ -1871,28 +1880,28 @@ public class SQLController {
         return associateList;
 
     }
+
     public ArrayList<HashMap<String, String>> getAllDataAssociateMaster() throws ClirNetAppException {
         ArrayList<HashMap<String, String>> wordList;
         wordList = new ArrayList<>();
         String selectQuery = "select id,name,speciality from associate_master";
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-        Cursor cursor=null;
-        try{
-             cursor = database.rawQuery(selectQuery, null);
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(selectQuery, null);
 
-        if (cursor.moveToFirst()) {
-            do {
-                HashMap<String, String> map = new HashMap<>();
-                map.put("ID", cursor.getString(0));
-                map.put("NAME", cursor.getString(1));
-                map.put("SPECIALITY", cursor.getString(2));
-                wordList.add(map);
-            } while (cursor.moveToNext());
-        }
-        }catch (Exception e){
+            if (cursor.moveToFirst()) {
+                do {
+                    HashMap<String, String> map = new HashMap<>();
+                    map.put("ID", cursor.getString(0));
+                    map.put("NAME", cursor.getString(1));
+                    map.put("SPECIALITY", cursor.getString(2));
+                    wordList.add(map);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong while geting getAllDataAssociateMaster");
-        }
-        finally {
+        } finally {
             if (cursor != null) {
                 cursor.close();
             }
@@ -1902,6 +1911,7 @@ public class SQLController {
         }
         return wordList;
     }
+
     //get docot membership id from db
     public String getNameByIdAssociateMaster(String id) throws ClirNetAppException {
         SQLiteDatabase db1 = null;
@@ -1931,6 +1941,7 @@ public class SQLController {
         }
         return returnString;
     }
+
     public ArrayList<RegistrationModel> getAssociateMasterFalg0() throws ClirNetAppException {
 
         ArrayList<RegistrationModel> idList = new ArrayList<>();
@@ -1994,13 +2005,14 @@ public class SQLController {
         }
         return idList;
     }
+
     public ArrayList<HashMap<String, String>> getIdNameDataAssociateMaster(String name) throws ClirNetAppException {
         ArrayList<HashMap<String, String>> wordList;
         wordList = new ArrayList<>();
         String selectQuery = "select id,speciality from associate_master where name='" + name + "'";
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-        Cursor cursor=null;
-        try{
+        Cursor cursor = null;
+        try {
             cursor = database.rawQuery(selectQuery, null);
 
             if (cursor.moveToFirst()) {
@@ -2008,14 +2020,13 @@ public class SQLController {
                     HashMap<String, String> map = new HashMap<>();
                     map.put("ID", cursor.getString(0));
                     map.put("SPECIALITY", cursor.getString(1));
-                   // map.put("SPECIALITY", cursor.getString(2));
+                    // map.put("SPECIALITY", cursor.getString(2));
                     wordList.add(map);
                 } while (cursor.moveToNext());
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong while geting getAllDataAssociateMaster");
-        }
-        finally {
+        } finally {
             if (cursor != null) {
                 cursor.close();
             }
@@ -2025,6 +2036,7 @@ public class SQLController {
         }
         return wordList;
     }
+
     public String getTitleByNameAssociateMaster(String name) throws ClirNetAppException {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
@@ -2057,119 +2069,119 @@ public class SQLController {
         }
         return returnString;
     }
+
     public ArrayList<HashMap<String, Integer>> getMinMaxVitals() throws ClirNetAppException {
         ArrayList<HashMap<String, Integer>> vitalsList;
         vitalsList = new ArrayList<>();
         String selectQuery = "select min(cast(weight as INTEGER))  as minWeight,max(cast(weight as INTEGER))  as maxWeight,min(cast(height as INTEGER))  as minHeight, max(cast(height as INTEGER)) " +
                 "as maxHeight, ROUND(min(cast(bmi as FLOAT)))  as minBmi , ROUND(max(cast(bmi as FLOAT))) as maxBmi,min(cast(pulse as INTEGER))  as minPulse,max(cast(pulse as INTEGER))  as maxPulse,min(cast(temperature as integer))  as minTemp,max(cast(temperature as integer))  as maxTemp,min(cast(bp_low as integer))  as minSystole,max(cast(bp_low as integer))  as maxSystole,min(cast(bp_high as integer))  as minDistole,max(cast(bp_high as integer))  as maxDistole, min(cast(sugar as integer))  as minSugarFPG,max(cast(sugar as integer))  as maxSugarFPG, min(cast(sugar_fasting as integer))  as minSugarPPG,max(cast(sugar_fasting as integer))  as maxSugarPPG    from patient_history";
         SQLiteDatabase database = dbHelper.getWritableDatabase();
-        Cursor cursor=null;
-        try{
+        Cursor cursor = null;
+        try {
             cursor = database.rawQuery(selectQuery, null);
-            Integer returnStringMin,returnStringMax;
+            Integer returnStringMin, returnStringMax;
             if (cursor.moveToFirst()) {
                 do {
                     HashMap<String, Integer> map = new HashMap<>();
                     returnStringMin = cursor.getInt(cursor.getColumnIndex("minWeight"));
                     returnStringMax = cursor.getInt(cursor.getColumnIndex("maxWeight"));
                     int returnStringMax1 = cursor.getInt(cursor.getColumnIndex("maxWeight"));
-                    Log.e("returnStringMax1","  " + returnStringMin + "  " + returnStringMax1);
-                    if(returnStringMin != null && !returnStringMin.equals("")){
+                    Log.e("returnStringMax1", "  " + returnStringMin + "  " + returnStringMax1);
+                    if (returnStringMin != null && !returnStringMin.equals("")) {
                         map.put("MINWEIGHT", returnStringMin);
                         map.put("MAXWEIGHT", returnStringMax);
-                    }else{
+                    } else {
                         map.put("MINWEIGHT", 0);
                         map.put("MAXWEIGHT", returnStringMax);
                     }
-                    Integer minHeight=cursor.getInt(cursor.getColumnIndex("minHeight"));
-                    Integer maxHeight=cursor.getInt(cursor.getColumnIndex("maxHeight"));
-                    if(minHeight != null && !minHeight.equals("")){
+                    Integer minHeight = cursor.getInt(cursor.getColumnIndex("minHeight"));
+                    Integer maxHeight = cursor.getInt(cursor.getColumnIndex("maxHeight"));
+                    if (minHeight != null && !minHeight.equals("")) {
                         map.put("MINHEIGHT", minHeight);
                         map.put("MAXHEIGHT", maxHeight);
-                    }else{
+                    } else {
                         map.put("MINHEIGHT", 0);
                         map.put("MAXHEIGHT", maxHeight);
                     }
-                   Integer minBmi=cursor.getInt(cursor.getColumnIndex("minBmi"));
-                    Integer maxBmi=cursor.getInt(cursor.getColumnIndex("maxBmi"));
+                    Integer minBmi = cursor.getInt(cursor.getColumnIndex("minBmi"));
+                    Integer maxBmi = cursor.getInt(cursor.getColumnIndex("maxBmi"));
 
-                    if(minBmi != null && !minBmi.equals("") && !maxBmi.equals("")){
+                    if (minBmi != null && !minBmi.equals("") && !maxBmi.equals("")) {
                         map.put("MINBMI", minBmi);
                         map.put("MAXBMI", maxBmi);
-                    }else{
+                    } else {
                         map.put("MINBMI", 0);
                         map.put("MAXBMI", 0);
                     }
 
-                    Integer minPulse=cursor.getInt(cursor.getColumnIndex("minPulse"));
-                    Integer maxPulse=cursor.getInt(cursor.getColumnIndex("maxPulse"));
+                    Integer minPulse = cursor.getInt(cursor.getColumnIndex("minPulse"));
+                    Integer maxPulse = cursor.getInt(cursor.getColumnIndex("maxPulse"));
 
-                    if(minPulse != null && !minPulse.equals("") && !maxPulse.equals("")){
+                    if (minPulse != null && !minPulse.equals("") && !maxPulse.equals("")) {
                         map.put("MINPULSE", minPulse);
                         map.put("MAXPULSE", maxPulse);
-                    }else{
+                    } else {
                         map.put("MINPULSE", 0);
                         map.put("MAXPULSE", 0);
                     }
-                    Integer minTemp=cursor.getInt(cursor.getColumnIndex("minTemp"));
-                    Integer maxTemp=cursor.getInt(cursor.getColumnIndex("maxTemp"));
+                    Integer minTemp = cursor.getInt(cursor.getColumnIndex("minTemp"));
+                    Integer maxTemp = cursor.getInt(cursor.getColumnIndex("maxTemp"));
 
-                    if(minTemp != null && !minTemp.equals("") && !maxTemp.equals("")){
+                    if (minTemp != null && !minTemp.equals("") && !maxTemp.equals("")) {
                         map.put("MINTEMP", minTemp);
                         map.put("MAXTEMP", maxTemp);
-                    }else{
+                    } else {
                         map.put("MINTEMP", 0);
                         map.put("MAXTEMP", 0);
                     }
 
-                    Integer minSystole=cursor.getInt(cursor.getColumnIndex("minSystole"));
-                    Integer maxSystole=cursor.getInt(cursor.getColumnIndex("maxSystole"));
+                    Integer minSystole = cursor.getInt(cursor.getColumnIndex("minSystole"));
+                    Integer maxSystole = cursor.getInt(cursor.getColumnIndex("maxSystole"));
 
-                    if(minSystole != null && !minSystole.equals("") && !maxSystole.equals("")){
+                    if (minSystole != null && !minSystole.equals("") && !maxSystole.equals("")) {
                         map.put("MINSYSTOLE", minSystole);
                         map.put("MAXSYSTOLE", maxSystole);
-                    }else{
+                    } else {
                         map.put("MINSYSTOLE", 0);
                         map.put("MAXSYSTOLE", 0);
                     }
 
-                    Integer minDistole=cursor.getInt(cursor.getColumnIndex("minDistole"));
-                    Integer maxDistole=cursor.getInt(cursor.getColumnIndex("maxDistole"));
+                    Integer minDistole = cursor.getInt(cursor.getColumnIndex("minDistole"));
+                    Integer maxDistole = cursor.getInt(cursor.getColumnIndex("maxDistole"));
 
-                    if(minDistole != null && !minDistole.equals("") && !maxDistole.equals("")){
+                    if (minDistole != null && !minDistole.equals("") && !maxDistole.equals("")) {
                         map.put("MINDISTOLE", minDistole);
                         map.put("MAXDISTOLE", maxDistole);
-                    }else{
+                    } else {
                         map.put("MINSISTOLE", 0);
                         map.put("MAXDISTOLE", 0);
                     }
-                    Integer minSugarFPG=cursor.getInt(cursor.getColumnIndex("minSugarFPG"));
-                    Integer maxSugarFPG=cursor.getInt(cursor.getColumnIndex("maxSugarFPG"));
+                    Integer minSugarFPG = cursor.getInt(cursor.getColumnIndex("minSugarFPG"));
+                    Integer maxSugarFPG = cursor.getInt(cursor.getColumnIndex("maxSugarFPG"));
 
-                    if(minSugarFPG != null && !minSugarFPG.equals("") && !maxSugarFPG.equals("")){
+                    if (minSugarFPG != null && !minSugarFPG.equals("") && !maxSugarFPG.equals("")) {
                         map.put("MINSUGARFPG", minSugarFPG);
                         map.put("MAXSUGARFPG", maxSugarFPG);
-                    }else{
+                    } else {
                         map.put("MINSUGARFPG", 0);
                         map.put("MAXSUGARFPG", 0);
                     }
-                    Integer minSugarPPG=cursor.getInt(cursor.getColumnIndex("minSugarPPG"));
-                    Integer maxSugarPPG=cursor.getInt(cursor.getColumnIndex("maxSugarPPG"));
+                    Integer minSugarPPG = cursor.getInt(cursor.getColumnIndex("minSugarPPG"));
+                    Integer maxSugarPPG = cursor.getInt(cursor.getColumnIndex("maxSugarPPG"));
 
-                    if(minSugarPPG != null && !minSugarPPG.equals("") && !maxSugarPPG.equals("")){
+                    if (minSugarPPG != null && !minSugarPPG.equals("") && !maxSugarPPG.equals("")) {
                         map.put("MINSUGARPPG", minSugarPPG);
                         map.put("MAXSUGARPPG", maxSugarPPG);
-                    }else{
+                    } else {
                         map.put("MINSUGARPPG", 0);
                         map.put("MAXSUGARPPG", 0);
                     }
                     vitalsList.add(map);
                 } while (cursor.moveToNext());
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong while geting getAllDataAssociateMaster");
-        }
-        finally {
+        } finally {
             if (cursor != null) {
                 cursor.close();
             }
@@ -2180,6 +2192,40 @@ public class SQLController {
         return vitalsList;
     }
 
+    public ArrayList<String> getImages() throws ClirNetAppException {
+
+        ArrayList<String> imageList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "select prescription  from patient_history where prescription!='null' and prescription !=''";
+
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    String value = cursor.getString(cursor.getColumnIndex("prescription"));
+                    imageList.add(value);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while geting Images");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return imageList;
+
+    }
 }
 
 

@@ -235,9 +235,9 @@
     <string name="uid">UID</string>
     <string name="uidtype">UID Type</string>
     <string name="reset">Reset</string>
-    <string name="version">Release Version 1.3.1.1</string>
-    <string name="aboutApp">About App V 1.3.1.1</string>
-    <string name="updateDate">Last Updated Date 06-05-2017</string>
+    <string name="version">Release Version 1.3.1.6</string>
+    <string name="aboutApp">About App V 1.3.1.6</string>
+    <string name="updateDate">Last Updated Date 15-05-2017</string>
     <string name="quickadd">Quick Add</string>
     <string name="title_edit_quick_add">Quick Edit Patient</string>
     <string name="referedby">Add Referals</string>

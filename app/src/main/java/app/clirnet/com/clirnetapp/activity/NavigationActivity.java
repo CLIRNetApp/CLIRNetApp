@@ -60,6 +60,8 @@ public class NavigationActivity extends AppCompatActivity
     private AppController appController;
     private String type, actionPath;
     private String msg, headerMsg;
+    private String calledFrom;
+    private String kind;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +73,8 @@ public class NavigationActivity extends AppCompatActivity
             type = getIntent().getStringExtra("TYPE");
             actionPath = getIntent().getStringExtra("ACTION_PATH");
             headerMsg = getIntent().getStringExtra("HEADER");
+            calledFrom=getIntent().getStringExtra("CALLEDFROM");
+            kind=getIntent().getStringExtra("KIND");
 
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -127,7 +131,8 @@ public class NavigationActivity extends AppCompatActivity
 
         Fragment fragment = null;
 
-         /*Handle push notification messages*/
+        /*Handle push notification messages*/
+
         if (type != null && !type.equals("") && actionPath != null && !actionPath.equals("") && type.equals("2")) {
             //for web-page
             callAction(actionPath);
@@ -139,6 +144,8 @@ public class NavigationActivity extends AppCompatActivity
             Bundle bundle2 = new Bundle();
             bundle2.putString("URL", actionPath);
             fragment.setArguments(bundle2);
+            fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
 
         } else if (type != null && !type.equals("") && type.equals("3")) {//for announcement
             fragment = new HomeFragment();
@@ -147,6 +154,8 @@ public class NavigationActivity extends AppCompatActivity
             bundle2.putString("MESSAGE", msg);
             bundle2.putString("HEADER", headerMsg);
             fragment.setArguments(bundle2);
+            fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
 
         } else if (type != null && !type.equals("") && type.equals("4")) {//for service
             fragment = new HomeFragment();
@@ -154,14 +163,30 @@ public class NavigationActivity extends AppCompatActivity
             bundle2.putString("SERVICE", "START");
             fragment.setArguments(bundle2);
             onNavigationItemSelected(navigationView.getMenu().getItem(0));
+            fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
 
+        }else if(kind!=null && kind.equals("1")){
+            fragment = new PoHistoryFragment();
+            onNavigationItemSelected(navigationView.getMenu().getItem(2));
+            fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+        } else if(kind!=null && kind.equals("2")){
+            fragment = new ConsultationLogFragment();
+            onNavigationItemSelected(navigationView.getMenu().getItem(1));
+            fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
         } else {
             fragment = new HomeFragment();
             onNavigationItemSelected(navigationView.getMenu().getItem(0));
+            fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
         }
-        fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+     //   fragmentManager = getSupportFragmentManager();
+      //  fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
         // subscribeToPushService();
+
+
     }
 
     private void subscribeToPushService() {

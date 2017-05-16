@@ -16,7 +16,6 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -84,7 +83,7 @@ public class AddPatientUpdateFragment extends Fragment {
     private BannerClass bannerClass;
     Button addPatientprescriptionBtn;
     private Intent imageIntent;
-    private File imagesFolder;
+    private File imagesFolder,imageFile;
     private String PrescriptionimageName;
     private AppController appController;
     private Uri uriSavedImage;
@@ -166,7 +165,7 @@ public class AddPatientUpdateFragment extends Fragment {
         if (getArguments() != null) {
             strPatientId=getArguments().getString("PATIENTID");
            // this.viewPager= (ViewPager) getArguments().get("viewpager");
-            Log.e("strPatientId"," "+strPatientId);
+          //  Log.e("strPatientId"," "+strPatientId);
         }
     }
     //Overriden method onCreateView
@@ -381,8 +380,8 @@ public class AddPatientUpdateFragment extends Fragment {
                 imagesFolder.mkdirs();
 
                 PrescriptionimageName = "prescription_" + docId + "_" + appController.getDateTime() + ".jpg";
-                File image = new File(imagesFolder, PrescriptionimageName);
-                uriSavedImage = Uri.fromFile(image);
+                imageFile = new File(imagesFolder, PrescriptionimageName);
+                uriSavedImage = Uri.fromFile(imageFile);
                 imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
                 imageIntent.putExtra("data", uriSavedImage);
                 startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -402,9 +401,8 @@ public class AddPatientUpdateFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {
                     // successfully captured the image
                     // display it in image view
-
+                  //  new ImageCompression(getContext(),imageFile.getPath().toString()).execute( uriSavedImage.getPath().trim());
                     previewCapturedImage();
-
                 }
             }
         } catch (Exception e) {
@@ -1163,8 +1161,8 @@ public class AddPatientUpdateFragment extends Fragment {
                     strbmi = edtInput_bmi.getText().toString().trim();
 
                     if (strTemp.length() > 0) {
-                        int intTemp = Integer.parseInt(strTemp);
-                        if (intTemp > 110) {
+                        double valueTemp = Double.parseDouble(strTemp);
+                        if (valueTemp > 110) {
                             edtInput_temp.setError(" Temp can not be more than 110 ");
                             return;
                         } else {
@@ -1461,8 +1459,7 @@ public class AddPatientUpdateFragment extends Fragment {
     }
 public void getViewPager(ViewPager viewPager){
     this.viewPager=viewPager;
-    Log.e("viewPager",""+viewPager);
+   // Log.e("viewPager",""+viewPager);
 
 }
-
 }

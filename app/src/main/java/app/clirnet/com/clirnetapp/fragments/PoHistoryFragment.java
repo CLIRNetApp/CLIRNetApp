@@ -11,6 +11,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -45,7 +47,6 @@ import app.clirnet.com.clirnetapp.activity.TermsCondition;
 import app.clirnet.com.clirnetapp.adapters.PoHistoryAdapter;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
-import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
@@ -110,8 +111,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private Integer tempMinValue, tempMaxValue;
     private Integer systoleMinValue, systoleMaxValue;
     private Integer distoleMinValue, distoleMaxValue;
-    private Integer sugarFpgMinValue, sugetFpgMaxValue;
-    private Integer sugarPpgMinValue, sugetPpgMaxValue;
+    private Integer sugarFpgMinValue, sugarFpgMaxValue;
+    private Integer sugarPpgMinValue, sugarPpgMaxValue;
 
     private Integer strMinWeight;
     private Integer strMaxWeight;
@@ -161,6 +162,11 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
+       /* Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            public void uncaughtException(Thread paramThread, Throwable paramThrowable) {
+                Log.e("Error"+Thread.currentThread().getStackTrace()[2],paramThrowable.getLocalizedMessage());
+            }
+        });*/
 
         rootview = inflater.inflate(R.layout.fragment_po_history, container, false);
 
@@ -251,7 +257,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 strMaxSugarFPG = demoList.get(0).get("MAXSUGARFPG");
                 strMinSugarPPG = demoList.get(0).get("MINSUGARPPG");
                 strMaxSugarPPG = demoList.get(0).get("MAXSUGARPPG");
-                Log.e("strMin", " " + strMinSugarFPG + " " + strMaxSugarFPG + " " + strMinSugarPPG + "  " + strMaxSugarPPG + "  " + strMinBmi + "  " + strMaxBmi);
+                //Log.e("strMin", " " + strMinSugarFPG + " " + strMaxSugarFPG + " " + strMinSugarPPG + "  " + strMaxSugarPPG + "  " + strMinBmi + "  " + strMaxBmi);
             }
 
         } catch (Exception e) {
@@ -326,16 +332,15 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
              /* print substrings */
                 Collections.addAll(selectedAilmentList, temp);
 
-
                 try {
-
                     ival = 0;
                     loadLimit = 25;
                     patientData = (sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
-                            pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugetFpgMaxValue, sugarPpgMinValue, sugetPpgMaxValue));
+                            pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugarFpgMaxValue, sugarPpgMinValue, sugarPpgMaxValue));
                     //    patientData = sqlController.getFilterDatanew(strfname, strlname, selectedListGender.get(i).toString(), strpno, strage);
                     queryCount = sqlController.getCountResult();
-                    //  Log.e("queryCount", "" + queryCount );
+                   // queryCount = 70;
+                   // Log.e("queryCount", "" + queryCount );
 
                     int beforeFilterCount = patientData.size();
 
@@ -343,12 +348,11 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                         removeDuplicate(patientData);
                     }
 
-
                     int afterFilterCount = patientData.size();
 
                     int totalFilterDataCount = beforeFilterCount - afterFilterCount;
 
-                    queryCount = queryCount - totalFilterDataCount;
+                    //queryCount = queryCount - totalFilterDataCount;
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -544,8 +548,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         i.putExtra("SUGARFASTING", book.getSugarFasting());
         i.putExtra("UID", book.getUid());
         i.putExtra("EMAIL", book.getEmail());
+        i.putExtra("CALLEDFROM","1");
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+       // i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(i);
 
 
@@ -633,8 +638,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
     }
 
     private static void removeDuplicate(final List<RegistrationModel> al) {
@@ -677,13 +680,17 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                         && totalItemCount >= PAGE_SIZE) {
 
                     isLoading = true;
+                     try {
+                         new Handler().postDelayed(new Runnable() {
+                             @Override
+                             public void run() {
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            loadDataForAdapter();
-                        }
-                    }, 2000);
+                                 loadDataForAdapter();
+                             }
+                         }, 2000);
+                     }catch (Exception e){
+                         e.printStackTrace();
+                     }
                 }
             }
         }
@@ -694,45 +701,70 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         isLoading = false;
         ival = ival + 25;
+        int beforeFilterCount=0;
 
         List<RegistrationModel> memberList = new ArrayList<>();
         int end = 0;
         try {
-            int index = poHistoryAdapter.getItemCount();
-            end = index + PAGE_SIZE;
+            if(poHistoryAdapter!=null) {
+                int index = poHistoryAdapter.getItemCount();
+                end = index + PAGE_SIZE;
+            }
+          //  Log.e("index", "" + index + " " + end + " size is " + queryCount);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         if (end <= queryCount) {
             try {
-                memberList = sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
-                        pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugetFpgMaxValue, sugarPpgMinValue, sugetPpgMaxValue);
-            } catch (ClirNetAppException | NullPointerException e) {
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "PhHistory Fragment " + e + " Line Number:  " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                Log.e("pulseMinValue"," pulseMinValue "+pulseMinValue + " pulseMaxValue "+pulseMaxValue + "strfname "+strfname);
+                Log.e("sqlController"," sqlController  "+sqlController);
 
-                e.printStackTrace();
+                if(sqlController!=null){
+                    memberList = sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
+                            pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugarFpgMaxValue, sugarPpgMinValue, sugarPpgMaxValue);
+
+                    queryCount = sqlController.getCountResult();
+                    beforeFilterCount = memberList.size();
+
+                    if (memberList.size() > 0) {
+                        removeDuplicate(memberList);
+                    }
+                }
+            } catch (Exception ex) {
+                //catch all the ones I didn't think of.
+                ex.printStackTrace();
             }
             try {
-                poHistoryAdapter.addAll(memberList);
+                int afterFilterCount = memberList.size();
+
+                int totalFilterDataCount = beforeFilterCount - afterFilterCount;
+
+              //  queryCount = queryCount - totalFilterDataCount;
+                Log.e("poHistoryAdapter","  "+poHistoryAdapter);
+                if(poHistoryAdapter!=null) {
+                    poHistoryAdapter.addAll(memberList);
+
+                    if (end >= queryCount) {
+                        poHistoryAdapter.setLoading(false);
+
+                    }
+                }
             } catch (Exception e) {
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "PhHistory Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "PoHistory Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                 e.printStackTrace();
             }
 
+         //   Log.e("index", ""  + end + " size is " + queryCount);
 
-            if (end >= queryCount) {
-                poHistoryAdapter.setLoading(false);
-
-            }
         }
 
     }
 
     @Override
     public void onPause() {
-
+      //  Log.e("onPause"," "+"onPause");
         InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         inputMethodManager.hideSoftInputFromWindow(firstName.getWindowToken(), 0);
@@ -742,7 +774,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     @Override
     public void onResume() {
         super.onResume();
-
+     // Log.e("onResume"," "+"onResume");
         // Tracking the screen view
         AppController.getInstance().trackScreenView("Po History Fragment");
     }
@@ -757,10 +789,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             sqlController.close();
             sqlController = null;
         }
-        if (poHistoryAdapter != null) {
-            poHistoryAdapter = null;
-        }
-
         if (appController != null) {
             appController = null;
         }
@@ -770,15 +798,16 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         if (bannerClass != null) {
             bannerClass = null;
         }
+        if(poHistoryAdapter!=null) {
+            poHistoryAdapter = null;
+        }
         bannerimgNames = null;
-
 
         patientData.clear();
         patientData = null;
 
         recyclerView.setOnClickListener(null);
         //  searchView.setOnClickListener(null);
-
         norecordtv = null;
 
         recyclerView = null;
@@ -805,7 +834,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         phone_no = null;
         genderSpinner = null;
         clearVitalsValue();
-        Log.e("onDetach", "onDetach Po hISTORY fRAGMENT Fragment");
     }
 
     private void showReferedDialogBox() {
@@ -820,57 +848,373 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(f);
 
-        dialog.setTitle("Referred By-To");
+        dialog.setTitle("Vitals Filter");
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(f);
         Button dialogButtonCancel = (Button) f.findViewById(R.id.customDialogCancel);
         Button dialogButtonOk = (Button) f.findViewById(R.id.customDialogOk);
 
-        RangeSeekBar seekbarWeight = (RangeSeekBar) f.findViewById(R.id.seekbarWeight);
-        RangeSeekBar seekbarHeight = (RangeSeekBar) f.findViewById(R.id.seekbarHeight);
-        RangeSeekBar seekbarBmi = (RangeSeekBar) f.findViewById(R.id.seekbarBmi);
-        RangeSeekBar seekbarPulse = (RangeSeekBar) f.findViewById(R.id.seekbarPulse);
-        RangeSeekBar seekbarTemp = (RangeSeekBar) f.findViewById(R.id.seekbarTemp);
-        RangeSeekBar seekbarSystole = (RangeSeekBar) f.findViewById(R.id.seekbarSystole);
-        RangeSeekBar seekbarDiastole = (RangeSeekBar) f.findViewById(R.id.seekbarDiastole);
-        RangeSeekBar seekbarSugarFpg = (RangeSeekBar) f.findViewById(R.id.seekbarSugarFpg);
-        RangeSeekBar seekbarSugarPpg = (RangeSeekBar) f.findViewById(R.id.seekbarSugarPpg);
+        final RangeSeekBar seekbarWeight = (RangeSeekBar) f.findViewById(R.id.seekbarWeight);
+        final RangeSeekBar seekbarHeight = (RangeSeekBar) f.findViewById(R.id.seekbarHeight);
+        final RangeSeekBar seekbarBmi = (RangeSeekBar) f.findViewById(R.id.seekbarBmi);
+        final RangeSeekBar seekbarPulse = (RangeSeekBar) f.findViewById(R.id.seekbarPulse);
+        final RangeSeekBar seekbarTemp = (RangeSeekBar) f.findViewById(R.id.seekbarTemp);
+        final RangeSeekBar seekbarSystole = (RangeSeekBar) f.findViewById(R.id.seekbarSystole);
+        final RangeSeekBar seekbarDiastole = (RangeSeekBar) f.findViewById(R.id.seekbarDiastole);
+        final RangeSeekBar seekbarSugarFpg = (RangeSeekBar) f.findViewById(R.id.seekbarSugarFpg);
+        final RangeSeekBar seekbarSugarPpg = (RangeSeekBar) f.findViewById(R.id.seekbarSugarPpg);
 
-        final  EditText input_min_weight=(EditText)f.findViewById(R.id.input_min_weight);
-        final EditText input_max_weight=(EditText)f.findViewById(R.id.input_max_weight);
-        final  EditText input_min_height=(EditText)f.findViewById(R.id.input_min_height);
-        final EditText input_max_height=(EditText)f.findViewById(R.id.input_max_height);
-        final  EditText input_min_bmi=(EditText)f.findViewById(R.id.input_min_bmi);
-        final EditText input_max_bmi=(EditText)f.findViewById(R.id.input_max_bmi);
-        final  EditText input_min_pulse=(EditText)f.findViewById(R.id.input_min_pulse);
-        final EditText input_max_pulse=(EditText)f.findViewById(R.id.input_max_pulse);
-        final  EditText input_min_temp=(EditText)f.findViewById(R.id.input_min_temp);
-        final EditText input_max_temp=(EditText)f.findViewById(R.id.input_max_temp);
-        final  EditText input_min_systole=(EditText)f.findViewById(R.id.input_min_systole);
-        final EditText input_max_systole=(EditText)f.findViewById(R.id.input_max_systole);
-        final  EditText input_min_distole=(EditText)f.findViewById(R.id.input_min_distole);
-        final EditText input_max_distole=(EditText)f.findViewById(R.id.input_max_distole);
-        final  EditText input_min_sugarfpg=(EditText)f.findViewById(R.id.input_min_sugarfpg);
-        final EditText  input_max_sugarfpg=(EditText)f.findViewById(R.id.input_max_sugarfpg);
-        final  EditText input_min_sugarppg=(EditText)f.findViewById(R.id.input_min_sugarppg);
-        final EditText  input_max_sugarppg=(EditText)f.findViewById(R.id.input_max_sugarppg);
-
-
+        final EditText input_min_weight = (EditText) f.findViewById(R.id.input_min_weight);
+        final EditText input_max_weight = (EditText) f.findViewById(R.id.input_max_weight);
+        final EditText input_min_height = (EditText) f.findViewById(R.id.input_min_height);
+        final EditText input_max_height = (EditText) f.findViewById(R.id.input_max_height);
+        final EditText input_min_bmi = (EditText) f.findViewById(R.id.input_min_bmi);
+        final EditText input_max_bmi = (EditText) f.findViewById(R.id.input_max_bmi);
+        final EditText input_min_pulse = (EditText) f.findViewById(R.id.input_min_pulse);
+        final EditText input_max_pulse = (EditText) f.findViewById(R.id.input_max_pulse);
+        final EditText input_min_temp = (EditText) f.findViewById(R.id.input_min_temp);
+        final EditText input_max_temp = (EditText) f.findViewById(R.id.input_max_temp);
+        final EditText input_min_systole = (EditText) f.findViewById(R.id.input_min_systole);
+        final EditText input_max_systole = (EditText) f.findViewById(R.id.input_max_systole);
+        final EditText input_min_distole = (EditText) f.findViewById(R.id.input_min_distole);
+        final EditText input_max_distole = (EditText) f.findViewById(R.id.input_max_distole);
+        final EditText input_min_sugarfpg = (EditText) f.findViewById(R.id.input_min_sugarfpg);
+        final EditText input_max_sugarfpg = (EditText) f.findViewById(R.id.input_max_sugarfpg);
+        final EditText input_min_sugarppg = (EditText) f.findViewById(R.id.input_min_sugarppg);
+        final EditText input_max_sugarppg = (EditText) f.findViewById(R.id.input_max_sugarppg);
 
 
-        //strMaxWeight=0;
-        if(strMinWeight==0 && strMaxWeight==0){
+        input_min_weight.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinWeight && i <= strMaxWeight) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarWeight.setSelectedMinValue(i);
+                        input_max_weight.setError(null);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_max_weight.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinWeight && i <= strMaxWeight) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarWeight.setSelectedMaxValue(i);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_min_height.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinHeight && i <= strMaxHeight) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarHeight.setSelectedMinValue(i);
+                        input_max_height.setError(null);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_max_height.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinHeight && i <= strMaxHeight) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarHeight.setSelectedMaxValue(i);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_min_bmi.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinBmi && i <= strMaxBmi) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarBmi.setSelectedMinValue(i);
+                        input_max_bmi.setError(null);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_max_bmi.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinBmi && i <= strMaxBmi) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarBmi.setSelectedMaxValue(i);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+
+        input_min_pulse.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinPulse && i <= strMaxPulse) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarPulse.setSelectedMinValue(i);
+                        input_max_pulse.setError(null);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_max_pulse.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinPulse && i <= strMaxPulse) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarPulse.setSelectedMaxValue(i);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+
+
+        input_min_temp.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinTemp && i <= strMaxTemp) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarTemp.setSelectedMinValue(i);
+                        input_max_temp.setError(null);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_max_temp.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMaxTemp && i <= strMaxTemp) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarTemp.setSelectedMaxValue(i);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+
+        input_min_systole.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinSystole && i <= strMaxSystole) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarSystole.setSelectedMinValue(i);
+                        input_max_systole.setError(null);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_max_systole.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinSystole && i <= strMaxSystole) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarSystole.setSelectedMaxValue(i);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_min_distole.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinDistole && i <= strMaxDistole) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarDiastole.setSelectedMinValue(i);
+                        input_max_distole.setError(null);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_max_distole.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinDistole && i <= strMaxDistole) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarDiastole.setSelectedMaxValue(i);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_min_sugarfpg.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinSugarFPG && i <= strMaxSugarFPG) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarSugarFpg.setSelectedMinValue(i);
+                        input_max_sugarfpg.setError(null);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_max_sugarfpg.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinSugarFPG && i <= strMaxSugarFPG) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarSugarFpg.setSelectedMaxValue(i);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_min_sugarppg.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinSugarPPG && i <= strMaxSugarPPG) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarSugarPpg.setSelectedMinValue(i);
+                        input_max_sugarppg.setError(null);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+        input_max_sugarppg.addTextChangedListener(new TextWatcher() {
+            public void afterTextChanged(Editable s) {
+                if (!s.toString().equals("")) {
+                    int i = Integer.parseInt(s.toString());
+                    if (i >= strMinSugarPPG && i <= strMaxSugarPPG) {
+                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
+                        seekbarSugarPpg.setSelectedMaxValue(i);
+                    }
+                }
+            }
+
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+        });
+
+
+        /////////////////////////////////////
+        if (strMinWeight == 0 && strMaxWeight == 0) {
             seekbarWeight.setVisibility(View.GONE);
-        }else{
+        } else {
             seekbarWeight.setRangeValues(strMinWeight, strMaxWeight); // if we want to set progrmmatically set range of seekbar
             seekbarWeight.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
 
 
                 @Override
                 public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
-                    Log.e("value", minValue + "  " + maxValue);
-                   // weightMinValue = minValue;
-                   // weightMaxValue = maxValue;
                     input_min_weight.setText(minValue.toString());
                     input_max_weight.setText(maxValue.toString());
                 }
@@ -878,9 +1222,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             });
         }
 
-        if(strMinHeight==0 && strMaxHeight==0){
+        if (strMinHeight == 0 && strMaxHeight == 0) {
             seekbarHeight.setVisibility(View.GONE);
-        }else {
+        } else {
             seekbarHeight.setRangeValues(strMinHeight, strMaxHeight);
             seekbarHeight.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
 
@@ -894,9 +1238,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             });
         }
-        if(strMinBmi==0 && strMaxBmi==0){
+        if (strMinBmi == 0 && strMaxBmi == 0) {
             seekbarBmi.setVisibility(View.GONE);
-        }else {
+        } else {
             seekbarBmi.setRangeValues(strMinBmi, strMaxBmi);
             seekbarBmi.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
                 @Override
@@ -908,9 +1252,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
             });
         }
-        if(strMinPulse==0 && strMaxPulse==0){
+        if (strMinPulse == 0 && strMaxPulse == 0) {
             seekbarPulse.setVisibility(View.GONE);
-        }else {
+        } else {
             seekbarPulse.setRangeValues(strMinPulse, strMaxPulse);
             seekbarPulse.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
                 @Override
@@ -921,9 +1265,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
             });
         }
-        if(strMinTemp==0 && strMaxTemp==0){
+        if (strMinTemp == 0 && strMaxTemp == 0) {
             seekbarTemp.setVisibility(View.GONE);
-        }else {
+        } else {
             seekbarTemp.setRangeValues(strMinTemp, strMaxTemp);
             seekbarTemp.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
                 @Override
@@ -933,9 +1277,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
             });
         }
-        if(strMinSystole==0 && strMaxSystole==0){
+        if (strMinSystole == 0 && strMaxSystole == 0) {
             seekbarSystole.setVisibility(View.GONE);
-        }else {
+        } else {
             seekbarSystole.setRangeValues(strMinSystole, strMaxSystole);
             seekbarSystole.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
                 @Override
@@ -945,9 +1289,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
             });
         }
-        if(strMinDistole==0 && strMaxDistole==0){
+        if (strMinDistole == 0 && strMaxDistole == 0) {
             seekbarDiastole.setVisibility(View.GONE);
-        }else {
+        } else {
             seekbarDiastole.setRangeValues(strMinDistole, strMaxDistole);
             seekbarDiastole.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
                 @Override
@@ -957,9 +1301,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
             });
         }
-        if(strMinSugarFPG==0 && strMaxSugarFPG==0){
+        if (strMinSugarFPG == 0 && strMaxSugarFPG == 0) {
             seekbarSugarFpg.setVisibility(View.GONE);
-        }else {
+        } else {
             seekbarSugarFpg.setRangeValues(strMinSugarFPG, strMaxSugarFPG);
             seekbarSugarFpg.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
                 @Override
@@ -970,9 +1314,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
             });
         }
-        if(strMinSugarPPG==0 && strMaxSugarPPG==0){
+        if (strMinSugarPPG == 0 && strMaxSugarPPG == 0) {
             seekbarSugarPpg.setVisibility(View.GONE);
-        }else {
+        } else {
             seekbarSugarPpg.setRangeValues(strMinSugarPPG, strMaxSugarPPG);
             seekbarSugarPpg.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
                 @Override
@@ -980,7 +1324,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     input_min_sugarppg.setText(minValue.toString());
                     input_max_sugarppg.setText(maxValue.toString());
 
-                }});
+                }
+            });
         }
         // Click cancel to dismiss android custom dialog box
         dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
@@ -995,68 +1340,176 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             @Override
             public void onClick(View v) {
-                String valMinWeight=input_min_weight.getText().toString();
-                String valMaxWeight=input_max_weight.getText().toString();
-                if(valMinWeight!=null && !valMinWeight.equals("") && !valMaxWeight.equals("")) {
+
+                String valMinWeight = input_min_weight.getText().toString();
+                String valMaxWeight = input_max_weight.getText().toString();
+
+                if (!valMinWeight.equals("") && !valMaxWeight.equals("")) {
 
                     weightMinValue = Integer.valueOf(valMinWeight);
                     weightMaxValue = Integer.valueOf(valMaxWeight);
+
+                    if(weightMaxValue < weightMinValue){
+                        input_max_weight.setError("Value must be greater from min value");
+                        return ;
+                    } else if(weightMinValue > weightMaxValue){
+                        input_min_weight.setError("Value must be small from max value");
+                        return ;
+                    } else if(weightMinValue > strMaxWeight){
+                        input_min_weight.setError("Entered value must be small from  "+strMaxWeight);
+                        return;
+                    }  else if(weightMaxValue > strMaxWeight) {
+                        input_max_weight.setError("Entered value must be small from  " + strMaxWeight);
+                        return;
+                    }
                 }
-                String valMinHeight=input_min_height.getText().toString();
-                String valMaxHeight=input_max_height.getText().toString();
-                if(valMinHeight!=null && !valMinHeight.equals("") && !valMaxHeight.equals("")) {
+
+                String valMinHeight = input_min_height.getText().toString();
+                String valMaxHeight = input_max_height.getText().toString();
+
+                if (!valMinHeight.equals("") && !valMaxHeight.equals("")) {
 
                     heightMinValue = Integer.valueOf(valMinHeight);
                     heightMaxValue = Integer.valueOf(valMaxHeight);
+
+                    if(heightMaxValue < heightMinValue){
+                        input_max_height.setError("Value must be greater from min value");
+                        return ;
+                    } else  if(heightMinValue > heightMaxValue){
+                        input_min_height.setError("Value must be small from max value");
+                        return ;
+                    } else if(heightMaxValue > strMaxHeight){
+                        input_max_height.setError("Entered value must be small from  "+strMaxHeight);
+                        return;
+                    }
                 }
-                String valMinBmi=input_min_bmi.getText().toString();
-                String valMaxBmi=input_max_bmi.getText().toString();
-                if(valMinBmi!=null && !valMinBmi.equals("") && !valMaxBmi.equals("")) {
+
+
+                String valMinBmi = input_min_bmi.getText().toString();
+                String valMaxBmi = input_max_bmi.getText().toString();
+                if (!valMinBmi.equals("") && !valMaxBmi.equals("")) {
 
                     bmiMinValue = Integer.valueOf(valMinBmi);
                     bmiMaxValue = Integer.valueOf(valMaxBmi);
+
+                    if(bmiMaxValue < bmiMinValue){
+                        input_max_bmi.setError("Value must be greater from min value");
+                        return ;
+                    } else if(bmiMinValue > bmiMaxValue){
+                        input_min_bmi.setError("Value must be small from max value");
+                        return ;
+                    }else if(bmiMaxValue > strMaxBmi){
+                        input_max_height.setError("Entered value must be small from  "+strMaxBmi);
+                        return;
+                    }
                 }
-                String valMinPulse=input_min_pulse.getText().toString();
-                String valMaxPulse=input_max_pulse.getText().toString();
-                if(valMinPulse!=null && !valMinPulse.equals("") && !valMaxPulse.equals("")) {
+
+                String valMinPulse = input_min_pulse.getText().toString();
+                String valMaxPulse = input_max_pulse.getText().toString();
+                if (!valMinPulse.equals("") && !valMaxPulse.equals("")) {
 
                     pulseMinValue = Integer.valueOf(valMinPulse);
                     pulseMaxValue = Integer.valueOf(valMaxPulse);
-                }
-                String valMinTemp=input_min_temp.getText().toString();
-                String valMaxTemp=input_max_temp.getText().toString();
-                if(valMinTemp!=null && !valMinTemp.equals("") && !valMaxTemp.equals("")) {
 
-                    pulseMinValue = Integer.valueOf(valMinTemp);
-                    pulseMaxValue = Integer.valueOf(valMaxTemp);
+                    if(pulseMaxValue < pulseMinValue){
+                        input_max_bmi.setError("Value must be greater from min value");
+                        return ;
+                    } else if(pulseMinValue > pulseMaxValue){
+                        input_min_bmi.setError("Value must be small from max value");
+                        return ;
+                    }else if(pulseMaxValue > strMaxPulse){
+                        input_max_height.setError("Entered value must be small from  "+strMaxPulse);
+                        return;
+                    }
                 }
-                String valMinSystole=input_min_systole.getText().toString();
-                String valMaxSystole=input_max_systole.getText().toString();
-                if(valMinSystole!=null && !valMinSystole.equals("") && !valMaxSystole.equals("")) {
+                String valMinTemp = input_min_temp.getText().toString();
+                String valMaxTemp = input_max_temp.getText().toString();
+                if (!valMinTemp.equals("") && !valMaxTemp.equals("")) {
+
+                    tempMinValue = Integer.valueOf(valMinTemp);
+                    tempMaxValue = Integer.valueOf(valMaxTemp);
+
+                    if(tempMaxValue < tempMinValue){
+                        input_max_bmi.setError("Value must be greater from min value");
+                        return ;
+                    } else if(tempMinValue > tempMaxValue){
+                        input_min_bmi.setError("Value must be small from max value");
+                        return ;
+                    }else if(tempMaxValue > strMaxTemp){
+                        input_max_height.setError("Entered value must be small from  "+strMaxTemp);
+                        return;
+                    }
+                }
+                String valMinSystole = input_min_systole.getText().toString();
+                String valMaxSystole = input_max_systole.getText().toString();
+                if (!valMinSystole.equals("") && !valMaxSystole.equals("")) {
 
                     systoleMinValue = Integer.valueOf(valMinSystole);
                     systoleMaxValue = Integer.valueOf(valMaxSystole);
+                    if(systoleMaxValue < systoleMinValue){
+                        input_max_bmi.setError("Value must be greater from min value");
+                        return ;
+                    } else if(systoleMinValue > systoleMaxValue){
+                        input_min_bmi.setError("Value must be small from max value");
+                        return ;
+                    }else if(systoleMaxValue > strMaxSystole){
+                        input_max_height.setError("Entered value must be small from  "+strMaxSystole);
+                        return;
+                    }
                 }
-                String valMinDistole=input_min_systole.getText().toString();
-                String valMaxDistole=input_max_systole.getText().toString();
-                if(valMinDistole!=null && !valMinDistole.equals("") && !valMaxDistole.equals("")) {
+                String valMinDistole = input_min_systole.getText().toString();
+                String valMaxDistole = input_max_systole.getText().toString();
+                if (!valMinDistole.equals("") && !valMaxDistole.equals("")) {
 
                     distoleMinValue = Integer.valueOf(valMinDistole);
                     distoleMaxValue = Integer.valueOf(valMaxDistole);
+
+                    if(distoleMaxValue < distoleMinValue){
+                        input_max_systole.setError("Value must be greater from min value");
+                        return ;
+                    } else if(distoleMinValue > distoleMaxValue){
+                        input_min_systole.setError("Value must be small from max value");
+                        return ;
+                    }else if(distoleMaxValue > strMaxDistole){
+                        input_max_systole.setError("Entered value must be small from  "+strMaxDistole);
+                        return;
+                    }
                 }
-                String valMinSugarFpg=input_min_sugarfpg.getText().toString();
-                String valMaxSugarFpg=input_max_sugarfpg.getText().toString();
-                if(valMinSugarFpg!=null && !valMinSugarFpg.equals("") && !valMaxSugarFpg.equals("")) {
+                String valMinSugarFpg = input_min_sugarfpg.getText().toString();
+                String valMaxSugarFpg = input_max_sugarfpg.getText().toString();
+                if (!valMinSugarFpg.equals("") && !valMaxSugarFpg.equals("")) {
 
                     sugarFpgMinValue = Integer.valueOf(valMinSugarFpg);
-                    sugetFpgMaxValue = Integer.valueOf(valMaxSugarFpg);
+                    sugarFpgMaxValue = Integer.valueOf(valMaxSugarFpg);
+
+                    if(sugarFpgMaxValue < sugarFpgMinValue){
+                        input_max_sugarfpg.setError("Value must be greater from min value");
+                        return ;
+                    } else if(sugarFpgMinValue > sugarFpgMaxValue){
+                        input_min_sugarfpg.setError("Value must be small from max value");
+                        return ;
+                    }else if(sugarFpgMaxValue > strMaxSugarFPG){
+                        input_max_sugarfpg.setError("Entered value must be small from  "+strMaxSugarFPG);
+                        return;
+                    }
                 }
-                String valMinSugarPpg=input_min_sugarppg.getText().toString();
-                String valMaxSugarPpg=input_max_sugarppg.getText().toString();
-                if(valMinSugarPpg!=null && !valMinSugarPpg.equals("") && !valMaxSugarPpg.equals("")) {
+                String valMinSugarPpg = input_min_sugarppg.getText().toString();
+                String valMaxSugarPpg = input_max_sugarppg.getText().toString();
+                if (!valMinSugarPpg.equals("") && !valMaxSugarPpg.equals("")) {
 
                     sugarPpgMinValue = Integer.valueOf(valMinSugarPpg);
-                    sugetPpgMaxValue = Integer.valueOf(valMaxSugarPpg);
+                    sugarPpgMaxValue = Integer.valueOf(valMaxSugarPpg);
+
+                    if(sugarPpgMaxValue < sugarPpgMinValue){
+                        input_max_sugarppg.setError("Value must be greater from min value");
+                        return ;
+                    } else if(sugarPpgMinValue > sugarPpgMaxValue){
+                        input_min_sugarppg.setError("Value must be small from max value");
+                        return ;
+                    }else if(sugarPpgMaxValue > strMaxSugarPPG){
+                        input_max_sugarppg.setError("Entered value must be small from  "+strMaxSugarPPG);
+                        return;
+                    }
                 }
                 //weightMinValue=
                 dialog.dismiss();
@@ -1082,9 +1535,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         distoleMinValue = null;
         distoleMaxValue = null;
         sugarFpgMinValue = null;
-        sugetFpgMaxValue = null;
+        sugarFpgMaxValue = null;
         sugarPpgMinValue = null;
-        sugetPpgMaxValue = null;
+        sugarPpgMaxValue = null;
     }
 }
 

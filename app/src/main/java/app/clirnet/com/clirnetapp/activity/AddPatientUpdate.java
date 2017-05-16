@@ -443,6 +443,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         ViewPagerAdapter(FragmentManager manager) {
             super(manager);
         }
+
         ViewPagerAdapter(FragmentManager manager,ViewPager viewPager) {
 
             super(manager);

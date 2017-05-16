@@ -1887,7 +1887,6 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
         super.onPause();
     }
-
     private void cleanResources() {
 
         if (mSymptomsList != null) {

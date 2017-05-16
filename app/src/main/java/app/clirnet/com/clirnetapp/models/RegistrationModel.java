@@ -6,22 +6,13 @@ package app.clirnet.com.clirnetapp.models;
 //model class
 public class RegistrationModel {
 
-
-
     private String uid;
-
-
     private String referedBy;
     private String referedTo;
     private String modiedCounter;
 
-
     private String speciality;
     private String associateType;
-
-    public String getModiedCounter() {
-        return modiedCounter;
-    }
 
     private String email;
     private String action;
@@ -116,6 +107,10 @@ public class RegistrationModel {
     private String selectedContactPhoneType;
     private  String distole;
     private  String systole;
+
+    public String getModiedCounter() {
+        return modiedCounter;
+    }
 
     public String getDistole() {
         return distole;

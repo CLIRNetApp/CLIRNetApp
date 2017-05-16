@@ -302,13 +302,14 @@ public class EditPersonalInfo extends AppCompatActivity {
                 radioLanguage.check(R.id.radioBen);
                 break;
         }
-
-        int size = strDob.trim().length();
-        if (size > 5) {
-            editage.setEnabled(false);
-        } else {
-            editage.setEnabled(true);
-            editdob.setText("");
+        if (strDob != null && !strDob.equals("")) {
+            int size = strDob.trim().length();
+            if (size > 5) {
+                editage.setEnabled(false);
+            } else {
+                editage.setEnabled(true);
+                editdob.setText("");
+            }
         }
 
         Glide.get(getApplicationContext()).clearMemory();
@@ -404,6 +405,7 @@ public class EditPersonalInfo extends AppCompatActivity {
 
 
         final Button cancel = (Button) findViewById(R.id.cancel);
+
         cancel.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
@@ -411,6 +413,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
                     cancel.setBackgroundColor(getResources().getColor(R.color.cancelbtn));
+                    showCancelAlertDialog();
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -419,15 +422,6 @@ public class EditPersonalInfo extends AppCompatActivity {
                 return false;
             }
 
-        });
-        cancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-
-                showCancelAlertDialog();
-
-            }
         });
 
         editdob.setOnClickListener(new View.OnClickListener() {
@@ -615,7 +609,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                     }
                 }
 
-                if (selectedState.equals("Select State")) {
+                if (selectedState != null && selectedState.equals("Select State")) {
                     selectedState = null;
                 }
 

@@ -371,7 +371,7 @@ public class QuickAddVisitFragment extends Fragment {
         editmobileno.setText(mPhNo);
         //txtReferredBy.setText(strReferedBy);
          txtReferredTo.setText(strReferedTo);
-
+                       /*setting prescription added date to visit date.*/
         visitDate.setText(added_on);
 
         if(strPhoneType!=null) {
@@ -1138,6 +1138,7 @@ public class QuickAddVisitFragment extends Fragment {
 
     private void goToNavigation() {
         Intent i = new Intent(getActivity(), NavigationActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);  // it will directly jump to navigation activity eith called fragment
         startActivity(i);
         getActivity().finish();
     }

@@ -663,7 +663,6 @@
                     android:gravity="start"
                     android:hint="@string/address"
                     android:inputType="text"
-                    android:maxLength="10"
                     android:maxLines="1"
                     android:textAppearance="?android:attr/textAppearanceLarge"
                     android:textSize="14sp" />
