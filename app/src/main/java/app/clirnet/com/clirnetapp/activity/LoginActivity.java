@@ -7,6 +7,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -66,6 +67,7 @@ public class LoginActivity extends Activity {
     private static final String PREF_PASSWORD = "password";
     private static final String LOGIN_TIME = "loginTime";
     private static final String LOGIN_COUNT = "firstTimeLogin";
+    private static final String SUGAR_INTO_INVESTIGATION = "vitalsToInvestigation";
     @InjectView(R.id.email)
     EditText inputEmail;
     @InjectView(R.id.password)
@@ -96,7 +98,6 @@ public class LoginActivity extends Activity {
     private BannerClass bannerClass;
 
     private Dialog dialog;
-    private static String BASE_URL = "http://192.168.1.6/server_side_code/register.php";
     private SQLiteHandler sInstance;
     private String docId;
     private String type, actionPath;
@@ -112,7 +113,6 @@ public class LoginActivity extends Activity {
         try {
             /*message from fcm service*/
             msg = getIntent().getStringExtra("MSG");
-
             type = getIntent().getStringExtra("TYPE");
             actionPath = getIntent().getStringExtra("ACTION_PATH");
             headerMsg = getIntent().getStringExtra("HEADER");
@@ -135,33 +135,6 @@ public class LoginActivity extends Activity {
         LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
         appController = new AppController();
 
-       /* WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-        WifiInfo wifiInfo = wifiManager.getConnectionInfo();
-
-        if (wifiInfo != null) {
-            Integer linkSpeed = wifiInfo.getLinkSpeed(); //measured using WifiInfo.LINK_SPEED_UNITS
-            Log.e("linkSpeed"," "+linkSpeed);
-        }*/
-
-      /*  privacyPolicy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), PrivacyPolicy.class);
-                startActivity(intent);
-
-            }
-        });
-
-        //redirect to TermsCondition Page
-        termsandCondition.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), TermsCondition.class);
-                startActivity(intent);
-
-            }
-        });
-*/
         if (md5 == null) {
             md5 = new MD5();
         }
@@ -185,22 +158,7 @@ public class LoginActivity extends Activity {
                 doctor_membership_number = sqlController.getDoctorMembershipIdNew();
                 docId = sqlController.getDoctorId();
             }
-          //  File imagesFolder = new File(Environment.getExternalStorageDirectory(), "PatientsImages");
-           // String PrescriptionimageName = "prescription_Demo_Gill94_19-04-2017_16:43:43.png";
-           // File imageFile = new File(imagesFolder, PrescriptionimageName);
-           // new ImageCompression(this,imageFile.getPath().toString()).execute("/storage/emulated/0/PatientsImages/prescription_Demo_Gill94_19-04-2017_16:43:43.png");
-           /* File imagesFolder = new File(Environment.getExternalStorageDirectory(), "PatientsImages");
-            ArrayList<String> imageList = sqlController.getImages();
-            for (String img:imageList){
-              Boolean exist=  appController.getImageFromPath(img);
-                if(exist){
-                    String PrescriptionimageName =  img.replaceAll("/storage/emulated/0/PatientsImages/", "");//"prescription_Demo_Gill94_19-04-2017_16:43:43.png";
-                    Log.e("PrescriptionimageName","  "+img + "  "+PrescriptionimageName);
-                    File imageFile = new File(imagesFolder, PrescriptionimageName);
-                   new ImageCompression(this,imageFile.getPath()).execute(img);
-                }
-            }
-*/
+
         } catch (Exception e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTimenew() + " " + "/ " + "Login Page" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -291,11 +249,13 @@ public class LoginActivity extends Activity {
         });
 
         /*We are updating visit date format*/
-       // updateVisitDateFormat(); //Commented on  10-05-2017
+        // updateVisitDateFormat(); //Commented on  10-05-2017
+
+         addVitalsIntoInvstigation();
 
         //Commented on  10-05-2017
         /*  Updateing banner stats flag to 0 build no 1.3+  */
-        /*String bannerUpdateFlag = getupdateBannerClickVisitFlag0();
+     /*  String bannerUpdateFlag = getupdateBannerClickVisitFlag0();
         if (bannerUpdateFlag == null) {
             updateBannerTableDataFlag();
         }
@@ -337,6 +297,29 @@ public class LoginActivity extends Activity {
                 setupdateBannerClickVisitFlag0("true");
             }
         });
+    }
+  /* we are adding patient_history sugar and sugar_fasting data into Investigation table along with key_visit_id */
+    private void addVitalsIntoInvstigation() {
+
+        String addedVitalsSugarFlag = getInsertedInvestigationVitalsFlag();
+        if (addedVitalsSugarFlag == null) {
+            SQLiteDatabase db = null;
+            try {
+                db = sInstance.getWritableDatabase();
+                db.execSQL("insert into table_investigation(key_visit_id,sugar,sugar_fasting) select key_visit_id , sugar, sugar_fasting from patient_history;");
+
+                /*Updating flag to true so wont run 2nd time */ //20-05-2017
+
+                setInsertedInvestigationVitalsFlag("true");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (db != null) {
+                    db.close();
+                }
+            }
+        }
     }
 
     private void updateVisitDateFormat() {
@@ -416,7 +399,7 @@ public class LoginActivity extends Activity {
                 //startService();
                 savedLoginCounter("true");//to save shrd pref to update login counter
                 new SessionManager(this).setLogin(true);
-               //registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
+                //registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
 
                 //update last sync time if sync from server
                 // update last login time
@@ -732,6 +715,20 @@ public class LoginActivity extends Activity {
         return pref.getString("flag1", null);
     }
 
+    private String getInsertedInvestigationVitalsFlag() {
+
+        SharedPreferences pref = getSharedPreferences(SUGAR_INTO_INVESTIGATION, MODE_PRIVATE);
+        return pref.getString("addedVitals", null);
+    }
+
+    private void setInsertedInvestigationVitalsFlag(String answer) {
+
+        getSharedPreferences(SUGAR_INTO_INVESTIGATION, Context.MODE_PRIVATE)
+                .edit()
+                .putString("addedVitals", answer)
+                .apply();
+    }
+
     private void setupdateBannerClickVisitFlag0(String answer) {
 
         getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -746,7 +743,8 @@ public class LoginActivity extends Activity {
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         return pref.getString("bannerflag", null);
     }
-/*Demo Code to register fcm with imy local machine to test*/
+
+    /*Demo Code to register fcm with imy local machine to test*/
     private void registerToServer(final String name, final String email) {
         // Tag used to cancel the request
         String tag_string_req = "req_register";
@@ -754,6 +752,7 @@ public class LoginActivity extends Activity {
         pDialog.setMessage("Please wait ...");
         showDialog();
 
+        String BASE_URL = "http://192.168.1.6/server_side_code/register.php";
         StringRequest strReq = new StringRequest(Request.Method.POST,
                 BASE_URL, new Response.Listener<String>() {
 
@@ -798,7 +797,7 @@ public class LoginActivity extends Activity {
                 Map<String, String> params = new HashMap<>();
 
                 String fcm_id = FirebaseInstanceId.getInstance().getToken();
-               // Log.e("fcm_id","  "+fcm_id);
+                // Log.e("fcm_id","  "+fcm_id);
                 appController.appendLog(fcm_id);
 
                 params.put("tag", "register");

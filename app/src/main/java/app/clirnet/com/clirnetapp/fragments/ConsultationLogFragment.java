@@ -79,7 +79,7 @@ public class ConsultationLogFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String greeting = (savedInstanceState != null) ? savedInstanceState.getString("greeting2") : "null";
+        //String greeting = (savedInstanceState != null) ? savedInstanceState.getString("greeting2") : "null";
         //Log.i(USER, " onViewStateRestoredfrag: " + greeting);
         setRetainInstance(true);//used to save instance on screen rotation
     }

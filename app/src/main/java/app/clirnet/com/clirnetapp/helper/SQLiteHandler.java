@@ -7,6 +7,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -17,43 +19,43 @@ import java.util.ArrayList;
 
 public class SQLiteHandler extends SQLiteOpenHelper {
 
-    //private static final String TAG = "SQLHandler";
+
     private final Context myContext;
     @SuppressLint("StaticFieldLeak")
     static SQLiteHandler sInstance;
 
     private SQLiteDatabase db;
-    // All Static variables
+
     // Database Version
-    static final int DATABASE_VERSION = 3;
+    static final int DATABASE_VERSION = 4;
 
     // Database Name
     public static final String DATABASE_NAME = "clirnetApp.db";
 
-
-    // Login table name
+    // table name
     static final String TABLE_USER = "user";
     private static final String TABLE_PATIENT = "patient";
     private static final String TABLE_PATIENT_HISTORY = "patient_history";
-    private static final String MASTER_AILMENT = "table_MasterAilment";
-    private static final String LAST_NAMETBL = "table_LastNames";
-    private static final String TABLE_PATIENTPERSONALINFO_HIOTORY = "table_persoplushistorydata";
+
+
+    private static final String TABLE_HEALTH_AND_LIFESTYLE = "health_and_lifestyle";
+    private static final String TABLE_INVESTIGATION = "table_investigation";
 
     private static final String TABLE_DOCTORINFO = "doctor_perInfo";
 
     private static final String TABLE_BANNER_CLICKED = "banner_clicked";
     private static final String TABLE_BANNER_DISPLAY = "banner_display";
-    private static final String TABLE_CALLMEET_REASON = "sample_call_meet_reasons";
+
     static final String TABLE_SYNC_STATUS = "sync_status";
 
-    // Login Table Columns names
+    // Table Columns names
     private static final String KEY_ID = "id";
     private static final String ADDED_TIME = "added_time";
     private static final String MODIFIED_TIME = "modified_time";
     private static final String SYCHRONIZED = "flag";
 
     static final String KEY_NAME = "name";
-    static final String KEY_PASSWORD = "password";
+    static  final String KEY_PASSWORD = "password";
     private static final String KEY_EMAIL = "email";
 
     //Patient personal Info Table
@@ -83,10 +85,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String DELETED_ON = "deleted_on";
     private static final String VISIT_DATE = "visit_date";
 
-    private final String KEY_VISIT_ID = "key_visit_id";
-    private final String ACTUAL_FOLLOW_UP_DATE = "actual_follow_up_date";
+    private static final String KEY_VISIT_ID = "key_visit_id";
+    private static final String ACTUAL_FOLLOW_UP_DATE = "actual_follow_up_date";
 
-    private final String DOCTOR_LOGIN_ID = "doc_login_id";
+    private static final String DOCTOR_LOGIN_ID = "doc_login_id";
 
     private static final String FIRST_NAME = "first_name";
     private static final String MIDDLE_NAME = "middle_name";
@@ -96,7 +98,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
     private static final String AGE = "age";
-    static final String PHONE_NUMBER = "phonenumber";
+     static final String PHONE_NUMBER = "phonenumber";
 
     private static final String LANGUAGE = "language";
     private static final String PHOTO = "photo";
@@ -128,12 +130,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String ISD_CODE = "isd_code";
     private static final String ATERNATE_NO_ISD_CODE = "alternate_no_isd";
 
-    private static final String CALLED_FROM = "called_from";
-    private static final String PREFERED_TIME = "preferred_time";
-    private static final String LOCATION = "location";
 
-    private static final String REQUEST_ON = "requested_on";
-    private static final String REQUEST_FULLFILLED = "request_fullfilled";
     private static final String FLAG = "flag";
     private static final String ALTERNATE_PHONE_NO = "alternate_no";
 
@@ -144,15 +141,33 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String TABLE_ASYNC = "async";
     private static final String MEMBERSHIP_ID = "membershipid";
     private static final String DISTRICT = "district";
-    private static String CITY_TOWN = "city";
+    private static final String CITY_TOWN = "city";
     private static final String NAME_TITLE = "title";
     static final String PATIENT_SEND = "patient_send";
     static final String VISIT_SEND = "visit_send";
     static final String RESPONSE_CODE = "response_code";
     static final String RESPONSE_TIME = "response_time";
-    static final String RECORD_SOURCE = "rec_source";
+    private static final String RECORD_SOURCE = "rec_source";
     private static final String CONTACT_FOR_PATIENT = "contactforpatient";
 
+    private static final String ALCOHOL_CONSUMPTION = "alocohol_consumption";
+    private static final String PACKE_PER_WEEK = "packs_per_week";
+    private static final String ALLERGIES = "allergies";
+    private static final String BINGE_EATING = "binge_eating";
+
+    private static final String CHEWING_TOBACO = "chewing_tobaco";
+    private static final String EXCERCISE = "excercise";
+
+    private static final String FOOD_HABIT = "food_habit";
+    private static final String FOOD_PREFERENCE = "food_preference";
+    private static final String LACATOSE_TOLERANCE = "lactose_tolerance";
+
+    private static final String LIFE_STYLE = "life_style";
+    private static final String SEXUALLY_ACTIVE = "sexually_active";
+
+    private static final String SMOKER_TYPE = "smoker_type";
+    private static final String STICK_COUNT = "stick_count";
+    private static final String STRESS_LEVEL = "stress_level";
 
 
     public SQLiteHandler(Context context) {
@@ -161,8 +176,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     public static synchronized SQLiteHandler getInstance(Context context) {
-        // Use the application context, which will ensure that you
-        // don't accidentally leak an Activity's context.
+        // Use the application conTEXT, which will ensure that you
+        // don't accidentally leak an Activity's conTEXT.
         // See this article for more information: http://bit.ly/6LRzfx
         if (sInstance == null) {
             sInstance = new SQLiteHandler(context.getApplicationContext());
@@ -189,6 +204,18 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String ASSOCIATE_TYPE = "associate_type";
     private static final String MODIFIED_COUNTER = "modified_counter";
     private static final String ASSOCIATE_VALUE = "type";
+    private  static final String ECG="ecg";
+    private  static final String FBG="fbg";
+    private  static final String HBA1C="hba1c";
+    private  static final String ACER="acer";
+    private  static final String PFT="pft";
+    private  static final String PPBG="ppbg";
+    private  static final String SEREM_UREA="serem_urea";
+    private  static  final String LIPID_PROFILE_TC ="lipid_profile_tc";
+    private  static  final String LIPID_PROFILE_TG ="lipid_profile_tg";
+    private  static  final String LIPID_PROFILE_LDL="lipid_profile_ldl";
+    private  static  final String  LIPID_PROFILE_VHDL="lipid_profile_vhdl";
+    private  static  final String LIPID_PROFILE_HDL="lipid_profile_hdl";
 
 
     static final String CREATE_ASSOCIATE_MASTER_TABLE =
@@ -206,26 +233,79 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     ASSOCIATE_STATE + " TEXT, " +
                     PIN_CODE + " NUMERIC, " +
                     DISTRICT + " TEXT ," +
-                    ADDED_BY + " text , " +
-                    ADDED_ON + " text , " +
-                    MODIFIED_BY + " text, " +
-                    MODIFIED_ON + " text, " +
-                    IS_DELETED + " text , " +
-                    IS_DISABLED + " text, " +
-                    DISABLED_BY + " text, " +
-                    DISABLED_ON + " text , " +
-                    DELETED_ON + " text ," +
+                    ADDED_BY + " TEXT , " +
+                    ADDED_ON + " TEXT , " +
+                    MODIFIED_BY + " TEXT, " +
+                    MODIFIED_ON + " TEXT, " +
+                    IS_DELETED + " TEXT , " +
+                    IS_DISABLED + " TEXT, " +
+                    DISABLED_BY + " TEXT, " +
+                    DISABLED_ON + " TEXT , " +
+                    DELETED_ON + " TEXT ," +
                     MODIFIED_COUNTER + " NUMERIC ," +
-                    FLAG + " text ) ";
+                    FLAG + " TEXT ) ";
 
     static String CREATE_TABLE_ASSOCTAE_TYPE_MASTER = "create table "
             + ASSOCIATE_TYPE + "(" + KEY_ID + " INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, "
-            + ASSOCIATE_VALUE + " text, "
-            + ADDED_BY + " text , "
-            + ADDED_ON + " text , "
-            + MODIFIED_BY + " text, "
-            + FLAG + " text , "
-            + DELETED_ON + " text ) ";
+            + ASSOCIATE_VALUE + " TEXT, "
+            + ADDED_BY + " TEXT , "
+            + ADDED_ON + " TEXT , "
+            + MODIFIED_BY + " TEXT, "
+            + FLAG + " TEXT , "
+            + DELETED_ON + " TEXT ) ";
+
+    private  static final String CREATE_HEALTH_AND_LIFESTYLE_TABLE =
+            "CREATE TABLE " + TABLE_HEALTH_AND_LIFESTYLE + " (" +
+                    KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    KEY_PATIENT_ID + " TEXT, " +
+                    ALCOHOL_CONSUMPTION + " TEXT, " +
+                    PACKE_PER_WEEK + " INTEGER, " +
+                    STRESS_LEVEL + " TEXT, " +
+                    SMOKER_TYPE + " TEXT, " +
+                    STICK_COUNT + " INTEGER, " +
+                    SEXUALLY_ACTIVE + " TEXT, " +
+                    LIFE_STYLE + " TEXT, " +
+                    LACATOSE_TOLERANCE + " TEXT, " +
+                    FOOD_PREFERENCE + " TEXT, " +
+                    FOOD_HABIT + " TEXT, " +
+                    EXCERCISE + " TEXT ," +
+                    CHEWING_TOBACO + " TEXT , " +
+                    BINGE_EATING + " TEXT , " +
+                    ALLERGIES + " TEXT, " +
+                    MODIFIED_ON + " TEXT, " +
+                    IS_DELETED + " TEXT , " +
+                    IS_DISABLED + " TEXT, " +
+                    DISABLED_BY + " TEXT, " +
+                    DISABLED_ON + " TEXT , " +
+                    DELETED_ON + " TEXT ," +
+                    DELETED_BY + " TEXT ," +
+                    FLAG + " TEXT ) ";
+
+    private static final String CREATE_INVESTIGATION_TABLE =
+            "CREATE TABLE " + TABLE_INVESTIGATION + " (" +
+                    KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    KEY_PATIENT_ID + " TEXT, " +
+                    KEY_VISIT_ID + " TEXT, " +
+                    ECG + " INTEGER, " +
+                    SUGAR + " INTEGER, " +
+                    SUGAR_FASTING + " INTEGER, " +
+                    ACER + " TEXT, " +
+                    PFT + " TEXT, " +
+                    HBA1C + " TEXT, " +
+                    SEREM_UREA + " TEXT, " +
+                    LIPID_PROFILE_TC + " TEXT, " +
+                    LIPID_PROFILE_TG + " TEXT, " +
+                    LIPID_PROFILE_LDL + " TEXT, " +
+                    LIPID_PROFILE_VHDL + " TEXT, " +
+                    LIPID_PROFILE_HDL + " TEXT, " +
+                    IS_DELETED + " TEXT , " +
+                    IS_DISABLED + " TEXT, " +
+                    DISABLED_BY + " TEXT, " +
+                    DISABLED_ON + " TEXT , " +
+                    DELETED_ON + " TEXT ," +
+                    DELETED_BY + " TEXT ," +
+                    FLAG + " TEXT ) ";
+
 
     // Creating Tables
     @Override
@@ -235,41 +315,51 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
     private static final String DATABASE_ALTER_TABLE_USER = "ALTER TABLE user"
-            + " ADD COLUMN phonenumber text;";
+            + " ADD COLUMN phonenumber TEXT;";
 
     private static final String DATABASE_ALTER_TABLE_PATIENT_ADDSTATE = "ALTER TABLE patient"
-            + " ADD COLUMN patient_state text;";
+            + " ADD COLUMN patient_state TEXT;";
 
     private static final String DATABASE_ALTER_TABLE_PATIENT_PHONE_TYPE = "ALTER TABLE patient"
-            + " ADD COLUMN phone_type text;";
+            + " ADD COLUMN phone_type TEXT;";
+
     private static final String DATABASE_ALTER_TABLE_PATIENT_ISD_CODE = "ALTER TABLE patient"
-            + " ADD COLUMN isd_code text;";
+            + " ADD COLUMN isd_code TEXT;";
+
+    private static final String DATABASE_ALTER_TABLE_PATIENT_OCCUPATION = "ALTER TABLE patient"
+            + " ADD COLUMN occupation TEXT;";
+
+    private static final String DATABASE_ALTER_TABLE_PATIENT_RELIGION = "ALTER TABLE patient"
+            + " ADD COLUMN religion TEXT;";
 
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_WEIGHT = " ALTER TABLE patient_history" + " ADD COLUMN weight text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_WEIGHT = " ALTER TABLE patient_history" + " ADD COLUMN weight TEXT;";
 
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_PULSE = " ALTER TABLE patient_history" + " ADD COLUMN pulse text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_PULSE = " ALTER TABLE patient_history" + " ADD COLUMN pulse TEXT;";
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_BP = " ALTER TABLE patient_history" + " ADD COLUMN bp_high text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_BP = " ALTER TABLE patient_history" + " ADD COLUMN bp_high TEXT;";
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_MMHG = " ALTER TABLE patient_history" + " ADD COLUMN bp_low text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_MMHG = " ALTER TABLE patient_history" + " ADD COLUMN bp_low TEXT;";
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_TEMP = " ALTER TABLE patient_history" + " ADD COLUMN temperature text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_TEMP = " ALTER TABLE patient_history" + " ADD COLUMN temperature TEXT;";
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_SUGAR = " ALTER TABLE patient_history" + " ADD COLUMN sugar text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_SUGAR = " ALTER TABLE patient_history" + " ADD COLUMN sugar TEXT;";
 
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_SYMPTOMS = " ALTER TABLE patient_history" + " ADD COLUMN symptoms text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_SYMPTOMS = " ALTER TABLE patient_history" + " ADD COLUMN symptoms TEXT;";
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_DIGNOSIS = " ALTER TABLE patient_history" + " ADD COLUMN diagnosis text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_DIGNOSIS = " ALTER TABLE patient_history" + " ADD COLUMN diagnosis TEXT;";
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_TESTS = " ALTER TABLE patient_history" + " ADD COLUMN tests text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_TESTS = " ALTER TABLE patient_history" + " ADD COLUMN tests TEXT;";
 
-    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_DRUGS = " ALTER TABLE patient_history" + " ADD COLUMN drugs text;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_DRUGS = " ALTER TABLE patient_history" + " ADD COLUMN drugs TEXT;";
 
-    private static final String DATABASE_ALTER_TABLE_DOCTORINFO = " ALTER TABLE doctor_perInfo" + " ADD COLUMN company_id text;";
+    private static final String DATABASE_ALTER_TABLE_DOCTORINFO = " ALTER TABLE doctor_perInfo" + " ADD COLUMN company_id TEXT;";
 
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_WAIST = " ALTER TABLE patient_history" + " ADD COLUMN waist integer;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_RESPIRATION_RATE = " ALTER TABLE patient_history" + " ADD COLUMN respiration_rate integer;";
+    private static final String DATABASE_ALTER_TABLE_PATIENT_HISTORY_OXYGEN_CONSUMPTION = " ALTER TABLE patient_history" + " ADD COLUMN oxygen_consumption integer;";
 
     // Upgrading database
     @Override
@@ -298,6 +388,17 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_DRUGS);
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_PHONE_TYPE);
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_ISD_CODE);
+        }
+        // v.1.3.1.6 +
+        if(oldVersion < 4){
+            //want to add few new tables and columns
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_OCCUPATION);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_RELIGION);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_WAIST);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_RESPIRATION_RATE);
+            db.execSQL(DATABASE_ALTER_TABLE_PATIENT_HISTORY_OXYGEN_CONSUMPTION);
+            db.execSQL(CREATE_HEALTH_AND_LIFESTYLE_TABLE);
+            db.execSQL(CREATE_INVESTIGATION_TABLE);
         }
 
     }
@@ -704,8 +805,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     }
 
     //add patient records from add pateint update page
-    public void addPatientNextVisitRecord(String visit_id, String strPatientId, String usersellectedDate, String follow_up_dates, String daysSel, String fowSel, String monthSel, String clinical_note, String prescriptionimgPath, String ailments, String visit_date, String doc_id, String doc_mem_id, String addedOnDate, String addedTime, String flag, String added_by, String action, String patInfoType,
-                                          String weight, String pulse, String bp, String mmhg, String temparature, String sugar, String symptoms, String dignosis, String tests, String drugs, String strHeight, String strbmi, String strSugarFasting, String referedBy, String referedTo, String rec_source) {
+    public void addPatientNextVisitRecord(@NonNull String visit_id, @NonNull String strPatientId, String actualFod, @Nullable  String follow_up_dates, String daysSel, String fowSel, String monthSel, String clinical_note, String prescriptionimgPath, String visit_date, String doc_id, String doc_mem_id, String addedOnDate, String addedTime, String flag, String added_by, String action, String patInfoType,
+                                          String weight, String pulse, String bp, String mmhg, String temparature, String sugar, String symptoms, String dignosis, String strHeight, String strbmi, String strSugarFasting, String referedBy, String referedTo, String rec_source) {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -714,14 +815,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
             values.put(KEY_VISIT_ID, visit_id);
             values.put(KEY_PATIENT_ID, strPatientId);
-            values.put(ACTUAL_FOLLOW_UP_DATE, usersellectedDate); // Name
+            values.put(ACTUAL_FOLLOW_UP_DATE, actualFod);
             values.put(FOLLOW_UP_DATE, follow_up_dates);
-            values.put(DAYS, daysSel); // Email
-            values.put(WEEKS, fowSel); // Email
+            values.put(DAYS, daysSel);
+            values.put(WEEKS, fowSel);
             values.put(MONTHS, monthSel); // Created At
             values.put(CLINICAL_NOTES, clinical_note);
             values.put(PRESCRIPTION, prescriptionimgPath);
-            values.put(AILMENT, ailments);
+           // values.put(AILMENT, ailments);
             values.put(VISIT_DATE, visit_date);
             values.put(ADDED_ON, addedOnDate);
             values.put(ADDED_TIME, addedTime);
@@ -739,8 +840,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(SUGAR, sugar);
             values.put(SYMPTOMS, symptoms);
             values.put(DIGNOSIS, dignosis);
-            values.put(TESTS, tests);
-            values.put(DRUGS, drugs);
+            //values.put(TESTS, tests);
+            //values.put(DRUGS, drugs);
             values.put(HEIGHT, strHeight);
             values.put(BMI, strbmi);
             values.put(SUGAR_FASTING, strSugarFasting);
@@ -1105,7 +1206,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public JSONArray getResultsForBannerDisplay() {
 
         JSONArray resultSet;
-        //or you can use `context.getDatabasePath("my_db_test.db")`
+        //or you can use `conTEXT.getDatabasePath("my_db_test.db")`
         Cursor cursor = null;
 
         SQLiteDatabase db1 = getReadableDatabase();
@@ -1153,7 +1254,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public JSONArray getResultsForBannerClicked() {
 
         JSONArray resultSet;
-        //or you can use `context.getDatabasePath("my_db_test.db")`
+        //or you can use `conTEXT.getDatabasePath("my_db_test.db")`
         Cursor cursor = null;
 
         SQLiteDatabase db1 = getReadableDatabase();
@@ -1252,7 +1353,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     public void addAsynctascRun_status(String process, String start_time, String end_time, String update_on) {
 
-        SQLiteDatabase db = null;
+        SQLiteDatabase db=null;
         try {
             db = this.getWritableDatabase();
 
@@ -1261,7 +1362,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put("start_time", start_time);
             values.put("end_time", end_time);
             values.put("update_on", update_on);
-
 
             boolean isProcessExistsboolean = isProcessExists(process);
 
@@ -1278,9 +1378,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
         } finally {
-            /*if (db != null) {
+           if (db != null) {
                 db.close();
-            }*/
+            }
         }
     }
 
@@ -1348,6 +1448,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             String selectQuery = "UPDATE patient_history SET doc_mem_id = '" + docMemId + "', doctor_id ='" + doc_id + "' where patient_info_type='Electronics' or patient_info_type='Electronic' or doc_mem_id = \"\" or doc_mem_id = null;";
 
             db.rawQuery(selectQuery, null);
+            //close();
 
             // Inserting Row
 
@@ -1426,7 +1527,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public JSONArray getAssociateMasterDataDisplay() {
 
         JSONArray resultSet;
-        //or you can use `context.getDatabasePath("my_db_test.db")`
+        //or you can use `conTEXT.getDatabasePath("my_db_test.db")`
         Cursor cursor = null;
 
         SQLiteDatabase db1 = getReadableDatabase();
@@ -1591,7 +1692,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     public ArrayList<String> getAllCompanyBanner() throws ClirNetAppException {
         ArrayList<String> bannerList;
         bannerList = new ArrayList<>();
-        String selectQuery = "select banner_id,banner_image1  from company_banners where status_name= 'Active'";
+        String selectQuery = "select banner_id,banner_image1 from company_banners where status_name= 'Active'";
         SQLiteDatabase database = null;
         Cursor cursor = null;
         try {
@@ -1607,7 +1708,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            throw new ClirNetAppException("Something went wrong while geting getAllDataAssociateMaster");
+            throw new ClirNetAppException("Something went wrong while geting getAllCompanyBanner " +e);
         } finally {
             if (cursor != null) {
                 cursor.close();
@@ -1681,7 +1782,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(RESPONSE_TIME, responseTime);
 
             // Inserting Row
-           long id= db.insert(TABLE_SYNC_STATUS, null, values);
+           db.insert(TABLE_SYNC_STATUS, null, values);
            // Log.e("Valuesis",""+id);
 
         } catch (Exception e) {
@@ -1759,6 +1860,69 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
         return wordList;
+    }
+
+    public void addHealthAndLifestyle(int visit_id,int strPatient_id,String strSmoking, String strNoOfSticks, String strTobaco, String strAlcoholConsumption, String strPackPerWeek, String strLifeStyle, String strStressLevel, String strExcercise, String strBingeEating, String strSexuallyActive, String strFoodHabit ,String strSugarFasting, String strSugar, String strHbA1c, String strEcg, String strPft, String strSerumUrea, String strAcer,String strAllergies,String strFoodPreference,String strLactoseTolerance,String strLipidTC,String strLipidTG,String strLipidLDL,String strLipidVHDL,String strLipidHDL,String strFlag) {
+
+        SQLiteDatabase db = null;
+        try {
+            db = this.getWritableDatabase();
+
+
+            ContentValues contentValue = new ContentValues();
+
+            contentValue.put(KEY_PATIENT_ID, strPatient_id);
+            contentValue.put(SMOKER_TYPE, strSmoking);
+            contentValue.put(STICK_COUNT, strNoOfSticks);
+            //contentValue.put(CHEWING_TOBACO, strTobaco);
+            contentValue.put(ALCOHOL_CONSUMPTION, strAlcoholConsumption);
+            contentValue.put(PACKE_PER_WEEK, strPackPerWeek);
+            contentValue.put(CHEWING_TOBACO, strTobaco);
+            contentValue.put(LIFE_STYLE,strLifeStyle);
+            contentValue.put(STRESS_LEVEL,strStressLevel);
+
+            contentValue.put(EXCERCISE,strExcercise);
+            contentValue.put(BINGE_EATING,strBingeEating);
+            contentValue.put(SEXUALLY_ACTIVE,strSexuallyActive);
+            contentValue.put(FOOD_HABIT,strFoodHabit);
+            contentValue.put(FOOD_PREFERENCE,strFoodPreference);
+            contentValue.put(ALLERGIES,strAllergies);
+            contentValue.put(LACATOSE_TOLERANCE,strLactoseTolerance);
+            contentValue.put(FLAG,strFlag);
+
+            // Inserting Row
+            db.insert(TABLE_HEALTH_AND_LIFESTYLE, null, contentValue);
+
+                    /*Inserting values to Investgation Table*/
+            ContentValues cv = new ContentValues();
+            cv.put(KEY_VISIT_ID, visit_id);
+            cv.put(KEY_PATIENT_ID, strPatient_id);
+            cv.put(ECG,strEcg);
+            cv.put(HBA1C,strHbA1c);
+            cv.put(SEREM_UREA,strSerumUrea);
+            cv.put(ACER,strAcer);
+            cv.put(PFT,strPft);
+            cv.put(SUGAR_FASTING,strSugarFasting);
+            cv.put(SUGAR,strSugar);
+            cv.put(FLAG,strFlag);
+            cv.put(LIPID_PROFILE_TC,strLipidTC);
+            cv.put(LIPID_PROFILE_TG,strLipidTG);
+            cv.put(LIPID_PROFILE_LDL,strLipidLDL);
+            cv.put(LIPID_PROFILE_VHDL,strLipidVHDL);
+            cv.put(LIPID_PROFILE_HDL,strLipidHDL);
+
+            db.insert(TABLE_INVESTIGATION, null, cv);
+
+
+            // Log.e("Valuesis",""+id);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
     }
 }
 

@@ -24,6 +24,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.InputType;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -170,6 +171,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private TextView incompletedisplay_tv;
 
     private LinearLayout nameheader;
+    private RVAdapter rvadapter;
+    private String formatedDate;
 
 
     public HomeFragment() {
@@ -238,8 +241,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         connectionDetector = new ConnectionDetector(getContext());
         dbController = SQLiteHandler.getInstance(getContext());
         TextView privacyPolicy = (TextView) view.findViewById(R.id.privacyPolicy);
-
-
 
         Glide.get(getContext()).clearMemory();
 
@@ -390,7 +391,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         try {
             sqlController1 = new SQLController(getActivity());
             sqlController1.open();
-            String formatedDate = appController.ConvertDateFormat(sysdate.toString());
+
+            formatedDate = appController.ConvertDateFormat(sysdate.toString());
 
             filteredModelList = sqlController1.getPatientList(formatedDate);
 
@@ -399,7 +401,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             if (filteredModelList.size() > 0) {
                 //do nothing
                 norecordtv.setVisibility(View.GONE);
-                RVAdapter rvadapter = new RVAdapter(filteredModelList);
+                rvadapter = new RVAdapter(filteredModelList);
                 recyclerView.setAdapter(rvadapter);
                 rvadapter.notifyDataSetChanged();
             }
@@ -1315,7 +1317,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private void setPatientPersonalList(JSONArray jsonArray) throws JSONException {
 
         String flag = "1";
-        List<RegistrationModel> inputPatientData = new ArrayList<>();
+       // List<RegistrationModel> inputPatientData = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
 
@@ -1371,7 +1373,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String converteddobDate = null;
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ENGLISH);
             SimpleDateFormat dobsdf = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-            Date formatDateOB = null;
+            Date formatDateOB;
             SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
             SimpleDateFormat sd2 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
             try {
@@ -1395,9 +1397,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     special_instruction, added_by, convertedDate, convertedTime, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, flag,status,email,phoneType,isdCode,alternateNumber, alternatePhoneType,uid, uidType,
                     alternateNoIsd);
 
-            inputPatientData.add(new RegistrationModel(pat_id, doctor_id, doc_membership_id, patient_info_type_form, pat_first_name, pat_middle_name, pat_last_name,
-                    pat_gender, converteddobDate, pat_age, pat_mobile_no, pat_address, pat_city_town, pat_pincode, pat_district, pref_lang, photo_name, consent,
-                    special_instruction, added_by, added_on, convertedDate, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, flag));
+           // inputPatientData.add(new RegistrationModel(pat_id, doctor_id, doc_membership_id, patient_info_type_form, pat_first_name, pat_middle_name, pat_last_name,
+            //        pat_gender, converteddobDate, pat_age, pat_mobile_no, pat_address, pat_city_town, pat_pincode, pat_district, pref_lang, photo_name, consent,
+            //        special_instruction, added_by, added_on, convertedDate, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, flag));
 
         }
 
@@ -1407,8 +1409,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     //This method will get patient History details from server and stores into db
     private void setPatientHistoryList(JSONArray patientHistoryList) throws JSONException {
-        String flag = "1";
 
+        String flag = "1";
         for (int i = 0; i < patientHistoryList.length(); i++) {
 
             JSONObject jsonPatientHistoryObject = patientHistoryList.getJSONObject(i);
@@ -1535,6 +1537,41 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         startActivity(i);
         makeToast("Application Initialization Successful");
     }
+    private void setAssociateMaster(JSONArray jsonAssciateMasterArray) throws JSONException {
+
+        String flag = "1";
+        // List<RegistrationModel> inputPatientData = new ArrayList<>();
+
+        for (int i = 0; i < jsonAssciateMasterArray.length(); i++) {
+
+            JSONObject jsonProsolveObject = jsonAssciateMasterArray.getJSONObject(i);
+
+            String strname = jsonProsolveObject.getString("first_name"); //getting first and last name in one value
+
+            String added_by = jsonProsolveObject.getString("doc_id");
+
+            String strmob_no = jsonProsolveObject.getString("phonenumber");
+            String selectedPhoneType = jsonProsolveObject.getString("phone_type");
+            String selectedIsd_codeType = jsonProsolveObject.getString("isd_code");
+            String strEmail = jsonProsolveObject.getString("email");
+            String selectedSpeciality = jsonProsolveObject.getString("speciality");
+            String selectedAssociateType = jsonProsolveObject.getString("associate_type");
+            String straddress = jsonProsolveObject.getString("associate_address");
+            String strcity= jsonProsolveObject.getString("patient_city_town");
+            String selectedState = jsonProsolveObject.getString("associate_state");
+            String strpin= jsonProsolveObject.getString("pin_code");
+            String strdistrict= jsonProsolveObject.getString("district");
+            String selectedTitle= jsonProsolveObject.getString("title");
+            String stcontactForPatient= jsonProsolveObject.getString("contactforpatient");
+            String selectedcontactForPatientType=jsonProsolveObject.getString("selectedcontactforPatientType");
+            String selectedIsd_code_altType=jsonProsolveObject.getString("selectedIsd_code_altType");
+            String mCounter=jsonProsolveObject.getString("modified_counter");
+
+            dbController.addAssociates(added_by, mCounter, strname, strmob_no, selectedPhoneType, selectedIsd_codeType, strEmail, selectedSpeciality, selectedAssociateType, straddress, strcity, selectedState, strpin, strdistrict, new AppController().getDateTimeddmmyyyy(), flag, selectedTitle, stcontactForPatient, selectedcontactForPatientType, selectedIsd_code_altType);
+
+        }
+    }
+
 
     //custom dialog  for the sync button result
     private void showNoInternetAlert(String title, String message) {
@@ -1685,6 +1722,53 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     public void onResume() {
         super.onResume();
 
+        try {
+            if(filteredModelList.size()>0) {
+                filteredModelList.clear();
+            }
+            if(sqlController!=null) {
+
+                filteredModelList = sqlController.getPatientList(formatedDate);
+
+                incompleteRecordList = sqlController.getIncompleteRecordList(formatedDate);
+                Log.e("SizeList", "" + incompleteRecordList.size());
+
+                if (filteredModelList.size() > 0) {
+                    //do nothing
+                    norecordtv.setVisibility(View.GONE);
+                    rvadapter = new RVAdapter(filteredModelList);
+                    recyclerView.setAdapter(rvadapter);
+                    rvadapter.notifyDataSetChanged();
+                }
+                View view1 = null;
+                if (incompleteRecordList.size() > 0) {
+                    incompletedisplay_tv = (TextView) view.findViewById(R.id.incompletedisplay_tv);
+                    incompletedisplay_tv.setVisibility(View.VISIBLE);
+                    nameheader = (LinearLayout) view.findViewById(R.id.nameheader);
+                    nameheader.setVisibility(View.VISIBLE);
+                    view1 = view.findViewById(R.id.view);
+                    view1.setVisibility(View.VISIBLE);
+                    IncompleteRecordsAdapter incompleteRecordsAdapter = new IncompleteRecordsAdapter(incompleteRecordList);
+                    incomplete_recordsRecyclerview.setVisibility(View.VISIBLE);
+                    incomplete_recordsRecyclerview.setAdapter(incompleteRecordsAdapter);
+                    incompleteRecordsAdapter.notifyDataSetChanged();
+                } else {
+                    if (nameheader != null) {
+                        nameheader.setVisibility(View.GONE);
+                    }
+                    if (incompletedisplay_tv != null) {
+                        incompletedisplay_tv.setVisibility(View.GONE);
+                    }
+                    if (view1 != null) {
+                        view1.setVisibility(View.GONE);
+                    }
+                    incomplete_recordsRecyclerview.setVisibility(View.GONE);
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        //rvadapter.notifyDataSetChanged();
         // Tracking the screen view
         AppController.getInstance().trackScreenView("Home Fragment");
     }
@@ -1766,8 +1850,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                 JSONArray patientHistoryList = user.getJSONArray("patient_visit_details");//for live api
 
+                JSONArray patientAssociateMaster = user.getJSONArray("associate_master");//for live api
+
                 setPatientPersonalList(jsonArray);
                 setPatientHistoryList(patientHistoryList);
+                setAssociateMaster(patientAssociateMaster);
 
 
             } catch (JSONException e) {

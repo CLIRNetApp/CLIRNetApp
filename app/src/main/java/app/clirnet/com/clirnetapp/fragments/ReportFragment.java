@@ -422,8 +422,8 @@ public class ReportFragment extends Fragment {
 
                         if (s.equals("1")) {
 
-                            String date = dayOfMonth + "-"
-                                    + (monthOfYear + 1) + "-" + year;
+                           // String date = dayOfMonth + "-"
+                                //    + (monthOfYear + 1) + "-" + year;
 
                             fromdate.setText(year + "-" + (monthOfYear + 1) + "-"
                                     + dayOfMonth);

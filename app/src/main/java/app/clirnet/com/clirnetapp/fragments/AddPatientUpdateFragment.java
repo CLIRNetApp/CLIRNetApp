@@ -53,6 +53,7 @@ import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
+import app.clirnet.com.clirnetapp.utility.ImageCompression;
 
 //Our class extending fragment
 public class AddPatientUpdateFragment extends Fragment {
@@ -71,10 +72,10 @@ public class AddPatientUpdateFragment extends Fragment {
     private Button btnclear;
     private EditText clinicalNotes;
     private String strPatientId;
-    private String fowSel = null;
+    private String fowSel;
     private String daysSel;
     private String userSellectedDate;
-    private String monthSel = null;
+    private String monthSel;
     private int maxVisitId;
     private String doctor_membership_number;
     private String docId;
@@ -83,7 +84,7 @@ public class AddPatientUpdateFragment extends Fragment {
     private BannerClass bannerClass;
     Button addPatientprescriptionBtn;
     private Intent imageIntent;
-    private File imagesFolder,imageFile;
+    private File imagesFolder, imagePathFile;
     private String PrescriptionimageName;
     private AppController appController;
     private Uri uriSavedImage;
@@ -111,6 +112,7 @@ public class AddPatientUpdateFragment extends Fragment {
     private int addCounter;
     private TextView textRefredByShow;
     private TextView textRefredToShow;
+
     private EditText edtInput_weight;
     private EditText edtInput_pulse;
     private EditText edtInput_bp;
@@ -380,8 +382,8 @@ public class AddPatientUpdateFragment extends Fragment {
                 imagesFolder.mkdirs();
 
                 PrescriptionimageName = "prescription_" + docId + "_" + appController.getDateTime() + ".jpg";
-                imageFile = new File(imagesFolder, PrescriptionimageName);
-                uriSavedImage = Uri.fromFile(imageFile);
+                imagePathFile = new File(imagesFolder, PrescriptionimageName);
+                uriSavedImage = Uri.fromFile(imagePathFile);
                 imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
                 imageIntent.putExtra("data", uriSavedImage);
                 startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -401,7 +403,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {
                     // successfully captured the image
                     // display it in image view
-                  //  new ImageCompression(getContext(),imageFile.getPath().toString()).execute( uriSavedImage.getPath().trim());
+                    new ImageCompression(getContext(), imagePathFile.getPath()).execute( uriSavedImage.getPath().trim());
                     previewCapturedImage();
                 }
             }
@@ -463,9 +465,11 @@ public class AddPatientUpdateFragment extends Fragment {
                         inputnumber.setError(null);
                     }
                     buttonSelected = "days";
-                    String dateis = sdf1.format(appController.addDay1(new Date(), val));
+                    String dateis = sdf1.format(AppController.addDay1(new Date(), val));
                     fodtextshow.setText(dateis);
                     daysSel = value;
+                    fowSel = null;
+                    monthSel = null;
                     userSellectedDate = dateis;
 
                 } else if (event.getAction() == KeyEvent.ACTION_UP) {
@@ -493,6 +497,7 @@ public class AddPatientUpdateFragment extends Fragment {
                     month.setBackground(getResources().getDrawable(R.drawable.circle));
                     btnclear.setBackground(getResources().getDrawable(R.drawable.circle));
                 }
+
                 value = inputnumber.getText().toString().trim();
 
                 if (TextUtils.isEmpty(value)) {
@@ -512,9 +517,11 @@ public class AddPatientUpdateFragment extends Fragment {
                 }
                 int fVal = (int) (val * 7);
                 buttonSelected = "week";
-                String dateis = sdf1.format(appController.addDay1(new Date(), fVal));
+                String dateis = sdf1.format(AppController.addDay1(new Date(), fVal));
                 userSellectedDate = dateis;
                 fowSel = value;
+                daysSel = null;
+                monthSel = null;
                 fodtextshow.setText(dateis);
             }
         });
@@ -527,7 +534,6 @@ public class AddPatientUpdateFragment extends Fragment {
                 month.setTextColor(getResources().getColor(R.color.white));
                 days.setTextColor(getResources().getColor(R.color.black));
                 btnclear.setTextColor(getResources().getColor(R.color.black));
-
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                     days.setBackground(getResources().getDrawable(R.drawable.circle));
                     week.setBackground(getResources().getDrawable(R.drawable.circle));
@@ -548,9 +554,11 @@ public class AddPatientUpdateFragment extends Fragment {
                     inputnumber.setError(null);
                 }
                 buttonSelected = "month";
-                String dateis = sdf1.format(appController.addMonth(new Date(), Integer.parseInt(value)));
+                String dateis = sdf1.format(AppController.addMonth(new Date(), Integer.parseInt(value)));
                 userSellectedDate = dateis;
                 monthSel = value;
+                daysSel = null;
+                fowSel = null;
                 fodtextshow.setText(dateis);
             }
         });
@@ -688,7 +696,7 @@ public class AddPatientUpdateFragment extends Fragment {
     }
 
     private void showReferedDialogBox() {
-        final Dialog dialog = new Dialog(new ContextThemeWrapper(getContext(), android.R.style.Theme_DeviceDefault_Light_NoActionBar_Overscan));
+        final Dialog dialog = new Dialog(getContext());
         LayoutInflater factory = LayoutInflater.from(getContext());
 
         final View f = factory.inflate(R.layout.refered_by_dialog, null);
@@ -920,9 +928,8 @@ public class AddPatientUpdateFragment extends Fragment {
                 strReferredTo1Name = (String) parent.getItemAtPosition(position);
 
                 try {
-                    if (nameRefredTo1Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo1Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo1Name, ".")) {
                             String[] parts = strReferredTo1Name.split(". ", 2);
                            // String string1 = parts[0];//namealias
@@ -955,9 +962,8 @@ public class AddPatientUpdateFragment extends Fragment {
 
                 strReferredTo2Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo2Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo2Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo2Name, ".")) {
                             String[] parts = strReferredTo2Name.split(". ", 2);
                             //String string1 = parts[0];//namealias
@@ -987,9 +993,8 @@ public class AddPatientUpdateFragment extends Fragment {
 
                 strReferredTo3Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo3Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo3Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo3Name, ".")) {
                             String[] parts = strReferredTo3Name.split(". ", 2);
                             //String string1 = parts[0];//namealias
@@ -1020,9 +1025,8 @@ public class AddPatientUpdateFragment extends Fragment {
 
                 strReferredTo4Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo4Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo4Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo4Name, ".")) {
                             String[] parts = strReferredTo4Name.split(". ", 2);
                             //String string1 = parts[0];//namealias
@@ -1052,9 +1056,8 @@ public class AddPatientUpdateFragment extends Fragment {
 
                 strReferredTo5Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo5Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo5Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo5Name, ".")) {
                             String[] parts = strReferredTo5Name.split(". ", 2);
                            // String string1 = parts[0];//namealias
@@ -1085,9 +1088,8 @@ public class AddPatientUpdateFragment extends Fragment {
 
                 strReferredByName = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredBySpinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredBySpinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredByName, ".")) {
 
                             String[] parts = strReferredByName.split(". ", 2);
@@ -1274,8 +1276,7 @@ public class AddPatientUpdateFragment extends Fragment {
     }
 
     private void saveDataToDataBase() {
-        monthSel = null;
-        fowSel = null;
+
         String ailments = null;
         String clinical_note = clinicalNotes.getText().toString().trim();
         //String follow_up_dates = follow_up_date.getText().toString().trim();
@@ -1344,8 +1345,8 @@ public class AddPatientUpdateFragment extends Fragment {
         String action = "added";
         String record_source = "Add Patient Update";
 
-        dbController.addPatientNextVisitRecord(visit_id, strPatientId, userSellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, ailments, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
-                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo, record_source);
+        dbController.addPatientNextVisitRecord(visit_id, strPatientId, userSellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
+                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo, record_source);
 
         Toast.makeText(getContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
         //Redirect to navigation Activity

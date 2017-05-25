@@ -48,11 +48,9 @@ public class RegistrationModel {
     private String clinicalNotes;
     private String ailments;
     private String key_visit_id;
-    private String added_by;
     private String added_on;
+    private String added_by;
     private String modified_by;
-
-
     private String modified_on;
     private String is_disabled;
     private String disabled_by;
@@ -80,7 +78,6 @@ public class RegistrationModel {
     private String bp;
     private String lowBp;
     private String temprature;
-    private String sugar;
     private String symptoms;
     private String dignosis;
     private String tests;
@@ -89,10 +86,7 @@ public class RegistrationModel {
     private String alternatePhoneType;
     private String alternatePhoneNumber;
 
-
-
     private String height;
-    private String sugarFasting;
     private String alternate_isd_code;
     private String isd_code;
 
@@ -105,20 +99,69 @@ public class RegistrationModel {
     private String contactForPatient;
     private String altContactPatientIsdCodeType;
     private String selectedContactPhoneType;
-    private  String distole;
-    private  String systole;
+    private  String sugar;
+    private  String sugarFasting;
+    private String ecg;
+    private String hba1c;
+
+    public String getLipidProfileHdl() {
+        return lipidProfileHdl;
+    }
+
+    public String getLipidProfileVhdl() {
+        return lipidProfileVhdl;
+    }
+
+    public String getLipidProfileLdl() {
+        return lipidProfileLdl;
+    }
+
+    public String getLipidProfileTg() {
+        return lipidProfileTg;
+    }
+
+    public String getLipidProfileTc() {
+        return lipidProfileTc;
+    }
+
+    public String getSeremUrea() {
+        return seremUrea;
+    }
+
+    public String getPft() {
+        return pft;
+    }
+
+    public String getAcer() {
+        return acer;
+    }
+
+    public String getHba1c() {
+        return hba1c;
+    }
+
+    public String getEcg() {
+        return ecg;
+    }
+
+    private String acer;
+    private String pft;
+    private String seremUrea;
+    private String lipidProfileTc;
+    private String lipidProfileTg;
+    private String lipidProfileLdl;
+    private String lipidProfileVhdl;
+    private String lipidProfileHdl;
+
+
+
+
+
 
     public String getModiedCounter() {
         return modiedCounter;
     }
 
-    public String getDistole() {
-        return distole;
-    }
-
-    public String getSystole() {
-        return systole;
-    }
 
     public String getContactForPatient() {
         return contactForPatient;
@@ -815,63 +858,19 @@ public class RegistrationModel {
         this.referedTo = referedTo;
         this.email = email;
     }
-   /* public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
-                             String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String email, String uid, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo,String systole,String distole) {
+    public RegistrationModel(String ecg, String sugar, String sugar_fasting, String acer, String pft, String hba1c, String serem_urea, String lipid_profile_tc, String lipid_profile_tg, String lipid_profile_ldl, String lipid_profile_vhdl, String lipid_profile_hdl) {
+        this.ecg=ecg;
+        this.sugar=sugar;
+        this.sugarFasting=sugar_fasting;
+        this.acer=acer;
+        this.pft=pft;
+        this.hba1c=hba1c;
+        this.seremUrea=serem_urea;
+        this.lipidProfileTc=lipid_profile_tc;
+        this.lipidProfileTg=lipid_profile_tg;
+        this.lipidProfileLdl=lipid_profile_ldl;
+        this.lipidProfileVhdl=lipid_profile_vhdl;
+        this.lipidProfileHdl=lipid_profile_hdl;
 
-        this.pat_id = id;
-        this.firstName = first_name;
-        this.middleName = middle_name;
-        this.lastName = last_name;
-        this.dob = strdate_of_birth;
-        this.gender = gender;
-
-        this.age = current_age;
-        this.mobileNumber = phone_number;
-        this.language = selectedLanguage;
-        this.photo = patientImagePath;
-        this.followUpDate = follow_up_date;
-
-        this.followUpdays = daysSel;
-        this.followUpWeek = weekSel;
-        this.followUpMonth = monthSel;
-        this.ailments = ailmentList;
-        this.pres_img = prescriptionImgPath;
-        this.clinicalNotes = clinical_note;
-        this.added_on = added_on;
-        this.visit_date = visit_date;
-        this.modified_on = modified_on;
-        this.key_visit_id = key_visit_id;
-        this.actualFollowupDate = actFolDate;
-
-        this.address = address;
-        this.cityortown = city;
-        this.district = district;
-        this.pin_code = pin;
-        this.state = state;
-
-        this.weight = weight;
-        this.pulse = pulse;
-        this.bp = bp;
-        this.lowBp = mmhg;
-        this.temprature = temprature;
-        this.sugar = sugar;
-        this.symptoms = symptoms;
-        this.dignosis = dignosis;
-        this.email = email;
-        this.uid = uid;
-        this.bmi = bmi;
-        this.height = height;
-        this.alternatePhoneNumber = altername_no;
-        this.alternatePhoneType = altternate_phType;
-        this.sugarFasting = sugar_fasting;
-        this.phone_type = phone_type;
-        this.isd_code = isd_code;
-        this.alternate_isd_code = alternate_noisd_code;
-        this.referedBy = referedBy;
-        this.referedTo = referedTo;
-        this.systole = systole;
-        this.distole = distole;
-
-    }*/
+    }
 }

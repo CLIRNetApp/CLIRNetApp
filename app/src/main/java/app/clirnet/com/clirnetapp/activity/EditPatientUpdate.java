@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -59,6 +58,7 @@ import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
+import app.clirnet.com.clirnetapp.utility.ImageCompression;
 import app.clirnet.com.clirnetapp.utility.Validator;
 
 public class EditPatientUpdate extends AppCompatActivity {
@@ -102,7 +102,6 @@ public class EditPatientUpdate extends AppCompatActivity {
     private String docId;
 
     private String strVisitId;
-    private int maxid;
     private AppController appController;
     private Button editUpdate;
     private Button cancel;
@@ -170,6 +169,7 @@ public class EditPatientUpdate extends AppCompatActivity {
     private String strReferredTo4Name;
     private String strReferredTo5Name;
     private ArrayList<String> nameReferalsList;
+    private File imagePathFile;
 
 
     @Override
@@ -458,8 +458,8 @@ public class EditPatientUpdate extends AppCompatActivity {
             } else {
                 recyclerView.setVisibility(View.GONE);
             }
-            int id = databaseClass.getMaxAimId();
-            maxid = id + 1;
+          //  int id = databaseClass.getMaxAimId();
+            //int maxid = id + 1;
 
             if (bannerClass == null) {
                 bannerClass = new BannerClass(getApplicationContext());
@@ -673,8 +673,8 @@ public class EditPatientUpdate extends AppCompatActivity {
 
                 imageName = "prescription_" + strFirstName + "_" + strLastName + docId + "_" + appController.getDateTime() + ".png";
 
-                File image = new File(imagesFolder, imageName);
-                uriSavedImage = Uri.fromFile(image);
+                 imagePathFile = new File(imagesFolder, imageName);
+                uriSavedImage = Uri.fromFile(imagePathFile);
                 imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
                 imageIntent.putExtra("data", uriSavedImage);
                 startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -697,7 +697,7 @@ public class EditPatientUpdate extends AppCompatActivity {
 
     private void showReferedDialogBox() {
 
-        final Dialog dialog = new Dialog(new ContextThemeWrapper(this, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Overscan));
+        final Dialog dialog = new Dialog(this);
 
         LayoutInflater factory = LayoutInflater.from(EditPatientUpdate.this);
         final View f = factory.inflate(R.layout.refered_by_dialog, null);
@@ -1111,7 +1111,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                         if (appController.contains(strReferredTo4Name, ".")) {
 
                             String[] parts = strReferredTo4Name.split(". ", 2);
-                            String string1 = parts[0];//namealias
+                           // String string1 = parts[0];//namealias
                             strReferredTo4Name = parts[1];//actual name
                         }
                         ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo4Name.trim());
@@ -1142,7 +1142,7 @@ public class EditPatientUpdate extends AppCompatActivity {
                         if (appController.contains(strReferredTo5Name, ".")) {
 
                             String[] parts = strReferredTo5Name.split(". ", 2);
-                            String string1 = parts[0];//namealias
+                           // String string1 = parts[0];//namealias
                             strReferredTo5Name = parts[1];//actual name
                         }
                         ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredTo5Name.trim());
@@ -1541,6 +1541,8 @@ public class EditPatientUpdate extends AppCompatActivity {
 
                 if (resultCode == Activity.RESULT_OK) {
                     // successfully captured the image display it in image view
+                    new ImageCompression(this, imagePathFile.getPath()).execute(uriSavedImage.getPath().trim());
+
                     previewCapturedImage();
                 }
             }
@@ -1785,6 +1787,7 @@ public class EditPatientUpdate extends AppCompatActivity {
         strReferredTo4Name = null;
         strReferredTo5Name = null;
         nameReferalsList = null;
+        imagePathFile=null;
     }
 
 }

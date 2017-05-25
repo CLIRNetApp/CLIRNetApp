@@ -60,6 +60,7 @@ import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
+import app.clirnet.com.clirnetapp.utility.ImageCompression;
 
 
 public class QuickAddVisitFragment extends Fragment {
@@ -183,6 +184,7 @@ public class QuickAddVisitFragment extends Fragment {
     private String strAlternatenumber,strAlternatephtype;
     private String strIsd_code,strUid;
     private String strAlternateIsd_code;
+    private File imagePathFile;
 
 
     public QuickAddVisitFragment() {
@@ -402,7 +404,6 @@ public class QuickAddVisitFragment extends Fragment {
             if (strPatientPhoto.length() > 0) {
                 // Bitmap bitmap = BitmapFactory.decodeFile(strPatientPhoto);
                 setUpGlide(strPatientPhoto, patientImage);
-
             }
         }
         try {
@@ -552,8 +553,8 @@ public class QuickAddVisitFragment extends Fragment {
 
                 prescriptionimgPath = "prescription_" + docId + "_" + appController.getDateTime() + ".jpg";
 
-                File image = new File(imagesFolder, prescriptionimgPath);
-                uriSavedImage = Uri.fromFile(image);
+                 imagePathFile = new File(imagesFolder, prescriptionimgPath);
+                uriSavedImage = Uri.fromFile(imagePathFile);
                 imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
                 imageIntent.putExtra("data", uriSavedImage);
                 startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -616,7 +617,7 @@ public class QuickAddVisitFragment extends Fragment {
 
     private void showReferedDialogBox() {
 
-        final Dialog dialog = new Dialog(new ContextThemeWrapper(getContext(), android.R.style.Theme_DeviceDefault_Light_NoActionBar_Overscan));
+        final Dialog dialog = new Dialog(getContext());
 
         LayoutInflater factory = LayoutInflater.from(getContext());
         final View f = factory.inflate(R.layout.refered_by_dialog, null);
@@ -1122,11 +1123,10 @@ public class QuickAddVisitFragment extends Fragment {
         String added_by = docId;
         String patientInfoType = "App";
         String action = "added";
-        String strTests = null, strDrugs = null, ailment = null;
         String record_source = "QuickAdd New Visit";
 
-        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionimgPath, ailment, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
-                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo, record_source);
+        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionimgPath,  visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
+                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo, record_source);
 
         dbController.deletePrescriptionImageQueue(prescriptionimgId, prescriptionimgPath);
 
@@ -1139,7 +1139,7 @@ public class QuickAddVisitFragment extends Fragment {
     private void goToNavigation() {
         Intent i = new Intent(getActivity(), NavigationActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);  // it will directly jump to navigation activity eith called fragment
-        startActivity(i);
+         startActivity(i);
         getActivity().finish();
     }
 
@@ -1533,6 +1533,63 @@ public class QuickAddVisitFragment extends Fragment {
         strReferredTo4Name = null;
         strReferredTo5Name = null;
         nameReferalsList = null;
+        edtInput_weight = null;
+        edtInput_pulse = null;
+        edtInput_bp = null;
+        edtLowBp = null;
+        edtInput_temp = null;
+        edtInput_sugar = null;
+        edtInput_sugarfasting = null;
+        edtInput_bmi = null;
+        edtInput_height = null;
+        txtReferredTo = null;
+        txtReferredBy = null;
+        strWeight = null;
+        strPulse = null;
+        strBp = null;
+        strLowBp = null;
+        strTemp = null;
+        strSugar = null;
+        strSugarFasting = null;
+        strHeight = null;
+
+        showReferrals = null;
+        showVitals = null;
+        txtLabelWeight = null;
+        txtWeight = null;
+        txtLabelHeight = null;
+        txtHeight = null;
+        txtLabelBmi = null;
+        txtBmi = null;
+        txtLabelPulse = null;
+        txtPulse = null;
+        txtLabelSystole = null;
+        txtSystole = null;
+        txtLabelTemp = null;
+        txtTemp = null;
+        txtLabelDistole = null;
+        txtDistole = null;
+        txtLabelSugarpp = null;
+        txtSugarPp = null;
+        txtLabelSugarFast = null;
+        txtSugarFast = null;
+        imagePathFile=null;
+        strEmail=null;
+        strPhoneType=null;
+        strFirstName=null;
+        strMiddleName=null;
+        strLastName=null;
+        strDob=null;
+        strAddress=null;
+        strCityorTown=null;
+        strDistrict=null;
+        strPinNo=null;
+        strState=null;
+        strAlternatenumber=null;
+        strAlternatephtype=null;
+        strIsd_code=null;
+        strUid=null;
+        strAlternateIsd_code=null;
     }
 
     public interface OnFragmentInteractionListener {
@@ -1550,6 +1607,8 @@ public class QuickAddVisitFragment extends Fragment {
 
                 if (resultCode == Activity.RESULT_OK) {
                     // successfully captured the image display it in image view
+                    new ImageCompression(getContext(), imagePathFile.getPath()).execute(uriSavedImage.getPath().trim());
+
                     previewCapturedImage();
                 }
             }

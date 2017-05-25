@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -18,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import app.clirnet.com.clirnetapp.R;
@@ -195,7 +195,7 @@ public class NavigationActivity extends AppCompatActivity
         //   Log.d("AndroidBash", "Subscribed");
         Toast.makeText(NavigationActivity.this, "Subscribed", Toast.LENGTH_SHORT).show();
 
-        String token = FirebaseInstanceId.getInstance().getToken();
+        //String token = FirebaseInstanceId.getInstance().getToken();
 
         // Log and toast
         // Log.d("AndroidBash", token);
@@ -224,7 +224,7 @@ public class NavigationActivity extends AppCompatActivity
     //This will used to navigate user from one menu to another
 
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         selectDrawerItem(item);
         return true;
@@ -370,7 +370,7 @@ public class NavigationActivity extends AppCompatActivity
 
 
     public void callAction(String action) {
-        Fragment mFragment = null;
+        Fragment mFragment;
         fragmentManager = getSupportFragmentManager();
         switch (action) {
             case "HomeFragment":

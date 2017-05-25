@@ -83,7 +83,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder>
         holder.phone_no.setText(model.getMobileNumber());
 
 
-        String stringdistance = String.valueOf(model.getLanguage());//Need to convert to string to set into text view Ashish U 21-04-2016
+       // String stringdistance = String.valueOf(model.getLanguage());//Need to convert to string to set into text view Ashish U 21-04-2016
 
         // Log.d("dis", "" + stringdistance);
 

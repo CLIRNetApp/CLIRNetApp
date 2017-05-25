@@ -180,6 +180,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
     private String strReferredTo4Name;
     private String strReferredTo5Name;
     private ArrayList<String> nameReferalsList;
+    private  File imagePathFile;
 
 
     public QuickAddNewRecordsFragment() {
@@ -188,11 +189,6 @@ public class QuickAddNewRecordsFragment extends Fragment {
     }
 
 
-    public static QuickAddNewRecordsFragment newInstance(String param1, String param2) {
-        QuickAddNewRecordsFragment fragment = new QuickAddNewRecordsFragment();
-
-        return fragment;
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -472,10 +468,10 @@ public class QuickAddNewRecordsFragment extends Fragment {
                     lastName.setError(null);
                 }
 
-                imageName = "img_" + strFirstName + "_" + strLastName + "_" + "docId" + "_" + appController.getDateTime() + ".png";
+                 imageName = "img_" + strFirstName + "_" + strLastName + "_" + "docId" + "_" + appController.getDateTime() + ".png";
 
-                File image = new File(imagesFolder, imageName);
-                uriSavedImage = Uri.fromFile(image);
+                 imagePathFile = new File(imagesFolder, imageName);
+                uriSavedImage = Uri.fromFile(imagePathFile);
                 imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
                 imageIntent.putExtra("data", uriSavedImage);
                 startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -819,9 +815,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
                 strReferredTo1Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo1Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo1Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo1Name, ".")) {
                             String[] parts = strReferredTo1Name.split(". ", 2);
                             //    String string1 = parts[0];//namealias
@@ -854,9 +849,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
                 strReferredTo2Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo2Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo2Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo2Name, ".")) {
                             String[] parts = strReferredTo2Name.split(". ", 2);
                             //    String string1 = parts[0];//namealias
@@ -887,9 +881,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
                 strReferredTo3Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo3Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo3Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo3Name, ".")) {
                             String[] parts = strReferredTo3Name.split(". ", 2);
                             //    String string1 = parts[0];//namealias
@@ -920,9 +913,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
                 strReferredTo4Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo4Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo4Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo4Name, ".")) {
                             String[] parts = strReferredTo4Name.split(". ", 2);
                             //    String string1 = parts[0];//namealias
@@ -952,9 +944,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
                 strReferredTo5Name = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredTo5Spinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredTo5Spinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredTo5Name, ".")) {
                             String[] parts = strReferredTo5Name.split(". ", 2);
                             //    String string1 = parts[0];//namealias
@@ -985,9 +976,8 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
                 strReferredByName = (String) parent.getItemAtPosition(position);
                 try {
-                    if (nameRefredBySpinner.getSelectedItem() == "Select Referrals") {
+                    if (nameRefredBySpinner.getSelectedItem() != "Select Referrals") {
 
-                    } else {
                         if (appController.contains(strReferredByName, ".")) {
                             String[] parts = strReferredByName.split(". ", 2);
                             //    String string1 = parts[0];//namealias
@@ -2177,7 +2167,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
             String action = "added";
             String patientInfoType = "App";
             String strfollow_up_date = null;
-            String strailments = null;
+           // String strailments = null;
 
 
             String added_by = docId;//INSERTING DOC ID IN ADDED BY COLUMN AS PER PUSHPAL-DA SAID

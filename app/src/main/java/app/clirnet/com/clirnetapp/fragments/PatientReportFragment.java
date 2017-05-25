@@ -75,7 +75,6 @@ public class PatientReportFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-
             fromDate = bundle.getString("FROMDATE");
             toDate = bundle.getString("TODATE");
            // Log.e("dateis", "" + fromDate + "" + toDate);

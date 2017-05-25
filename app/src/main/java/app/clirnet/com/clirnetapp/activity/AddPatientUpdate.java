@@ -88,6 +88,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
     private String strEmail;
 
 
+
     @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,6 +104,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
             //getSupportActionBar().setDisplayShowHomeEnabled(true);
             final ActionBar ab = getSupportActionBar();
             //ab.setHomeAsUpIndicator(R.drawable.ic_menu); // set a custom icon for the default home button
+            assert ab != null;
             ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
             ab.setDisplayHomeAsUpEnabled(true);
             ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
@@ -321,8 +323,6 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         if (backChangingImages != null) {
             backChangingImages.setImageDrawable(null);
         }
-
-
     }
 
     @Override
@@ -498,4 +498,6 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
             return mFragmentTitleList.get(position);
         }
     }
+
+
 }

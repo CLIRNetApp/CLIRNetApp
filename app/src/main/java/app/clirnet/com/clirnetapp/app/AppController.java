@@ -931,7 +931,7 @@ public class AppController extends Application {
     // Used to convert 24hr format to 12hr format with AM/PM values
     private void updateTime(int hours, int mins, TextView fromtime) {
 
-        String timeSet = "";
+        String timeSet;
         if (hours > 12) {
             hours -= 12;
             timeSet = "PM";
@@ -984,7 +984,7 @@ public class AppController extends Application {
         //show age of pateint
     }
 
-    public void saveBannerDataIntoDb(String image_url, Context context, String doctor_membership_number, String action, String sourcepage) {
+    public void saveBannerDataIntoDb(String BannerImageUrl, Context context, String doctor_membership_number, String action, String sourcepage) {
 
         SQLiteHandler dbController = null;
 
@@ -992,7 +992,7 @@ public class AppController extends Application {
         String company_id = null;
         String banner_id = null;
         String banner_folder = null;
-        String banner_image = image_url;
+        //String banner_image = BannerImageUrl;
         int banner_type_id = 0;
         String module = "patient";
         String is_deleted = "0";
@@ -1004,10 +1004,10 @@ public class AppController extends Application {
             sqlController.open();
             dbController = new SQLiteHandler(context);
             docId = sqlController.getDoctorId();
-            banner_id = sqlController.getBannerId(banner_image);
-            banner_folder = sqlController.getFolderName(banner_image);
+            banner_id = sqlController.getBannerId(BannerImageUrl);
+            banner_folder = sqlController.getFolderName(BannerImageUrl);
             company_id = sqlController.getBannerCompany_id();
-            banner_type_id = sqlController.getBannerTypeId(banner_image);
+            banner_type_id = sqlController.getBannerTypeId(BannerImageUrl);
             //Log.e("banner_id", "  " + banner_id+""+banner_folder);
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
@@ -1017,11 +1017,11 @@ public class AppController extends Application {
             if (dbController != null)
                 if (action.equals("display")) {
 
-                    dbController.addBannerDisplayData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time, flag, sourcepage);
+                    dbController.addBannerDisplayData(docId, doctor_membership_number, company_id, banner_id, banner_folder, BannerImageUrl, banner_type_id, module, is_deleted, is_disbled, display_time, flag, sourcepage);
 
                 } else {
 
-                    dbController.addBannerClickedData(docId, doctor_membership_number, company_id, banner_id, banner_folder, banner_image, banner_type_id, module, is_deleted, is_disbled, display_time, flag, sourcepage);
+                    dbController.addBannerClickedData(docId, doctor_membership_number, company_id, banner_id, banner_folder, BannerImageUrl, banner_type_id, module, is_deleted, is_disbled, display_time, flag, sourcepage);
 
                 }
         } catch (NullPointerException e) {
@@ -1172,6 +1172,7 @@ public class AppController extends Application {
 
                         final BitmapDrawable d = new BitmapDrawable(context.getResources(), AppConfig.SDCARD_PATH + url + ".png"); // path is ur resultant //image
                         backChangingImages.setImageDrawable(d);
+
                         backChangingImages.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -1191,6 +1192,8 @@ public class AppController extends Application {
             }
 
         } catch (Exception e) {
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller  " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
             e.printStackTrace();
         }
 

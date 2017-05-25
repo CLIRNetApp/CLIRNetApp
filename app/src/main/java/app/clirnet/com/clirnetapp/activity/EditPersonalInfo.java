@@ -51,6 +51,7 @@ import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
+import app.clirnet.com.clirnetapp.utility.ImageCompression;
 
 public class EditPersonalInfo extends AppCompatActivity {
 
@@ -115,7 +116,7 @@ public class EditPersonalInfo extends AppCompatActivity {
     private Spinner isd_code;
     private int position1;
     private EditText edtEmail_id;
-    private String url;
+    private File imagePathFile;
 
 
     @Override
@@ -446,11 +447,11 @@ public class EditPersonalInfo extends AppCompatActivity {
                 editdob.setText("");
             }
         });
-        RadioGroup gndrbutton = (RadioGroup) findViewById(R.id.radioGender);
+       // RadioGroup gndrbutton = (RadioGroup) findViewById(R.id.radioGender);
 
         sex = "Male";//set Daefault gender value to Male if not selected any other value to prevent null value. 14-12-2016
         // Checked change Listener for RadioGroup 1
-        gndrbutton.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        radioSexGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 switch (checkedId) {
@@ -517,9 +518,9 @@ public class EditPersonalInfo extends AppCompatActivity {
                 imageName = "imgs_" + first_name + "_" + last_name + "_" + docId + "_" + appController.getDateTime() + ".png";
 
 
-                File image = new File(imagesFolder, imageName);
+                imagePathFile = new File(imagesFolder, imageName);
 
-                uriSavedImage = Uri.fromFile(image);
+                uriSavedImage = Uri.fromFile(imagePathFile);
                 imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
                 imageIntent.putExtra("data", uriSavedImage);
                 startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -860,6 +861,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 if (resultCode == Activity.RESULT_OK) {
                     // successfully captured the image
                     // display it in image view
+                    new ImageCompression(this, imagePathFile.getPath()).execute(uriSavedImage.getPath().trim());
                     previewCapturedImage();
 
                 }
@@ -1049,11 +1051,11 @@ public class EditPersonalInfo extends AppCompatActivity {
         alternatemobile_no = null;
         isd_code = null;
         edtEmail_id = null;
-        url = null;
         backChangingImages = null;
         mLastNameList = null;
         phType = null;
         selectedPhoneType = null;
+        imagePathFile=null;
     }
 
 

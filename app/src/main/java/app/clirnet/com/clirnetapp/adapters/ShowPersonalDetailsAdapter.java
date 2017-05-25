@@ -22,7 +22,6 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
 
     private final List<RegistrationModel> patientList;
     private final Context mContext;
-    private AppController appController;
 
 
     public ShowPersonalDetailsAdapter(Context context,List<RegistrationModel> patientList) {
@@ -48,7 +47,7 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
         RegistrationModel model = patientList.get(position);
 
 
-        appController=new AppController();
+        AppController appController = new AppController();
         String follow_up_date = patientList.get(position).getFollowUpDate();
 
         try {

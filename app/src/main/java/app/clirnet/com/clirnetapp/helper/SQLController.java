@@ -2226,6 +2226,76 @@ public class SQLController {
         return imageList;
 
     }
+    public ArrayList<String> getPatientImages() throws ClirNetAppException {
+
+        ArrayList<String> imageList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "select photo  from patient where photo!='null' and photo !=''";
+
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    String value = cursor.getString(cursor.getColumnIndex("photo"));
+                    imageList.add(value);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while geting Images");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return imageList;
+
+    }
+
+    public ArrayList<RegistrationModel> getInvestigationDeatils(String visit_id) throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> investigationList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+           String selectQuery="select ecg,sugar,sugar_fasting,acer,pft,hba1c,serem_urea,lipid_profile_tc,lipid_profile_tg,lipid_profile_ldl,lipid_profile_vhdl,lipid_profile_hdl  from table_investigation where key_visit_id =" + visit_id + ";";
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+
+            if (cursor.moveToFirst()) {
+                do {
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                            cursor.getString(7), cursor.getString(8),
+                            cursor.getString(9), cursor.getString(10), cursor.getString(11));
+                    investigationList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getInvestigationDeatils");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return investigationList;
+
+    }
+
 }
 
 
