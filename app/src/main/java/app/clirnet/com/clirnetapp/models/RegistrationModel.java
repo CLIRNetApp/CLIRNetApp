@@ -6,6 +6,8 @@ package app.clirnet.com.clirnetapp.models;
 //model class
 public class RegistrationModel {
 
+
+
     private String uid;
     private String referedBy;
     private String referedTo;
@@ -104,6 +106,14 @@ public class RegistrationModel {
     private String ecg;
     private String hba1c;
 
+
+    private String followUpStatus;
+
+    public String getFollowUpStatus() {
+        return followUpStatus;
+    }
+
+
     public String getLipidProfileHdl() {
         return lipidProfileHdl;
     }
@@ -152,6 +162,119 @@ public class RegistrationModel {
     private String lipidProfileLdl;
     private String lipidProfileVhdl;
     private String lipidProfileHdl;
+    private String alocholConsumption;
+    private String packPerWeek;
+    private String stressLevel;
+    private String smokerType;
+    private String  stickCount;
+
+    private String lifeSyle;
+    private String lactoseTolerance;
+    private String foodPreference;
+
+    private String excercise;
+    private String foodHabit;
+    private String chewingTobaco;
+    private String bingeEating;
+    private String allergies;
+    private  String sexuallyActive;
+    private  String sticksGapSelected;
+    private  String pegsGapSelected;
+    private String otherTobacoConsumption;
+    private String drugConsumption;
+    private String otherDrugConsumption;
+    private  String sleep;
+    private  String lastSmokeYear;
+    private  String lastDrinkYear;
+
+    public String getLastSmokeYear() {
+        return lastSmokeYear;
+    }
+
+    public String getLastDrinkYear() {
+        return lastDrinkYear;
+    }
+
+    public String getSleep() {
+        return sleep;
+    }
+
+    public String getOtherTobacoConsumption() {
+        return otherTobacoConsumption;
+    }
+
+    public String getDrugConsumption() {
+        return drugConsumption;
+    }
+
+    public String getOtherDrugConsumption() {
+        return otherDrugConsumption;
+    }
+
+    public String getSticksGapSelected() {
+        return sticksGapSelected;
+    }
+
+    public String getPegsGapSelected() {
+        return pegsGapSelected;
+    }
+
+    public String getSexuallyActive() {
+        return sexuallyActive;
+    }
+    public String getAlocholConsumption() {
+        return alocholConsumption;
+    }
+
+    public String getPackPerWeek() {
+        return packPerWeek;
+    }
+
+    public String getStressLevel() {
+        return stressLevel;
+    }
+
+    public String getSmokerType() {
+        return smokerType;
+    }
+
+    public String getStickCount() {
+        return stickCount;
+    }
+
+    public String getLifeSyle() {
+        return lifeSyle;
+    }
+
+    public String getLactoseTolerance() {
+        return lactoseTolerance;
+    }
+
+    public String getFoodPreference() {
+        return foodPreference;
+    }
+
+    public String getExcercise() {
+        return excercise;
+    }
+
+    public String getFoodHabit() {
+        return foodHabit;
+    }
+
+    public String getChewingTobaco() {
+        return chewingTobaco;
+    }
+
+    public String getBingeEating() {
+        return bingeEating;
+    }
+
+    public String getAllergies() {
+        return allergies;
+    }
+
+
 
 
 
@@ -200,9 +323,6 @@ public class RegistrationModel {
         return temprature;
     }
 
-    public String getMmhg() {
-        return lowBp;
-    }
 
     public String getlowBp() {
         return lowBp;
@@ -871,6 +991,97 @@ public class RegistrationModel {
         this.lipidProfileLdl=lipid_profile_ldl;
         this.lipidProfileVhdl=lipid_profile_vhdl;
         this.lipidProfileHdl=lipid_profile_hdl;
+    }
+
+    public RegistrationModel(String alocholConsumption, String packPerWeek, String stressLevel, String smokerType, String stickCount, String lifeSyle, String lactoseTolerance, String foodPreference, String foodHabit, String excercise, String chewingTobaco, String bingeEating,String allergies,String sexuallyActive,String sticksGapSelected,String pegsGapSelected,String otherTobacoConsumption,String drugConsumption,String otherDrugConsumption,String sleep,String lastSmokeYear,String lastDrinkYear) {
+
+        this.alocholConsumption=alocholConsumption;
+        this.packPerWeek=packPerWeek;
+        this.stressLevel=stressLevel;
+        this.smokerType=smokerType;
+        this.stickCount=stickCount;
+        this.lifeSyle=lifeSyle;
+        this.lactoseTolerance=lactoseTolerance;
+        this.foodPreference=foodPreference;
+        this.foodHabit=foodHabit;
+        this.excercise=excercise;
+        this.chewingTobaco=chewingTobaco;
+        this.bingeEating=bingeEating;
+        this.allergies=allergies;
+        this.sexuallyActive=sexuallyActive;
+        this.sticksGapSelected=sticksGapSelected;
+        this.pegsGapSelected=  pegsGapSelected;
+
+        this.otherTobacoConsumption=otherTobacoConsumption;
+        this.drugConsumption=drugConsumption;
+        this.otherDrugConsumption=  otherDrugConsumption;
+        this.sleep= sleep;
+        this.lastSmokeYear=  lastSmokeYear;
+        this.lastDrinkYear= lastDrinkYear;
 
     }
+    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
+                             String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
+                             String sugar, String symptoms, String dignosis, String uid, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo, String email,String followUpStatus) {
+
+        this.pat_id = id;
+        this.firstName = first_name;
+        this.middleName = middle_name;
+        this.lastName = last_name;
+        this.dob = strdate_of_birth;
+        this.gender = gender;
+
+        this.age = current_age;
+        this.mobileNumber = phone_number;
+        this.language = selectedLanguage;
+        this.photo = patientImagePath;
+        this.followUpDate = follow_up_date;
+
+        this.followUpdays = daysSel;
+        this.followUpWeek = weekSel;
+        this.followUpMonth = monthSel;
+        this.ailments = ailmentList;
+        this.pres_img = prescriptionImgPath;
+
+        this.clinicalNotes = clinical_note;
+        this.added_on = added_on;
+        this.visit_date = visit_date;
+        this.modified_on = modified_on;
+        this.key_visit_id = key_visit_id;
+
+        this.actualFollowupDate = actFolDate;
+        this.address = address;
+        this.cityortown = city;
+        this.district = district;
+        this.pin_code = pin;
+
+        this.state = state;
+        this.weight = weight;
+        this.pulse = pulse;
+        this.bp = bp;
+        this.lowBp = mmhg;
+
+        this.temprature = temprature;
+        this.sugar = sugar;
+        this.symptoms = symptoms;
+        this.dignosis = dignosis;
+        this.uid = uid;
+
+        this.drugs = drugs;
+        this.bmi = bmi;
+        this.height = height;
+        this.alternatePhoneNumber = altername_no;
+        this.alternatePhoneType = altternate_phType;
+
+        this.sugarFasting = sugar_fasting;
+        this.phone_type = phone_type;
+        this.isd_code = isd_code;
+        this.alternate_isd_code = alternate_noisd_code;
+        this.referedBy = referedBy;
+
+        this.referedTo = referedTo;
+        this.email = email;
+        this.followUpStatus=followUpStatus;
+    }
+
 }

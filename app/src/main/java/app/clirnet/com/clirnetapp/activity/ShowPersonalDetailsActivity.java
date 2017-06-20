@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -65,6 +66,19 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private String strEmail;
     private String strUid;
     private String calledFrom;
+    private ArrayList<RegistrationModel> healthLifeStyleList;
+    private String mAlcohol;
+    private String mPacsWeek, mStressLevel;
+    private String mSmokerType, mStickCount;
+    private String mLifeStyle, mLactoseTolerance;
+    private String mFoodPreference, mFoodHabit;
+    private  String mExcercise, mChewinogTobaco ;
+    private String mBingeEating , mAllergies ;
+    private String mSexuallyActive;
+    private String mDrug;
+    private String otherDrugTaking;
+    private String otherTobacoTaking;
+    private String mSleepStatus;
 
 
     @Override
@@ -84,7 +98,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Show patient Detail" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Show patient Details " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
@@ -214,6 +228,29 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
+            healthLifeStyleList = sqlController.getHealthAndLifestyle(strId);
+
+            if (healthLifeStyleList.size() > 0) {
+                mAlcohol = healthLifeStyleList.get(0).getAlocholConsumption();
+                mStressLevel = healthLifeStyleList.get(0).getStressLevel();
+                mSmokerType = healthLifeStyleList.get(0).getSmokerType();
+                mLifeStyle = healthLifeStyleList.get(0).getLifeSyle();
+                mLactoseTolerance = healthLifeStyleList.get(0).getLactoseTolerance();
+                mFoodPreference = healthLifeStyleList.get(0).getFoodPreference();
+                mFoodHabit = healthLifeStyleList.get(0).getFoodHabit();
+                mExcercise = healthLifeStyleList.get(0).getExcercise();
+                mChewinogTobaco = healthLifeStyleList.get(0).getChewingTobaco();
+                mBingeEating = healthLifeStyleList.get(0).getBingeEating();
+                mAllergies = healthLifeStyleList.get(0).getAllergies();
+                mSexuallyActive = healthLifeStyleList.get(0).getSexuallyActive();
+
+                mDrug=healthLifeStyleList.get(0).getDrugConsumption();
+                otherDrugTaking = healthLifeStyleList.get(0).getOtherDrugConsumption();
+                otherTobacoTaking = healthLifeStyleList.get(0).getOtherTobacoConsumption();
+                mSleepStatus=healthLifeStyleList.get(0).getSleep();
+            }
+
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -312,6 +349,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         }
 
         setupAnimation();
+        setImagesToHealthLifeStyle();
     }
 
     private void setUpGlide(ImageView patientImage) {
@@ -326,7 +364,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
     private void redirectToEditPersonalInfo() {
 
-        Intent i = new Intent(getApplicationContext(), EditPersonalInfo.class);
+        Intent i = new Intent(getApplicationContext(), NewEditPersonalInfo.class);
 
         i.putExtra("PATIENTPHOTO", strPatientPhoto);
         i.putExtra("ID", strId);
@@ -457,5 +495,45 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     protected void onRestart() {
         super.onRestart();
         setupAnimation();
+    }
+    private void setImagesToHealthLifeStyle(){
+        ImageView imgSmoke = (ImageView) findViewById(R.id.imgSmoke);
+        ImageView imgDrink = (ImageView) findViewById(R.id.imgDrink);
+        ImageView imgTobaco = (ImageView) findViewById(R.id.imgTobaco);
+        ImageView imgFood = (ImageView) findViewById(R.id.imgFood);
+        ImageView imgSleep = (ImageView) findViewById(R.id.imgSleep);
+        ImageView imgStress = (ImageView) findViewById(R.id.imgStress);
+        Log.e("mSmokerType",""+mSmokerType + "" +mAlcohol);
+        if(mSmokerType!=null && !mSmokerType.equals("")&& mSmokerType.equals("Active Smoker")){
+            imgSmoke.setVisibility(View.VISIBLE);
+            imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.smoke));
+        }else if(mSmokerType!=null && !mSmokerType.equals("")&& mSmokerType.equals("Non Smoker")){
+            imgSmoke.setVisibility(View.VISIBLE);
+            imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.no_smoke));
+        }
+        if(mAlcohol!=null && !mAlcohol.equals("")&& mAlcohol.equals("Drinker")){
+            imgDrink.setVisibility(View.VISIBLE);
+            imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.drink));
+        }else if(mAlcohol!=null && !mAlcohol.equals("")&& mAlcohol.equals("Non Drinker")){
+            imgDrink.setVisibility(View.VISIBLE);
+            imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.no_drink));
+        }
+        if(mSleepStatus!=null && !mSleepStatus.equals("")&& mSleepStatus.equals("Adequate")){
+            imgSleep.setVisibility(View.VISIBLE);
+            imgSleep.setImageDrawable(getResources().getDrawable(R.drawable.sleep));
+        }else if(mSleepStatus!=null && !mSleepStatus.equals("")&& mSleepStatus.equals("InAdequate")){
+            imgSleep.setVisibility(View.VISIBLE);
+            imgSleep.setImageDrawable(getResources().getDrawable(R.drawable.no_sleep));
+        }
+        if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("Low")){
+            imgStress.setVisibility(View.VISIBLE);
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stressed));
+        }else if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("Moderate")){
+            imgStress.setVisibility(View.VISIBLE);
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.no_stressed));
+        } else if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("High")){
+            imgStress.setVisibility(View.VISIBLE);
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.no_stressed));
+        }
     }
 }

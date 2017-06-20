@@ -3,7 +3,7 @@
 
     <string name="app_name">CLIRNet</string>
 
-    <string name="prompt_email">Email</string>
+    <string name="prompt_email">User Name</string>
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
@@ -148,6 +148,27 @@
         <item>NA.</item>
     </string-array>
 
+    <string-array name="religion">
+        <item>Hindu</item>
+        <item>Buddhism</item>
+        <item>Sikhism</item>
+        <item>Jainism</item>
+        <item>Muslims</item>
+        <item>Christianity</item>
+        <item>Zoroastaianism</item>
+        <item>Judaism</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="otherFoodType">
+        <item>Jain</item>
+        <item>Vegan</item>
+        <item>Raw Vegan</item>
+        <item>Eggetarian</item>
+        <item>Pescatarian</item>
+        <item>Paleolithic</item>
+    </string-array>
+
 
     <string name="title_activity_patient_update">Edit Patient Update</string>
     <string name="title_activity_edit_personal_info">Edit Personal Info</string>
@@ -213,7 +234,7 @@
     <string name="add">Save</string>
     <string name="m">M</string>
     <string name="female">F</string>
-    <string name="other">OTHR</string>
+    <string name="other">Other</string>
     <string name="na">NA</string>
     <string name="knowledge">Knowledge</string>
     <string name="old_password">Current Password</string>
@@ -235,9 +256,9 @@
     <string name="uid">UID</string>
     <string name="uidtype">UID Type</string>
     <string name="reset">Reset</string>
-    <string name="version">Release Version 1.3.1.10</string>
-    <string name="aboutApp">About App V 1.3.1.10</string>
-    <string name="updateDate">Last Updated Date 24/05/2017</string>
+    <string name="version">Release Version 1.3.1.13</string>
+    <string name="aboutApp">About App V 1.3.1.13</string>
+    <string name="updateDate">Last Updated Date 09/06/2017</string>
     <string name="quickadd">Quick Add</string>
     <string name="title_edit_quick_add">Quick Edit Patient</string>
     <string name="referedby">Add Referals</string>
@@ -276,19 +297,19 @@
     <string name="no">No</string>
     <string name="passive">Passive</string>
     <string name="active">Active</string>
-    <string name="nonSmoker">NonSmoker</string>
+    <string name="nonSmoker">N/A</string>
     <string name="lifeStyle">Life Style</string>
-    <string name="alcoholConsumption">Alcohol Consumption</string>
+    <string name="alcoholConsumption">Alcohol</string>
     <string name="sedentary">Sedentary</string>
-    <string name="lightActive">Light Active</string>
+    <string name="lightActive">Lightly Active</string>
     <string name="excercise">Exercise</string>
     <string name="stressLevel">Stress Level</string>
-    <string name="BingeEating">BingeEating</string>
+    <string name="BingeEating">Binge Eating</string>
     <string name="low">Low</string>
     <string name="moderate">Moderate</string>
     <string name="high">High</string>
     <string name="sexuallyActive">Sexually Active</string>
-    <string name="habit">Food Habit</string>
+    <string name="habit">Food Habit    </string>
     <string name="veg">Veg</string>
     <string name="nonVeg">NonVeg</string>
     <string name="vegan">Vegan</string>
@@ -308,7 +329,7 @@
     <string name="activeSmoker">Active Smoker</string>
     <string name="nonDrinker">Non Drinker</string>
     <string name="activeDrinker">Drinker</string>
-    <string name="alergies">Alergies</string>
+    <string name="alergies">Allergies</string>
     <string name="lactoseTolerance">Lactose Tolerance</string>
     <string name="tc">TC</string>
     <string name="tg">TG</string>
@@ -316,6 +337,26 @@
     <string name="vhdl">VHDL</string>
     <string name="hdl">HDL</string>
     <string name="investigation">Investigation</string>
-    <string name="moreFilters">More Filters</string>
+    <string name="moreFilters">Filter Vitals</string>
+    <string name="healthLifestyle">Health and Lifestyle</string>
+    <string name="title_activity_new_edit_personal_info">NewEditPersonalInfo</string>
+    <string name="section_format">Hello World from section: %1$d</string>
+    <string name="observations">Observation</string>
+    <string name="title_activity_new_edit_incomplete_records">NewEditIncompleteRecordsActivity</string>
+    <string name="substanceUse">Substance Use</string>
+    <string name="smoking">Smoking</string>
+    <string name="ex">Ex</string>
+    <string name="sticksperweek">#Sticks</string>
+    <string name="since">Since</string>
+    <string name="selectYear">Select Year</string>
+    <string name="otherTobaco">Other Tobaco</string>
+    <string name="otherDrug">Other Drug</string>
+    <string name="otherTobacoUse">Other Tobaco Use</string>
+    <string name="dietPreference">Diet Prefernce</string>
+    <string name="sleep">Sleep</string>
+    <string name="adequate">Adequate</string>
+    <string name="inadequate">Inadequate</string>
+    <string name="otherDrugUse">Other Drug Use</string>
+    <string name="ok">OK</string>
 
 </resources>

@@ -263,6 +263,42 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
         }
         return  ailmentList;
     }
+    //method to fetch ailments from db
+    public ArrayList<String> getOccupationList() throws ClirNetAppException {
+        ArrayList<String> ailmentList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "SELECT  name  FROM occupation ";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    String user=cursor.getString(0);
+                    //  AilmentModel user = new AilmentModel(cursor.getString(0), cursor.getString(1) );
+
+                    ailmentList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            appController.appendLog(appController.getDateTime()+"" +"/"+"occcupation "+e+ " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+            throw new ClirNetAppException("Something went wrong while getting occupation records");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+        return  ailmentList;
+    }
+
 
     public void addLastName1(String lastName, int nameid) {
         SQLiteDatabase db = null;

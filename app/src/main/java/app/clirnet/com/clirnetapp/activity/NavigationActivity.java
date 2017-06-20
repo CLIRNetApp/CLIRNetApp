@@ -26,6 +26,7 @@ import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.fragments.AssociatesFragment;
 import app.clirnet.com.clirnetapp.fragments.BarChartFragment;
 import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
+import app.clirnet.com.clirnetapp.fragments.HealthVitalsDialogFragment;
 import app.clirnet.com.clirnetapp.fragments.HomeFragment;
 import app.clirnet.com.clirnetapp.fragments.IncompleteListFragment;
 import app.clirnet.com.clirnetapp.fragments.KnowledgeFragment;
@@ -46,7 +47,7 @@ import com.google.firebase.messaging.FirebaseMessaging;*/
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
         , ReportFragment.OnFragmentInteractionListener, PatientReportFragment.OnFragmentInteractionListener, ReportFragmentViewPagerSetup.OnFragmentInteractionListener, TopTenAilmentFragment.OnFragmentInteractionListener,
-        BarChartFragment.OnFragmentInteractionListener, KnowledgeFragment.OnFragmentInteractionListener, IncompleteListFragment.OnFragmentInteractionListener, AssociatesFragment.OnFragmentInteractionListener {
+        BarChartFragment.OnFragmentInteractionListener, KnowledgeFragment.OnFragmentInteractionListener, IncompleteListFragment.OnFragmentInteractionListener, AssociatesFragment.OnFragmentInteractionListener,HealthVitalsDialogFragment.onSubmitListener {
 
 
     private FragmentManager fragmentManager;
@@ -424,7 +425,13 @@ public class NavigationActivity extends AppCompatActivity
         fragmentManager.beginTransaction().replace(R.id.flContent, mFragment).commit();
 
     }
-
+  //get data from heaalth dialog fragment and pass to po history fragment for search opertaion.
+    @Override
+    public void setOnSubmitListener(Bundle arg) {
+      //  Log.e("Dialog ","  Dialog is Clicked "+arg);
+        PoHistoryFragment newFragment = new PoHistoryFragment();
+        newFragment.updateDisplay(arg);
+    }
 }
 
 

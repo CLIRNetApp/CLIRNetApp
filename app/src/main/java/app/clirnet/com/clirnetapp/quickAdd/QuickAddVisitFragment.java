@@ -29,6 +29,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -49,8 +50,8 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import app.clirnet.com.clirnetapp.R;
-import app.clirnet.com.clirnetapp.activity.EditPersonalInfo;
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
+import app.clirnet.com.clirnetapp.activity.NewEditPersonalInfo;
 import app.clirnet.com.clirnetapp.activity.PrivacyPolicy;
 import app.clirnet.com.clirnetapp.activity.TermsCondition;
 import app.clirnet.com.clirnetapp.app.AppController;
@@ -60,6 +61,7 @@ import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
+import app.clirnet.com.clirnetapp.models.RegistrationModel;
 import app.clirnet.com.clirnetapp.utility.ImageCompression;
 
 
@@ -75,10 +77,10 @@ public class QuickAddVisitFragment extends Fragment {
     private Button month;
     private BootstrapEditText inputnumber;
     private String value;
-    private String buttonSelected;
+
     private String daysSel;
-    private TextView txtRecord;
-    private TextView txtsymtomsanddignost;
+
+
     private Button addUpdate;
     private Button cancel;
 
@@ -150,41 +152,66 @@ public class QuickAddVisitFragment extends Fragment {
     private EditText edtInput_bmi;
     private EditText edtInput_height;
 
-    private TextView txtReferredTo,txtReferredBy;
+    private TextView txtReferredTo, txtReferredBy;
 
     private String strWeight;
-    private String strPulse ;
+    private String strPulse;
     private String strBp;
-    private String strLowBp ;
-    private String strTemp ;
-    private String strSugar;
-    private String strHeight ;
-    private String strbmi ;
-    private String strSugarFasting;
+    private String strLowBp;
+    private String strTemp;
+    private String strHeight;
+    private String strbmi;
 
-    private TextView txtLabelWeight,txtWeight;
-    private TextView txtLabelHeight,txtHeight;
-    private TextView txtLabelBmi,txtBmi;
-    private TextView txtLabelPulse,txtPulse;
-    private TextView txtLabelSystole,txtSystole;
-    private TextView txtLabelTemp,txtTemp;
-    private TextView txtLabelDistole,txtDistole;
-    private TextView txtLabelSugarpp,txtSugarPp;
-    private TextView txtLabelSugarFast,txtSugarFast;
 
-    private  LinearLayout showReferrals,showVitals;
+    private LinearLayout showReferrals;
     private String strEmail;
     private String strPhoneType;
-    private String strFirstName,strMiddleName,strLastName;
+    private String strFirstName, strMiddleName, strLastName;
     private String strDob;
     private String strAddress;
     private String strCityorTown;
     private String strDistrict;
-    private String strPinNo,strState;
-    private String strAlternatenumber,strAlternatephtype;
-    private String strIsd_code,strUid;
+    private String strPinNo, strState;
+    private String strAlternatenumber, strAlternatephtype;
+    private String strIsd_code, strUid;
     private String strAlternateIsd_code;
     private File imagePathFile;
+
+    private TextView showInvestigationData;
+    private TextView showVitalsData;
+    private Button buttonInvestigation;
+
+    private String strLipidTC;
+    private String strLipidTG;
+    private String strLipidLDL;
+    private String strLipidVHDL;
+    private String strLipidHDL;
+    private String strSgar;
+    private String strSugarFasting;
+    private String strHbA1c;
+    private String strSerumUrea;
+    private String strAcer;
+    private String strEcg;
+    private String strPft;
+
+    private StringBuilder sbVitals = new StringBuilder();
+    private StringBuilder sbReferrals = new StringBuilder();
+    private StringBuilder sbInvestigations = new StringBuilder();
+    private String strVisitId;
+
+    private ArrayList<RegistrationModel> healthLifeStyleList;
+    private String mAlcohol;
+    private String mPacsWeek, mStressLevel;
+    private String mSmokerType, mStickCount;
+    private String mLifeStyle, mLactoseTolerance;
+    private String mFoodPreference, mFoodHabit;
+    private String mExcercise, mChewinogTobaco;
+    private String mBingeEating, mAllergies;
+    private String mSexuallyActive;
+    private String mDrug;
+    private String otherDrugTaking;
+    private String otherTobacoTaking;
+    private String mSleepStatus;
 
 
     public QuickAddVisitFragment() {
@@ -200,20 +227,20 @@ public class QuickAddVisitFragment extends Fragment {
             this.setRetainInstance(true);
 
             strName = getArguments().getString("NAME");
-            strFirstName= getArguments().getString("FIRSTTNAME");
-            strMiddleName= getArguments().getString("MIDDLENAME");
-            strLastName= getArguments().getString("LASTNAME");
-            strDob=getArguments().getString("DOB");
-            strAddress =getArguments().getString("ADDRESS");
-            strCityorTown=getArguments().getString("CITYORTOWN");
-            strDistrict=getArguments().getString("DISTRICT");
-            strPinNo=getArguments().getString("CITYORTOWN");
-            strState=getArguments().getString("STATE");
-            strAlternatenumber=getArguments().getString("ALTERNATENUMBER");
-            strAlternatephtype=getArguments().getString("ALTERNATENUMBERTYPE");
-            strIsd_code=getArguments().getString("ISDCODE");
-            strAlternateIsd_code=getArguments().getString("ALTERNATEISDCODE");
-            strUid=getArguments().getString("UID");
+            strFirstName = getArguments().getString("FIRSTTNAME");
+            strMiddleName = getArguments().getString("MIDDLENAME");
+            strLastName = getArguments().getString("LASTNAME");
+            strDob = getArguments().getString("DOB");
+            strAddress = getArguments().getString("ADDRESS");
+            strCityorTown = getArguments().getString("CITYORTOWN");
+            strDistrict = getArguments().getString("DISTRICT");
+            strPinNo = getArguments().getString("CITYORTOWN");
+            strState = getArguments().getString("STATE");
+            strAlternatenumber = getArguments().getString("ALTERNATENUMBER");
+            strAlternatephtype = getArguments().getString("ALTERNATENUMBERTYPE");
+            strIsd_code = getArguments().getString("ISDCODE");
+            strAlternateIsd_code = getArguments().getString("ALTERNATEISDCODE");
+            strUid = getArguments().getString("UID");
             strPatientId = getArguments().getString("PATIENTID");
             strPatientPhoto = getArguments().getString("PATIENTPHOTO");
             prescriptionimgPath = getArguments().getString("PRESCRIPTIONIMG");
@@ -238,22 +265,21 @@ public class QuickAddVisitFragment extends Fragment {
 
 
         //TextView date = (TextView) view.findViewById(R.id.sysdate);
-        ImageView patientImage = (ImageView)view. findViewById(R.id.patientImage);
+        ImageView patientImage = (ImageView) view.findViewById(R.id.patientImage);
         // TextView date = (TextView) findViewById(R.id.sysdate);
         TextView editpatientName = (TextView) view.findViewById(R.id.patientName);
         TextView editAge = (TextView) view.findViewById(R.id.age);
-        TextView editmobileno = (TextView)view. findViewById(R.id.mobileno);
-        TextView phoneType = (TextView)view. findViewById(R.id.phoneType);
-        TextView email = (TextView)view .findViewById(R.id.email);
-        TextView txteMail=(TextView)view.findViewById(R.id.txtEmail);
+        TextView editmobileno = (TextView) view.findViewById(R.id.mobileno);
+        TextView phoneType = (TextView) view.findViewById(R.id.phoneType);
+        TextView email = (TextView) view.findViewById(R.id.email);
+        TextView txteMail = (TextView) view.findViewById(R.id.txtEmail);
 
 
         Button addPatientprescriptionBtn = (Button) view.findViewById(R.id.addPatientprescriptionBtn);
 
         cancel = (Button) view.findViewById(R.id.cancel);
         addUpdate = (Button) view.findViewById(R.id.addUpdate);
-        txtRecord = (TextView) view.findViewById(R.id.txtRecord);
-        txtsymtomsanddignost = (TextView) view.findViewById(R.id.txtsymptomsanddignost);
+
         TextView privacyPolicy = (TextView) view.findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) view.findViewById(R.id.termsandCondition);
 
@@ -276,42 +302,25 @@ public class QuickAddVisitFragment extends Fragment {
         edtInput_bmi = (EditText) view.findViewById(R.id.input_bmi);
         edtInput_height = (EditText) view.findViewById(R.id.input_height);
 
-        txtReferredBy=(TextView)view.findViewById(R.id.txtReferredBy);
-        txtReferredTo=(TextView)view.findViewById(R.id.txtReferredTo);
+        txtReferredBy = (TextView) view.findViewById(R.id.txtReferredBy);
+        txtReferredTo = (TextView) view.findViewById(R.id.txtReferredTo);
 
-        showReferrals=(LinearLayout) view.findViewById(R.id.showReferrals);
-        showVitals=(LinearLayout)view.findViewById(R.id.showVitals);
+        showReferrals = (LinearLayout) view.findViewById(R.id.showReferrals);
 
         clinicalNotes = (EditText) view.findViewById(R.id.clinicalNotes);
 
+        buttonInvestigation = (Button) view.findViewById(R.id.buttonInvestigation);
+
+        showInvestigationData = (TextView) view.findViewById(R.id.showInvestigationData);
+        showVitalsData = (TextView) view.findViewById(R.id.showVitalsData);
+
         Button refered = (Button) view.findViewById(R.id.buttonReferrals);
         Button buttonVital = (Button) view.findViewById(R.id.buttonVital);
-        Button buttonHistory=(Button)view.findViewById(R.id.buttonHistory);
+        Button buttonHistory = (Button) view.findViewById(R.id.buttonHistory);
         buttonHistory.setVisibility(View.GONE);
 
-        txtLabelWeight=(TextView) view.findViewById(R.id.txtLabelWeight);
-        txtWeight=(TextView) view.findViewById(R.id.txtWeight);
-        txtLabelHeight=(TextView)view.findViewById(R.id.txtLabelHeight);
-        txtHeight=(TextView)view.findViewById(R.id.txtHeight);
 
-        txtLabelBmi=(TextView) view.findViewById(R.id.txtLabelBmi);
-        txtBmi=(TextView) view.findViewById(R.id.txtBmi);
-        txtLabelPulse=(TextView)view.findViewById(R.id.txtLabelPulse);
-        txtPulse=(TextView)view.findViewById(R.id.txtPulse);
-
-        txtLabelSystole=(TextView) view.findViewById(R.id.txtLabelSystole);
-        txtSystole=(TextView) view.findViewById(R.id.txtSystole);
-        txtLabelTemp=(TextView)view.findViewById(R.id.txtLabelTemp);
-        txtTemp=(TextView)view.findViewById(R.id.txtTemp);
-
-        txtLabelDistole=(TextView) view.findViewById(R.id.txtLabelDistole);
-        txtDistole=(TextView) view.findViewById(R.id.txtDistole);
-        txtLabelSugarpp=(TextView)view.findViewById(R.id.txtLabelSugarpp);
-        txtSugarPp=(TextView)view.findViewById(R.id.txtSugarPp);
-        txtLabelSugarFast=(TextView)view.findViewById(R.id.txtLabelSugarFast);
-        txtSugarFast=(TextView)view.findViewById(R.id.txtSugarFast);
-
-        LinearLayout linearlayoutEdit = (LinearLayout) view.findViewById(R.id.linearlayoutEdit);
+        ImageView editPersonalInfo = (ImageView) view.findViewById(R.id.editPersonalInfo);
         //linearlayoutEdit.setVisibility(View.GONE); //we are hiding edit button which redirect to edit personal info page  04-05-2017
 
         edtSymptoms = (MultiAutoCompleteTextView) view.findViewById(R.id.symptoms);
@@ -350,12 +359,11 @@ public class QuickAddVisitFragment extends Fragment {
         //SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
         //  Date todayDate = new Date();
 
-       // String dd = sdf.format(todayDate);
-       // date.setText("Today's Date " + dd);
+        // String dd = sdf.format(todayDate);
+        // date.setText("Today's Date " + dd);
 
         SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
         Date todayDate3 = new Date();
-
 
         //this date is ued to set update records date in patient history table
         addedTime = sdf3.format(todayDate3);
@@ -372,26 +380,29 @@ public class QuickAddVisitFragment extends Fragment {
         editpatientName.setText(strName);
         editmobileno.setText(mPhNo);
         //txtReferredBy.setText(strReferedBy);
-         txtReferredTo.setText(strReferedTo);
+        txtReferredTo.setText(strReferedTo);
                        /*setting prescription added date to visit date.*/
-        visitDate.setText(added_on);
+        if (added_on != null && !added_on.equals("")) {
+            visitDate.setText(added_on);
+        } else
+            visitDate.setText(addedOnDate); //incase added on date comes null or ""
 
-        if(strPhoneType!=null) {
+        if (strPhoneType != null) {
             phoneType.setText(strPhoneType + " :");
-        }else{
+        } else {
             phoneType.setText("Mobile :");
         }
 
-        if(strEmail!=null &&!TextUtils.isEmpty(strEmail) ){
+        if (strEmail != null && !TextUtils.isEmpty(strEmail)) {
             txteMail.setVisibility(View.VISIBLE);
             email.setText(strEmail);
         }
-        if(mGender!=null && mGender.equals("Male")){
-            editAge.setText("( M - "+ mAge + " )");
-        }else if(mGender!=null && mGender.equals("Female")) {
-            editAge.setText("( F - "+ mAge + " )");
-        }else if(mGender!=null && mGender.equals("Trans")) {
-            editAge.setText("( T - "+ mAge + " )");
+        if (mGender != null && mGender.equals("Male")) {
+            editAge.setText("( M - " + mAge + " )");
+        } else if (mGender != null && mGender.equals("Female")) {
+            editAge.setText("( F - " + mAge + " )");
+        } else if (mGender != null && mGender.equals("Trans")) {
+            editAge.setText("( T - " + mAge + " )");
         }
 
         edtprescriptionImgPath = (TextView) view.findViewById(R.id.prescriptionImgPath);
@@ -418,6 +429,29 @@ public class QuickAddVisitFragment extends Fragment {
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
             docId = sqlController.getDoctorId();
             maxVisitId = sqlController.getPatientVisitIdCount();
+            strVisitId = String.valueOf(maxVisitId + 1);
+
+            healthLifeStyleList = sqlController.getHealthAndLifestyle(strPatientId);
+
+            if (healthLifeStyleList.size() > 0) {
+                mAlcohol = healthLifeStyleList.get(0).getAlocholConsumption();
+                mStressLevel = healthLifeStyleList.get(0).getStressLevel();
+                mSmokerType = healthLifeStyleList.get(0).getSmokerType();
+                mLifeStyle = healthLifeStyleList.get(0).getLifeSyle();
+                mLactoseTolerance = healthLifeStyleList.get(0).getLactoseTolerance();
+                mFoodPreference = healthLifeStyleList.get(0).getFoodPreference();
+                mFoodHabit = healthLifeStyleList.get(0).getFoodHabit();
+                mExcercise = healthLifeStyleList.get(0).getExcercise();
+                mChewinogTobaco = healthLifeStyleList.get(0).getChewingTobaco();
+                mBingeEating = healthLifeStyleList.get(0).getBingeEating();
+                mAllergies = healthLifeStyleList.get(0).getAllergies();
+                mSexuallyActive = healthLifeStyleList.get(0).getSexuallyActive();
+
+                mDrug = healthLifeStyleList.get(0).getDrugConsumption();
+                otherDrugTaking = healthLifeStyleList.get(0).getOtherDrugConsumption();
+                otherTobacoTaking = healthLifeStyleList.get(0).getOtherTobacoConsumption();
+                mSleepStatus = healthLifeStyleList.get(0).getSleep();
+            }
 
             if (bannerClass == null) {
                 bannerClass = new BannerClass(getContext());
@@ -553,13 +587,30 @@ public class QuickAddVisitFragment extends Fragment {
 
                 prescriptionimgPath = "prescription_" + docId + "_" + appController.getDateTime() + ".jpg";
 
-                 imagePathFile = new File(imagesFolder, prescriptionimgPath);
+                imagePathFile = new File(imagesFolder, prescriptionimgPath);
                 uriSavedImage = Uri.fromFile(imagePathFile);
                 imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
                 imageIntent.putExtra("data", uriSavedImage);
                 startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
 
             }
+        });
+        buttonInvestigation.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    buttonInvestigation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
+                    showInvestigationDialog();
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    buttonInvestigation.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
+            }
+
         });
 
         refered.setOnClickListener(new View.OnClickListener() {
@@ -576,11 +627,11 @@ public class QuickAddVisitFragment extends Fragment {
                 addVitalsDialog();
             }
         });
-        linearlayoutEdit.setOnClickListener(new View.OnClickListener() {
+        editPersonalInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                Intent i = new Intent(getContext(), EditPersonalInfo.class);
+                Intent i = new Intent(getContext(), NewEditPersonalInfo.class);
 
                 i.putExtra("PATIENTPHOTO", strPatientPhoto);
                 i.putExtra("ID", strPatientId);
@@ -603,7 +654,7 @@ public class QuickAddVisitFragment extends Fragment {
                 i.putExtra("ALTERNATEISDCODE", strAlternateIsd_code);
                 i.putExtra("UID", strUid);
                 i.putExtra("EMAIL", strEmail);
-                i.putExtra("PHONETYPE",strPhoneType);
+                i.putExtra("PHONETYPE", strPhoneType);
 
                 startActivity(i);
                 // finish();
@@ -611,6 +662,7 @@ public class QuickAddVisitFragment extends Fragment {
         });
 
         setUpAnimation();
+        setImagesToHealthLifeStyle();
         return view;
 
     }
@@ -643,7 +695,7 @@ public class QuickAddVisitFragment extends Fragment {
             for (int im = 0; im < list.size(); im++) {
                 String strid = list.get(im).get("ID");
                 String strName = list.get(im).get("NAME");
-              //  String str = list.get(im).get("SPECIALITY");
+                //  String str = list.get(im).get("SPECIALITY");
 
                 NameData.put(strName, strid);
             }
@@ -794,7 +846,7 @@ public class QuickAddVisitFragment extends Fragment {
                     textRefredToShow.setVisibility(View.VISIBLE);
                     txtReferredTo.setVisibility(View.VISIBLE);
                     textRefredToShow.setText(insertedName + "");
-                }else{
+                } else {
                     textRefredToShow.setVisibility(View.INVISIBLE);
                     txtReferredTo.setVisibility(View.INVISIBLE);
                 }
@@ -1082,7 +1134,7 @@ public class QuickAddVisitFragment extends Fragment {
         monthSel = null;
         fowSel = null;
         String clinical_note = clinicalNotes.getText().toString().trim();
-        String follow_up_dates = null;
+
         String strSymptoms = edtSymptoms.getText().toString().trim();
         String strDignosis = edtDignosis.getText().toString().trim();
 
@@ -1095,8 +1147,6 @@ public class QuickAddVisitFragment extends Fragment {
         }
 
 
-
-        String visit_id = String.valueOf(maxVisitId + 1);
         String visit_date = addedOnDate;
         //  Log.e("visit_date", "" + visit_date);
 
@@ -1124,9 +1174,10 @@ public class QuickAddVisitFragment extends Fragment {
         String patientInfoType = "App";
         String action = "added";
         String record_source = "QuickAdd New Visit";
+        String strFollowUpStatus = null;
 
-        dbController.addPatientNextVisitRecord(visit_id, strPatientId, usersellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionimgPath,  visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
-                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo, record_source);
+        dbController.addPatientNextVisitRecord(strVisitId, strPatientId, usersellectedDate, daysSel, fowSel, monthSel, clinical_note, prescriptionimgPath, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
+                strWeight, strPulse, strBp, strLowBp, strTemp, strSymptoms, strDignosis, strHeight, strbmi, strReferedBy, strReferedTo, strFollowUpStatus, record_source);
 
         dbController.deletePrescriptionImageQueue(prescriptionimgId, prescriptionimgPath);
 
@@ -1139,7 +1190,7 @@ public class QuickAddVisitFragment extends Fragment {
     private void goToNavigation() {
         Intent i = new Intent(getActivity(), NavigationActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);  // it will directly jump to navigation activity eith called fragment
-         startActivity(i);
+        startActivity(i);
         getActivity().finish();
     }
 
@@ -1193,8 +1244,9 @@ public class QuickAddVisitFragment extends Fragment {
                     } else {
                         inputnumber.setError(null);
                     }
-                    buttonSelected = "days";
-                    String dateis = sdf1.format(appController.addDay1(new Date(), val));
+                    String strVisitDate = visitDate.getText().toString();
+                    Date calDate = appController.stringToDate(strVisitDate);
+                    String dateis = sdf1.format(AppController.addDay1(calDate, val));
                     fodtextshow.setText(dateis);
                     daysSel = value;
                     usersellectedDate = dateis;
@@ -1245,8 +1297,9 @@ public class QuickAddVisitFragment extends Fragment {
                     }
                 }
                 int fVal = (int) (val * 7);
-                buttonSelected = "week";
-                String dateis = sdf1.format(appController.addDay1(new Date(), fVal));
+                String strVisitDate = visitDate.getText().toString();
+                Date calDate = appController.stringToDate(strVisitDate);
+                String dateis = sdf1.format(AppController.addDay1(calDate, fVal));
                 usersellectedDate = dateis;
                 fowSel = value;
                 fodtextshow.setText(dateis);
@@ -1281,8 +1334,9 @@ public class QuickAddVisitFragment extends Fragment {
                 } else {
                     inputnumber.setError(null);
                 }
-                buttonSelected = "month";
-                String dateis = sdf1.format(appController.addMonth(new Date(), Integer.parseInt(value)));
+                String strVisitDate = visitDate.getText().toString();
+                Date calDate = appController.stringToDate(strVisitDate);
+                String dateis = sdf1.format(AppController.addMonth(calDate, Integer.parseInt(value)));
                 usersellectedDate = dateis;
                 monthSel = value;
                 fodtextshow.setText(dateis);
@@ -1517,8 +1571,7 @@ public class QuickAddVisitFragment extends Fragment {
         inputnumber = null;
         value = null;
         daysSel = null;
-        txtRecord = null;
-        txtsymtomsanddignost = null;
+
         edtInput_sugarfasting = null;
         edtInput_bmi = null;
         edtInput_height = null;
@@ -1549,47 +1602,30 @@ public class QuickAddVisitFragment extends Fragment {
         strBp = null;
         strLowBp = null;
         strTemp = null;
-        strSugar = null;
+
         strSugarFasting = null;
         strHeight = null;
-
         showReferrals = null;
-        showVitals = null;
-        txtLabelWeight = null;
-        txtWeight = null;
-        txtLabelHeight = null;
-        txtHeight = null;
-        txtLabelBmi = null;
-        txtBmi = null;
-        txtLabelPulse = null;
-        txtPulse = null;
-        txtLabelSystole = null;
-        txtSystole = null;
-        txtLabelTemp = null;
-        txtTemp = null;
-        txtLabelDistole = null;
-        txtDistole = null;
-        txtLabelSugarpp = null;
-        txtSugarPp = null;
-        txtLabelSugarFast = null;
-        txtSugarFast = null;
-        imagePathFile=null;
-        strEmail=null;
-        strPhoneType=null;
-        strFirstName=null;
-        strMiddleName=null;
-        strLastName=null;
-        strDob=null;
-        strAddress=null;
-        strCityorTown=null;
-        strDistrict=null;
-        strPinNo=null;
-        strState=null;
-        strAlternatenumber=null;
-        strAlternatephtype=null;
-        strIsd_code=null;
-        strUid=null;
-        strAlternateIsd_code=null;
+
+        imagePathFile = null;
+        strEmail = null;
+        strPhoneType = null;
+        strFirstName = null;
+        strMiddleName = null;
+        strLastName = null;
+        strDob = null;
+        strAddress = null;
+        strCityorTown = null;
+        strDistrict = null;
+        strPinNo = null;
+        strState = null;
+        strAlternatenumber = null;
+        strAlternatephtype = null;
+        strIsd_code = null;
+        strUid = null;
+        strAlternateIsd_code = null;
+        sbVitals = null;
+        sbInvestigations = null;
     }
 
     public interface OnFragmentInteractionListener {
@@ -1641,19 +1677,51 @@ public class QuickAddVisitFragment extends Fragment {
 
             Button cancel = (Button) f.findViewById(R.id.customDialogCancel);
             Button save = (Button) f.findViewById(R.id.customDialogOk);
-            edtInput_weight = (EditText)f. findViewById(R.id.input_weight);
-            edtInput_pulse = (EditText)f. findViewById(R.id.input_pulse);
+            edtInput_weight = (EditText) f.findViewById(R.id.input_weight);
+            edtInput_pulse = (EditText) f.findViewById(R.id.input_pulse);
             edtInput_bp = (EditText) f.findViewById(R.id.input_bp);
             edtLowBp = (EditText) f.findViewById(R.id.lowBp);
-            edtInput_temp = (EditText)f. findViewById(R.id.input_temp);
+            edtInput_temp = (EditText) f.findViewById(R.id.input_temp);
             edtInput_sugar = (EditText) f.findViewById(R.id.input_sugar);
-            edtInput_sugarfasting = (EditText)f. findViewById(R.id.input_sugarfasting);
-            edtInput_bmi = (EditText)f. findViewById(R.id.input_bmi);
+            edtInput_sugarfasting = (EditText) f.findViewById(R.id.input_sugarfasting);
+            edtInput_bmi = (EditText) f.findViewById(R.id.input_bmi);
             edtInput_height = (EditText) f.findViewById(R.id.input_height);
 
             dialog.setTitle(" Add Vitals ");
             dialog.setCanceledOnTouchOutside(false);
             dialog.setContentView(f);
+            sbVitals.setLength(0);
+
+            if (strWeight != null && !strWeight.equals("") && strWeight.length() > 0) {
+                edtInput_weight.setText(strWeight);
+            }
+
+            if (strHeight != null && !strHeight.equals("") && strHeight.length() > 0) {
+
+                edtInput_height.setText(strHeight);
+            }
+
+            if (strbmi != null && !strbmi.equals("") && strbmi.length() > 0) {
+
+                edtInput_bmi.setText(strbmi);
+            }
+
+            if (strPulse != null && !strPulse.equals("") && strPulse.length() > 0) {
+
+                edtInput_pulse.setText(strPulse);
+            }
+            if (strBp != null && !strBp.equals("") && strBp.length() > 0) {
+
+                edtInput_bp.setText(strBp);
+            }
+            if (strLowBp != null && !strLowBp.equals("") && strLowBp.length() > 0) {
+
+                edtLowBp.setText(strLowBp);
+            }
+            if (strTemp != null && !strTemp.equals("") && strTemp.length() > 0) {
+
+                edtInput_temp.setText(strTemp);
+            }
             cancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -1668,8 +1736,6 @@ public class QuickAddVisitFragment extends Fragment {
                     strBp = edtInput_bp.getText().toString().trim();
                     strLowBp = edtLowBp.getText().toString().trim();
                     strTemp = edtInput_temp.getText().toString().trim();
-                    strSugar = edtInput_sugar.getText().toString().trim();
-                    strSugarFasting = edtInput_sugarfasting.getText().toString().trim();
 
                     strHeight = edtInput_height.getText().toString().trim();
                     strbmi = edtInput_bmi.getText().toString().trim();
@@ -1683,85 +1749,43 @@ public class QuickAddVisitFragment extends Fragment {
                             edtInput_temp.setError(null);
                         }
                     }
-                    showVitals.setVisibility(View.VISIBLE);
-                    if (strWeight != null && !strWeight.equals("") && strWeight.length()>0) {
-                        txtLabelWeight.setVisibility(View.VISIBLE);
-                        txtWeight.setVisibility(View.VISIBLE);
-                        txtWeight.setText(strWeight+ " Kgs");
-                    } else {
-                        txtLabelWeight.setVisibility(View.GONE);
-                        txtWeight.setVisibility(View.GONE);
+                    if (strWeight != null && !strWeight.equals("") && strWeight.length() > 0) {
+                        sbVitals.append("Weight: ").append(strWeight).append(" ;");
                     }
 
-                    if (strHeight != null && !strHeight.equals("") && strHeight.length()>0) {
-                        txtLabelHeight.setVisibility(View.VISIBLE);
-                        txtHeight.setVisibility(View.VISIBLE);
-                        txtHeight.setText(strHeight + " Cms");
-                    } else {
-                        txtLabelHeight.setVisibility(View.GONE);
-                        txtHeight.setVisibility(View.GONE);
+                    if (strHeight != null && !strHeight.equals("") && strHeight.length() > 0) {
+
+                        sbVitals.append("  ");
+                        sbVitals.append(" Height: ").append(strHeight).append(" ;");
                     }
 
-                    if (strbmi != null && !strbmi.equals("") && strbmi.length()>0) {
-                        txtLabelBmi.setVisibility(View.VISIBLE);
-                        txtBmi.setVisibility(View.VISIBLE);
-                        txtBmi.setText(strbmi + " Bmi");
-                    } else {
-                        txtLabelBmi.setVisibility(View.GONE);
-                        txtBmi.setVisibility(View.GONE);
+                    if (strbmi != null && !strbmi.equals("") && strbmi.length() > 0) {
+
+                        sbVitals.append("  ");
+                        sbVitals.append(" Bmi: ").append(strbmi).append(" ;");
                     }
 
-                    if (strPulse != null && !strPulse.equals("") && strPulse.length()>0) {
-                        txtLabelPulse.setVisibility(View.VISIBLE);
-                        txtPulse.setVisibility(View.VISIBLE);
-                        txtPulse.setText(strPulse + " bmp");
-                    } else {
-                        txtLabelPulse.setVisibility(View.GONE);
-                        txtPulse.setVisibility(View.GONE);
-                    }
-                    if (strBp != null && !strBp.equals("") && strBp.length()>0) {
-                        txtLabelSystole.setVisibility(View.VISIBLE);
-                        txtSystole.setVisibility(View.VISIBLE);
-                        txtSystole.setText(strBp + " mmhg");
-                    } else {
-                        txtLabelSystole.setVisibility(View.GONE);
-                        txtSystole.setVisibility(View.GONE);
-                    }
-                    if (strLowBp != null && !strLowBp.equals("") && strLowBp.length()>0) {
-                        txtLabelDistole.setVisibility(View.VISIBLE);
-                        txtDistole.setVisibility(View.VISIBLE);
-                        txtDistole.setText(strLowBp + " mmhg");
-                    } else {
-                        txtLabelDistole.setVisibility(View.GONE);
-                        txtDistole.setVisibility(View.GONE);
-                    }
-                    if (strTemp != null && !strTemp.equals("") && strTemp.length()>0) {
-                        txtLabelTemp.setVisibility(View.VISIBLE);
-                        txtTemp.setVisibility(View.VISIBLE);
-                        txtTemp.setText(strTemp + ""+ getResources().getString(R.string.degree));
-                    } else {
-                        txtLabelTemp.setVisibility(View.GONE);
-                        txtTemp.setVisibility(View.GONE);
-                    }
+                    if (strPulse != null && !strPulse.equals("") && strPulse.length() > 0) {
 
-
-                    if (strSugar != null && !strSugar.equals("") && strSugar.length()>0) {
-                        txtLabelSugarpp.setVisibility(View.VISIBLE);
-                        txtSugarPp.setVisibility(View.VISIBLE);
-                        txtSugarPp.setText(strSugar +" mg/dl");
-                    } else {
-                        txtLabelSugarpp.setVisibility(View.GONE);
-                        txtSugarPp.setVisibility(View.GONE);
+                        sbVitals.append("  ");
+                        sbVitals.append(" Pulse: ").append(strPulse).append(" ;");
                     }
-                    if (strSugarFasting != null && !strSugarFasting.equals("") && strSugarFasting.length()>0) {
-                        txtLabelSugarFast.setVisibility(View.VISIBLE);
-                        txtSugarFast.setVisibility(View.VISIBLE);
-                        txtSugarFast.setText(strSugarFasting+" mg/dl");
-                    } else {
-                        txtLabelSugarFast.setVisibility(View.GONE);
-                        txtSugarFast.setVisibility(View.GONE);
-                    }
+                    if (strBp != null && !strBp.equals("") && strBp.length() > 0) {
 
+                        sbVitals.append("  ");
+                        sbVitals.append(" Systole: ").append(strBp).append(" ;");
+                    }
+                    if (strLowBp != null && !strLowBp.equals("") && strLowBp.length() > 0) {
+
+                        sbVitals.append("  ");
+                        sbVitals.append(" Diastole: ").append(strLowBp).append(" ;");
+                    }
+                    if (strTemp != null && !strTemp.equals("") && strTemp.length() > 0) {
+
+                        sbVitals.append("  ");
+                        sbVitals.append(" Temp: ").append(strTemp).append(" ;");
+                    }
+                    showVitalsData.setText(sbVitals);
                     dialog.dismiss();
                 }
             });
@@ -1787,4 +1811,232 @@ public class QuickAddVisitFragment extends Fragment {
         });
     }
 
+    private void showInvestigationDialog() {
+
+        final Dialog dialog;
+
+        dialog = new Dialog(getContext());
+        LayoutInflater factory = LayoutInflater.from(getContext());
+
+        final View f = factory.inflate(R.layout.investigation_dialog, null);
+        dialog.setTitle(" Edit Investigation ");
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(f);
+
+
+        Button cancel = (Button) f.findViewById(R.id.customDialogCancel);
+        Button ok = (Button) f.findViewById(R.id.customDialogOk);
+        final EditText input_hba1c = (EditText) f.findViewById(R.id.input_hba1c);
+        final EditText input_acer = (EditText) f.findViewById(R.id.input_acer);
+        final EditText input_seremUrea = (EditText) f.findViewById(R.id.input_seremUrea);
+        final EditText input_LipidHDL = (EditText) f.findViewById(R.id.input_LipidHDL);
+        final EditText input_LipidTC = (EditText) f.findViewById(R.id.input_LipidTC);
+        final EditText input_LipidTG = (EditText) f.findViewById(R.id.input_LipidTG);
+        final EditText input_LipidLDL = (EditText) f.findViewById(R.id.input_LipidLDL);
+        final EditText input_LipidVHDL = (EditText) f.findViewById(R.id.input_LipidVHDL);
+        edtInput_sugar = (EditText) f.findViewById(R.id.input_sugar);
+        edtInput_sugarfasting = (EditText) f.findViewById(R.id.input_sugarfasting);
+
+        RadioGroup radioEcg = (RadioGroup) f.findViewById(R.id.radioEcg);
+        RadioGroup radioPft = (RadioGroup) f.findViewById(R.id.radioPft);
+
+
+        sbInvestigations.setLength(0);
+
+        if (strLipidTC != null) {
+            input_LipidTC.setText(strLipidTC);
+        }
+        if (strLipidTG != null && !strLipidTG.equals("")) input_LipidTG.setText(strLipidTG);
+        if (strLipidLDL != null && !strLipidLDL.equals("")) input_LipidLDL.setText(strLipidLDL);
+        if (strLipidVHDL != null && !strLipidVHDL.equals("")) input_LipidVHDL.setText(strLipidVHDL);
+        if (strLipidHDL != null && !strLipidHDL.equals("")) input_LipidHDL.setText(strLipidHDL);
+        if (strSgar != null && !strSgar.equals("")) edtInput_sugar.setText(strSgar);
+        if (strSugarFasting != null && !strSugarFasting.equals(""))
+            edtInput_sugarfasting.setText(strSugarFasting);
+        if (strHbA1c != null && !strHbA1c.equals("")) input_hba1c.setText(strHbA1c);
+        if (strSerumUrea != null && !strSerumUrea.equals("")) input_seremUrea.setText(strSerumUrea);
+        if (strAcer != null && !strAcer.equals("")) input_acer.setText(strAcer);
+
+
+        if (strEcg != null && !strEcg.equals(""))
+            switch (strEcg) {
+                case "Normal":
+                    radioEcg.check(R.id.radioEcgNormal);
+                    break;
+                case "Abnormal":
+                    radioEcg.check(R.id.radioEcgAbnormal);
+                    break;
+
+            }
+        if (strPft != null && !strPft.equals(""))
+            switch (strPft) {
+                case "Normal":
+                    radioPft.check(R.id.radioPftNormal);
+                    break;
+                case "Abnormal":
+                    radioPft.check(R.id.radioPftAbnormal);
+                    break;
+            }
+        strEcg = "Normal";
+        radioEcg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+
+                    case R.id.radioEcgNormal:
+                        strEcg = "Normal";
+                        break;
+
+                    case R.id.radioEcgAbnormal:
+                        strEcg = "Abnormal";
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        strPft = "Normal";
+        radioPft.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+
+                    case R.id.radioPftNormal:
+                        strPft = "Normal";
+                        break;
+
+                    case R.id.radioPftAbnormal:
+                        strPft = "Abnormal";
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                strLipidTC = input_LipidTC.getText().toString();
+                strLipidTG = input_LipidTG.getText().toString();
+                strLipidLDL = input_LipidLDL.getText().toString();
+                strLipidVHDL = input_LipidVHDL.getText().toString();
+                strLipidHDL = input_LipidHDL.getText().toString();
+                strSugarFasting = edtInput_sugarfasting.getText().toString();
+                strSgar = edtInput_sugar.getText().toString();
+                strHbA1c = input_hba1c.getText().toString();
+                strSerumUrea = input_seremUrea.getText().toString();
+                strAcer = input_acer.getText().toString();
+                String flag = "0";
+
+                if (strSgar != null && !strSgar.equals("") && strSgar.length() > 0) {
+                    sbInvestigations.append("Sugar(PPG):").append(strSgar).append(" ;");
+
+                }
+                if (strSugarFasting != null && !strSugarFasting.equals("") && strSugarFasting.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" Sugar(FPG):").append(strSugarFasting).append(" ;");
+                }
+                if (strEcg != null && !strEcg.equals("") && strEcg.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" ECG:").append(strEcg).append(" ;");
+                }
+                if (strPft != null && !strPft.equals("") && strPft.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" PFT:").append(strPft).append(" ;");
+                }
+                if (strHbA1c != null && !strHbA1c.equals("") && strHbA1c.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" HbA1c:").append(strHbA1c).append(" ;");
+                }
+                if (strAcer != null && !strAcer.equals("") && strAcer.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" Acer:").append(strAcer).append(" ;");
+                }
+                if (strSerumUrea != null && !strSerumUrea.equals("") && strSerumUrea.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" SerumUrea:").append(strSerumUrea).append(" ;");
+                }
+                if (strLipidHDL != null && !strLipidHDL.equals("") && strLipidHDL.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" LipidHDL:").append(strLipidHDL).append(" ;");
+                }
+                if (strLipidTC != null && !strLipidTC.equals("") && strLipidTC.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" LipidTC:").append(strLipidTC).append(" ;");
+                }
+                if (strLipidTG != null && !strLipidTG.equals("") && strLipidTG.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" LipidTG:").append(strLipidTG).append(" ;");
+                }
+                if (strLipidLDL != null && !strLipidLDL.equals("") && strLipidLDL.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" LipidLDL:").append(strLipidLDL).append(" ;");
+                }
+                if (strLipidVHDL != null && !strLipidVHDL.equals("") && strLipidVHDL.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" LipidVHDL:").append(strLipidVHDL).append(" ");
+                }
+
+                dbController.addInvestigation(strPatientId, strVisitId, strSgar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC
+                        , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft, flag);
+
+                showInvestigationData.setText(sbInvestigations);
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+
+    }
+
+    private void setImagesToHealthLifeStyle() {
+        ImageView imgSmoke = (ImageView) view.findViewById(R.id.imgSmoke);
+        ImageView imgDrink = (ImageView) view.findViewById(R.id.imgDrink);
+      //  ImageView imgTobaco = (ImageView) view.findViewById(R.id.imgTobaco);
+      //  ImageView imgFood = (ImageView) view.findViewById(R.id.imgFood);
+        ImageView imgSleep = (ImageView) view.findViewById(R.id.imgSleep);
+        ImageView imgStress = (ImageView) view.findViewById(R.id.imgStress);
+       // Log.e("mSmokerType", "" + mSmokerType + "" + mAlcohol);
+
+        if (mSmokerType != null && !mSmokerType.equals("") && mSmokerType.equals("Active Smoker")) {
+            imgSmoke.setVisibility(View.VISIBLE);
+            imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.smoke));
+        } else if (mSmokerType != null && !mSmokerType.equals("") && mSmokerType.equals("Non Smoker")) {
+            imgSmoke.setVisibility(View.VISIBLE);
+            imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.no_smoke));
+        }
+        if (mAlcohol != null && !mAlcohol.equals("") && mAlcohol.equals("Drinker")) {
+            imgDrink.setVisibility(View.VISIBLE);
+            imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.drink));
+        } else if (mAlcohol != null && !mAlcohol.equals("") && mAlcohol.equals("Non Drinker")) {
+            imgDrink.setVisibility(View.VISIBLE);
+            imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.no_drink));
+        }
+        if (mSleepStatus != null && !mSleepStatus.equals("") && mSleepStatus.equals("Adequate")) {
+            imgSleep.setVisibility(View.VISIBLE);
+            imgSleep.setImageDrawable(getResources().getDrawable(R.drawable.sleep));
+        } else if (mSleepStatus != null && !mSleepStatus.equals("") && mSleepStatus.equals("InAdequate")) {
+            imgSleep.setVisibility(View.VISIBLE);
+            imgSleep.setImageDrawable(getResources().getDrawable(R.drawable.no_sleep));
+        }
+        if (mStressLevel != null && !mStressLevel.equals("") && mStressLevel.equals("Low")) {
+            imgStress.setVisibility(View.VISIBLE);
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stressed));
+        } else if (mStressLevel != null && !mStressLevel.equals("") && mStressLevel.equals("Moderate")) {
+            imgStress.setVisibility(View.VISIBLE);
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.no_stressed));
+        } else if (mStressLevel != null && !mStressLevel.equals("") && mStressLevel.equals("High")) {
+            imgStress.setVisibility(View.VISIBLE);
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.no_stressed));
+        }
+    }
 }

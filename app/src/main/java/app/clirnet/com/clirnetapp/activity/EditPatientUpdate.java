@@ -1508,13 +1508,13 @@ public class EditPatientUpdate extends AppCompatActivity {
         String patientInfoType = "App";
         String action = "updated";
         String status = null;
-        try {
+      /*  try {
             dbController.updatePatientOtherInfo(strId, strVisitId, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, clinical_note, prescriptionImagePath, ailments, modified_on, updatedTime, modified_by, action, patientInfoType, flag,
-                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, status, visit_date, strReferedBy, strReferedTo);
+                   strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, status, visit_date, strReferedBy, strReferedTo);
         } catch (ClirNetAppException e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Edit Patient" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
-        }
+        }*/
         Toast.makeText(getApplicationContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
         //redirect to navigation activity
 

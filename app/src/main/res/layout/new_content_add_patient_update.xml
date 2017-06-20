@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -14,19 +14,24 @@
         android:id="@+id/backChangingImages"
         android:layout_width="match_parent"
         android:layout_height="110dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_gravity="start"
         android:contentDescription="@string/desc"
         android:orientation="vertical" />
 
+
     <android.support.v7.widget.CardView
         android:id="@+id/card_view"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/backChangingImages"
         android:gravity="center"
         android:orientation="vertical"
         app:cardCornerRadius="4dp">
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/nameLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -44,144 +49,196 @@
                 app:civ_shadow_color="#FF0000"
                 app:civ_shadow_radius="0" />
 
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/patientName"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.6"
-                android:orientation="vertical">
+                android:layout_margin="5dp"
+                android:layout_marginEnd="@+id/patientImage"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/patientImage"
+                android:gravity="center_horizontal"
+                android:padding="5dp"
+                android:paddingTop="5dp"
+                android:text="Patient Name"
+                android:textColor="@color/bg_main"
+                android:textSize="24sp"
+                android:textStyle="normal|bold" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/patientName"
-                        android:layout_width="wrap_content"
-                        android:layout_height="45dp"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center_horizontal"
-                        android:padding="5dp"
-                        android:paddingTop="5dp"
-                        android:text="Patient Name"
-                        android:textColor="@color/bg_main"
-                        android:textSize="24sp"
-                        android:textStyle="normal|bold" />
-
-                    <TextView
-                        android:id="@+id/age"
-                        android:layout_width="wrap_content"
-                        android:layout_height="45dp"
-                        android:layout_marginTop="5dp"
-                        android:gravity="center_horizontal"
-                        android:paddingTop="5dp"
-                        android:textColor="@color/bg_main"
-                        android:textSize="24sp"
-                        android:textStyle="normal|bold" />
+            <TextView
+                android:id="@+id/age"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/patientName"
+                android:gravity="center_horizontal"
+                android:paddingTop="5dp"
+                android:text="(M-74)"
+                android:textColor="@color/bg_main"
+                android:textSize="24sp"
+                android:textStyle="normal|bold" />
 
 
-                </LinearLayout>
+            <TextView
+                android:id="@+id/phoneType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@+id/patientName"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginStart="110dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center_horizontal"
+                android:padding="5dp"
+                android:paddingTop="5dp"
+                android:text="Mobile"
+                android:textColor="@color/bg_main"
+                android:textSize="18sp"
+                android:textStyle="normal|bold" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+            <TextView
+                android:id="@+id/mobileno"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/patientName"
+                android:layout_marginBottom="5dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@+id/phoneType"
+                android:fontFamily="sans-serif"
+                android:padding="5dp"
+                android:paddingTop="5dp"
+                android:text="Number"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/bg_main"
+                android:textSize="18sp"
+                android:textStyle="normal|bold"
+                tools:targetApi="jelly_bean" />
 
-                    <TextView
-                        android:id="@+id/phoneType"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif"
-                        android:paddingBottom="4dp"
-                        android:paddingLeft="7dp"
-                        android:paddingRight="4dp"
-                        android:paddingTop="0dp"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/bg_main"
-                        android:textSize="18sp"
-                        android:textStyle="normal"
-                        tools:targetApi="jelly_bean" />
+            <TextView
+                android:id="@+id/txtEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/patientName"
+                android:layout_margin="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_toRightOf="@+id/mobileno"
+                android:fontFamily="sans-serif"
+                android:padding="4dp"
+                android:text="Email : "
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/bg_main"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                tools:targetApi="jelly_bean" />
 
-                    <TextView
-                        android:id="@+id/mobileno"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.6"
-                        android:fontFamily="sans-serif"
-                        android:padding="2dp"
-                        android:text="Number"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/bg_main"
-                        android:textSize="18sp"
-                        android:textStyle="normal|bold"
-                        tools:targetApi="jelly_bean" />
+            <TextView
+                android:id="@+id/email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/patientName"
+                android:layout_margin="5dp"
+                android:layout_toRightOf="@+id/txtEmail"
+                android:fontFamily="sans-serif"
+                android:padding="4dp"
+                android:text="a@ashish.com"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="@color/bg_main"
+                android:textSize="18sp"
+                android:textStyle="normal|bold"
+                tools:targetApi="jelly_bean" />
 
-                    <TextView
-                        android:id="@+id/txtEmail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="2dp"
-                        android:layout_marginLeft="10dp"
-                        android:fontFamily="sans-serif"
-                        android:padding="4dp"
-                        android:text="Email : "
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/bg_main"
-                        android:textSize="18sp"
-                        android:textStyle="normal"
-                        android:visibility="gone"
-                        tools:targetApi="jelly_bean" />
+            <ImageView
+                android:id="@+id/editPersonalInfo"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_alignParentEnd="true"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/edit"
+                android:contentDescription="@string/desc"
+                android:gravity="end" />
 
-                    <TextView
-                        android:id="@+id/email"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="2dp"
-                        android:layout_weight="1.4"
-                        android:fontFamily="sans-serif"
-                        android:padding="4dp"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:textColor="@color/bg_main"
-                        android:textSize="18sp"
-                        android:textStyle="normal|bold"
-                        tools:targetApi="jelly_bean" />
-                </LinearLayout>
-            </LinearLayout>
+            <ImageView
+                android:id="@+id/imgSmoke"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignTop="@+id/imgDrink"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toEndOf="@+id/patientImage"
+                android:layout_toRightOf="@+id/patientImage"
+                android:contentDescription="@string/desc"
+                android:gravity="end"
+                android:visibility="gone"/>
 
-            <LinearLayout
-                android:id="@+id/linearlayoutEdit"
-                android:layout_width="0dp"
-                android:layout_height="120dp"
-                android:layout_weight="0.1"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:background="@drawable/edit">
+            <ImageView
+                android:id="@+id/imgDrink"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/patientImage"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/imgSmoke"
+                android:contentDescription="@string/desc"
+                android:gravity="end"
+                android:visibility="gone"/>
 
-                <ImageView
-                    android:id="@+id/editPersonalInfo"
-                    android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:contentDescription="@string/desc"
-                    android:gravity="center"
-                    />
+            <ImageView
+                android:id="@+id/imgTobaco"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/patientImage"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/imgDrink"
+                android:contentDescription="@string/desc"
+                android:gravity="end"
+                android:visibility="gone"/>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/light_grey"
-                    android:gravity="center"
-                    android:text="Edit"
-                    android:textColor="@color/bg_main"
-                    android:textSize="20sp"
-                    android:textStyle="normal"
-                    tools:targetApi="jelly_bean"
-                    android:visibility="gone"/>
-            </LinearLayout>
-        </LinearLayout>
+            <ImageView
+                android:id="@+id/imgFood"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/patientImage"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/imgTobaco"
+                android:contentDescription="@string/desc"
+                android:gravity="end"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/imgSleep"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/patientImage"
+                android:layout_margin="5dp"
+                android:layout_toRightOf="@+id/imgFood"
+                android:contentDescription="@string/desc"
+                android:gravity="end"
+                android:visibility="gone"/>
+
+            <ImageView
+                android:id="@+id/imgStress"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/patientImage"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/imgSleep"
+                android:contentDescription="@string/desc"
+                android:gravity="end"
+                android:visibility="gone"/>
+
+
+        </RelativeLayout>
+
 
     </android.support.v7.widget.CardView>
 
-</LinearLayout>
+</RelativeLayout>
 
 
 

@@ -13,6 +13,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -86,51 +87,25 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
 
     private String struid;
     private String strEmail;
-
-
+    private ArrayList<RegistrationModel> healthLifeStyleList;
+    private String mAlcohol;
+    private String mPacsWeek, mStressLevel;
+    private String mSmokerType, mStickCount;
+    private String mLifeStyle, mLactoseTolerance;
+    private String mFoodPreference, mFoodHabit;
+    private  String mExcercise, mChewinogTobaco ;
+    private String mBingeEating , mAllergies ;
+    private String mSexuallyActive;
+    private String mDrug;
+    private String otherDrugTaking;
+    private String otherTobacoTaking;
+    private String mSleepStatus;
 
     @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_patient_update);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        appController = new AppController();
-
-        try {
-            //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            //getSupportActionBar().setDisplayShowHomeEnabled(true);
-            final ActionBar ab = getSupportActionBar();
-            //ab.setHomeAsUpIndicator(R.drawable.ic_menu); // set a custom icon for the default home button
-            assert ab != null;
-            ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
-            ab.setDisplayHomeAsUpEnabled(true);
-            ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
-            ab.setDisplayShowTitleEnabled(true);
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
-        }
-
-        if (databaseClass == null) {
-            databaseClass = new DatabaseClass(getApplicationContext());
-        }
-        if (lastNamedb == null) {
-            lastNamedb = new LastnameDatabaseClass(getApplicationContext());
-        }
-        if(bannerClass==null){
-            bannerClass=new BannerClass(getApplicationContext());
-        }
-        try {
-            sqlController = new SQLController(getApplicationContext());
-            sqlController.open();
-            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
-        } catch (ClirNetAppException |SQLException e) {
-            e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient Update" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
-        }
 
         strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
 
@@ -161,6 +136,63 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         struid = getIntent().getStringExtra("UID");
         strEmail = getIntent().getStringExtra("EMAIL");
         String  strPhoneType = getIntent().getStringExtra("PHONETYPE");
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        appController = new AppController();
+
+        try {
+            final ActionBar ab = getSupportActionBar();
+            //ab.setHomeAsUpIndicator(R.drawable.ic_menu); // set a custom icon for the default home button
+            assert ab != null;
+            ab.setDisplayShowHomeEnabled(true); // show or hide the default home button
+            ab.setDisplayHomeAsUpEnabled(true);
+            ab.setDisplayShowCustomEnabled(true); // enable overriding the default toolbar layout
+            ab.setDisplayShowTitleEnabled(true);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+
+        if (databaseClass == null) {
+            databaseClass = new DatabaseClass(getApplicationContext());
+        }
+        if (lastNamedb == null) {
+            lastNamedb = new LastnameDatabaseClass(getApplicationContext());
+        }
+        if(bannerClass==null){
+            bannerClass=new BannerClass(getApplicationContext());
+        }
+        try {
+            sqlController = new SQLController(getApplicationContext());
+            sqlController.open();
+            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
+            healthLifeStyleList = sqlController.getHealthAndLifestyle(strPatientId);
+
+            if (healthLifeStyleList.size() > 0) {
+                mAlcohol = healthLifeStyleList.get(0).getAlocholConsumption();
+                mStressLevel = healthLifeStyleList.get(0).getStressLevel();
+                mSmokerType = healthLifeStyleList.get(0).getSmokerType();
+                mLifeStyle = healthLifeStyleList.get(0).getLifeSyle();
+                mLactoseTolerance = healthLifeStyleList.get(0).getLactoseTolerance();
+                mFoodPreference = healthLifeStyleList.get(0).getFoodPreference();
+                mFoodHabit = healthLifeStyleList.get(0).getFoodHabit();
+                mExcercise = healthLifeStyleList.get(0).getExcercise();
+                mChewinogTobaco = healthLifeStyleList.get(0).getChewingTobaco();
+                mBingeEating = healthLifeStyleList.get(0).getBingeEating();
+                mAllergies = healthLifeStyleList.get(0).getAllergies();
+                mSexuallyActive = healthLifeStyleList.get(0).getSexuallyActive();
+                mDrug=healthLifeStyleList.get(0).getDrugConsumption();
+                otherDrugTaking = healthLifeStyleList.get(0).getOtherDrugConsumption();
+                otherTobacoTaking = healthLifeStyleList.get(0).getOtherTobacoConsumption();
+                mSleepStatus=healthLifeStyleList.get(0).getSleep();
+            }
+        } catch (ClirNetAppException |SQLException e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient Update" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+
+
 
         backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
 
@@ -240,7 +272,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
             @Override
             public void onClick(View v) {
 
-                Intent i = new Intent(getApplicationContext(), EditPersonalInfo.class);
+                Intent i = new Intent(getApplicationContext(), NewEditPersonalInfo.class);
 
                 i.putExtra("PATIENTPHOTO", strPatientPhoto);
                 i.putExtra("ID", strPatientId);
@@ -281,6 +313,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         });
 
         setupAnimation();
+        setImagesToHealthLifeStyle();
     }
 
 
@@ -499,5 +532,44 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         }
     }
 
-
+    private void setImagesToHealthLifeStyle(){
+        ImageView imgSmoke = (ImageView) findViewById(R.id.imgSmoke);
+        ImageView imgDrink = (ImageView) findViewById(R.id.imgDrink);
+        ImageView imgTobaco = (ImageView) findViewById(R.id.imgTobaco);
+        ImageView imgFood = (ImageView) findViewById(R.id.imgFood);
+        ImageView imgSleep = (ImageView) findViewById(R.id.imgSleep);
+        ImageView imgStress = (ImageView) findViewById(R.id.imgStress);
+        Log.e("mSmokerType",""+mSmokerType + "" +mAlcohol);
+        if(mSmokerType!=null && !mSmokerType.equals("")&& mSmokerType.equals("Active Smoker")){
+            imgSmoke.setVisibility(View.VISIBLE);
+            imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.smoke));
+        }else if(mSmokerType!=null && !mSmokerType.equals("")&& mSmokerType.equals("Non Smoker")){
+            imgSmoke.setVisibility(View.VISIBLE);
+            imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.no_smoke));
+        }
+        if(mAlcohol!=null && !mAlcohol.equals("")&& mAlcohol.equals("Drinker")){
+            imgDrink.setVisibility(View.VISIBLE);
+            imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.drink));
+        }else if(mAlcohol!=null && !mAlcohol.equals("")&& mAlcohol.equals("Non Drinker")){
+            imgDrink.setVisibility(View.VISIBLE);
+            imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.no_drink));
+        }
+        if(mSleepStatus!=null && !mSleepStatus.equals("")&& mSleepStatus.equals("Adequate")){
+            imgSleep.setVisibility(View.VISIBLE);
+            imgSleep.setImageDrawable(getResources().getDrawable(R.drawable.sleep));
+        }else if(mSleepStatus!=null && !mSleepStatus.equals("")&& mSleepStatus.equals("InAdequate")){
+            imgSleep.setVisibility(View.VISIBLE);
+            imgSleep.setImageDrawable(getResources().getDrawable(R.drawable.no_sleep));
+        }
+        if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("Low")){
+            imgStress.setVisibility(View.VISIBLE);
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stressed));
+        }else if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("Moderate")){
+            imgStress.setVisibility(View.VISIBLE);
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.no_stressed));
+        } else if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("High")){
+            imgStress.setVisibility(View.VISIBLE);
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.no_stressed));
+        }
+    }
 }

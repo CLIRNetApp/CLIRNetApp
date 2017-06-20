@@ -1,147 +1,111 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/llayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/dep"
-    android:orientation="vertical"
     android:padding="5dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".activity.EditPatientUpdate">
 
-    <ScrollView
+    <TextView
+        android:id="@+id/sysdate"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:text="Date"
+        android:textAppearance="@style/Base.Widget.AppCompat.Button.Small"
+        android:textColor="#827d86"
+        android:textSize="16sp"
+        android:textStyle="normal" />
 
-        <LinearLayout
+
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sysdate"
+        android:orientation="vertical"
+        android:padding="5dp">
+
+        <include
+            android:id="@+id/linearlayout"
+            layout="@layout/new_content_add_patient_update"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
-
-            <ImageView
-                android:id="@+id/patientImage1"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:contentDescription="@string/desc"
-                android:src="@drawable/main_profile"
-                android:visibility="gone" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+            android:layout_height="wrap_content"
+            android:background="@drawable/dep" />
+    </LinearLayout>
 
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="0dp"
-                    android:layout_weight="1"
-                    android:orientation="horizontal"
-                    android:padding="5dp">
+    <LinearLayout
+        android:id="@+id/labelLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/headerLayout"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.93"
+            android:fontFamily="sans-serif-medium"
+            android:paddingLeft="7dp"
+            android:text="Update History"
+            android:textColor="#50BAA0"
+            android:textSize="16sp"
+            tools:targetApi="jelly_bean" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight=".1"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/editlastUpdate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.85"
+            android:background="#50BAA0"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:paddingRight="10dp"
+            android:text="Edit Last Update"
+            android:textColor="#ffffff"
+            android:textSize="16sp"
+            tools:targetApi="jelly_bean" />
+
+    </LinearLayout>
 
 
-                    <TextView
-                        android:id="@+id/sysdate"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.7"
-                        android:gravity="end"
-                        android:text="Date"
-                        android:textAppearance="@style/Base.Widget.AppCompat.Button.Small"
-                        android:textColor="#827d86"
-                        android:textSize="16sp"
-                        android:textStyle="normal" />
-                </LinearLayout>
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/labelLayout"
+        android:layout_marginTop="10dp"
+        android:paddingBottom="10dp"
+        android:scrollbars="vertical"
+        app:layoutManager="GridLayoutManager"
+        app:spanCount="1"
+        android:layout_above="@+id/linearLayout" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:padding="5dp">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/linearLayout">
 
-                    <include layout="@layout/new_content_add_patient_update"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/linearlayout"
-                        android:background="@drawable/dep" />
+        <include
+            layout="@layout/footer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="0dp"
-                        android:layout_weight="2"
-                        android:orientation="horizontal">
-
-                        <TextView
-
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.93"
-                            android:fontFamily="sans-serif-medium"
-                            android:paddingLeft="7dp"
-                            android:text="Update History"
-                            android:textColor="#50BAA0"
-                            android:textSize="16sp"
-                            tools:targetApi="jelly_bean" />
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".1"
-                            android:visibility="invisible" />
-
-                        <Button
-                            android:id="@+id/editlastUpdate"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="0.85"
-                            android:background="#50BAA0"
-                            android:fontFamily="sans-serif-medium"
-                            android:gravity="center"
-                            android:paddingRight="10dp"
-                            android:textSize="16sp"
-                            tools:targetApi="jelly_bean"
-                            android:text="Edit Last Update"
-                            android:textColor="#ffffff"
-                            />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical">
-
-                        <android.support.v7.widget.RecyclerView
-                            android:id="@+id/recycler_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="0.9"
-                            android:scrollbars="vertical"
-                            app:layoutManager="GridLayoutManager"
-                            app:spanCount="1"
-                            android:paddingBottom="10dp"/>
-
-                        <include
-                            layout="@layout/footer"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom" />
-
-                    </LinearLayout>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-            <!-- TODO: Update blank fragment layout -->
+    </LinearLayout>
+</RelativeLayout>
 
 
-        </LinearLayout>
-    </ScrollView>
 
-</LinearLayout>
+
 

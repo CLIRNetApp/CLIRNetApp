@@ -24,10 +24,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -118,58 +120,68 @@ public class AddPatientUpdateFragment extends Fragment {
     private EditText edtInput_bp;
     private EditText edtLowBp;
     private EditText edtInput_temp;
-    private EditText edtInput_sugar;
-    private EditText edtInput_sugarfasting;
+
     private EditText edtInput_bmi;
     private EditText edtInput_height;
 
     private String strWeight;
-    private String strPulse ;
+    private String strPulse;
     private String strBp;
-    private String strLowBp ;
-    private String strTemp ;
-    private String strSugar;
-    private String strTests ;
-    private String strDrugs ;
-    private String strHeight ;
-    private String strbmi ;
+    private String strLowBp;
+    private String strTemp;
+    private String strHeight;
+    private String strbmi;
     private String strSugarFasting;
     private DatabaseClass databaseClass;
-    private  LinearLayout showReferrals,showVitals;
-    private TextView txtReferredTo,txtReferredBy;
-    private TextView txtLabelWeight,txtWeight;
-    private TextView txtLabelHeight,txtHeight;
-    private TextView txtLabelBmi,txtBmi;
-    private TextView txtLabelPulse,txtPulse;
-    private TextView txtLabelSystole,txtSystole;
-    private TextView txtLabelTemp,txtTemp;
-    private TextView txtLabelDistole,txtDistole;
-    private TextView txtLabelSugarpp,txtSugarPp;
-    private TextView txtLabelSugarFast,txtSugarFast;
-    private  ViewPager viewPager;
+    private LinearLayout showReferrals;
+    private TextView txtReferredTo, txtReferredBy;
+
+    private ViewPager viewPager;
+    private String strEcg;
+    private String strPft;
+    private String strLipidTC;
+    private String strLipidTG;
+    private String strLipidLDL;
+    private String strLipidVHDL;
+    private String strLipidHDL;
+    private String strSgar;
+    private String strHbA1c;
+    private String strSerumUrea;
+    private String strAcer;
+    private Button buttonInvestigation;
+    private String strVisitId;
+    private TextView showInvestigationData;
+    private TextView showVitalsData;
+
+    private StringBuilder sbVitals = new StringBuilder();
+    //private StringBuilder sbReferrals = new StringBuilder();
+    private StringBuilder sbInvestigations = new StringBuilder();
+    private String strPatientFollowUpStatus;
 
 
-    public  AddPatientUpdateFragment (){
+    public AddPatientUpdateFragment() {
 
     }
-    public static AddPatientUpdateFragment newInstance(ViewPager viewPager,String strPatientId) {
+
+    public static AddPatientUpdateFragment newInstance(ViewPager viewPager, String strPatientId) {
         AddPatientUpdateFragment fragment = new AddPatientUpdateFragment();
         Bundle args = new Bundle();
-        args.putString("strPatientId", strPatientId);
-        args.putString("viewpager", String.valueOf(viewPager));
+
         fragment.setArguments(args);
 
         return fragment;
     }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            strPatientId=getArguments().getString("PATIENTID");
-           // this.viewPager= (ViewPager) getArguments().get("viewpager");
-          //  Log.e("strPatientId"," "+strPatientId);
+            strPatientId = getArguments().getString("PATIENTID");
+            // this.viewPager= (ViewPager) getArguments().get("viewpager");
+            //  Log.e("strPatientId"," "+strPatientId);
         }
     }
+
     //Overriden method onCreateView
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -196,34 +208,17 @@ public class AddPatientUpdateFragment extends Fragment {
         textRefredToShow = (TextView) view.findViewById(R.id.txtrefredto);
         Button refered = (Button) view.findViewById(R.id.buttonReferrals);
         Button buttonVital = (Button) view.findViewById(R.id.buttonVital);
-        Button buttonHistory=(Button)view.findViewById(R.id.buttonHistory);
-        showReferrals=(LinearLayout) view.findViewById(R.id.showReferrals);
-        showVitals=(LinearLayout)view.findViewById(R.id.showVitals);
-        txtReferredBy=(TextView)view.findViewById(R.id.txtReferredBy);
-        txtReferredTo=(TextView)view.findViewById(R.id.txtReferredTo);
+        Button buttonHistory = (Button) view.findViewById(R.id.buttonHistory);
+        buttonHistory.setVisibility(View.GONE);
+        showReferrals = (LinearLayout) view.findViewById(R.id.showReferrals);
+        buttonInvestigation = (Button) view.findViewById(R.id.buttonInvestigation);
 
-        txtLabelWeight=(TextView) view.findViewById(R.id.txtLabelWeight);
-        txtWeight=(TextView) view.findViewById(R.id.txtWeight);
-        txtLabelHeight=(TextView)view.findViewById(R.id.txtLabelHeight);
-        txtHeight=(TextView)view.findViewById(R.id.txtHeight);
+        txtReferredBy = (TextView) view.findViewById(R.id.txtReferredBy);
+        txtReferredTo = (TextView) view.findViewById(R.id.txtReferredTo);
 
-        txtLabelBmi=(TextView) view.findViewById(R.id.txtLabelBmi);
-        txtBmi=(TextView) view.findViewById(R.id.txtBmi);
-        txtLabelPulse=(TextView)view.findViewById(R.id.txtLabelPulse);
-        txtPulse=(TextView)view.findViewById(R.id.txtPulse);
 
-        txtLabelSystole=(TextView) view.findViewById(R.id.txtLabelSystole);
-        txtSystole=(TextView) view.findViewById(R.id.txtSystole);
-        txtLabelTemp=(TextView)view.findViewById(R.id.txtLabelTemp);
-        txtTemp=(TextView)view.findViewById(R.id.txtTemp);
-
-        txtLabelDistole=(TextView) view.findViewById(R.id.txtLabelDistole);
-        txtDistole=(TextView) view.findViewById(R.id.txtDistole);
-        txtLabelSugarpp=(TextView)view.findViewById(R.id.txtLabelSugarpp);
-        txtSugarPp=(TextView)view.findViewById(R.id.txtSugarPp);
-        txtLabelSugarFast=(TextView)view.findViewById(R.id.txtLabelSugarFast);
-        txtSugarFast=(TextView)view.findViewById(R.id.txtSugarFast);
-
+        showInvestigationData = (TextView) view.findViewById(R.id.showInvestigationData);
+        showVitalsData = (TextView) view.findViewById(R.id.showVitalsData);
 
         sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
@@ -259,6 +254,10 @@ public class AddPatientUpdateFragment extends Fragment {
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
             docId = sqlController.getDoctorId();
             maxVisitId = sqlController.getPatientVisitIdCount();
+            strVisitId = String.valueOf(maxVisitId + 1);
+
+            //investigationDeatilsList = sqlController.getInvestigationDeatils(strVisitId);
+
 
             if (bannerClass == null) {
                 bannerClass = new BannerClass(getContext());
@@ -296,6 +295,20 @@ public class AddPatientUpdateFragment extends Fragment {
             }
 
         });
+
+        CheckBox  checkBoxFollowUp = (CheckBox) view.findViewById(R.id.checkBoxFollowUp);
+
+        checkBoxFollowUp.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                //is chkIos checked?
+                if (((CheckBox) v).isChecked()) {
+
+                    strPatientFollowUpStatus="FollowUp";
+                }
+            }
+        });
         SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
         Date todayDate3 = new Date();
 
@@ -328,6 +341,24 @@ public class AddPatientUpdateFragment extends Fragment {
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
                     addUpdate.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
+            }
+
+        });
+        buttonInvestigation.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    buttonInvestigation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
+
+                    showInvestigationDialog();//Open Investigation Dialog
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    buttonInvestigation.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 }
                 return false;
             }
@@ -403,7 +434,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 if (resultCode == Activity.RESULT_OK) {
                     // successfully captured the image
                     // display it in image view
-                    new ImageCompression(getContext(), imagePathFile.getPath()).execute( uriSavedImage.getPath().trim());
+                    new ImageCompression(getContext(), imagePathFile.getPath()).execute(uriSavedImage.getPath().trim());
                     previewCapturedImage();
                 }
             }
@@ -465,7 +496,9 @@ public class AddPatientUpdateFragment extends Fragment {
                         inputnumber.setError(null);
                     }
                     buttonSelected = "days";
-                    String dateis = sdf1.format(AppController.addDay1(new Date(), val));
+                    String strVisitDate=visitDate.getText().toString();
+                    Date calDate= appController.stringToDate(strVisitDate);
+                    String dateis = sdf1.format(AppController.addDay1(calDate, val));
                     fodtextshow.setText(dateis);
                     daysSel = value;
                     fowSel = null;
@@ -517,7 +550,9 @@ public class AddPatientUpdateFragment extends Fragment {
                 }
                 int fVal = (int) (val * 7);
                 buttonSelected = "week";
-                String dateis = sdf1.format(AppController.addDay1(new Date(), fVal));
+                String strVisitDate=visitDate.getText().toString();
+                Date calDate=appController.stringToDate(strVisitDate);
+                String dateis = sdf1.format(AppController.addDay1(calDate, fVal));
                 userSellectedDate = dateis;
                 fowSel = value;
                 daysSel = null;
@@ -554,7 +589,9 @@ public class AddPatientUpdateFragment extends Fragment {
                     inputnumber.setError(null);
                 }
                 buttonSelected = "month";
-                String dateis = sdf1.format(AppController.addMonth(new Date(), Integer.parseInt(value)));
+                String strVisitDate=visitDate.getText().toString();
+                Date calDate=appController.stringToDate(strVisitDate);
+                String dateis = sdf1.format(AppController.addMonth(calDate, Integer.parseInt(value)));
                 userSellectedDate = dateis;
                 monthSel = value;
                 daysSel = null;
@@ -836,7 +873,7 @@ public class AddPatientUpdateFragment extends Fragment {
                     textRefredToShow.setVisibility(View.VISIBLE);
                     txtReferredTo.setVisibility(View.VISIBLE);
                     textRefredToShow.setText(insertedName + "");
-                }else{
+                } else {
                     textRefredToShow.setVisibility(View.INVISIBLE);
                     txtReferredTo.setVisibility(View.INVISIBLE);
                 }
@@ -878,7 +915,7 @@ public class AddPatientUpdateFragment extends Fragment {
         dialog.show();
     }
 
-      private void setSpinner(View f) {
+    private void setSpinner(View f) {
 
         final Spinner nameRefredBySpinner = (Spinner) f.findViewById(R.id.nameRefredBySpinner);
         final Spinner nameRefredTo1Spinner = (Spinner) f.findViewById(R.id.nameRefredTo1Spinner);
@@ -893,7 +930,7 @@ public class AddPatientUpdateFragment extends Fragment {
         final TextView referredtoSpeciality3 = (TextView) f.findViewById(R.id.refredtoSpeciality3);
         final TextView referredtoSpeciality4 = (TextView) f.findViewById(R.id.refredtoSpeciality4);
         final TextView referredtoSpeciality5 = (TextView) f.findViewById(R.id.refredtoSpeciality5);
-        final TextView referredBySpeciality  = (TextView) f.findViewById(R.id.refredBySpeciality);
+        final TextView referredBySpeciality = (TextView) f.findViewById(R.id.refredBySpeciality);
 
 
         try {
@@ -932,7 +969,7 @@ public class AddPatientUpdateFragment extends Fragment {
 
                         if (appController.contains(strReferredTo1Name, ".")) {
                             String[] parts = strReferredTo1Name.split(". ", 2);
-                           // String string1 = parts[0];//namealias
+                            // String string1 = parts[0];//namealias
                             strReferredTo1Name = parts[1].trim();//actual name
 
                         }
@@ -1060,7 +1097,7 @@ public class AddPatientUpdateFragment extends Fragment {
 
                         if (appController.contains(strReferredTo5Name, ".")) {
                             String[] parts = strReferredTo5Name.split(". ", 2);
-                           // String string1 = parts[0];//namealias
+                            // String string1 = parts[0];//namealias
                             strReferredTo5Name = parts[1];//actual name
                         }
 
@@ -1093,7 +1130,7 @@ public class AddPatientUpdateFragment extends Fragment {
                         if (appController.contains(strReferredByName, ".")) {
 
                             String[] parts = strReferredByName.split(". ", 2);
-                           // String string1 = parts[0];//namealias
+                            // String string1 = parts[0];//namealias
                             strReferredByName = parts[1];//actual name
                         }
                         ArrayList<HashMap<String, String>> list = sqlController.getIdNameDataAssociateMaster(strReferredByName.trim());
@@ -1116,6 +1153,7 @@ public class AddPatientUpdateFragment extends Fragment {
         });
 
     }
+
     private void addVitalsDialog() {
 
         final Dialog dialog;
@@ -1127,19 +1165,50 @@ public class AddPatientUpdateFragment extends Fragment {
 
             Button cancel = (Button) f.findViewById(R.id.customDialogCancel);
             Button save = (Button) f.findViewById(R.id.customDialogOk);
-            edtInput_weight = (EditText)f. findViewById(R.id.input_weight);
-            edtInput_pulse = (EditText)f. findViewById(R.id.input_pulse);
+            edtInput_weight = (EditText) f.findViewById(R.id.input_weight);
+            edtInput_height = (EditText) f.findViewById(R.id.input_height);
+            edtInput_bmi = (EditText) f.findViewById(R.id.input_bmi);
+            edtInput_pulse = (EditText) f.findViewById(R.id.input_pulse);
             edtInput_bp = (EditText) f.findViewById(R.id.input_bp);
             edtLowBp = (EditText) f.findViewById(R.id.lowBp);
-            edtInput_temp = (EditText)f. findViewById(R.id.input_temp);
-            edtInput_sugar = (EditText) f.findViewById(R.id.input_sugar);
-            edtInput_sugarfasting = (EditText)f. findViewById(R.id.input_sugarfasting);
-            edtInput_bmi = (EditText)f. findViewById(R.id.input_bmi);
-            edtInput_height = (EditText) f.findViewById(R.id.input_height);
+            edtInput_temp = (EditText) f.findViewById(R.id.input_temp);
+
+
 
             dialog.setTitle(" Add Vitals ");
             dialog.setCanceledOnTouchOutside(false);
             dialog.setContentView(f);
+
+            if (strWeight != null && !strWeight.equals("") && strWeight.length() > 0) {
+                edtInput_weight.setText(strWeight);
+            }
+
+            if (strHeight != null && !strHeight.equals("") && strHeight.length() > 0) {
+
+                edtInput_height.setText(strHeight);
+            }
+
+            if (strbmi != null && !strbmi.equals("") && strbmi.length() > 0) {
+
+                edtInput_bmi.setText(strbmi);
+            }
+
+            if (strPulse != null && !strPulse.equals("") && strPulse.length() > 0) {
+
+                edtInput_pulse.setText(strPulse);
+            }
+            if (strBp != null && !strBp.equals("") && strBp.length() > 0) {
+
+                edtInput_bp.setText(strBp);
+            }
+            if (strLowBp != null && !strLowBp.equals("") && strLowBp.length() > 0) {
+
+                edtLowBp.setText(strLowBp);
+            }
+            if (strTemp != null && !strTemp.equals("") && strTemp.length() > 0) {
+
+                edtInput_temp.setText(strTemp);
+            }
             cancel.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -1154,10 +1223,7 @@ public class AddPatientUpdateFragment extends Fragment {
                     strBp = edtInput_bp.getText().toString().trim();
                     strLowBp = edtLowBp.getText().toString().trim();
                     strTemp = edtInput_temp.getText().toString().trim();
-                    strSugar = edtInput_sugar.getText().toString().trim();
-                    strSugarFasting = edtInput_sugarfasting.getText().toString().trim();
-                    strTests = null;
-                    strDrugs = null;
+
 
                     strHeight = edtInput_height.getText().toString().trim();
                     strbmi = edtInput_bmi.getText().toString().trim();
@@ -1171,85 +1237,43 @@ public class AddPatientUpdateFragment extends Fragment {
                             edtInput_temp.setError(null);
                         }
                     }
-                    showVitals.setVisibility(View.VISIBLE);
-                    if (strWeight != null && !strWeight.equals("") && strWeight.length()>0) {
-                        txtLabelWeight.setVisibility(View.VISIBLE);
-                        txtWeight.setVisibility(View.VISIBLE);
-                        txtWeight.setText(strWeight+ " Kgs");
-                    } else {
-                        txtLabelWeight.setVisibility(View.GONE);
-                        txtWeight.setVisibility(View.GONE);
+                    if (strWeight != null && !strWeight.equals("") && strWeight.length() > 0) {
+                        sbVitals.append("Weight: ").append(strWeight).append(" ;");
                     }
 
-                    if (strHeight != null && !strHeight.equals("") && strHeight.length()>0) {
-                        txtLabelHeight.setVisibility(View.VISIBLE);
-                        txtHeight.setVisibility(View.VISIBLE);
-                        txtHeight.setText(strHeight + " Cms");
-                    } else {
-                        txtLabelHeight.setVisibility(View.GONE);
-                        txtHeight.setVisibility(View.GONE);
+                    if (strHeight != null && !strHeight.equals("") && strHeight.length() > 0) {
+
+                        sbVitals.append("  ");
+                        sbVitals.append(" Height: ").append(strHeight).append(" ;");
                     }
 
-                    if (strbmi != null && !strbmi.equals("") && strbmi.length()>0) {
-                        txtLabelBmi.setVisibility(View.VISIBLE);
-                        txtBmi.setVisibility(View.VISIBLE);
-                        txtBmi.setText(strbmi + " Bmi");
-                    } else {
-                        txtLabelBmi.setVisibility(View.GONE);
-                        txtBmi.setVisibility(View.GONE);
+                    if (strbmi != null && !strbmi.equals("") && strbmi.length() > 0) {
+
+                        sbVitals.append("  ");
+                        sbVitals.append(" Bmi: ").append(strbmi).append(" ;");
                     }
 
-                    if (strPulse != null && !strPulse.equals("") && strPulse.length()>0) {
-                        txtLabelPulse.setVisibility(View.VISIBLE);
-                        txtPulse.setVisibility(View.VISIBLE);
-                        txtPulse.setText(strPulse + " bmp");
-                    } else {
-                        txtLabelPulse.setVisibility(View.GONE);
-                        txtPulse.setVisibility(View.GONE);
-                    }
-                    if (strBp != null && !strBp.equals("") && strBp.length()>0) {
-                        txtLabelSystole.setVisibility(View.VISIBLE);
-                        txtSystole.setVisibility(View.VISIBLE);
-                        txtSystole.setText(strBp + " mmhg");
-                    } else {
-                        txtLabelSystole.setVisibility(View.GONE);
-                        txtSystole.setVisibility(View.GONE);
-                    }
-                    if (strLowBp != null && !strLowBp.equals("") && strLowBp.length()>0) {
-                        txtLabelDistole.setVisibility(View.VISIBLE);
-                        txtDistole.setVisibility(View.VISIBLE);
-                        txtDistole.setText(strLowBp + " mmhg");
-                    } else {
-                        txtLabelDistole.setVisibility(View.GONE);
-                        txtDistole.setVisibility(View.GONE);
-                    }
-                    if (strTemp != null && !strTemp.equals("") && strTemp.length()>0) {
-                        txtLabelTemp.setVisibility(View.VISIBLE);
-                        txtTemp.setVisibility(View.VISIBLE);
-                        txtTemp.setText(strTemp + ""+ getResources().getString(R.string.degree));
-                    } else {
-                        txtLabelTemp.setVisibility(View.GONE);
-                        txtTemp.setVisibility(View.GONE);
-                    }
+                    if (strPulse != null && !strPulse.equals("") && strPulse.length() > 0) {
 
-
-                    if (strSugar != null && !strSugar.equals("") && strSugar.length()>0) {
-                        txtLabelSugarpp.setVisibility(View.VISIBLE);
-                        txtSugarPp.setVisibility(View.VISIBLE);
-                        txtSugarPp.setText(strSugar +" mg/dl");
-                    } else {
-                        txtLabelSugarpp.setVisibility(View.GONE);
-                        txtSugarPp.setVisibility(View.GONE);
+                        sbVitals.append("  ");
+                        sbVitals.append(" Pulse: ").append(strPulse).append(" ;");
                     }
-                    if (strSugarFasting != null && !strSugarFasting.equals("") && strSugarFasting.length()>0) {
-                        txtLabelSugarFast.setVisibility(View.VISIBLE);
-                        txtSugarFast.setVisibility(View.VISIBLE);
-                        txtSugarFast.setText(strSugarFasting+" mg/dl");
-                    } else {
-                        txtLabelSugarFast.setVisibility(View.GONE);
-                        txtSugarFast.setVisibility(View.GONE);
-                    }
+                    if (strBp != null && !strBp.equals("") && strBp.length() > 0) {
 
+                        sbVitals.append("  ");
+                        sbVitals.append(" Systole: ").append(strBp).append(" ;");
+                    }
+                    if (strLowBp != null && !strLowBp.equals("") && strLowBp.length() > 0) {
+
+                        sbVitals.append("  ");
+                        sbVitals.append(" Diastole: ").append(strLowBp).append(" ;");
+                    }
+                    if (strTemp != null && !strTemp.equals("") && strTemp.length() > 0) {
+
+                        sbVitals.append("  ");
+                        sbVitals.append(" Temp: ").append(strTemp).append(" ;");
+                    }
+                    showVitalsData.setText(sbVitals);
                     dialog.dismiss();
                 }
             });
@@ -1277,7 +1301,7 @@ public class AddPatientUpdateFragment extends Fragment {
 
     private void saveDataToDataBase() {
 
-        String ailments = null;
+
         String clinical_note = clinicalNotes.getText().toString().trim();
         //String follow_up_dates = follow_up_date.getText().toString().trim();
         String follow_up_dates = null;
@@ -1345,13 +1369,14 @@ public class AddPatientUpdateFragment extends Fragment {
         String action = "added";
         String record_source = "Add Patient Update";
 
-        dbController.addPatientNextVisitRecord(visit_id, strPatientId, userSellectedDate, follow_up_dates, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
-                strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo, record_source);
+        dbController.addPatientNextVisitRecord(visit_id, strPatientId, userSellectedDate, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
+                strWeight, strPulse, strBp, strLowBp, strTemp, strSymptoms, strDignosis, strHeight, strbmi, strReferedBy, strReferedTo,strPatientFollowUpStatus, record_source);
 
         Toast.makeText(getContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
         //Redirect to navigation Activity
         goToNavigation();
     }
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -1375,30 +1400,11 @@ public class AddPatientUpdateFragment extends Fragment {
         edtInput_bp = null;
         edtLowBp = null;
         edtInput_temp = null;
-        edtInput_sugar = null;
-        edtInput_sugarfasting = null;
         edtInput_bmi = null;
         edtInput_height = null;
         txtReferredTo = null;
         txtReferredBy = null;
-        txtLabelWeight = null;
-        txtWeight = null;
-        txtLabelHeight = null;
-        txtHeight = null;
-        txtLabelBmi = null;
-        txtBmi = null;
-        txtLabelPulse = null;
-        txtPulse = null;
-        txtLabelSystole = null;
-        txtSystole = null;
-        txtLabelTemp = null;
-        txtTemp = null;
-        txtLabelDistole = null;
-        txtDistole = null;
-        txtLabelSugarpp = null;
-        txtSugarPp = null;
-        txtLabelSugarFast = null;
-        txtSugarFast = null;
+
         visitDate = null;
         edtprescriptionImgPath = null;
         addPatientprescriptionBtn = null;
@@ -1417,19 +1423,15 @@ public class AddPatientUpdateFragment extends Fragment {
         daysSel = null;
         fowSel = null;
         monthSel = null;
-        userSellectedDate=null;
+        userSellectedDate = null;
         strWeight = null;
         strPulse = null;
         strBp = null;
         strLowBp = null;
         strTemp = null;
-        strSugar = null;
         strSugarFasting = null;
         strHeight = null;
-
         showReferrals = null;
-        showVitals = null;
-
         textRefredByShow = null;
         textRefredToShow = null;
         strReferredByName = null;
@@ -1441,26 +1443,215 @@ public class AddPatientUpdateFragment extends Fragment {
 
         strReferedTo = null;
         strReferedBy = null;
-        NameData=null;
-        mDiagnosisList=null;
-        mSymptomsList=null;
-        value=null;
-        sdf1=null;
-        imageIntent=null;
-        uriSavedImage=null;
-        imagesFolder=null;
-        doctor_membership_number=null;
-        docId=null;
-        PrescriptionimageName=null;
-        prescriptionImgPath=null;
+        NameData = null;
+        mDiagnosisList = null;
+        mSymptomsList = null;
+        value = null;
+        sdf1 = null;
+        imageIntent = null;
+        uriSavedImage = null;
+        imagesFolder = null;
+        doctor_membership_number = null;
+        docId = null;
+        PrescriptionimageName = null;
+        prescriptionImgPath = null;
 
-        addedTime=null;
-        addedOnDate=null;
-        specialityArray=null;
+        addedTime = null;
+        addedOnDate = null;
+        specialityArray = null;
     }
-public void getViewPager(ViewPager viewPager){
-    this.viewPager=viewPager;
-   // Log.e("viewPager",""+viewPager);
 
-}
+    public void getViewPager(ViewPager viewPager) {
+        this.viewPager = viewPager;
+        // Log.e("viewPager",""+viewPager);
+
+    }
+
+    private void showInvestigationDialog() {
+
+        final Dialog dialog;
+
+        dialog = new Dialog(getContext());
+        LayoutInflater factory = LayoutInflater.from(getContext());
+
+        final View f = factory.inflate(R.layout.investigation_dialog, null);
+        dialog.setTitle(" Add Investigation ");
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(f);
+
+
+        Button cancel = (Button) f.findViewById(R.id.customDialogCancel);
+        Button ok = (Button) f.findViewById(R.id.customDialogOk);
+        final EditText input_hba1c = (EditText) f.findViewById(R.id.input_hba1c);
+        final EditText input_acer = (EditText) f.findViewById(R.id.input_acer);
+        final EditText input_seremUrea = (EditText) f.findViewById(R.id.input_seremUrea);
+        final EditText input_LipidHDL = (EditText) f.findViewById(R.id.input_LipidHDL);
+        final EditText input_LipidTC = (EditText) f.findViewById(R.id.input_LipidTC);
+        final EditText input_LipidTG = (EditText) f.findViewById(R.id.input_LipidTG);
+        final EditText input_LipidLDL = (EditText) f.findViewById(R.id.input_LipidLDL);
+        final EditText input_LipidVHDL = (EditText) f.findViewById(R.id.input_LipidVHDL);
+        final EditText edtInput_sugar = (EditText) f.findViewById(R.id.input_sugar);
+        final EditText edtInput_sugarfasting = (EditText) f.findViewById(R.id.input_sugarfasting);
+
+        RadioGroup radioEcg = (RadioGroup) f.findViewById(R.id.radioEcg);
+        RadioGroup radioPft = (RadioGroup) f.findViewById(R.id.radioPft);
+
+        sbInvestigations.setLength(0);//clearing string builder from previous data
+
+
+        if (strLipidTC != null) {
+            input_LipidTC.setText(strLipidTC);
+        }
+        if (strLipidTG != null && !strLipidTG.equals("")) input_LipidTG.setText(strLipidTG);
+        if (strLipidLDL != null && !strLipidLDL.equals("")) input_LipidLDL.setText(strLipidLDL);
+        if (strLipidVHDL != null && !strLipidVHDL.equals("")) input_LipidVHDL.setText(strLipidVHDL);
+        if (strLipidHDL != null && !strLipidHDL.equals("")) input_LipidHDL.setText(strLipidHDL);
+        if (strSgar != null && !strSgar.equals("")) edtInput_sugar.setText(strSgar);
+        if (strSugarFasting != null && !strSugarFasting.equals(""))
+            edtInput_sugarfasting.setText(strSugarFasting);
+        if (strHbA1c != null && !strHbA1c.equals("")) input_hba1c.setText(strHbA1c);
+        if (strSerumUrea != null && !strSerumUrea.equals("")) input_seremUrea.setText(strSerumUrea);
+        if (strAcer != null && !strAcer.equals("")) input_acer.setText(strAcer);
+
+
+        if (strEcg != null && !strEcg.equals(""))
+            switch (strEcg) {
+                case "Normal":
+                    radioEcg.check(R.id.radioEcgNormal);
+                    break;
+                case "Abnormal":
+                    radioEcg.check(R.id.radioEcgAbnormal);
+                    break;
+
+            }
+        if (strPft != null && !strPft.equals(""))
+            switch (strPft) {
+                case "Normal":
+                    radioPft.check(R.id.radioPftNormal);
+                    break;
+                case "Abnormal":
+                    radioPft.check(R.id.radioPftAbnormal);
+                    break;
+            }
+        strEcg = "Normal";
+        radioEcg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+
+                    case R.id.radioEcgNormal:
+                        strEcg = "Normal";
+                        break;
+
+                    case R.id.radioEcgAbnormal:
+                        strEcg = "Abnormal";
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        strPft = "Normal";
+        radioPft.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+
+                    case R.id.radioPftNormal:
+                        strPft = "Normal";
+                        break;
+
+                    case R.id.radioPftAbnormal:
+                        strPft = "Abnormal";
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+
+
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                strLipidTC = input_LipidTC.getText().toString();
+                strLipidTG = input_LipidTG.getText().toString();
+                strLipidLDL = input_LipidLDL.getText().toString();
+                strLipidVHDL = input_LipidVHDL.getText().toString();
+                strLipidHDL = input_LipidHDL.getText().toString();
+                strSugarFasting = edtInput_sugarfasting.getText().toString();
+                strSgar = edtInput_sugar.getText().toString();
+                strHbA1c = input_hba1c.getText().toString();
+                strSerumUrea = input_seremUrea.getText().toString();
+                strAcer = input_acer.getText().toString();
+                String flag = "0";
+
+                if (strSgar != null && !strSgar.equals("") && strSgar.length() > 0) {
+                    sbInvestigations.append("Sugar(PPG):").append(strSgar).append(" ;");
+
+                }
+                if (strSugarFasting != null && !strSugarFasting.equals("") && strSugarFasting.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" Sugar(FPG):").append(strSgar).append(" ;");
+                }
+                if (strEcg != null && !strEcg.equals("") && strEcg.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" ECG:").append(strEcg).append(" ;");
+                }
+                if (strPft != null && !strPft.equals("") && strPft.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" PFT:").append(strPft).append(" ;");
+                }
+                if (strHbA1c != null && !strHbA1c.equals("") && strHbA1c.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" HbA1c:").append(strHbA1c).append(" ;");
+                }
+                if (strAcer != null && !strAcer.equals("") && strAcer.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" Acer:").append(strAcer).append(" ;");
+                }
+                if (strSerumUrea != null && !strSerumUrea.equals("") && strSerumUrea.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" SerumUrea:").append(strSerumUrea).append(" ;");
+                }
+                if (strLipidHDL != null && !strLipidHDL.equals("") && strLipidHDL.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" LipidHDL:").append(strLipidHDL).append(" ;");
+                }
+                if (strLipidTC != null && !strLipidTC.equals("") && strLipidTC.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" LipidTC:").append(strLipidTC).append(" ;");
+                }
+                if (strLipidTG != null && !strLipidTG.equals("") && strLipidTG.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" LipidTG:").append(strLipidTG).append(" ;");
+                }
+                if (strLipidLDL != null && !strLipidLDL.equals("") && strLipidLDL.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" LipidLDL:").append(strLipidLDL).append(" ;");
+                }
+                if (strLipidVHDL != null && !strLipidVHDL.equals("") && strLipidVHDL.length() > 0) {
+                    sbInvestigations.append("  ");
+                    sbInvestigations.append(" LipidVHDL:").append(strLipidVHDL).append(" ;");
+                }
+
+                dbController.addInvestigation(strPatientId, strVisitId, strSgar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC
+                        , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft, flag);
+
+                showInvestigationData.setText(sbInvestigations);
+                dialog.dismiss();
+            }
+        });
+        dialog.show();
+
+    }
+
 }

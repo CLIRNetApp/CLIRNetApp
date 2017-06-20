@@ -1,22 +1,28 @@
 apply plugin: 'com.android.application'
 
 android {
+    signingConfigs {
+        config {
+            keyAlias 'clirnet'
+            keyPassword 'clirnet'
+            storeFile file('C:/Users/CLIRNET1/clirnetappkey.jks')
+            storePassword 'clirnet'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
     android {
         useLibrary 'org.apache.http.legacy'
     }
-
-
     defaultConfig {
         applicationId "app.clirnet.com.clirnetapp"
         minSdkVersion 15
         targetSdkVersion 25
         multiDexEnabled true
-        versionCode 8
-        versionName "1.3.1.10"
+        versionCode 9
+        versionName "1.3.1.13"
+        signingConfig signingConfigs.config
     }
-
     lintOptions {
         abortOnError false
     }
@@ -27,6 +33,10 @@ android {
             zipAlignEnabled true
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            debuggable true
         }
     }
     packagingOptions {
@@ -41,18 +51,19 @@ android {
         exclude 'META-INF/dependencies.txt'
         exclude 'META-INF/LGPL2.1'
     }
+    productFlavors {
+    }
 }
 repositories {
     maven { url "https://jitpack.io" }
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile group: 'org.apache.httpcomponents', name: 'httpclient-android', version: '4.3.5.1'
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile('org.apache.httpcomponents:httpmime:4.3') {
         exclude module: "httpclient"
     }
-
+    compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
     compile 'com.google.firebase:firebase-core:9.8.0'
     compile 'com.google.firebase:firebase-messaging:9.8.0'
     compile 'com.google.android.gms:play-services-auth:9.8.0'
@@ -71,5 +82,6 @@ dependencies {
     compile 'com.github.delight-im:Android-AdvancedWebView:v3.0.0'
     compile 'com.android.support:support-v4:25.0.1'
     compile 'com.jakewharton:butterknife:6.1.0'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 }
 apply plugin: 'com.google.gms.google-services'

@@ -11,7 +11,7 @@
     <uses-permission android:name="android.hardware.camera" />
     <uses-permission android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.READ_LOGS" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 
     <application
         android:name=".app.AppController"
@@ -144,6 +144,14 @@
 
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
 
+        <activity
+            android:name=".activity.NewEditPersonalInfo"
+            android:label="@string/title_activity_new_edit_personal_info"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".quickAdd.NewEditIncompleteRecordsActivity"
+            android:label="@string/title_activity_new_edit_incomplete_records"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

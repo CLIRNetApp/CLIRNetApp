@@ -119,17 +119,9 @@ public class LoginActivity extends Activity {
 
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
-
         }
-        //inputEmail = (EditText) findViewById(R.id.email);
-        //inputPassword = (EditText) findViewById(R.id.password);
-        // btnLogin = (Button) findViewById(R.id.btnLogin);
-
         TextView btnLinkToForgetScreen = (TextView) findViewById(R.id.btnLinkToForgetScreen);
-        //  TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
-        // TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
 
-        // DatabaseClass databaseClass = DatabaseClass.getInstance(getApplicationContext());
         DatabaseClass databaseClass = new DatabaseClass(getApplicationContext());
         bannerClass = new BannerClass(getApplicationContext());
         LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
@@ -139,7 +131,7 @@ public class LoginActivity extends Activity {
             md5 = new MD5();
         }
 
-        //this will set value to run asynctask only once per login session
+        //this will set value to run  asynctask only once per login session
 
         new CallAsynOnce().setValue("1");//this set value which helps to call asyntask only once while app is running.
 
@@ -306,7 +298,7 @@ public class LoginActivity extends Activity {
             SQLiteDatabase db = null;
             try {
                 db = sInstance.getWritableDatabase();
-                db.execSQL("insert into table_investigation(key_visit_id,sugar,sugar_fasting) select key_visit_id , sugar, sugar_fasting from patient_history;");
+                db.execSQL("insert into table_investigation(patient_id,key_visit_id,sugar,sugar_fasting) select patient_id, key_visit_id , sugar, sugar_fasting from patient_history;");
 
                 /*Updating flag to true so wont run 2nd time */ //20-05-2017
 
@@ -841,6 +833,8 @@ public class LoginActivity extends Activity {
                 String Specialitycount = sInstance.getTableCount("Speciality");
                 String symptomscount = sInstance.getTableCount("Symptoms");
                 String last_name_masterCount = sInstance.getTableCount("last_name_master");
+                String occupationCount = sInstance.getTableCount("occupation");
+
                 // Log.e("symptomscount"," "+symptomscount + " "+Diagnosiscount + " "+Specialitycount +" "+last_name_masterCount);
 
                 if (symptomscount.equals("0")) {
@@ -854,6 +848,9 @@ public class LoginActivity extends Activity {
                 }
                 if (last_name_masterCount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("last_name_master.sql"));
+                }
+                if (occupationCount.equals("0")) {
+                    bannerClass.insertFromFile(getAssets().open("occupation.sql"));
                 }
 
             } catch (IOException | ClirNetAppException e) {

@@ -41,14 +41,12 @@ public class SQLController {
         return this;
 
     }
-
     public void close() {
 
         if (dbHelper != null) {
             dbHelper.close();
             database.close();
         }
-
     }
 
     //method to fetch user name and password
@@ -91,7 +89,7 @@ public class SQLController {
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,p.uid,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,ph.refered_by,ph.refered_to,p.email  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' and ph.added_on = '" + date + "' or ph.modified_on='" + date + "' order by ph.key_visit_id desc";
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,p.uid,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,ph.refered_by,ph.refered_to,p.email,ph.follow_up_status  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' and ph.added_on = '" + date + "' or ph.modified_on='" + date + "' order by ph.key_visit_id desc";
 
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
@@ -104,7 +102,7 @@ public class SQLController {
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
                             cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41),
-                            cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47));
+                            cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47),cursor.getString(48));
 
                     hotelList.add(user);
 
@@ -142,7 +140,6 @@ public class SQLController {
 
             if (cursor.moveToFirst()) {
                 do {
-
                     RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
                             cursor.getString(7), cursor.getString(8),
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
@@ -267,38 +264,35 @@ public class SQLController {
 
     //used to fileter data from Patient history module
     public ArrayList<RegistrationModel> getFilterDatanew(String fname, String lname, String phoneno, ArrayList sex, ArrayList ageGap, ArrayList ailment, int page, int limit, Integer weightMinValue, Integer weightMaxValue, Integer heightMinValue, Integer heightMaxValue, Integer bmiMinValue, Integer bmiMaxValue, Integer pulseMinValue, Integer pulseMaxValue, Integer tempMinValue, Integer tempMaxValue, Integer systoleMinValue, Integer systoleMaxValue,
-                                                         Integer distoleMinValue, Integer distoleMaxValue, Integer sugarFpgMinValue, Integer sugarFpgMaxValue, Integer sugarPpgMinValue, Integer sugarPpgMaxValue) throws ClirNetAppException {
+            Integer distoleMinValue, Integer distoleMaxValue, Integer sugarFpgMinValue, Integer sugarFpgMaxValue, Integer sugarPpgMinValue, Integer sugarPpgMaxValue,String strLipidTC,String strLipidTCMax,String strLipidTG,String strLipidTGMax,String strLipidLDL,String strLipidLDLMax,String strLipidVHDL,String strLipidVHDLMax,String strLipidHDL,String strLipidHDLMax,String strHbA1c,String strHbA1cMax,String strSerumUrea,String strSerumUreaMax,String strAcer,String strAcerMax,String strEcg,String strPft,String strSmoking,String noOfSticksPerYear,String strLeftSmokingSinceYear,String strAlcoholConsumption,String noOfPegsPerYear,String strLeftAlcoholSinceYear,String strTobaco,String otherTobacoTaking,String strDrug,String otherDrugTaking,String strFoodHabit,String strFoodPreference,String strBingeEating,String strLactoseTolerance,String strLifeStyle,String strSleepStatus,String strStressLevel,String strSexuallyActive,String strExcercise,String strAllergie) throws ClirNetAppException {
 
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
 
         Set<RegistrationModel> pList1 = new LinkedHashSet<>();
         try {
-            open();
-            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,p.alternate_no,p.alternate_phone_type,p.phone_type,ph.visit_date,p.email,p.uid  from patient p,patient_history ph   where p.patient_id=ph.patient_id";//and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
+            //open();
+            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,p.alternate_no,p.alternate_phone_type,p.phone_type,ph.visit_date,p.email,p.uid  from  patient p  LEFT JOIN patient_history ph ON p.patient_id = ph.patient_id LEFT JOIN table_investigation ti ON ph.key_visit_id = ti.key_visit_id LEFT JOIN health_and_lifestyle hl ON p.patient_id = hl.patient_id  where p.patient_id=ph.patient_id";//and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
 
             // String countQuery = "select  COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id ";
 
                      /*Selecting count of query for the pagination filter*/
-            String countQuery = "select count(distinct(p.patient_id)) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id ";
+         //   String countQuery = "select count(distinct(p.patient_id)) as count from patient p  LEFT JOIN patient_history ph ON p.patient_id = ph.patient_id LEFT JOIN table_investigation ti where ph.key_visit_id = ti.key_visit_id";
+              String countQuery="select count(distinct(p.patient_id)) as count from patient p LEFT JOIN patient_history ph ON p.patient_id = ph.patient_id LEFT JOIN table_investigation ti ON ph.key_visit_id = ti.key_visit_id  LEFT JOIN health_and_lifestyle hl ON p.patient_id = hl.patient_id where p.patient_id=ph.patient_id";
 
-
-            if (fname != null) {
+            if (fname != null && !fname.equals("")){
                 selectQuery = selectQuery.concat(" and p.first_name like '%" + fname + "%'");
                 countQuery = countQuery.concat(" and p.first_name like '%" + fname + "%'");
             }
-
-            if (lname != null) {
+            if (lname != null && !lname.equals("")) {
                 selectQuery = selectQuery.concat(" and p.last_name like '%" + lname + "%'");
                 countQuery = countQuery.concat(" and p.last_name like '%" + lname + "%'");
             }
-
             if (sex.size() > 0) {
                 for (int i = 0; i < sex.size(); i++) {
                     if (i != 0) {
                         selectQuery = selectQuery.concat(" OR p.gender = '" + sex.get(i) + "'");
                         countQuery = countQuery.concat(" OR p.gender = '" + sex.get(i) + "'");
-
                     } else {
                         selectQuery = selectQuery.concat("  AND ( p.gender = '" + sex.get(i) + "'");
                         countQuery = countQuery.concat("  AND ( p.gender = '" + sex.get(i) + "'");
@@ -390,14 +384,172 @@ public class SQLController {
             }
 
             if (sugarFpgMinValue != null && sugarFpgMaxValue != null) {
-                selectQuery = selectQuery.concat(" AND cast(ph.sugar as INTEGER) BETWEEN " + sugarFpgMinValue + " and " + sugarFpgMaxValue + " ");
-                countQuery = countQuery.concat(" AND cast(ph.sugar as INTEGER) BETWEEN " + sugarFpgMinValue + " and " + sugarFpgMaxValue + " ");
+                selectQuery = selectQuery.concat(" AND cast(ti.sugar_fasting as INTEGER) BETWEEN " + sugarFpgMinValue + " and " + sugarFpgMaxValue + " ");
+                countQuery = countQuery.concat(" AND cast(ti.sugar_fasting  as INTEGER) BETWEEN " + sugarFpgMinValue + " and " + sugarFpgMaxValue + " ");
             }
             if (sugarPpgMinValue != null && sugarPpgMaxValue != null) {
-                selectQuery = selectQuery.concat(" AND cast(ph.sugar as INTEGER) BETWEEN " + sugarPpgMinValue + " and " + sugarPpgMaxValue + " ");
-                countQuery = countQuery.concat(" AND cast(ph.sugar as INTEGER) BETWEEN " + sugarPpgMinValue + " and " + sugarPpgMaxValue + " ");
+                selectQuery = selectQuery.concat(" AND cast(ti.sugar as INTEGER) BETWEEN " + sugarPpgMinValue + " and " + sugarPpgMaxValue + " ");
+                countQuery = countQuery.concat(" AND cast(ti.sugar as INTEGER) BETWEEN " + sugarPpgMinValue + " and " + sugarPpgMaxValue + " ");
+            }
+            if (strLipidTC != null && !strLipidTC.equals("")) {
+                selectQuery = selectQuery.concat(" AND cast(ti.lipid_profile_tc as INTEGER) BETWEEN " + strLipidTC + " and " + strLipidTCMax + " ");
+                countQuery = countQuery.concat(" AND cast(ti.lipid_profile_tc as INTEGER) BETWEEN " + strLipidTC + " and " + strLipidTCMax + " ");
+                /*selectQuery = selectQuery.concat(" and ti.lipid_profile_tc like '%" + strLipidTC + "%'");
+                countQuery = countQuery.concat(" and ti.lipid_profile_tc like '%" + strLipidTC + "%'");*/
+            }
+            if (strLipidTG != null && !strLipidTG.equals("")) {
+                selectQuery = selectQuery.concat(" AND cast(ti.lipid_profile_tg as INTEGER) BETWEEN " + strLipidTG + " and " + strLipidTGMax + " ");
+                countQuery = countQuery.concat(" AND cast(ti.lipid_profile_tg as INTEGER) BETWEEN " + strLipidTG + " and " + strLipidTGMax + " ");
+               /* selectQuery = selectQuery.concat(" and ti.lipid_profile_tg like '%" + strLipidTG + "%'");
+                countQuery = countQuery.concat(" and ti.lipid_profile_tg like '%" + strLipidTG + "%'");*/
+            }
+            if (strLipidLDL != null && !strLipidLDL.equals("")) {
+                selectQuery = selectQuery.concat(" AND cast(ti.lipid_profile_ldl as INTEGER) BETWEEN " + strLipidLDL + " and " + strLipidLDLMax + " ");
+                countQuery = countQuery.concat(" AND cast(ti.lipid_profile_ldl as INTEGER) BETWEEN " + strLipidLDL + " and " + strLipidLDLMax + " ");
+               /* selectQuery = selectQuery.concat(" and ti.lipid_profile_ldl like '%" + strLipidLDL + "%'");
+                countQuery = countQuery.concat(" and ti.lipid_profile_ldl like '%" + strLipidLDL + "%'");*/
+            }
+            if (strLipidVHDL != null && !strLipidVHDL.equals("")) {
+
+                selectQuery = selectQuery.concat(" AND cast(ti.lipid_profile_vhdl as INTEGER) BETWEEN " + strLipidVHDL + " and " + strLipidVHDLMax + " ");
+                countQuery = countQuery.concat(" AND cast(ti.lipid_profile_vhdl as INTEGER) BETWEEN " + strLipidVHDL + " and " + strLipidVHDLMax + " ");
+               /* selectQuery = selectQuery.concat(" and ti.lipid_profile_vhdl like '%" + strLipidVHDL + "%'");
+                countQuery = countQuery.concat(" and ti.lipid_profile_vhdl like '%" + strLipidVHDL + "%'");*/
+            }
+            if (strLipidHDL != null && !strLipidHDL.equals("")) {
+                selectQuery = selectQuery.concat(" AND cast(ti.lipid_profile_hdl as INTEGER) BETWEEN " + strLipidHDL + " and " + strLipidHDLMax + " ");
+                countQuery = countQuery.concat(" AND cast(ti.lipid_profile_hdl as INTEGER) BETWEEN " + strLipidHDL + " and " + strLipidHDLMax + " ");
+                /*selectQuery = selectQuery.concat(" and ti.lipid_profile_hdl like '%" + strLipidHDL + "%'");
+                countQuery = countQuery.concat(" and ti.lipid_profile_hdl like '%" + strLipidHDL + "%'");*/
+            }
+            if (strHbA1c != null  && !strHbA1c.equals("")) {
+                selectQuery = selectQuery.concat(" AND cast(ti.hba1c as INTEGER) BETWEEN " + strHbA1c + " and " + strHbA1cMax + " ");
+                countQuery = countQuery.concat(" AND cast(ti.hba1c as INTEGER) BETWEEN " + strHbA1c + " and " + strHbA1cMax + " ");
+                /*selectQuery = selectQuery.concat(" and ti.hba1c like '%" + strHbA1c + "%'");
+                countQuery = countQuery.concat(" and ti.hba1c like '%" + strHbA1c + "%'");*/
+            }
+            if (strSerumUrea != null && !strSerumUrea.equals("")) {
+                selectQuery = selectQuery.concat(" AND cast(ti.serem_urea as INTEGER) BETWEEN " + strSerumUrea + " and " + strSerumUreaMax + " ");
+                countQuery = countQuery.concat(" AND cast(ti.serem_urea as INTEGER) BETWEEN " + strSerumUrea + " and " + strSerumUreaMax + " ");
+                /*selectQuery = selectQuery.concat(" and ti.serem_urea like '%" + strSerumUrea + "%'");
+                countQuery = countQuery.concat(" and ti.serem_urea like '%" + strSerumUrea + "%'");*/
+            }
+            if (strAcer != null && !strAcer.equals("")) {
+                selectQuery = selectQuery.concat(" AND cast(ti.acer as INTEGER) BETWEEN " + strAcer + " and " + strAcerMax + " ");
+                countQuery = countQuery.concat(" AND cast(ti.acer as INTEGER) BETWEEN " + strAcer + " and " + strAcerMax + " ");
+                /*selectQuery = selectQuery.concat(" and ti.acer like '%" + strAcer + "%'");
+                countQuery = countQuery.concat(" and ti.acer like '%" + strAcer + "%'");*/
+            }
+            if (strEcg != null && !strEcg.equals("")) {
+                selectQuery = selectQuery.concat(" and ti.ecg like '%" + strEcg + "%'");
+                countQuery = countQuery.concat(" and ti.ecg like '%" + strEcg + "%'");
+            }
+            if (strPft != null && !strPft.equals("")) {
+                selectQuery = selectQuery.concat(" and ti.pft like '%" + strPft + "%'");
+                countQuery = countQuery.concat(" and ti.pft like '%" + strPft + "%'");
             }
 
+            // filter from  health table
+            if (strSmoking != null && !strSmoking.equals("")) {
+               //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.smoker_type = '" + strSmoking + "'");
+                countQuery = countQuery.concat("  and hl.smoker_type = '" + strSmoking + "'");
+            }
+            if (noOfSticksPerYear != null && !noOfSticksPerYear.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.stick_count = '" + noOfSticksPerYear + "'");
+                countQuery = countQuery.concat("  and hl.stick_count = '" + noOfSticksPerYear + "'");
+            }
+            if (strLeftSmokingSinceYear != null && !strLeftSmokingSinceYear.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.last_smoke_year = '" + strLeftSmokingSinceYear + "'");
+                countQuery = countQuery.concat("  and hl.last_smoke_year = '" + strLeftSmokingSinceYear + "'");
+            }
+            if (strAlcoholConsumption != null && !strAlcoholConsumption.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.alcohol_consumption = '" + strAlcoholConsumption + "'");
+                countQuery = countQuery.concat("  and hl.alcohol_consumption = '" + strAlcoholConsumption + "'");
+            }
+            if (noOfPegsPerYear != null && !noOfPegsPerYear.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.pegs_count = '" + noOfPegsPerYear + "'");
+                countQuery = countQuery.concat("  and hl.pegs_count = '" + noOfPegsPerYear + "'");
+            }
+            if (strLeftAlcoholSinceYear != null && !strLeftAlcoholSinceYear.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.last_drink_year = '" + strLeftAlcoholSinceYear + "'");
+                countQuery = countQuery.concat("  and hl.last_drink_year = '" + strLeftAlcoholSinceYear + "'");
+            }
+            if (strTobaco != null && !strTobaco.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.chewing_tobaco = '" + strTobaco + "'");
+                countQuery = countQuery.concat("  and hl.chewing_tobaco = '" + strTobaco + "'");
+            }
+            if (otherTobacoTaking != null && !otherTobacoTaking.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.tobaco_other like '%" + otherTobacoTaking + "%'");
+                countQuery = countQuery.concat("  and hl.tobaco_other like '%" + otherTobacoTaking + "%'");
+            }
+            if (strDrug != null && !strDrug.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.drug_consumption = '" + strDrug + "'");
+                countQuery = countQuery.concat("  and hl.drug_consumption = '" + strDrug + "'");
+            }
+            if (otherDrugTaking != null && !otherDrugTaking.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.drug_consumption_type like '%" + otherDrugTaking + "%'");
+                countQuery = countQuery.concat("  and hl.drug_consumption_type like '%" + otherDrugTaking + "%'");
+            }
+            if (strFoodHabit != null && !strFoodHabit.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.food_habit = '" + strFoodHabit + "'");
+                countQuery = countQuery.concat("  and hl.food_habit = '" + strFoodHabit + "'");
+            }
+            if (strFoodPreference != null && !strFoodPreference.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.food_preference = '" + strFoodPreference + "'");
+                countQuery = countQuery.concat("  and hl.food_preference = '" + strFoodPreference + "'");
+            }
+            if (strBingeEating != null && !strBingeEating.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.binge_eating = '" + strBingeEating + "'");
+                countQuery = countQuery.concat("  and hl.binge_eating = '" + strBingeEating + "'");
+            }
+            if (strLactoseTolerance != null && !strLactoseTolerance.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.lactose_tolerance = '" + strLactoseTolerance + "'");
+                countQuery = countQuery.concat("  and hl.lactose_tolerance = '" + strLactoseTolerance + "'");
+            }
+            if (strLifeStyle != null && !strLifeStyle.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.life_style = '" + strLifeStyle + "'");
+                countQuery = countQuery.concat("  and hl.life_style = '" + strLifeStyle + "'");
+            }
+            if (strSleepStatus != null && !strSleepStatus.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.sleep_status = '" + strSleepStatus + "'");
+                countQuery = countQuery.concat("  and hl.sleep_status = '" + strSleepStatus + "'");
+            }
+            if (strStressLevel != null && !strStressLevel.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.stress_level = '" + strStressLevel + "'");
+                countQuery = countQuery.concat("  and hl.stress_level = '" + strStressLevel + "'");
+            }
+            if (strSexuallyActive != null && !strSexuallyActive.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.sexually_active = '" + strSexuallyActive + "'");
+                countQuery = countQuery.concat("  and hl.sexually_active = '" + strSexuallyActive + "'");
+            }
+            if (strExcercise != null && !strExcercise.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.excercise = '" + strExcercise + "'");
+                countQuery = countQuery.concat("  and hl.excercise = '" + strExcercise + "'");
+            }
+            if (strAllergie != null && !strAllergie.equals("")) {
+                //ph.actual_follow_up_date = '" + date + "'
+                selectQuery = selectQuery.concat(" and hl.allergies like '%" + strAllergie + "%'");
+                countQuery = countQuery.concat("  and hl.allergies like '%" + strAllergie +"%'");
+            }
             //count query here to get no of records fetch by query for pagination in page.
             countQuery = countQuery.concat("  and p.phonenumber like '%" + phoneno + "%' order by ph.key_visit_id desc ");
             //   String queryforCount=selectQuery.concat("  and p.phonenumber like '%" + phoneno + "%' order by ph.key_visit_id desc ");
@@ -406,8 +558,8 @@ public class SQLController {
 
             new Counts().setCountQuery(countQuery);
 
-           // Log.e("selectQuery", "" + selectQuery);
-           // Log.e("countQueryQuery", "" + countQuery);
+            Log.e("selectQuery", "" + selectQuery);
+            Log.e("countQueryQuery", "" + countQuery);
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
 
@@ -447,7 +599,7 @@ public class SQLController {
             if (countQuery != null && countQuery.length() > 10) {
 
                 numRows = (int) DatabaseUtils.longForQuery(db1, countQuery, null);
-                //   Log.d("count", "" + countQuery + "  " + numRows);
+             //   Log.d("count", "" + countQuery + "  " + numRows);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -496,7 +648,7 @@ public class SQLController {
                     " ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,\n" +
                     " p.uid,ph.drugs,p.alternate_no,ph.height,ph.bmi,\n" +
                     " sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,\n" +
-                    " ph.refered_by,ph.refered_to,p.email from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like '%" + number + "%' group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc limit " + page + " , " + limit + ";";
+                    " ph.refered_by,ph.refered_to,p.email,ph.follow_up_status from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like '%" + number + "%' group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc limit " + page + " , " + limit + ";";
 
             new Counts().setCountQueryforHomeFragmentNoFilter(countQuery);
 
@@ -513,7 +665,7 @@ public class SQLController {
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
                             cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38),
-                            cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47));
+                            cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47),cursor.getString(48));
 
                     hotelList.add(user);
 
@@ -563,7 +715,10 @@ public class SQLController {
         Cursor cursor = null;
         try {
 
-            String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,ph.symptoms,ph.diagnosis  from patient_history  ph , patient p where p.patient_id=" + patient_id + " and  p.patient_id=ph.patient_id order by ph.key_visit_id desc ";
+            //String selectQuery = "select  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,ph.symptoms,ph.diagnosis  from patient_history  ph , patient p where p.patient_id=" + patient_id + " and  p.patient_id=ph.patient_id order by ph.key_visit_id desc ";
+           String selectQuery="SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ti.sugar,ph.symptoms, ph.diagnosis,p.email,p.uid,p.alternate_no,ph.height,ph.bmi,ti.sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd ,ph.refered_by,ph.refered_to from patient p" +
+                   " LEFT JOIN patient_history ph ON p.patient_id = ph.patient_id LEFT JOIN table_investigation ti ON ph.key_visit_id = ti.key_visit_id where p.patient_id= " + patient_id + " order by ph.key_visit_id desc ";
+
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
 
@@ -601,13 +756,11 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {
-
-            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms, ph.diagnosis,p.email,p.uid,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd ,ph.refered_by,ph.refered_to from patient_history  ph, patient p where p.patient_id=" + patient_id + " and  p.patient_id=ph.patient_id order by ph.key_visit_id desc ";
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ti.sugar,ph.symptoms, ph.diagnosis,p.email," +
+                    "p.uid,p.alternate_no,ph.height,ph.bmi,ti.sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd ,ph.refered_by,ph.refered_to from  patient p  LEFT JOIN patient_history ph ON p.patient_id = ph.patient_id LEFT JOIN table_investigation ti ON ph.key_visit_id = ti.key_visit_id  where p.patient_id=" + patient_id + "  order by ph.key_visit_id desc ";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-
             // looping through all rows and adding to list
-
             if (cursor.moveToFirst()) {
                 do {
                     RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
@@ -705,7 +858,77 @@ public class SQLController {
         return VisitidList;
 
     }
+    //get all patients  visits data which is yet to send to server
+    public ArrayList<RegistrationModel> getPatientIdInvestigationFalg0() throws ClirNetAppException {
 
+        ArrayList<RegistrationModel> VisitidList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "select patient_id from table_investigation where flag = 0 ";
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    RegistrationModel ids = new RegistrationModel(cursor.getString(0));
+
+                    VisitidList.add(ids);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getPatientIdInvestigationFalg0");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return VisitidList;
+
+    }
+
+    //get all patients  visits data which is yet to send to server
+    public ArrayList<RegistrationModel> getPatientIdHealthAndLifestyleFalg0() throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> VisitidList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "select patient_id from health_and_lifestyle where flag = 0 ";
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    RegistrationModel ids = new RegistrationModel(cursor.getString(0));
+
+                    VisitidList.add(ids);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getPatientIdInvestigationFalg0");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return VisitidList;
+
+    }
     //get docot membership id from db
     public String getDoctorMembershipIdNew() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
@@ -2073,8 +2296,9 @@ public class SQLController {
     public ArrayList<HashMap<String, Integer>> getMinMaxVitals() throws ClirNetAppException {
         ArrayList<HashMap<String, Integer>> vitalsList;
         vitalsList = new ArrayList<>();
-        String selectQuery = "select min(cast(weight as INTEGER))  as minWeight,max(cast(weight as INTEGER))  as maxWeight,min(cast(height as INTEGER))  as minHeight, max(cast(height as INTEGER)) " +
-                "as maxHeight, ROUND(min(cast(bmi as FLOAT)))  as minBmi , ROUND(max(cast(bmi as FLOAT))) as maxBmi,min(cast(pulse as INTEGER))  as minPulse,max(cast(pulse as INTEGER))  as maxPulse,min(cast(temperature as integer))  as minTemp,max(cast(temperature as integer))  as maxTemp,min(cast(bp_low as integer))  as minSystole,max(cast(bp_low as integer))  as maxSystole,min(cast(bp_high as integer))  as minDistole,max(cast(bp_high as integer))  as maxDistole, min(cast(sugar as integer))  as minSugarFPG,max(cast(sugar as integer))  as maxSugarFPG, min(cast(sugar_fasting as integer))  as minSugarPPG,max(cast(sugar_fasting as integer))  as maxSugarPPG    from patient_history";
+        //String selectQuery = "select min(cast(ph.weight as INTEGER))  as minWeight,max(cast(ph.weight as INTEGER))  as maxWeight,min(cast(ph.height as INTEGER))  as minHeight, max(cast(ph.height as INTEGER)) as maxHeight, ROUND(min(cast(ph.bmi as FLOAT)))  as minBmi , ROUND(max(cast(bmi as FLOAT))) as maxBmi,min(cast(ph.pulse as INTEGER))  as minPulse,max(cast(ph.pulse as INTEGER))  as maxPulse,min(cast(temperature as integer))  as minTemp,max(cast(ph.temperature as integer))  as maxTemp,min(cast(bp_low as integer))  as minSystole,max(cast(ph.bp_low as integer))  as maxSystole,min(cast(bp_high as integer))  as minDistole,max(cast(ph.bp_high as integer))  as maxDistole, min(cast(ph.sugar_fasting as integer))  as minSugarFPG,max(cast(ph.sugar_fasting as integer))  as maxSugarFPG, min(cast(ph.sugar as integer))  as minSugarPPG,max(cast(ph.sugar as integer))as maxSugarPPG  from patient_history ph,table_investigation ti";
+
+        String selectQuery = "select min(cast(ph.weight as INTEGER))  as minWeight, max(cast(ph.weight as INTEGER))  as maxWeight,min(cast(ph.height as INTEGER))  as minHeight, max(cast(ph.height as INTEGER)) as maxHeight, ROUND(min(cast(ph.bmi as FLOAT)))  as minBmi , ROUND(max(cast(bmi as FLOAT))) as maxBmi,min(cast(ph.pulse as INTEGER))  as minPulse,max(cast(ph.pulse as INTEGER))  as maxPulse,min(cast(temperature as integer))  as minTemp,max(cast(ph.temperature as integer))  as maxTemp,min(cast(bp_low as integer))  as minSystole,max(cast(ph.bp_low as integer))  as maxSystole,min(cast(bp_high as integer))  as minDistole,max(cast(ph.bp_high as integer))  as maxDistole, min(cast(ti.sugar_fasting as integer))  as minSugarFPG,max(cast(ti.sugar_fasting as integer))  as maxSugarFPG, min(cast(ti.sugar as integer))  as minSugarPPG,max(cast(ti.sugar as integer))as maxSugarPPG  from patient_history ph LEFT JOIN table_investigation ti";
         SQLiteDatabase database = dbHelper.getWritableDatabase();
         Cursor cursor = null;
         try {
@@ -2085,7 +2309,7 @@ public class SQLController {
                     HashMap<String, Integer> map = new HashMap<>();
                     returnStringMin = cursor.getInt(cursor.getColumnIndex("minWeight"));
                     returnStringMax = cursor.getInt(cursor.getColumnIndex("maxWeight"));
-                    int returnStringMax1 = cursor.getInt(cursor.getColumnIndex("maxWeight"));
+                   int returnStringMax1 = cursor.getInt(cursor.getColumnIndex("maxWeight"));
                     Log.e("returnStringMax1", "  " + returnStringMin + "  " + returnStringMax1);
                     if (returnStringMin != null && !returnStringMin.equals("")) {
                         map.put("MINWEIGHT", returnStringMin);
@@ -2149,7 +2373,7 @@ public class SQLController {
                     Integer minDistole = cursor.getInt(cursor.getColumnIndex("minDistole"));
                     Integer maxDistole = cursor.getInt(cursor.getColumnIndex("maxDistole"));
 
-                    if (minDistole != null && !minDistole.equals("") && !maxDistole.equals("")) {
+                    if (minDistole.toString() != null && !minDistole.toString().equals("") && !maxDistole.toString().equals("")) {
                         map.put("MINDISTOLE", minDistole);
                         map.put("MAXDISTOLE", maxDistole);
                     } else {
@@ -2267,7 +2491,7 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {
-           String selectQuery="select ecg,sugar,sugar_fasting,acer,pft,hba1c,serem_urea,lipid_profile_tc,lipid_profile_tg,lipid_profile_ldl,lipid_profile_vhdl,lipid_profile_hdl  from table_investigation where key_visit_id =" + visit_id + ";";
+           String selectQuery="select ecg,sugar,sugar_fasting,acer,pft,hba1c,serem_urea,lipid_profile_tc,lipid_profile_tg,lipid_profile_ldl,lipid_profile_vhdl,lipid_profile_hdl  from table_investigation where key_visit_id =" + visit_id + " limit 1;";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
 
@@ -2295,7 +2519,73 @@ public class SQLController {
         return investigationList;
 
     }
+    public ArrayList<RegistrationModel> getHealthAndLifestyle(String patientId) throws ClirNetAppException {
 
+        ArrayList<RegistrationModel> investigationList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery="select alcohol_consumption,pegs_count,stress_level,smoker_type,stick_count,life_style,lactose_tolerance,food_preference,food_habit,excercise,chewing_tobaco,binge_eating,allergies,sexually_active,sticks_selected_gap,packs_selected_gap,tobaco_other,drug_consumption,drug_consumption_type,sleep_status,last_smoke_year,last_drink_year from health_and_lifestyle where patient_id = " + patientId + " order by  id desc limit 1;";
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+
+            if (cursor.moveToFirst()) {
+                do {
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                            cursor.getString(7), cursor.getString(8),
+                            cursor.getString(9), cursor.getString(10), cursor.getString(11),cursor.getString(12),cursor.getString(13),cursor.getString(14),cursor.getString(15),cursor.getString(16),cursor.getString(17),cursor.getString(18),cursor.getString(19),cursor.getString(20),cursor.getString(21));
+                    investigationList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getInvestigationDeatils");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return investigationList;
+
+    }
+    public HashMap<String, String> getReligionOccupation(String patientId ) throws ClirNetAppException {
+        HashMap<String, String> user = new HashMap<>();
+
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            String query = "select religion,occupation from patient where patient_id="+patientId+"";
+            db = dbHelper.getReadableDatabase();
+            cursor = db.rawQuery(query, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    user.put("religion", cursor.getString(0));
+                    user.put("occupation", cursor.getString(1));
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while geting getReligionOccupation");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        return user;
+    }
 }
 
 

@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -106,6 +107,7 @@ import butterknife.InjectView;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
+import static app.clirnet.com.clirnetapp.R.id.recycler_view;
 
 
 @SuppressWarnings("ConstantConditions")
@@ -115,7 +117,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private final String mailId = "support@clirnet.com";
 
     private SearchView searchView;
-    @InjectView(R.id.recycler_view) RecyclerView recyclerView;
+    @InjectView(recycler_view) RecyclerView recyclerView;
     @InjectView(R.id.todays_patient_updatetxt) TextView todays_patient_updatetxt;
     //private RecyclerView recyclerView;
     @InjectView(R.id.norecordtv) LinearLayout norecordtv;
@@ -173,6 +175,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private LinearLayout nameheader;
     private RVAdapter rvadapter;
     private String formatedDate;
+    private Parcelable mListViewState;
 
 
     public HomeFragment() {
@@ -394,7 +397,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             formatedDate = appController.ConvertDateFormat(sysdate.toString());
 
-            filteredModelList = sqlController1.getPatientList(formatedDate);
+            filteredModelList = sqlController1.getPatientList(formatedDate);//ie by todays date
 
             incompleteRecordList = sqlController1.getIncompleteRecordList(formatedDate);
 
@@ -555,7 +558,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         if (savedUserName != null && savedUserPassword != null) {
 
                           new GetBannerImageTask(getContext(), savedUserName, savedUserPassword, doctor_membership_number, company_id, new AppController().getDateTimenew()); //send log file to server
-
                         }
                         getPatientRecords(savedUserName, savedUserPassword, doctor_membership_number, docId);
                     }
@@ -607,6 +609,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     }
 
     private void afterDateEditPatientUpdate(int position) {
+
         RegistrationModel registrationModel = filteredModelList.get(position);
 
         Intent i = new Intent(getContext().getApplicationContext(), NewEditPatientUpdate.class);
@@ -659,6 +662,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("REFEREDTO", registrationModel.getReferedTo());
         i.putExtra("UID", registrationModel.getUid());
         i.putExtra("EMAIL", registrationModel.getEmail());
+        i.putExtra("FOLLOWUPSTATUS", registrationModel.getFollowUpStatus());
 
         startActivity(i);
 
@@ -917,6 +921,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("UID", registrationModel.getUid());
         i.putExtra("EMAIL", registrationModel.getEmail());
         i.putExtra("PHONETYPE", registrationModel.getPhone_type());
+        i.putExtra("FOLLOWUPSTATUS", registrationModel.getFollowUpStatus());
         startActivity(i);
     }
 
@@ -1708,12 +1713,18 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     @Override
     public void onPause() {
-        InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+        Log.e("DEBUG", "OnPause of HomeFragment");
 
-        inputMethodManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
-        getActivity().getWindow().setSoftInputMode(
-                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
-        );
+        try {
+            InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
+
+            inputMethodManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
+            getActivity().getWindow().setSoftInputMode(
+                    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+            );
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
         super.onPause();
     }
@@ -1721,25 +1732,34 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     @Override
     public void onResume() {
         super.onResume();
+        //Log.e("DEBUG", "onResume of HomeFragment");
+        filteredModelList=getData();
+        Log.e("DEBUG", "onResume of HomeFragment " +filteredModelList.size());
+        {
+          if  (filteredModelList.size() >0){
+              rvadapter = new RVAdapter(filteredModelList);
+              recyclerView.setAdapter(rvadapter);
+              rvadapter.notifyDataSetChanged();
+          }
+        }
 
         try {
-            if(filteredModelList.size()>0) {
+           /* if(filteredModelList.size()>0) {
                 filteredModelList.clear();
-            }
+            }*/
             if(sqlController!=null) {
 
-                filteredModelList = sqlController.getPatientList(formatedDate);
+               // filteredModelList = sqlController.getPatientList(formatedDate);
 
                 incompleteRecordList = sqlController.getIncompleteRecordList(formatedDate);
-                Log.e("SizeList", "" + incompleteRecordList.size());
 
-                if (filteredModelList.size() > 0) {
+                /*if (filteredModelList.size() > 0) {
                     //do nothing
                     norecordtv.setVisibility(View.GONE);
                     rvadapter = new RVAdapter(filteredModelList);
                     recyclerView.setAdapter(rvadapter);
                     rvadapter.notifyDataSetChanged();
-                }
+                }*/
                 View view1 = null;
                 if (incompleteRecordList.size() > 0) {
                     incompletedisplay_tv = (TextView) view.findViewById(R.id.incompletedisplay_tv);
@@ -1768,7 +1788,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         }catch (Exception e){
             e.printStackTrace();
         }
-        //rvadapter.notifyDataSetChanged();
         // Tracking the screen view
         AppController.getInstance().trackScreenView("Home Fragment");
     }
@@ -1968,5 +1987,12 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         serviceIntent.putExtra("password", savedUserName);
         serviceIntent.putExtra("apikey", apiKey);
         getContext().startService(serviceIntent);
+    }
+    public void setData(ArrayList<RegistrationModel> data) {
+        this.filteredModelList = data;
+    }
+
+    public List<RegistrationModel> getData() {
+        return filteredModelList;
     }
 }

@@ -531,7 +531,7 @@ public class AppController extends Application {
         } else {
             productImage.setImageResource(R.drawable.brand);
         }
-        if (banner_type!=null && banner_type.equals("product")) {
+        if (banner_type != null && banner_type.equals("product")) {
             dialog.setTitle("Product Details");
             mktByText.setVisibility(View.VISIBLE);
             brand_nameText.setVisibility(View.VISIBLE);
@@ -1157,7 +1157,8 @@ public class AppController extends Application {
         }
         return null;
     }
-/*Method to get/display banner image*/
+
+    /*Method to get/display banner image*/
     public void setUpAdd(final Context context, ArrayList<String> bannerimgNamesList, ImageView backChangingImages, final String doctor_membership_number, final String pageTitle) {
         final String url;
         try {
@@ -1198,7 +1199,8 @@ public class AppController extends Application {
         }
 
     }
-    public void setSpinnerPosition(Spinner spinner, String[] some_array, String value ){
+
+    public void setSpinnerPosition(Spinner spinner, String[] some_array, String value) {
         ArrayList<String> _stateList = new ArrayList<>();
         Collections.addAll(_stateList, some_array);
         if (value != null) {
@@ -1207,7 +1209,7 @@ public class AppController extends Application {
         }
     }
 
-    private int getCategoryPos(ArrayList<String> _categories, String category) {
+    public int getCategoryPos(ArrayList<String> _categories, String category) {
         return _categories.indexOf(category);
     }
 
@@ -1221,9 +1223,23 @@ public class AppController extends Application {
         return haystack.toLowerCase().contains(needle.toLowerCase());
     }
 
-    public boolean getImageFromPath(String filePath ){
+    public boolean getImageFromPath(String filePath) {
         File file = new File(filePath);
         return file.exists();
+    }
+
+    public Date stringToDate(String dtStart) {
+
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+        Date date = null;
+        try {
+            date = format.parse(dtStart);
+            System.out.println(date);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return date;
     }
 
 }

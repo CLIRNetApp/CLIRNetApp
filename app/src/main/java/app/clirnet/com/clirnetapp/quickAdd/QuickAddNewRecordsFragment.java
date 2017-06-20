@@ -2178,10 +2178,10 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
             //Add a new patient
             dbController.addPatientPersonalfromLocal(patient_id, docId, strFirstName, middle_name, strLastName, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, visit_date, doctor_membership_number, flag, patientInfoType, addedTime, added_by, action,
-                    strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, stralternatePhone_no, selectedPhoneTypealternate_no, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, strEmailAddress);
+                    strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, stralternatePhone_no, selectedPhoneTypealternate_no, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, strEmailAddress,"","");
 
-            dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate, strfollow_up_date, daysSel, fowSel, monthSel, prescriptionimgPath, clinical_note, added_on, visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action,
-                    strWeight, strPulse, strBp, strLowBp, strTemp, strSugar, strSymptoms, strDignosis, strTests, strDrugs, strHeight, strbmi, strSugarFasting, strReferedBy, strReferedTo, record_source);//"" are refredby and to
+            dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate,  daysSel, fowSel, monthSel, prescriptionimgPath, clinical_note, added_on, visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action,
+                    strWeight, strPulse, strBp, strLowBp, strTemp, strSymptoms, strDignosis,  strHeight, strbmi, strReferedBy, strReferedTo, record_source);//"" are refredby and to
 
             dbController.deletePrescriptionImageQueue(prescriptionimgId, prescriptionimgPath);
 
