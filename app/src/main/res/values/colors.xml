@@ -21,7 +21,7 @@
     <color name="lbl_name">#333333</color>
     <color name="input_register">#888888</color>
     <color name="btn_logut_bg">#ff6861</color>
-
+    <color name="silver">#C0C0C0</color>
     <color name="button_text_color">#FF808080</color>
     <color name="bg_list_row">#0a599d</color>
     <color name="text_background">#90000000</color>
@@ -33,5 +33,8 @@
     <color name="transparent_background">#00FF0000</color>
     <color name="grey">#808080</color>
     <color name="colorPrimary2">#1837e6</color>
-
+    <color name="tagLight">#b1c914</color>
+    <color name="tagDark">#206fa1</color>
+    <color name="lightGreen">#b2ffb2</color>
+    <color name="lightBlue">#66A6F7</color>
 </resources>

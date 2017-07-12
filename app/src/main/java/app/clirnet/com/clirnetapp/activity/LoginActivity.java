@@ -276,6 +276,49 @@ public class LoginActivity extends Activity {
 
             }
         }*/
+       /* FileInputStream is=null;
+        try {
+
+            File file = new File("/storage/emulated/0/PatientsImages/clirnetappkey.jks");
+            is = new FileInputStream(file);
+            KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
+            String password = "clirnet";
+            keystore.load(is, password.toCharArray());
+            Key key = keystore.getKey("clirnet", password.toCharArray());
+          //  String encodedKey = new Base64Encoder().encode(key.getEncoded());
+            System.out.println("key ? " + key);
+
+            Enumeration enumeration = keystore.aliases();
+            while(enumeration.hasMoreElements()) {
+                String alias = (String)enumeration.nextElement();
+                System.out.println("alias name: " + alias);
+                Certificate certificate = keystore.getCertificate(alias);
+                System.out.println(certificate.toString());
+
+            }
+
+        } catch (java.security.cert.CertificateException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (KeyStoreException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (UnrecoverableKeyException e) {
+            e.printStackTrace();
+        } finally {
+            if(null != is)
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+        }*/
+
 
     }
 
@@ -825,7 +868,6 @@ public class LoginActivity extends Activity {
 
     private class InsertDataLocally extends AsyncTask<String, String, String> {
 
-
         @Override
         protected String doInBackground(String... params) {
             try {
@@ -834,8 +876,6 @@ public class LoginActivity extends Activity {
                 String symptomscount = sInstance.getTableCount("Symptoms");
                 String last_name_masterCount = sInstance.getTableCount("last_name_master");
                 String occupationCount = sInstance.getTableCount("occupation");
-
-                // Log.e("symptomscount"," "+symptomscount + " "+Diagnosiscount + " "+Specialitycount +" "+last_name_masterCount);
 
                 if (symptomscount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("Symptoms.sql"));
@@ -859,7 +899,6 @@ public class LoginActivity extends Activity {
             }
             return null;
         }
-
         protected void onPostExecute(String e) {
             //  Toast.makeText(getApplicationContext(),"Rows loaded from file", Toast.LENGTH_SHORT).show();
         }

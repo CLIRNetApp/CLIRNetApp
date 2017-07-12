@@ -1724,6 +1724,13 @@ public class QuickAddNewRecordsFragment extends Fragment {
                 //   Log.v("item", (String) parent.getItemAtPosition(position));
 
                 selectedState = (String) parent.getItemAtPosition(position);
+
+                if (selectedState.equals("Select State")) {
+                    selectedState = null;
+                    ((TextView)parent.getChildAt(0)).setTextColor(R.color.black);
+                } else {
+                    ((TextView) parent.getChildAt(0)).setTextColor(R.color.silver);
+                }
                 // Toast.makeText(RegistrationActivityNew.this, "selected State is:" + selectedState, Toast.LENGTH_LONG).show();
             }
 
@@ -2177,13 +2184,13 @@ public class QuickAddNewRecordsFragment extends Fragment {
             String record_source = "QuickAdd New Record";
 
             //Add a new patient
-            dbController.addPatientPersonalfromLocal(patient_id, docId, strFirstName, middle_name, strLastName, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, visit_date, doctor_membership_number, flag, patientInfoType, addedTime, added_by, action,
-                    strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, stralternatePhone_no, selectedPhoneTypealternate_no, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, strEmailAddress,"","");
+            //dbController.addPatientPersonalfromLocal(patient_id, docId, strFirstName, middle_name, strLastName, sex, strdate_of_birth, current_age, phone_number, selectedLanguage, patientImagePath, visit_date, doctor_membership_number, flag, patientInfoType, addedTime, added_by, action,
+                 //   strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, stralternatePhone_no, selectedPhoneTypealternate_no, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, strEmailAddress,"","");
 
-            dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate,  daysSel, fowSel, monthSel, prescriptionimgPath, clinical_note, added_on, visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action,
-                    strWeight, strPulse, strBp, strLowBp, strTemp, strSymptoms, strDignosis,  strHeight, strbmi, strReferedBy, strReferedTo, record_source);//"" are refredby and to
+           // dbController.addHistoryPatientRecords(visit_id, patient_id, usersellectedDate,  daysSel, fowSel, monthSel, prescriptionimgPath, clinical_note, added_on, visit_date, docId, doctor_membership_number, flag, addedTime, patientInfoType, added_by, action,
+                   // strWeight, strPulse, strBp, strLowBp, strTemp, strSymptoms, strDignosis,  strHeight, strbmi, strReferedBy, strReferedTo, record_source,"","","","");//"" are refredby and to
 
-            dbController.deletePrescriptionImageQueue(prescriptionimgId, prescriptionimgPath);
+           // dbController.deletePrescriptionImageQueue(prescriptionimgId, prescriptionimgPath);
 
             Toast.makeText(getContext(), "Patient Record Saved", Toast.LENGTH_LONG).show();
 

@@ -16,7 +16,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -175,7 +174,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private LinearLayout nameheader;
     private RVAdapter rvadapter;
     private String formatedDate;
-    private Parcelable mListViewState;
+
 
 
     public HomeFragment() {
@@ -224,6 +223,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         mLayoutManager = new LinearLayoutManager(getContext().getApplicationContext());
         Searchrecycler_view.setLayoutManager(mLayoutManager);
+
+        backChangingImages = (ImageView) view.findViewById(R.id.backChangingImages);
 
         Button export = (Button) view.findViewById(R.id.exp);
 
@@ -603,6 +604,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("ISDCODE", registrationModel.getIsd_code());
         i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
         i.putExtra("UID", registrationModel.getUid());
+        i.putExtra("FAMILYHISTORY", registrationModel.getFamilyHistory());
+        i.putExtra("HOSPITALIZATION", registrationModel.getHospitalizationSurgery());
 
 
         startActivity(i);
@@ -663,6 +666,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("UID", registrationModel.getUid());
         i.putExtra("EMAIL", registrationModel.getEmail());
         i.putExtra("FOLLOWUPSTATUS", registrationModel.getFollowUpStatus());
+        i.putExtra("SPO2", registrationModel.getSpo2());
+        i.putExtra("RESPIRATION", registrationModel.getRespirataion());
+        i.putExtra("FAMILYHISTORY", registrationModel.getFamilyHistory());
+        i.putExtra("HOSPITALIZATION", registrationModel.getHospitalizationSurgery());
+        i.putExtra("OBESITY", registrationModel.getObesity());
 
         startActivity(i);
 
@@ -922,6 +930,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("EMAIL", registrationModel.getEmail());
         i.putExtra("PHONETYPE", registrationModel.getPhone_type());
         i.putExtra("FOLLOWUPSTATUS", registrationModel.getFollowUpStatus());
+        i.putExtra("SPO2", registrationModel.getSpo2());
+        i.putExtra("RESPIRATION", registrationModel.getRespirataion());
+        i.putExtra("FAMILYHISTORY", registrationModel.getFamilyHistory());
+        i.putExtra("HOSPITALIZATION", registrationModel.getHospitalizationSurgery());
         startActivity(i);
     }
 
@@ -1733,33 +1745,34 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     public void onResume() {
         super.onResume();
         //Log.e("DEBUG", "onResume of HomeFragment");
-        filteredModelList=getData();
-        Log.e("DEBUG", "onResume of HomeFragment " +filteredModelList.size());
+
+        List<RegistrationModel> filteredModelList1 = getData();
+        Log.e("DEBUG", "onResume of HomeFragment " +filteredModelList1.size());
         {
-          if  (filteredModelList.size() >0){
-              rvadapter = new RVAdapter(filteredModelList);
+          if  (filteredModelList1.size() >0){
+              rvadapter = new RVAdapter(filteredModelList1);
               recyclerView.setAdapter(rvadapter);
               rvadapter.notifyDataSetChanged();
           }
         }
 
         try {
-           /* if(filteredModelList.size()>0) {
+            if(filteredModelList.size()>0) {
                 filteredModelList.clear();
-            }*/
+            }
             if(sqlController!=null) {
 
-               // filteredModelList = sqlController.getPatientList(formatedDate);
+                filteredModelList = sqlController.getPatientList(formatedDate);
 
                 incompleteRecordList = sqlController.getIncompleteRecordList(formatedDate);
 
-                /*if (filteredModelList.size() > 0) {
+                if (filteredModelList.size() > 0) {
                     //do nothing
                     norecordtv.setVisibility(View.GONE);
                     rvadapter = new RVAdapter(filteredModelList);
                     recyclerView.setAdapter(rvadapter);
                     rvadapter.notifyDataSetChanged();
-                }*/
+                }
                 View view1 = null;
                 if (incompleteRecordList.size() > 0) {
                     incompletedisplay_tv = (TextView) view.findViewById(R.id.incompletedisplay_tv);

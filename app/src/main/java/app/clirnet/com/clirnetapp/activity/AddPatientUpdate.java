@@ -100,6 +100,8 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
     private String otherDrugTaking;
     private String otherTobacoTaking;
     private String mSleepStatus;
+    private String strFamilyHistory;
+    private String strHospitalizaionSurgery;
 
     @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
     @Override
@@ -136,6 +138,9 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         struid = getIntent().getStringExtra("UID");
         strEmail = getIntent().getStringExtra("EMAIL");
         String  strPhoneType = getIntent().getStringExtra("PHONETYPE");
+
+        strFamilyHistory=getIntent().getStringExtra("FAMILYHISTORY");
+        strHospitalizaionSurgery =getIntent().getStringExtra("HOSPITALIZATION");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -295,6 +300,8 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
                 i.putExtra("ALTERNATEISDCODE", strAlternateIsd_code);
                 i.putExtra("UID", struid);
                 i.putExtra("EMAIL", strEmail);
+                i.putExtra("FAMILYHISTORY", strFamilyHistory);
+                i.putExtra("HOSPITALIZATION", strHospitalizaionSurgery);
                 i.putExtra("FROMWHERE", "editpatient");
                 startActivity(i);
                 // finish();
@@ -468,7 +475,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         viewPager.setAdapter(adapter);
     }
 
-    class ViewPagerAdapter extends FragmentPagerAdapter {
+    private class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
         ViewPager viewPager;
@@ -482,7 +489,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
             super(manager);
             this.viewPager=viewPager;
         }
-  //this method is also working fine bt we have do spcl so we used below getItem code to pass tab view position from button
+        //this method is also working fine bt we have do spcl so we used below getItem code to pass tab view position from button
         //ie we call view pager from external button call
       /*  @Override
         public Fragment getItem(int position) {
@@ -533,13 +540,16 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
     }
 
     private void setImagesToHealthLifeStyle(){
+
         ImageView imgSmoke = (ImageView) findViewById(R.id.imgSmoke);
         ImageView imgDrink = (ImageView) findViewById(R.id.imgDrink);
         ImageView imgTobaco = (ImageView) findViewById(R.id.imgTobaco);
-        ImageView imgFood = (ImageView) findViewById(R.id.imgFood);
-        ImageView imgSleep = (ImageView) findViewById(R.id.imgSleep);
         ImageView imgStress = (ImageView) findViewById(R.id.imgStress);
+        ImageView imgLifeStyle=(ImageView) findViewById(R.id.imgLifeStyle);
+        ImageView imgExcercise=(ImageView) findViewById(R.id.imgExcercise);
+
         Log.e("mSmokerType",""+mSmokerType + "" +mAlcohol);
+
         if(mSmokerType!=null && !mSmokerType.equals("")&& mSmokerType.equals("Active Smoker")){
             imgSmoke.setVisibility(View.VISIBLE);
             imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.smoke));
@@ -554,22 +564,41 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
             imgDrink.setVisibility(View.VISIBLE);
             imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.no_drink));
         }
-        if(mSleepStatus!=null && !mSleepStatus.equals("")&& mSleepStatus.equals("Adequate")){
-            imgSleep.setVisibility(View.VISIBLE);
-            imgSleep.setImageDrawable(getResources().getDrawable(R.drawable.sleep));
-        }else if(mSleepStatus!=null && !mSleepStatus.equals("")&& mSleepStatus.equals("InAdequate")){
-            imgSleep.setVisibility(View.VISIBLE);
-            imgSleep.setImageDrawable(getResources().getDrawable(R.drawable.no_sleep));
+        if(mChewinogTobaco!=null && !mChewinogTobaco.equals("")&& mChewinogTobaco.equals("Yes")){
+            imgTobaco.setVisibility(View.VISIBLE);
+            imgTobaco.setImageDrawable(getResources().getDrawable(R.drawable.tobacco));
+        }else if(mSleepStatus!=null && !mSleepStatus.equals("")&& mSleepStatus.equals("No")){
+            imgTobaco.setVisibility(View.VISIBLE);
+            imgTobaco.setImageDrawable(getResources().getDrawable(R.drawable.no_tobacco));
         }
         if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("Low")){
             imgStress.setVisibility(View.VISIBLE);
-            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stressed));
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stress_low));
         }else if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("Moderate")){
             imgStress.setVisibility(View.VISIBLE);
-            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.no_stressed));
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stress_moderate));
         } else if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("High")){
             imgStress.setVisibility(View.VISIBLE);
-            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.no_stressed));
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stress_high));
+        }
+
+        if(mExcercise!=null && !mExcercise.equals("")&& mExcercise.equals("Yes")){
+            imgExcercise.setVisibility(View.VISIBLE);
+            imgExcercise.setImageDrawable(getResources().getDrawable(R.drawable.exercise));
+        }else if(mExcercise!=null && !mExcercise.equals("")&& mExcercise.equals("No")){
+            imgExcercise.setVisibility(View.VISIBLE);
+            imgExcercise.setImageDrawable(getResources().getDrawable(R.drawable.no_exercise));
+        }
+        if(mLifeStyle!=null && !mLifeStyle.equals("")&& mLifeStyle.equals("Sedentary")){
+            imgLifeStyle.setVisibility(View.VISIBLE);
+            imgLifeStyle.setImageDrawable(getResources().getDrawable(R.drawable.sitting));
+        }else if(mLifeStyle!=null && !mLifeStyle.equals("")&& mLifeStyle.equals("Light Active")){
+            imgLifeStyle.setVisibility(View.VISIBLE);
+            imgLifeStyle.setImageDrawable(getResources().getDrawable(R.drawable.walking));
+        }
+        else if(mLifeStyle!=null && !mLifeStyle.equals("")&& mLifeStyle.equals("Active")){
+            imgLifeStyle.setVisibility(View.VISIBLE);
+            imgLifeStyle.setImageDrawable(getResources().getDrawable(R.drawable.running));
         }
     }
 }

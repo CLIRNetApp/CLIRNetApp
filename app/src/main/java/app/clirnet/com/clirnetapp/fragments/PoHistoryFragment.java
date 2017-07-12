@@ -11,7 +11,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -30,6 +29,9 @@ import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+
+import com.dpizarro.autolabel.library.AutoLabelUI;
+import com.dpizarro.autolabel.library.AutoLabelUISettings;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -115,7 +117,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private Integer distoleMinValue, distoleMaxValue;
     private Integer sugarFpgMinValue, sugarFpgMaxValue;
     private Integer sugarPpgMinValue, sugarPpgMaxValue;
-
+    private Integer spo2MinValue, spo2MaxValue;
+    private Integer respirationMinValue, respirationMaxValue;
     private Integer strMinWeight;
     private Integer strMaxWeight;
     private Integer strMinHeight;
@@ -134,10 +137,11 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private Integer strMaxSugarFPG;
     private Integer strMinSugarPPG;
     private Integer strMaxSugarPPG;
+    private Integer strMinSpo2;
+    private Integer strMaxSpo2;
+    private Integer strMinRespiration;
+    private Integer strMaxRespiration;
     private TextView showData;
-
-
-
     private EditText input_min_weight;
     private EditText input_max_weight;
     private EditText input_min_height;
@@ -156,6 +160,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private EditText input_max_sugarfpg;
     private EditText input_min_sugarppg;
     private EditText input_max_sugarppg;
+    private EditText input_min_sPo2, input_max_sPo2;
+    private EditText input_min_respiration;
+    private EditText input_max_respiration;
     private long mLastClickTime = 0;
 
     private StringBuilder sb = new StringBuilder();
@@ -166,12 +173,10 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private String strLipidLDL;
     private String strLipidVHDL;
     private String strLipidHDL;
-    private String strHbA1c;
+    private Integer strHbA1c;
     private String strSerumUrea;
     private String strAcer;
     private String strAllergie;
-    private String strNoOfSticks;
-    private String strPackPerWeek;
 
     private String strLifeStyle;
     private String strStressLevel;
@@ -185,7 +190,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private String strAlcoholConsumption;
     private String noOfSticksPerYear;
     private String noOfPegsPerYear;
-    private Button btnMoreFilter;
+    private Button filterVitals;
     private String strLeftSmokingSinceYear;
     private String strLeftAlcoholSinceYear;
     private String otherTobacoTaking;
@@ -198,10 +203,35 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private String strLipidLDLMax;
     private String strLipidVHDLMax;
     private String strLipidHDLMax;
-    private String strHbA1cMax;
+    private Integer strHbA1cMax;
     private String strSerumUreaMax;
     private String strAcerMax;
+
+    private String strPallore;
+    private String strCyanosis, strTremors, strIcterus, strClubbing, strOedema, strCalfTenderness, strLymphadenopathy;
+
+    private String strPallorDescription;
+    private String strCyanosisDescription;
+    private String strTremorsDescription;
+    private String strIcterusDescription;
+    private String strClubbingDescription;
+    private String strOedemaDescription;
+    private String strCalfTendernessDescription;
+    private String strLymphadenopathyDescription;
     private LastnameDatabaseClass lastnameDatabaseClass;
+    private Button filterObservation;
+    private Button filterInvestigation;
+    private Integer mMinHbA1c, mMaxHbA1c;
+    private Integer mMinAcer, mMaxAcer;
+    private Integer mMinSerumUrea, mMaxSerumUrea;
+    private Integer mMinTc, mMaxTc;
+    private Integer mMinTg, mMaxTg;
+    private Integer mMinHdl, mMaxHdl;
+    private Integer mMinLdl, mMaxLdl;
+    private Integer mMinVhdl, mMaxVhdl;
+    private AutoLabelUI mAutoLabel;
+    private AutoLabelUI mInvestigationLabel;
+
 
     public PoHistoryFragment() {
 
@@ -259,9 +289,16 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         showData = (TextView) rootview.findViewById(R.id.showData);
 
 
-        Button filterInvestigation = (Button) rootview.findViewById(R.id.filterInvestigation);
+        filterInvestigation = (Button) rootview.findViewById(R.id.filterInvestigation);
         Button filterHealth = (Button) rootview.findViewById(R.id.filterHealth);
-        btnMoreFilter = (Button) rootview.findViewById(R.id.btnMoreFilters);
+        filterVitals = (Button) rootview.findViewById(R.id.filterVitals);
+        filterObservation = (Button) rootview.findViewById(R.id.filterObservation);
+
+
+        mAutoLabel = (AutoLabelUI) rootview.findViewById(R.id.label_view);
+        mInvestigationLabel=(AutoLabelUI)rootview.findViewById(R.id.investigation_label_view);
+        setListeners();
+        setAutoLabelUISettings();
 
         //initalizeView(rootview);
 
@@ -307,34 +344,64 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             if (appController == null) {
                 appController = new AppController();
             }
-            if(lastnameDatabaseClass==null){
-               lastnameDatabaseClass=new LastnameDatabaseClass(getContext());
+            if (lastnameDatabaseClass == null) {
+                lastnameDatabaseClass = new LastnameDatabaseClass(getContext());
             }
             bannerimgNames = bannerClass.getImageName();
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
-            ArrayList<HashMap<String, Integer>> demoList = sqlController.getMinMaxVitals();
+            ArrayList<HashMap<String, Integer>> vitalsMinMaxList = sqlController.getMinMaxVitals();
+            ArrayList<HashMap<String, Integer>> investigationMinMaxList = sqlController.getMinMaxInvestigation();
+           // Log.e("investigationList", "  " + investigationMinMaxList.size());
 
-            if (demoList.size() > 0) {
-                strMinWeight = demoList.get(0).get("MINWEIGHT");
-                strMaxWeight = demoList.get(0).get("MAXWEIGHT");
-                strMinHeight = demoList.get(0).get("MINHEIGHT");
-                strMaxHeight = demoList.get(0).get("MAXHEIGHT");
-                strMinBmi = demoList.get(0).get("MINBMI");
-                strMaxBmi = demoList.get(0).get("MAXBMI");
-                strMinPulse = demoList.get(0).get("MINPULSE");
-                strMaxPulse = demoList.get(0).get("MAXPULSE");
-                strMinTemp = demoList.get(0).get("MINTEMP");
-                strMaxTemp = demoList.get(0).get("MAXTEMP");
-                strMinSystole = demoList.get(0).get("MINSYSTOLE");
-                strMaxSystole = demoList.get(0).get("MAXSYSTOLE");
-                strMinDistole = demoList.get(0).get("MINDISTOLE");
-                strMaxDistole = demoList.get(0).get("MAXDISTOLE");
-                strMinSugarFPG = demoList.get(0).get("MINSUGARFPG");
-                strMaxSugarFPG = demoList.get(0).get("MAXSUGARFPG");
-                strMinSugarPPG = demoList.get(0).get("MINSUGARPPG");
-                strMaxSugarPPG = demoList.get(0).get("MAXSUGARPPG");
+            if (vitalsMinMaxList.size() > 0) {
+
+                strMinWeight = vitalsMinMaxList.get(0).get("MINWEIGHT");
+                strMaxWeight = vitalsMinMaxList.get(0).get("MAXWEIGHT");
+
+                strMinHeight = vitalsMinMaxList.get(0).get("MINHEIGHT");
+                strMaxHeight = vitalsMinMaxList.get(0).get("MAXHEIGHT");
+                strMinBmi = vitalsMinMaxList.get(0).get("MINBMI");
+                strMaxBmi = vitalsMinMaxList.get(0).get("MAXBMI");
+                strMinPulse = vitalsMinMaxList.get(0).get("MINPULSE");
+                strMaxPulse = vitalsMinMaxList.get(0).get("MAXPULSE");
+                strMinTemp = vitalsMinMaxList.get(0).get("MINTEMP");
+                strMaxTemp = vitalsMinMaxList.get(0).get("MAXTEMP");
+                strMinSystole = vitalsMinMaxList.get(0).get("MINSYSTOLE");
+                strMaxSystole = vitalsMinMaxList.get(0).get("MAXSYSTOLE");
+                strMinDistole = vitalsMinMaxList.get(0).get("MINDISTOLE");
+                strMaxDistole = vitalsMinMaxList.get(0).get("MAXDISTOLE");
+                strMinSpo2 = vitalsMinMaxList.get(0).get("MINSPO2");
+                strMaxSpo2 = vitalsMinMaxList.get(0).get("MAXSPO2");
+                strMinRespiration = vitalsMinMaxList.get(0).get("MINRESPIRATION");
+                strMaxRespiration = vitalsMinMaxList.get(0).get("MAXRESPIRATION");
+                strMinSugarFPG = vitalsMinMaxList.get(0).get("MINSUGARFPG");
+                strMaxSugarFPG = vitalsMinMaxList.get(0).get("MAXSUGARFPG");
+                strMinSugarPPG = vitalsMinMaxList.get(0).get("MINSUGARPPG");
+                strMaxSugarPPG = vitalsMinMaxList.get(0).get("MAXSUGARPPG");
+             //   Log.e("strMinWeight", "  " + strMinSpo2 + "  " + strMaxSpo2 + "  " + strMinRespiration + "  " + strMaxRespiration);
                 //Log.e("strMin", " " + strMinSugarFPG + " " + strMaxSugarFPG + " " + strMinSugarPPG + "  " + strMaxSugarPPG + "  " + strMinBmi + "  " + strMaxBmi);
+            }
+            if (investigationMinMaxList.size() > 0) {
+
+                mMinHbA1c = investigationMinMaxList.get(0).get("MINHbA1c");
+                mMaxHbA1c = investigationMinMaxList.get(0).get("MAXHbA1c");
+                mMinAcer = investigationMinMaxList.get(0).get("MINAcer");
+                mMaxAcer = investigationMinMaxList.get(0).get("MAXAcer");
+                mMinSerumUrea = investigationMinMaxList.get(0).get("MINSerumUrea");
+                mMaxSerumUrea = investigationMinMaxList.get(0).get("MAXSerumUrea");
+                mMinTc = investigationMinMaxList.get(0).get("MINTC");
+                mMaxTc = investigationMinMaxList.get(0).get("MAXTC");
+                mMinTg = investigationMinMaxList.get(0).get("MINTG");
+                mMaxTg = investigationMinMaxList.get(0).get("MAXTG");
+                mMinHdl = investigationMinMaxList.get(0).get("MINHDL");
+                mMaxHdl = investigationMinMaxList.get(0).get("MAXHDL");
+                mMinLdl = investigationMinMaxList.get(0).get("MINLDL");
+                mMaxLdl = investigationMinMaxList.get(0).get("MAXLDL");
+                mMinVhdl = investigationMinMaxList.get(0).get("MINVHDL");
+                mMaxVhdl = investigationMinMaxList.get(0).get("MAXVHDL");
+                //Log.e("mMinTc", "  " + mMinTc + "  " + mMaxTc + "  " + mMinLdl + "  " + mMaxLdl);
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -375,7 +442,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 if (poHistoryAdapter != null) {
                     poHistoryAdapter.notifyDataSetChanged();
                 }
-                        //data from health dialog fragment
+                //data from health dialog fragment
                 if (healthDataBundle != null) {
 
                     strSmoking = healthDataBundle.getString("SMOKING");
@@ -394,15 +461,14 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strBingeEating = healthDataBundle.getString("BINFEEATING");
                     strLactoseTolerance = healthDataBundle.getString("LACTOSETOLERNCE");
                     strLifeStyle = healthDataBundle.getString("LIFESTYLE");
-
                     strSleepStatus = healthDataBundle.getString("SLEEP");
                     strStressLevel = healthDataBundle.getString("STRESSLEVEL");
                     strSexuallyActive = healthDataBundle.getString("SEXUALACTIVITY");
                     strExcercise = healthDataBundle.getString("EXCERCISE");
                     strAllergie = healthDataBundle.getString("ALLERGIES");
-                  //  Log.e("strAllergie", "  " + strAllergie);
-                }
 
+                }
+             //   Log.e("weightMinValue", "  " + weightMinValue + " " + weightMaxValue);
 
                 strfname = firstName.getText().toString().trim();
                 strlname = lastName.getText().toString().trim();
@@ -424,26 +490,17 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     ival = 0;
                     loadLimit = 25;
                     patientData = sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
-                            pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugarFpgMaxValue, sugarPpgMinValue, sugarPpgMaxValue, strLipidTC,strLipidTCMax, strLipidTG,strLipidTGMax, strLipidLDL,strLipidLDLMax, strLipidVHDL,strLipidVHDLMax,strLipidHDL,strLipidHDLMax, strHbA1c, strHbA1cMax, strSerumUrea, strSerumUreaMax, strAcer, strAcerMax,strEcg, strPft
-                            , strSmoking, noOfSticksPerYear, strLeftSmokingSinceYear, strAlcoholConsumption, noOfPegsPerYear, strLeftAlcoholSinceYear, strTobaco, otherTobacoTaking, strDrug, otherDrugTaking, strFoodHabit, strFoodPreference, strBingeEating, strLactoseTolerance, strLifeStyle, strSleepStatus, strStressLevel, strSexuallyActive, strExcercise, strAllergie);
+                            pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugarFpgMaxValue, sugarPpgMinValue, sugarPpgMaxValue, strLipidTC, strLipidTCMax, strLipidTG, strLipidTGMax, strLipidLDL, strLipidLDLMax, strLipidVHDL, strLipidVHDLMax, strLipidHDL, strLipidHDLMax, strHbA1c, strHbA1cMax, strSerumUrea, strSerumUreaMax, strAcer, strAcerMax, strEcg, strPft
+                            , strSmoking, noOfSticksPerYear, strLeftSmokingSinceYear, strAlcoholConsumption, noOfPegsPerYear, strLeftAlcoholSinceYear, strTobaco, otherTobacoTaking, strDrug, otherDrugTaking, strFoodHabit, strFoodPreference, strBingeEating, strLactoseTolerance, strLifeStyle, strSleepStatus, strStressLevel, strSexuallyActive, strExcercise, strAllergie, strPallore, strPallorDescription, strCyanosis, strCyanosisDescription, strTremors, strTremorsDescription, strIcterus, strIcterusDescription
+                            , strClubbing, strClubbingDescription, strOedema, strOedemaDescription, strCalfTenderness, strCalfTendernessDescription, strLymphadenopathy, strLymphadenopathyDescription,spo2MinValue,spo2MaxValue,respirationMinValue,respirationMinValue);
 
 
-                    //    patientData = sqlController.getFilterDatanew(strfname, strlname, selectedListGender.get(i).toString(), strpno, strage);
                     queryCount = sqlController.getCountResult();
-                    // queryCount = 70;
-                    // Log.e("queryCount", "" + patientData.size()+"  "+queryCount );
 
-                    //int beforeFilterCount = patientData.size();
 
                     if (patientData.size() > 0) {
                         removeDuplicate(patientData);
                     }
-
-                    // int afterFilterCount = patientData.size();
-
-                    // int totalFilterDataCount = beforeFilterCount - afterFilterCount;
-
-                    //queryCount = queryCount - totalFilterDataCount;
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -503,7 +560,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         setupAnimation();
         //setValueToSeekBarFromDb();
 
-        btnMoreFilter.setOnTouchListener(new View.OnTouchListener() {
+        filterVitals.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
@@ -511,11 +568,28 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     showVitalsDialogBox();
 
-                    btnMoreFilter.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+                    filterVitals.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    btnMoreFilter.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    filterVitals.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
+            }
+
+        });
+        filterObservation.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    filterObservation.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+                    showObservationsDialog();
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    filterObservation.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 }
                 return false;
             }
@@ -542,13 +616,25 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             }
 
         });
+        filterInvestigation.setOnTouchListener(new View.OnTouchListener() {
 
-        filterInvestigation.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                openInvestigationDialog();
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    openInvestigationDialog();
+
+                    filterInvestigation.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    filterInvestigation.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
             }
+
         });
+
 
         filterHealth.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -560,8 +646,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 bundle.putBundle("FILTERDATA", healthDataBundle);
                 testDialog.setRetainInstance(true);
                 testDialog.setArguments(bundle);
-                //testDialog.setTargetFragment(getContext(), 0);
-                Log.e("strPatientId", " " + healthDataBundle);
+
                 testDialog.show(fm, "fragment_name");
 
             }
@@ -595,7 +680,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 symptomsDiagnosis.setAdapter(adp);
                 symptomsDiagnosis.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
             }
-            if(mLastNameList.size()>0){
+            if (mLastNameList.size() > 0) {
                 ArrayAdapter<String> adp = new ArrayAdapter<>(getContext(),
                         android.R.layout.simple_dropdown_item_1line, mLastNameList);
 
@@ -721,7 +806,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         i.putExtra("SUGARFASTING", book.getSugarFasting());
         i.putExtra("UID", book.getUid());
         i.putExtra("EMAIL", book.getEmail());
-        i.putExtra("CALLEDFROM", "1");
+        i.putExtra("UID", book.getUid());
+        i.putExtra("FAMILYHISTORY", book.getFamilyHistory());
+        i.putExtra("HOSPITALIZATION", book.getHospitalizationSurgery());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         // i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
         startActivity(i);
@@ -775,11 +862,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             } else selectedItems[i] = 0;
         }
-       /* for (int selectedItem : selectedItems) {
-            // if(selectedItems[i]==1)
-            // System.out.println(al.get(i));
-            //  selectedListGender.add(genderList.get(i).toString());
-        }*/
+
     }
 
     @Override
@@ -799,15 +882,11 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     }
 
     public void updateDisplay(Bundle bundle) {
-        //Log.e("Dialog 5 ", "  Dialog is Clicked " + bundle);
+
         healthDataBundle = bundle;
     }
 
-   /* @Override
-    public void setOnSubmitListener(String arg) {
-        Log.e("Dialog ","  Dialog is Clicked "+arg);
-    }
-*/
+
 
     public interface OnFragmentInteractionListener {
         void onFragmentInteraction(Uri uri);
@@ -906,11 +985,12 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     //   memberList = sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
                     //       pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugarFpgMaxValue, sugarPpgMinValue, sugarPpgMaxValue,strLipidTC,strLipidTG,strLipidLDL,strLipidVHDL,strLipidHDL,strHbA1c,strSerumUrea,strAcer,strEcg,strPft);
                     memberList = sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
-                            pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugarFpgMaxValue, sugarPpgMinValue, sugarPpgMaxValue, strLipidTC,strLipidTCMax, strLipidTG,strLipidTGMax, strLipidLDL,strLipidLDLMax, strLipidVHDL,strLipidVHDLMax,strLipidHDL,strLipidHDLMax, strHbA1c, strHbA1cMax, strSerumUrea, strSerumUreaMax, strAcer, strAcerMax,strEcg, strPft
-                            , strSmoking, noOfSticksPerYear, strLeftSmokingSinceYear, strAlcoholConsumption, noOfPegsPerYear, strLeftAlcoholSinceYear, strTobaco, otherTobacoTaking, strDrug, otherDrugTaking, strFoodHabit, strFoodPreference, strBingeEating, strLactoseTolerance, strLifeStyle, strSleepStatus, strStressLevel, strSexuallyActive, strExcercise, strAllergie);
-
+                            pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugarFpgMaxValue, sugarPpgMinValue, sugarPpgMaxValue, strLipidTC, strLipidTCMax, strLipidTG, strLipidTGMax, strLipidLDL, strLipidLDLMax, strLipidVHDL, strLipidVHDLMax, strLipidHDL, strLipidHDLMax, strHbA1c, strHbA1cMax, strSerumUrea, strSerumUreaMax, strAcer, strAcerMax, strEcg, strPft
+                            , strSmoking, noOfSticksPerYear, strLeftSmokingSinceYear, strAlcoholConsumption, noOfPegsPerYear, strLeftAlcoholSinceYear, strTobaco, otherTobacoTaking, strDrug, otherDrugTaking, strFoodHabit, strFoodPreference, strBingeEating, strLactoseTolerance, strLifeStyle, strSleepStatus, strStressLevel, strSexuallyActive, strExcercise, strAllergie, strPallore, strPallorDescription, strCyanosis, strCyanosisDescription, strTremors, strTremorsDescription, strIcterus, strIcterusDescription
+                            , strClubbing, strClubbingDescription, strOedema, strOedemaDescription, strCalfTenderness, strCalfTendernessDescription, strLymphadenopathy, strLymphadenopathyDescription,spo2MinValue,spo2MaxValue,respirationMinValue,respirationMinValue);
+                    //getting count of patient  for filter query
                     queryCount = sqlController.getCountResult();
-                    // beforeFilterCount = memberList.size();
+
 
                     if (memberList.size() > 0) {
                         removeDuplicate(memberList);
@@ -982,8 +1062,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         if (poHistoryAdapter != null) {
             poHistoryAdapter = null;
         }
-        if(lastnameDatabaseClass!=null){
-            lastnameDatabaseClass=null;
+        if (lastnameDatabaseClass != null) {
+            lastnameDatabaseClass = null;
         }
         bannerimgNames = null;
 
@@ -1017,9 +1097,11 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         lastName = null;
         phone_no = null;
         genderSpinner = null;
+        healthDataBundle = null;
+        filterObservation= null;
         clearVitalsValue();
         reseFiltersData();
-        healthDataBundle = null;
+
     }
 
     private void showVitalsDialogBox() {
@@ -1043,13 +1125,13 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         input_max_systole = (EditText) f.findViewById(R.id.input_max_systole);
         input_min_distole = (EditText) f.findViewById(R.id.input_min_distole);
         input_max_distole = (EditText) f.findViewById(R.id.input_max_distole);
-        input_min_sugarfpg = (EditText) f.findViewById(R.id.input_min_sugarfpg);
-        input_max_sugarfpg = (EditText) f.findViewById(R.id.input_max_sugarfpg);
-        input_min_sugarppg = (EditText) f.findViewById(R.id.input_min_sugarppg);
-        input_max_sugarppg = (EditText) f.findViewById(R.id.input_max_sugarppg);
 
+        input_min_sPo2 = (EditText) f.findViewById(R.id.input_min_spo2);
+        input_max_sPo2 = (EditText) f.findViewById(R.id.input_max_spo2);
+        input_min_respiration = (EditText) f.findViewById(R.id.input_min_respiration);
+        input_max_respiration = (EditText) f.findViewById(R.id.input_max_respiration);
         /* Clear The entered viatls for next search*/
-        //clearVitalsValue2();
+
         sb.setLength(0);
 
         dialog.setCanceledOnTouchOutside(false);
@@ -1063,386 +1145,56 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         //Log.e("weightMinValue", "  " + weightMinValue);
 
+
         if (weightMinValue != null && weightMaxValue != null) {
             input_min_weight.setText(weightMinValue.toString());
             input_max_weight.setText(weightMaxValue.toString());
-            //seekbarWeight.setSelectedMinValue(weightMinValue);
-           // seekbarWeight.setSelectedMaxValue(weightMaxValue);
+
         }
         if (heightMinValue != null && heightMaxValue != null) {
             input_min_height.setText(heightMinValue.toString());
             input_max_height.setText(heightMaxValue.toString());
-           // seekbarHeight.setSelectedMinValue(heightMinValue);
-           // seekbarHeight.setSelectedMaxValue(heightMaxValue);
         }
         if (bmiMinValue != null && bmiMaxValue != null) {
             input_min_bmi.setText(bmiMinValue.toString());
             input_max_bmi.setText(bmiMaxValue.toString());
-           // seekbarBmi.setSelectedMinValue(bmiMinValue);
-           // seekbarBmi.setSelectedMaxValue(bmiMaxValue);
         }
 
         if (pulseMinValue != null && pulseMaxValue != null) {
             input_min_pulse.setText(pulseMinValue.toString());
             input_max_pulse.setText(pulseMaxValue.toString());
-           // seekbarPulse.setSelectedMinValue(pulseMinValue);
-           // seekbarPulse.setSelectedMaxValue(pulseMaxValue);
         }
         if (tempMinValue != null && tempMaxValue != null) {
             input_min_temp.setText(tempMinValue.toString());
             input_max_temp.setText(tempMaxValue.toString());
-          //  seekbarTemp.setSelectedMinValue(tempMinValue);
-           // seekbarTemp.setSelectedMaxValue(tempMaxValue);
         }
         if (systoleMinValue != null && systoleMaxValue != null) {
             input_min_systole.setText(systoleMinValue.toString());
             input_max_systole.setText(systoleMaxValue.toString());
-           // seekbarSystole.setSelectedMinValue(systoleMinValue);
-          //  seekbarSystole.setSelectedMaxValue(systoleMaxValue);
         }
         if (distoleMinValue != null && distoleMaxValue != null) {
             input_min_distole.setText(distoleMinValue.toString());
             input_max_distole.setText(distoleMaxValue.toString());
-            //seekbarDiastole.setSelectedMinValue(distoleMinValue);
-           // seekbarDiastole.setSelectedMaxValue(distoleMaxValue);
+        }
+        if (spo2MinValue != null && spo2MaxValue != null) {
+            input_min_sPo2.setText(spo2MinValue.toString());
+            input_max_sPo2.setText(spo2MaxValue.toString());
+
+        }
+        if (respirationMinValue != null && respirationMaxValue != null) {
+            input_min_respiration.setText(respirationMinValue.toString());
+            input_max_respiration.setText(respirationMaxValue.toString());
+
         }
         if (sugarFpgMinValue != null && sugarFpgMaxValue != null) {
             input_min_sugarfpg.setText(sugarFpgMinValue.toString());
             input_max_sugarfpg.setText(sugarFpgMaxValue.toString());
-           // seekbarSugarFpg.setSelectedMinValue(sugarFpgMinValue);
-           // seekbarSugarFpg.setSelectedMaxValue(sugarFpgMaxValue);
         }
         if (sugarPpgMinValue != null && sugarPpgMaxValue != null) {
             input_min_sugarppg.setText(sugarPpgMinValue.toString());
             input_max_sugarppg.setText(sugarPpgMaxValue.toString());
-           // seekbarSugarPpg.setSelectedMinValue(sugarPpgMinValue);
-           // seekbarSugarPpg.setSelectedMaxValue(sugarPpgMaxValue);
         }
 
-      /*  input_min_weight.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinWeight && i <= strMaxWeight) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarWeight.setSelectedMinValue(i);
-                        input_max_weight.setError(null);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        input_max_weight.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinWeight && i <= strMaxWeight) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarWeight.setSelectedMaxValue(i);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-
-        input_min_height.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinHeight && i <= strMaxHeight) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarHeight.setSelectedMinValue(i);
-                        input_max_height.setError(null);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        input_max_height.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinHeight && i <= strMaxHeight) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarHeight.setSelectedMaxValue(i);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        input_min_bmi.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinBmi && i <= strMaxBmi) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarBmi.setSelectedMinValue(i);
-                        input_max_bmi.setError(null);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        input_max_bmi.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinBmi && i <= strMaxBmi) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarBmi.setSelectedMaxValue(i);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-
-        input_min_pulse.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinPulse && i <= strMaxPulse) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarPulse.setSelectedMinValue(i);
-                        input_max_pulse.setError(null);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        input_max_pulse.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinPulse && i <= strMaxPulse) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarPulse.setSelectedMaxValue(i);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-
-
-        input_min_temp.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinTemp && i <= strMaxTemp) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarTemp.setSelectedMinValue(i);
-                        input_max_temp.setError(null);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        input_max_temp.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMaxTemp && i <= strMaxTemp) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarTemp.setSelectedMaxValue(i);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-
-        input_min_systole.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinSystole && i <= strMaxSystole) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarSystole.setSelectedMinValue(i);
-                        input_max_systole.setError(null);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        input_max_systole.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinSystole && i <= strMaxSystole) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarSystole.setSelectedMaxValue(i);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        input_min_distole.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinDistole && i <= strMaxDistole) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarDiastole.setSelectedMinValue(i);
-                        input_max_distole.setError(null);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        input_max_distole.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinDistole && i <= strMaxDistole) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarDiastole.setSelectedMaxValue(i);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        input_min_sugarfpg.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinSugarFPG && i <= strMaxSugarFPG) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarSugarFpg.setSelectedMinValue(i);
-                        input_max_sugarfpg.setError(null);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        input_max_sugarfpg.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinSugarFPG && i <= strMaxSugarFPG) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarSugarFpg.setSelectedMaxValue(i);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        input_min_sugarppg.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinSugarPPG && i <= strMaxSugarPPG) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarSugarPpg.setSelectedMinValue(i);
-                        input_max_sugarppg.setError(null);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-        input_max_sugarppg.addTextChangedListener(new TextWatcher() {
-            public void afterTextChanged(Editable s) {
-                if (!s.toString().equals("")) {
-                    int i = Integer.parseInt(s.toString());
-                    if (i >= strMinSugarPPG && i <= strMaxSugarPPG) {
-                        //seekbarWeight.setRangeValues(i, strMaxWeight); // This ensures 0-120 value for seekbar
-                        seekbarSugarPpg.setSelectedMaxValue(i);
-                    }
-                }
-            }
-
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-        });
-*/
-
-        /////////////////////////////////////
-        // Log.e("strMaxWeight"," "+strMinWeight +" "+strMaxWeight);
 
         // Click cancel to dismiss android custom dialog box
         dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
@@ -1459,15 +1211,32 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             @Override
             public void onClick(View v) {
 
+                mAutoLabel.clear();
+
                 String valMinWeight = input_min_weight.getText().toString();
                 String valMaxWeight = input_max_weight.getText().toString();
 
-                if (!valMinWeight.equals("") && !valMaxWeight.equals("")) {
+
+                if (valMinWeight != null && !valMinWeight.equals("") && valMaxWeight == null || valMaxWeight.equals("")) {
+
+                    valMaxWeight = String.valueOf(strMaxWeight);
+                } else if (valMaxWeight != null && !valMaxWeight.equals("") && valMinWeight == null || valMinWeight.equals("")) {
+
+                    valMinWeight = String.valueOf(strMinWeight);
+                } else if (valMinWeight == null && valMaxWeight == null) {
+                    valMinWeight = null;
+                    valMaxWeight = null;
+
+                } else {
+                    // do nothing
+                }
+
+                if (valMinWeight != null && valMaxWeight != null && !valMinWeight.equals("") && !valMaxWeight.equals("")) {
 
                     weightMinValue = Integer.valueOf(valMinWeight);
                     weightMaxValue = Integer.valueOf(valMaxWeight);
 
-                    sb.append(" Weight: Min ").append(weightMinValue).append(" - Max ").append(weightMaxValue).append(" ;");
+                 //   sb.append(" Weight: Min ").append(weightMinValue).append(" - Max ").append(weightMaxValue).append(" ;");
 
                     if (weightMaxValue < weightMinValue) {
                         input_max_weight.setError("Value must be greater from min value");
@@ -1483,17 +1252,35 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                         return;
                     }
                 }
+                if (!valMinWeight.isEmpty() && !valMaxWeight.isEmpty()) {
 
+                    mAutoLabel.addLabel("Weight " + valMinWeight + "-" + valMaxWeight);
+                    /*if (success) {
+                        Toast.makeText(getContext(),"Label added!",Toast.LENGTH_LONG).show();
+                    }*/
+                }
                 String valMinHeight = input_min_height.getText().toString();
                 String valMaxHeight = input_max_height.getText().toString();
 
-                if (!valMinHeight.equals("") && !valMaxHeight.equals("")) {
+                if (valMinHeight != null && valMaxHeight == null || valMaxHeight.equals("")) {
+                    valMaxHeight = String.valueOf(strMaxHeight);
+                } else if (valMaxWeight != null && valMinHeight == null || valMinHeight.equals("")) {
+                    valMinHeight = String.valueOf(strMinHeight);
+                } else if (valMinHeight == null && valMaxHeight == null) {
+                    valMinHeight = null;
+                    valMaxHeight = null;
+
+                } else {
+                    // do nothing
+                }
+
+                if (valMinHeight != null && valMaxHeight != null && !valMinHeight.equals("") && !valMaxHeight.equals("")) {
 
                     heightMinValue = Integer.valueOf(valMinHeight);
                     heightMaxValue = Integer.valueOf(valMaxHeight);
 
-                    sb.append("  ");
-                    sb.append(" Height: Min ").append(heightMinValue).append(" - Max ").append(heightMaxValue).append(" ;");
+                  //  sb.append("  ");
+                  //  sb.append(" Height: Min ").append(heightMinValue).append(" - Max ").append(heightMaxValue).append(" ;");
 
                     if (heightMaxValue < heightMinValue) {
                         input_max_height.setError("Value must be greater from min value");
@@ -1503,16 +1290,31 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                         return;
                     }
                 }
+                if (!valMinHeight.isEmpty() && !valMaxHeight.isEmpty()) {
 
+                       mAutoLabel.addLabel("Height " + valMinHeight + "-" + valMaxHeight);
+                }
 
                 String valMinBmi = input_min_bmi.getText().toString();
                 String valMaxBmi = input_max_bmi.getText().toString();
-                if (!valMinBmi.equals("") && !valMaxBmi.equals("")) {
+
+                if (valMinBmi != null && valMaxBmi == null || valMaxBmi.equals("")) {
+                    valMaxBmi = String.valueOf(strMaxBmi);
+                } else if (valMaxBmi != null && valMinBmi == null || valMinBmi.equals("")) {
+                    valMinBmi = String.valueOf(strMinBmi);
+                } else if (valMinBmi == null && valMaxBmi == null) {
+                    valMinBmi = null;
+                    valMaxBmi = null;
+                } else {
+
+                }
+
+                if (valMinBmi != null && valMaxBmi != null && !valMinBmi.equals("") && !valMaxBmi.equals("")) {
 
                     bmiMinValue = Integer.valueOf(valMinBmi);
                     bmiMaxValue = Integer.valueOf(valMaxBmi);
-                    sb.append("  ");
-                    sb.append(" Bmi: Min ").append(bmiMinValue).append(" - Max ").append(bmiMaxValue).append(" ;");
+                  //  sb.append("  ");
+                   // sb.append(" Bmi: Min ").append(bmiMinValue).append(" - Max ").append(bmiMaxValue).append(" ;");
 
                     if (bmiMaxValue < bmiMinValue) {
                         input_max_bmi.setError("Value must be greater from min value");
@@ -1521,103 +1323,252 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                         input_min_bmi.setError("Value must be small from max value");
                         return;
                     } else if (bmiMaxValue > strMaxBmi) {
-                        input_max_height.setError("Entered value must be small from  " + strMaxBmi);
+                        input_max_bmi.setError("Entered value must be small from  " + strMaxBmi);
                         return;
                     }
                 }
+                if (!valMinBmi.isEmpty() && !valMaxHeight.isEmpty()) {
 
+                    boolean success = mAutoLabel.addLabel("Bmi " + valMinBmi + "-" + valMaxBmi);
+                }
                 String valMinPulse = input_min_pulse.getText().toString();
                 String valMaxPulse = input_max_pulse.getText().toString();
-                if (!valMinPulse.equals("") && !valMaxPulse.equals("")) {
+
+                if (valMinPulse != null && valMaxPulse == null || valMaxPulse.equals("")) {
+                    valMaxPulse = String.valueOf(strMaxPulse);
+                } else if (valMaxPulse != null && valMinPulse == null || valMinPulse.equals("")) {
+                    valMinPulse = String.valueOf(strMinPulse);
+                } else if (valMaxPulse == null && valMinPulse == null) {
+                    valMinPulse = null;
+                    valMaxPulse = null;
+                } else {
+                }
+
+                if (valMinPulse != null && valMaxPulse != null && !valMinPulse.equals("") && !valMaxPulse.equals("")) {
 
                     pulseMinValue = Integer.valueOf(valMinPulse);
                     pulseMaxValue = Integer.valueOf(valMaxPulse);
-                    sb.append("  ");
-                    sb.append(" Pulse: Min ").append(pulseMinValue).append(" -  Max ").append(pulseMaxValue).append(" ;");
+                   /// sb.append("  ");
+                   // sb.append(" Pulse: Min ").append(pulseMinValue).append(" -  Max ").append(pulseMaxValue).append(" ;");
 
                     if (pulseMaxValue < pulseMinValue) {
-                        input_max_bmi.setError("Value must be greater from min value");
+                        input_min_pulse.setError("Value must be greater from min value");
                         return;
                     } else if (pulseMinValue > pulseMaxValue) {
-                        input_min_bmi.setError("Value must be small from max value");
+                        input_min_pulse.setError("Value must be small from max value");
                         return;
                     } else if (pulseMaxValue > strMaxPulse) {
-                        input_max_height.setError("Entered value must be small from  " + strMaxPulse);
+                        input_max_pulse.setError("Entered value must be small from  " + strMaxPulse);
                         return;
                     }
                 }
+                if (!valMinPulse.isEmpty() && !valMinPulse.isEmpty()) {
+
+                     mAutoLabel.addLabel("Pulse " + valMinPulse + "-" + valMaxPulse);
+                }
                 String valMinTemp = input_min_temp.getText().toString();
                 String valMaxTemp = input_max_temp.getText().toString();
-                if (!valMinTemp.equals("") && !valMaxTemp.equals("")) {
+
+                if (valMinTemp != null && valMaxTemp == null || valMaxTemp.equals("")) {
+                    valMaxTemp = String.valueOf(strMaxTemp);
+                } else if (valMaxTemp != null && valMinTemp == null || valMinTemp.equals("")) {
+                    valMinTemp = String.valueOf(strMinTemp);
+                } else if (valMinTemp == null && valMaxTemp == null) {
+                    valMinTemp = null;
+                    valMaxTemp = null;
+                } else {
+                }
+
+                if (valMinTemp != null && valMaxTemp != null && !valMinTemp.equals("") && !valMaxTemp.equals("")) {
 
                     tempMinValue = Integer.valueOf(valMinTemp);
                     tempMaxValue = Integer.valueOf(valMaxTemp);
 
-                    sb.append("  ");
-                    sb.append(" Temp: Min ").append(tempMinValue).append(" -  Max ").append(tempMaxValue).append(" ;");
+                   // sb.append("  ");
+                   // sb.append(" Temp: Min ").append(tempMinValue).append(" -  Max ").append(tempMaxValue).append(" ;");
 
                     if (tempMaxValue < tempMinValue) {
-                        input_max_bmi.setError("Value must be greater from min value");
+                        input_max_temp.setError("Value must be greater from min value");
                         return;
                     } else if (tempMinValue > tempMaxValue) {
-                        input_min_bmi.setError("Value must be small from max value");
+                        input_min_temp.setError("Value must be small from max value");
                         return;
                     } else if (tempMaxValue > strMaxTemp) {
-                        input_max_height.setError("Entered value must be small from  " + strMaxTemp);
+                        input_max_temp.setError("Entered value must be small from  " + strMaxTemp);
                         return;
                     }
                 }
+                if (!valMinTemp.isEmpty() && !valMaxTemp.isEmpty()) {
+
+                    boolean success = mAutoLabel.addLabel("Temp " + valMinTemp + "-" + valMaxTemp);
+                }
+
                 String valMinSystole = input_min_systole.getText().toString();
                 String valMaxSystole = input_max_systole.getText().toString();
-                if (!valMinSystole.equals("") && !valMaxSystole.equals("")) {
+
+                if (valMinSystole != null && valMaxSystole == null || valMaxSystole.equals("")) {
+                    valMaxSystole = String.valueOf(strMaxSystole);
+                } else if (valMaxSystole != null && valMinSystole == null || valMinSystole.equals("")) {
+                    valMinSystole = String.valueOf(strMinSystole);
+                } else if (valMinSystole == null && valMaxSystole == null) {
+                    valMinSystole = null;
+                    valMaxSystole = null;
+                } else {
+                }
+
+                if (valMinSystole != null && valMaxSystole != null && !valMinSystole.equals("") && !valMaxSystole.equals("")) {
 
                     systoleMinValue = Integer.valueOf(valMinSystole);
                     systoleMaxValue = Integer.valueOf(valMaxSystole);
 
-                    sb.append("  ");
-                    sb.append(" Systole: Min ").append(systoleMinValue).append(" -  Max  ").append(systoleMaxValue).append(" ;");
+                  //  sb.append("  ");
+                  //  sb.append(" Systole: Min ").append(systoleMinValue).append(" -  Max  ").append(systoleMaxValue).append(" ;");
 
                     if (systoleMaxValue < systoleMinValue) {
-                        input_max_bmi.setError("Value must be greater from min value");
+                        input_max_systole.setError("Value must be greater from min value");
                         return;
                     } else if (systoleMinValue > systoleMaxValue) {
-                        input_min_bmi.setError("Value must be small from max value");
+                        input_min_systole.setError("Value must be small from max value");
                         return;
                     } else if (systoleMaxValue > strMaxSystole) {
-                        input_max_height.setError("Entered value must be small from  " + strMaxSystole);
+                        input_max_systole.setError("Entered value must be small from  " + strMaxSystole);
                         return;
                     }
                 }
+                if (!valMinSystole.isEmpty() && !valMaxSystole.isEmpty()) {
+
+                     mAutoLabel.addLabel("Systole " + valMinSystole + "-" + valMaxSystole);
+                }
                 String valMinDistole = input_min_distole.getText().toString();
                 String valMaxDistole = input_max_distole.getText().toString();
-                if (!valMinDistole.equals("") && !valMaxDistole.equals("")) {
+
+                if (valMinDistole != null && valMaxDistole == null || valMaxDistole.equals("")) {
+                    valMaxDistole = String.valueOf(strMaxDistole);
+                } else if (valMaxDistole != null && valMinDistole == null || valMinDistole.equals("")) {
+                    valMinDistole = String.valueOf(strMinDistole);
+                } else if (valMinDistole == null && valMaxDistole == null) {
+                    valMinDistole = null;
+                    valMaxDistole = null;
+                } else {
+                }
+
+                if (valMinDistole != null && valMaxDistole != null && !valMinDistole.equals("") && !valMaxDistole.equals("")) {
 
                     distoleMinValue = Integer.valueOf(valMinDistole);
                     distoleMaxValue = Integer.valueOf(valMaxDistole);
 
-                    sb.append("  ");
-                    sb.append(" Distole: Min ").append(distoleMinValue).append(" -  Max ").append(distoleMaxValue).append(" ;");
+                   // sb.append("  ");
+                   // sb.append(" Distole: Min ").append(distoleMinValue).append(" -  Max ").append(distoleMaxValue).append(" ;");
 
                     if (distoleMaxValue < distoleMinValue) {
-                        input_max_systole.setError("Value must be greater from min value");
+                        input_max_distole.setError("Value must be greater from min value");
                         return;
                     } else if (distoleMinValue > distoleMaxValue) {
-                        input_min_systole.setError("Value must be small from max value");
+                        input_min_distole.setError("Value must be small from max value");
                         return;
                     } else if (distoleMaxValue > strMaxDistole) {
-                        input_max_systole.setError("Entered value must be small from  " + strMaxDistole);
+                        input_max_distole.setError("Entered value must be small from  " + strMaxDistole);
                         return;
                     }
                 }
-                String valMinSugarFpg = input_min_sugarfpg.getText().toString();
+                if (!valMinDistole.isEmpty() && !valMaxDistole.isEmpty()) {
+
+                    boolean success = mAutoLabel.addLabel("Diastole " + valMinDistole + "-" + valMaxDistole);
+                }
+
+                ///////////////////
+                String valMinSpo2 = input_min_sPo2.getText().toString();
+                String valMaxSpo2 = input_max_sPo2.getText().toString();
+
+                if (valMinSpo2 != null && valMaxSpo2 == null || valMaxSpo2.equals("")) {
+                    valMaxSpo2 = String.valueOf(strMaxSpo2);
+                } else if (valMaxSpo2 != null && valMinSpo2 == null || valMinSpo2.equals("")) {
+                    valMinSpo2 = String.valueOf(strMinSpo2);
+                } else if (valMinSpo2 == null && valMaxSpo2 == null) {
+                    valMinSpo2 = null;
+                    valMaxSpo2 = null;
+                } else {
+                }
+
+                if (valMinSpo2 != null && valMaxSpo2 != null && !valMinSpo2.equals("") && !valMaxSpo2.equals("")) {
+
+                    spo2MinValue = Integer.valueOf(valMinSpo2);
+                    spo2MaxValue = Integer.valueOf(valMaxSpo2);
+
+
+                    if (spo2MaxValue < spo2MinValue) {
+                        input_max_sPo2.setError("Value must be greater from min value");
+                        return;
+                    } else if (spo2MinValue > spo2MaxValue) {
+                        input_min_sPo2.setError("Value must be small from max value");
+                        return;
+                    } else if (spo2MaxValue > strMaxSpo2) {
+                        input_max_sPo2.setError("Entered value must be small from  " + strMaxSpo2);
+                        return;
+                    }
+                }
+                if (!valMinSpo2.isEmpty() && !valMaxSpo2.isEmpty()) {
+
+                   mAutoLabel.addLabel("Spo2 " + valMinSpo2 + "-" + valMaxSpo2);
+                }
+                ///////////////////
+
+                String valMinRespiration = input_min_respiration.getText().toString();
+                String valMaxRespiration = input_max_respiration.getText().toString();
+
+                if (valMinRespiration != null && valMaxRespiration == null || valMaxRespiration.equals("")) {
+                    valMaxRespiration = String.valueOf(strMaxRespiration);
+                } else if (valMaxRespiration != null && valMinRespiration == null || valMinRespiration.equals("")) {
+                    valMinRespiration = String.valueOf(strMinRespiration);
+                } else if (valMinSpo2 == null && valMaxRespiration == null) {
+                    valMinRespiration = null;
+                    valMaxRespiration = null;
+                } else {
+                }
+
+                if (valMinRespiration != null && valMaxRespiration != null && !valMinRespiration.equals("") && !valMaxRespiration.equals("")) {
+
+                    respirationMinValue = Integer.valueOf(valMinRespiration);
+                    respirationMaxValue = Integer.valueOf(valMaxRespiration);
+
+                    if (respirationMaxValue < respirationMinValue) {
+                        input_max_respiration.setError("Value must be greater from min value");
+                        return;
+                    } else if (respirationMinValue > respirationMaxValue) {
+                        input_min_respiration.setError("Value must be small from max value");
+                        return;
+                    } else if (respirationMaxValue > strMaxRespiration) {
+                        input_max_respiration.setError("Entered value must be small from  " + strMaxRespiration);
+                        return;
+                    }
+                }
+                if (!valMinRespiration.isEmpty() && !valMaxSpo2.isEmpty()) {
+
+                    mAutoLabel.addLabel("Respiration " + valMinRespiration + "-" + valMaxRespiration);
+                }
+
+
+
+               /* String valMinSugarFpg = input_min_sugarfpg.getText().toString();
                 String valMaxSugarFpg = input_max_sugarfpg.getText().toString();
-                if (!valMinSugarFpg.equals("") && !valMaxSugarFpg.equals("")) {
+
+                if (valMinSugarFpg != null && valMaxSugarFpg == null || valMaxSugarFpg.equals("")) {
+                    valMaxSugarFpg = String.valueOf(strMaxSugarFPG);
+                } else if (valMaxSugarFpg != null && valMinSugarFpg == null || valMinSugarFpg.equals("")) {
+                    valMinSugarFpg = String.valueOf(strMinSugarFPG);
+                } else if (valMinSugarFpg == null && valMaxSugarFpg == null) {
+                    valMinSugarFpg = null;
+                    valMaxSugarFpg = null;
+                } else {
+                }
+
+                if (valMinSugarFpg != null && valMaxSugarFpg != null && !valMinSugarFpg.equals("") && !valMaxSugarFpg.equals("")) {
 
                     sugarFpgMinValue = Integer.valueOf(valMinSugarFpg);
                     sugarFpgMaxValue = Integer.valueOf(valMaxSugarFpg);
 
-                    sb.append("  ");
-                    sb.append(" SugarFpg: Min ").append(sugarFpgMinValue).append(" -  Max ").append(sugarFpgMaxValue).append(" ;");
+                  //  sb.append("  ");
+                  //  sb.append(" SugarFpg: Min ").append(sugarFpgMinValue).append(" -  Max ").append(sugarFpgMaxValue).append(" ;");
 
 
                     if (sugarFpgMaxValue < sugarFpgMinValue) {
@@ -1631,15 +1582,31 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                         return;
                     }
                 }
+                if (!valMinSugarFpg.isEmpty() && !valMaxSugarFpg.isEmpty()) {
+
+                    mAutoLabel.addLabel("SugarFpg " + valMinSugarFpg + "-" + valMaxSugarFpg);
+                }
                 String valMinSugarPpg = input_min_sugarppg.getText().toString();
                 String valMaxSugarPpg = input_max_sugarppg.getText().toString();
-                if (!valMinSugarPpg.equals("") && !valMaxSugarPpg.equals("")) {
+
+                if (valMinSugarPpg != null && valMaxSugarPpg == null || valMaxSugarPpg.equals("")) {
+                    valMaxSugarPpg = String.valueOf(strMaxSugarPPG);
+                } else if (valMaxSugarFpg != null && valMinSugarPpg == null || valMinSugarPpg.equals("")) {
+                    valMinSugarPpg = String.valueOf(strMinSugarPPG);
+                } else if (valMinSugarPpg == null && valMaxSugarPpg == null) {
+                    valMinSugarPpg = null;
+                    valMaxSugarPpg = null;
+
+                } else {
+                }
+
+                if (valMinSugarPpg != null && valMaxSugarPpg != null && !valMinSugarPpg.equals("") && !valMaxSugarPpg.equals("")) {
 
                     sugarPpgMinValue = Integer.valueOf(valMinSugarPpg);
                     sugarPpgMaxValue = Integer.valueOf(valMaxSugarPpg);
 
-                    sb.append("  ");
-                    sb.append("SugarPpg: Min ").append(sugarPpgMinValue).append(" -  Max ").append(sugarPpgMaxValue).append(" ;");
+                   // sb.append("  ");
+                   // sb.append("SugarPpg: Min ").append(sugarPpgMinValue).append(" -  Max ").append(sugarPpgMaxValue).append(" ;");
 
 
                     if (sugarPpgMaxValue < sugarPpgMinValue) {
@@ -1653,8 +1620,12 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                         return;
                     }
                 }
-                showData.setText(sb);
-               // Log.e("valMinWeight ",""+weightMinValue + ""+weightMaxValue);
+                if (!valMinSugarPpg.isEmpty() && !valMaxSugarPpg.isEmpty()) {
+
+                    mAutoLabel.addLabel("SugarPpg " + valMinSugarPpg + "-" + valMaxSugarPpg);
+                }*/
+                //showData.setText(sb);
+                // Log.e("valMinWeight ",""+weightMinValue + ""+weightMaxValue);
                 dialog.dismiss();
             }
         });
@@ -1662,137 +1633,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         dialog.show();
     }
 
-   /* private void setValueToSeekBarFromDb() {
-
-        if (strMinWeight == 0 && strMaxWeight == 0) {
-            seekbarWeight.setVisibility(View.GONE);
-        } else {
-
-            seekbarWeight.setRangeValues(strMinWeight, strMaxWeight);// if we want to set progrmmatically set range of seekbar
-
-            seekbarWeight.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
-
-
-                @Override
-                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
-                    input_min_weight.setText(minValue.toString());
-                    input_max_weight.setText(maxValue.toString());
-                }
-
-            });
-        }
-        if (strMinHeight == 0 && strMaxHeight == 0) {
-            seekbarHeight.setVisibility(View.GONE);
-        } else {
-            seekbarHeight.setRangeValues(strMinHeight, strMaxHeight);
-
-            seekbarHeight.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
-
-
-                @Override
-                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
-
-                    input_min_height.setText(minValue.toString());
-                    input_max_height.setText(maxValue.toString());
-                }
-
-            });
-        }
-        if (strMinBmi == 0 && strMaxBmi == 0) {
-            seekbarBmi.setVisibility(View.GONE);
-        } else {
-
-            seekbarBmi.setRangeValues(strMinBmi, strMaxBmi);
-
-            seekbarBmi.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
-                @Override
-                public void onRangeSeekBarValuesChanged(RangeSeekBar bar, Integer minValue, Integer maxValue) {
-
-                    input_min_bmi.setText(minValue.toString());
-                    input_max_bmi.setText(maxValue.toString());
-
-                }
-            });
-        }
-        if (strMinPulse == 0 && strMaxPulse == 0) {
-            seekbarPulse.setVisibility(View.GONE);
-        } else {
-
-            seekbarPulse.setRangeValues(strMinPulse, strMaxPulse);
-            seekbarPulse.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
-                @Override
-                public void onRangeSeekBarValuesChanged(RangeSeekBar bar, Integer minValue, Integer maxValue) {
-                    input_min_pulse.setText(minValue.toString());
-                    input_max_pulse.setText(maxValue.toString());
-
-                }
-            });
-        }
-        if (strMinTemp == 0 && strMaxTemp == 0) {
-            seekbarTemp.setVisibility(View.GONE);
-        } else {
-
-            seekbarTemp.setRangeValues(strMinTemp, strMaxTemp);
-            seekbarTemp.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
-                @Override
-                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
-                    input_min_temp.setText(minValue.toString());
-                    input_max_temp.setText(maxValue.toString());
-                }
-            });
-        }
-        if (strMinSystole == 0 && strMaxSystole == 0) {
-            seekbarSystole.setVisibility(View.GONE);
-        } else {
-            seekbarSystole.setRangeValues(strMinSystole, strMaxSystole);
-            seekbarSystole.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
-                @Override
-                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
-                    input_min_systole.setText(minValue.toString());
-                    input_max_systole.setText(maxValue.toString());
-                }
-            });
-        }
-        if (strMinDistole == 0 && strMaxDistole == 0) {
-            seekbarDiastole.setVisibility(View.GONE);
-        } else {
-            seekbarDiastole.setRangeValues(strMinDistole, strMaxDistole);
-            seekbarDiastole.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
-                @Override
-                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
-                    input_min_distole.setText(minValue.toString());
-                    input_max_distole.setText(maxValue.toString());
-                }
-            });
-        }
-        if (strMinSugarFPG == 0 && strMaxSugarFPG == 0) {
-            seekbarSugarFpg.setVisibility(View.GONE);
-        } else {
-            seekbarSugarFpg.setRangeValues(strMinSugarFPG, strMaxSugarFPG);  //value from  db
-            seekbarSugarFpg.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
-                @Override
-                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
-                    input_min_sugarfpg.setText(minValue.toString());
-                    input_max_sugarfpg.setText(maxValue.toString());
-
-                }
-            });
-        }
-        if (strMinSugarPPG == 0 && strMaxSugarPPG == 0) {
-            seekbarSugarPpg.setVisibility(View.GONE);
-        } else {
-            seekbarSugarPpg.setRangeValues(strMinSugarPPG, strMaxSugarPPG);
-            seekbarSugarPpg.setOnRangeSeekBarChangeListener(new RangeSeekBar.OnRangeSeekBarChangeListener<Integer>() {
-                @Override
-                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
-                    input_min_sugarppg.setText(minValue.toString());
-                    input_max_sugarppg.setText(maxValue.toString());
-
-                }
-            });
-        }
-
-    }*/
 
     private void clearVitalsValue() {
         weightMinValue = null;
@@ -1837,7 +1677,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private void reseFiltersData() {
 
         // seekbarWeight.setRangeValues(strMinWeight, strMaxWeight);// if we want to set progrmmatically set range of seekbar
-
+        mAutoLabel.clear();
+        mInvestigationLabel.clear();
         weightMinValue = null;
         weightMaxValue = null;
         heightMinValue = null;
@@ -1859,7 +1700,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         strEcg = null;
         strPft = null;
         strAcer = null;
-        strHbA1c = null;
         strLipidHDL = null;
         strLipidLDL = null;
         strLipidTC = null;
@@ -1876,9 +1716,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         strLipidTGMax = null;
         strLipidVHDLMax = null;
         strSerumUreaMax = null;
-        btnMoreFilter = null;
         healthDataBundle = null;
-        strTobaco=null;
+        strTobaco = null;
         strSmoking = null;
         strAlcoholConsumption = null;
         noOfSticksPerYear = null;
@@ -1898,37 +1737,35 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         otherDrugTaking = null;
         strFoodHabit = null;
         strFoodPreference = null;
+        strPallore = null;
+        strTremors = null;
+        strIcterus = null;
+        strClubbing = null;
+        strOedema = null;
+        strCalfTenderness = null;
+        strLymphadenopathy = null;
+        strPallorDescription = null;
+        strCyanosisDescription = null;
+        strTremorsDescription = null;
+        strIcterusDescription = null;
+        strClubbingDescription = null;
+        strOedemaDescription = null;
+
+        strCyanosis = null;
+        strTremors = null;
+        strIcterus = null;
+        strClubbing = null;
+        strOedema = null;
+        strCalfTenderness = null;
+        strLymphadenopathy = null;
+
+
     }
-
-   /* abstract class OnSingleClickListener implements View.OnClickListener {
-
-        private static final long MIN_CLICK_INTERVAL = 600;
-
-        private long mLastClickTime;
-
-
-        public abstract void onSingleClick(View v);
-
-        @Override
-        public final void onClick(View v) {
-            long currentClickTime = SystemClock.uptimeMillis();
-            long elapsedTime = currentClickTime - mLastClickTime;
-
-            mLastClickTime = currentClickTime;
-
-            if (elapsedTime <= MIN_CLICK_INTERVAL)
-                return;
-
-            onSingleClick(v);
-        }
-
-    }*/
 
     private void openInvestigationDialog() {
 
         final Dialog dialog = new Dialog(getContext());
         LayoutInflater factory = LayoutInflater.from(getContext());
-       // dialog.getWindow().setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         final View f = factory.inflate(R.layout.investigation_dialognew, null);
         dialog.setTitle(" Filter Investigation ");
@@ -1946,8 +1783,11 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         final EditText input_LipidTG = (EditText) f.findViewById(R.id.input_LipidTG);
         final EditText input_LipidLDL = (EditText) f.findViewById(R.id.input_LipidLDL);
         final EditText input_LipidVHDL = (EditText) f.findViewById(R.id.input_LipidVHDL);
-        final EditText edtInput_sugar = (EditText) f.findViewById(R.id.input_sugar);
-        final EditText edtInput_sugarfasting = (EditText) f.findViewById(R.id.input_sugarfasting);
+
+        input_min_sugarfpg = (EditText) f.findViewById(R.id.input_sugarfasting);
+        input_max_sugarfpg = (EditText) f.findViewById(R.id.input_sugarfasting_max);
+        input_min_sugarppg = (EditText) f.findViewById(R.id.input_sugar);
+        input_max_sugarppg = (EditText) f.findViewById(R.id.input_sugar_max);
 
         final EditText input_hba1c_max = (EditText) f.findViewById(R.id.input_hba1c_max);
         final EditText input_acer_max = (EditText) f.findViewById(R.id.input_acer_max);
@@ -1959,35 +1799,70 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         final EditText input_LipidVHDL_max = (EditText) f.findViewById(R.id.input_LipidVHDL_max);
 
 
-        edtInput_sugar.setVisibility(View.GONE);
-        edtInput_sugarfasting.setVisibility(View.GONE);
-        /*LinearLayout sugarLayout = (LinearLayout) f.findViewById(R.id.sugarLayout);
-        sugarLayout.setVisibility(View.GONE);*/
+
 
         RadioGroup radioEcg = (RadioGroup) f.findViewById(R.id.radioEcg);
         RadioGroup radioPft = (RadioGroup) f.findViewById(R.id.radioPft);
 
-        if (strLipidTC != null) {
+        if (sugarFpgMinValue != null && sugarFpgMaxValue != null) {
+            input_min_sugarfpg.setText(sugarFpgMinValue.toString());
+            input_max_sugarfpg.setText(sugarFpgMaxValue.toString());
+        }
+        if (sugarPpgMinValue != null && sugarPpgMaxValue != null) {
+            input_min_sugarppg.setText(sugarPpgMinValue.toString());
+            input_max_sugarppg.setText(sugarPpgMaxValue.toString());
+        }
+
+        if (strLipidTC != null && !strLipidTC.equals("")) {
             input_LipidTC.setText(strLipidTC);
         }
-        if (strLipidTG != null && !strLipidTG.equals("")) input_LipidTG.setText(strLipidTG);
-        if (strLipidLDL != null && !strLipidLDL.equals("")) input_LipidLDL.setText(strLipidLDL);
-        if (strLipidVHDL != null && !strLipidVHDL.equals("")) input_LipidVHDL.setText(strLipidVHDL);
-        if (strLipidHDL != null && !strLipidHDL.equals("")) input_LipidHDL.setText(strLipidHDL);
-        if (strHbA1c != null && !strHbA1c.equals("")) input_hba1c.setText(strHbA1c);
-        if (strSerumUrea != null && !strSerumUrea.equals("")) input_seremUrea.setText(strSerumUrea);
-        if (strAcer != null && !strAcer.equals("")) input_acer.setText(strAcer);
+        if (strLipidTG != null && !strLipidTG.equals("")) {
+            input_LipidTG.setText(strLipidTG);
+        }
+        if (strLipidLDL != null && !strLipidLDL.equals("")) {
+            input_LipidLDL.setText(strLipidLDL);
+        }
+        if (strLipidVHDL != null && !strLipidVHDL.equals("")) {
+            input_LipidVHDL.setText(strLipidVHDL);
+        }
+        if (strLipidHDL != null && !strLipidHDL.equals("")) {
+            input_LipidHDL.setText(strLipidHDL);
+        }
+        if (strHbA1c != null) {
+            input_hba1c.setText(strHbA1c.toString());
+        }
+        if (strSerumUrea != null && !strSerumUrea.equals("")) {
+            input_seremUrea.setText(strSerumUrea);
+        }
+        if (strAcer != null && !strAcer.equals("")) {
+            input_acer.setText(strAcer);
+        }
 
-        if (strLipidTCMax != null) {
+        if (strLipidTCMax != null && !strLipidTCMax.equals("")) {
             input_LipidTC_max.setText(strLipidTCMax);
         }
-        if (strLipidTGMax != null && !strLipidTGMax.equals("")) input_LipidTG_max.setText(strLipidTGMax);
-        if (strLipidLDLMax != null && !strLipidLDLMax.equals("")) input_LipidLDL_max.setText(strLipidLDLMax);
-        if (strLipidVHDLMax != null && !strLipidVHDLMax.equals("")) input_LipidVHDL_max.setText(strLipidVHDLMax);
-        if (strLipidHDLMax != null && !strLipidHDLMax.equals("")) input_LipidHDL_max.setText(strLipidHDLMax);
-        if (strHbA1cMax != null && !strHbA1cMax.equals("")) input_hba1c_max.setText(strHbA1cMax);
-        if (strSerumUreaMax != null && !strSerumUreaMax.equals("")) input_seremUrea_max.setText(strSerumUreaMax);
-        if (strAcerMax != null && !strAcerMax.equals("")) input_acer_max.setText(strAcerMax);
+        if (strLipidTGMax != null && !strLipidTGMax.equals("")) {
+            input_LipidTG_max.setText(strLipidTGMax);
+        }
+
+        if (strLipidLDLMax != null && !strLipidLDLMax.equals("")) {
+            input_LipidLDL_max.setText(strLipidLDLMax);
+        }
+        if (strLipidVHDLMax != null && !strLipidVHDLMax.equals("")) {
+            input_LipidVHDL_max.setText(strLipidVHDLMax);
+        }
+        if (strLipidHDLMax != null && !strLipidHDLMax.equals("")) {
+            input_LipidHDL_max.setText(strLipidHDLMax);
+        }
+        if (strHbA1cMax != null && !strHbA1cMax.equals("")) {
+            input_hba1c_max.setText(strHbA1cMax.toString());
+        }
+        if (strSerumUreaMax != null && !strSerumUreaMax.equals("")) {
+            input_seremUrea_max.setText(strSerumUreaMax);
+        }
+        if (strAcerMax != null && !strAcerMax.equals("")) {
+            input_acer_max.setText(strAcerMax);
+        }
 
         if (strEcg != null && !strEcg.equals(""))
             switch (strEcg) {
@@ -2050,570 +1925,696 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 dialog.dismiss();
             }
         });
+
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                strLipidTC = input_LipidTC.getText().toString();
-                strLipidTG = input_LipidTG.getText().toString();
-                strLipidLDL = input_LipidLDL.getText().toString();
-                strLipidVHDL = input_LipidVHDL.getText().toString();
-                strLipidHDL = input_LipidHDL.getText().toString();
-                //strSugarFasting = edtInput_sugarfasting.getText().toString();
-                // strSgar = edtInput_sugar.getText().toString();
-                strHbA1c = input_hba1c.getText().toString();
-                strSerumUrea = input_seremUrea.getText().toString();
-                strAcer = input_acer.getText().toString();
 
-                strLipidTCMax = input_LipidTC_max.getText().toString();
-                strLipidTGMax = input_LipidTG_max.getText().toString();
-                strLipidLDLMax = input_LipidLDL_max.getText().toString();
-                strLipidVHDLMax = input_LipidVHDL_max.getText().toString();
-                strLipidHDLMax = input_LipidHDL_max.getText().toString();
-                strHbA1cMax = input_hba1c_max.getText().toString();
-                strSerumUreaMax = input_seremUrea_max.getText().toString();
-                strAcerMax = input_acer_max.getText().toString();
+                mInvestigationLabel.clear();
 
-               /* if (strSgar != null && !strSgar.equals("") && strSgar.length() > 0) {
-                    sbInvestigations.append("Sugar(PPG):").append(strSgar).append(" ;");
 
+                String strMinHbA1c = input_hba1c.getText().toString();
+                String strMaxHbA1c = input_hba1c_max.getText().toString();
+
+                if (strMinHbA1c != null && !strMinHbA1c.equals("") && strMaxHbA1c == null || strMaxHbA1c.equals("")) {
+
+                    strMaxHbA1c = String.valueOf(mMaxHbA1c);
+
+                } else if (strMaxHbA1c != null && !strMaxHbA1c.equals("") && strMinHbA1c == null || strMinHbA1c.equals("")) {
+
+                    strMinHbA1c = String.valueOf(mMinHbA1c);
+
+                } else if (strMinHbA1c == null && strMaxHbA1c == null) {
+                    strMinHbA1c = null;
+                    strMaxHbA1c = null;
+
+                } else {
+                    // do nothing
                 }
-                if (strSugarFasting != null && !strSugarFasting.equals("") && strSugarFasting.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" Sugar(FPG):").append(strSgar).append(" ;");
+
+                if (strMinHbA1c != null && strMaxHbA1c != null && !strMinHbA1c.equals("") && !strMaxHbA1c.equals("")) {
+
+                    strHbA1c = Integer.valueOf(strMinHbA1c);
+                    strHbA1cMax = Integer.valueOf(strMaxHbA1c);
+
+                    if (strHbA1cMax < strHbA1c) {
+                        input_hba1c_max.setError("Value must be greater from min value");
+                        return;
+                    } else if (strHbA1c > strHbA1cMax) {
+                        input_hba1c.setError("Value must be small from max value");
+                        return;
+                    } else if (strHbA1c > strHbA1cMax) {
+                        input_hba1c.setError("Entered value must be small from  " + mMaxHbA1c);
+                        return;
+                    } else if (strHbA1cMax > Integer.valueOf(strMaxHbA1c)) {
+                        input_hba1c_max.setError("Entered value must be small from  " + mMaxHbA1c);
+                        return;
+                    }
                 }
-                if (strEcg != null && !strEcg.equals("") && strEcg.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" ECG:").append(strEcg).append(" ;");
+                if (!strMinHbA1c.isEmpty() && !strMaxHbA1c.isEmpty()) {
+
+                    mInvestigationLabel.addLabel("HbA1c " + strMinHbA1c + " - " + strMaxHbA1c);
                 }
-                if (strPft != null && !strPft.equals("") && strPft.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" PFT:").append(strPft).append(" ;");
-                }
-                sbInvestigations.append("  ");
-                sbInvestigations.append(" HbA1c:").append(strHbA1c).append(" ;");
-                sbInvestigations.append("  ");
-                sbInvestigations.append(" Acer:").append(strAcer).append(" ;");
-                sbInvestigations.append("  ");
-                sbInvestigations.append(" SerumUrea:").append(strSerumUrea).append(" ;");
-                sbInvestigations.append("  ");
-                sbInvestigations.append(" LipidHDL:").append(strLipidHDL).append(" ;");
-                sbInvestigations.append("  ");
-                sbInvestigations.append(" LipidTC:").append(strLipidTC).append(" ;");
-                sbInvestigations.append("  ");
-                sbInvestigations.append(" LipidTG:").append(strLipidTG).append(" ;");
-                sbInvestigations.append("  ");
-                sbInvestigations.append(" LipidLDL:").append(strLipidLDL).append(" ;");
-                sbInvestigations.append("  ");
-                sbInvestigations.append(" LipidVHDL:").append(strLipidVHDL).append(" ;");
+                String strMinAcer = input_acer.getText().toString();
+                String strMaxAcer = input_acer_max.getText().toString();
+
+                if (strMinAcer != null && !strMinAcer.equals("") && strMaxAcer == null || strMaxAcer.equals("")) {
+
+                    strMaxAcer = String.valueOf(mMaxAcer);
 
 
+                } else if (strMaxAcer != null && !strMaxAcer.equals("") && strMinAcer == null || strMinAcer.equals("")) {
 
-                  showInvestigationData.setText(sbInvestigations);*/
+                    strMinAcer = String.valueOf(mMinAcer);
+
+                } else if (strMinHbA1c == null && strMaxAcer == null) {
+                    strMinAcer = null;
+                    strMaxAcer = null;
+
+                } else {
+                    // do nothing
+                }
+                if (strMinAcer != null && strMaxAcer != null && !strMinAcer.equals("") && !strMaxAcer.equals("")) {
+
+                    strAcer = strMinAcer;
+                    strAcerMax = strMaxAcer;
+                }
+                if (!strMinAcer.isEmpty() && !strMaxAcer.isEmpty()) {
+
+                    mInvestigationLabel.addLabel("Acer " + strMinAcer + " - " + strMaxAcer);
+                }
+                String strMinLipidHDL = input_LipidHDL.getText().toString();
+                String strMaxLipidHDL = input_LipidHDL_max.getText().toString();
+
+                if (strMinLipidHDL != null && !strMinLipidHDL.equals("") && strMaxLipidHDL == null || strMaxLipidHDL.equals("")) {
+
+                    strMaxLipidHDL = String.valueOf(mMaxHdl);
+
+                } else if (strMaxLipidHDL != null && !strMaxLipidHDL.equals("") && strMinLipidHDL == null || strMinLipidHDL.equals("")) {
+
+                    strMinLipidHDL = String.valueOf(mMinHdl);
+
+                } else if (strMinLipidHDL == null && strMaxLipidHDL == null) {
+                    strMinLipidHDL = null;
+                    strMaxLipidHDL = null;
+
+                } else {
+                    // do nothing
+                }
+                if (strMaxLipidHDL != null && strMinLipidHDL != null && !strMaxLipidHDL.equals("") && !strMinLipidHDL.equals("")) {
+
+                    strLipidHDL = strMinLipidHDL;
+                    strLipidHDLMax = strMaxLipidHDL;
+                }
+                if (!strMinLipidHDL.isEmpty() && !strMaxLipidHDL.isEmpty()) {
+
+                    mInvestigationLabel.addLabel("HDL " + strMinLipidHDL + " - " + strMaxLipidHDL);
+                }
+                String strMinLipidLDL = input_LipidLDL.getText().toString();
+                String strMaxLipidLDL = input_LipidLDL_max.getText().toString();
+
+
+                if (strMinLipidLDL != null && !strMinLipidLDL.equals("") && strMaxLipidLDL == null || strMaxLipidLDL.equals("")) {
+
+                    strMaxLipidLDL = String.valueOf(mMaxLdl);
+
+                } else if (strMaxLipidLDL != null && !strMaxLipidLDL.equals("") && strMinLipidLDL == null || strMinLipidLDL.equals("")) {
+
+                    strMinLipidLDL = String.valueOf(mMinLdl);
+
+                } else if (strMinLipidLDL == null && strMaxLipidLDL == null) {
+                    strMinLipidLDL = null;
+                    strMaxLipidLDL = null;
+
+                } else {
+                    // do nothing
+                }
+
+                if (strMinLipidLDL != null && strMaxLipidLDL != null && !strMinLipidLDL.equals("") && !strMaxLipidLDL.equals("")) {
+
+                    strLipidLDL = strMinLipidLDL;
+                    strLipidLDLMax = strMaxLipidLDL;
+                }
+                if (!strMinLipidLDL.isEmpty() && !strMaxLipidLDL.isEmpty()) {
+
+                    mInvestigationLabel.addLabel("LDL " + strMinLipidLDL + " - " + strMaxLipidLDL);
+                }
+
+                String strMinTC = input_LipidTC.getText().toString();
+                String strMaxTC = input_LipidTC_max.getText().toString();
+
+
+                if (strMinTC != null && !strMinTC.equals("") && strMaxTC == null || strMaxTC.equals("")) {
+
+                    strMaxTC = String.valueOf(mMaxTc);
+
+                } else if (strMaxTC != null && !strMaxTC.equals("") && strMinTC == null || strMinTC.equals("")) {
+
+                    strMinTC = String.valueOf(mMinTc);
+
+                } else if (strMinTC == null && strMaxTC == null) {
+                    strMinTC = null;
+                    strMaxTC = null;
+
+                } else {
+                    // do nothing
+                }
+                if (strMinTC != null && strMaxTC != null && !strMinTC.equals("") && !strMaxTC.equals("")) {
+
+                    strLipidTC = strMinTC;
+                    strLipidTCMax = strMaxTC;
+                }
+                if (!strMinTC.isEmpty() && !strMaxTC.isEmpty()) {
+
+                    mInvestigationLabel.addLabel("TC " + strMinTC + " - " + strMaxTC);
+                }
+                String strMinTG = input_LipidTG.getText().toString();
+                String strMaxTG = input_LipidTG_max.getText().toString();
+               // Log.e("strMinTG", "  " + strMinTG + "   " + strMaxTG);
+
+                if (strMinTG != null && !strMinTG.equals("") && strMaxTG == null || strMaxTG.equals("")) {
+
+                    strMaxTG = String.valueOf(mMaxTg);
+
+                } else if (strMaxTG != null && !strMaxTG.equals("") && strMinTG == null || strMinTG.equals("")) {
+
+                    strMinTG = String.valueOf(mMinTg);
+
+                } else if (strMaxTG == null && strMinTG == null) {
+                    strMinTG = null;
+                    strMaxTG = null;
+
+                } else {
+                    // do nothing
+                }
+                if (strMinTG != null && strMaxTG != null && !strMinTG.equals("") && !strMaxTG.equals("")) {
+
+                    strLipidTG = strMinTG;
+                    strLipidTGMax = strMaxTG;
+                }
+                if (!strMinTG.isEmpty() && !strMaxTG.isEmpty()) {
+
+                    mInvestigationLabel.addLabel("TG " + strMinTG + " - " + strMaxTG);
+                }
+                String strMinLipidVHDL = input_LipidVHDL.getText().toString();
+                String strMaxLipidVHDLMax = input_LipidVHDL_max.getText().toString();
+
+
+                if (strMinLipidVHDL != null && !strMinLipidVHDL.equals("") && strMaxLipidVHDLMax == null || strMaxLipidVHDLMax.equals("")) {
+
+                    strMaxLipidVHDLMax = String.valueOf(mMaxVhdl);
+
+                } else if (strMaxLipidVHDLMax != null && !strMaxLipidVHDLMax.equals("") && strMinLipidVHDL == null || strMinLipidVHDL.equals("")) {
+
+                    strMinLipidVHDL = String.valueOf(mMinVhdl);
+
+                } else if (strMaxLipidVHDLMax == null && strMinLipidVHDL == null) {
+                    strMinLipidVHDL = null;
+                    strMaxLipidVHDLMax = null;
+
+                } else {
+                    // do nothing
+                }
+                if (strMinLipidVHDL != null && strMaxLipidVHDLMax != null && !strMinLipidVHDL.equals("") && !strMaxLipidVHDLMax.equals("")) {
+
+                    strLipidVHDL = strMinLipidVHDL;
+                    strLipidVHDLMax = strMaxLipidVHDLMax;
+                }
+                if (!strMinLipidVHDL.isEmpty() && !strMaxLipidVHDLMax.isEmpty()) {
+
+                    mInvestigationLabel.addLabel("VHDL " + strMinLipidVHDL + " - " + strMaxLipidVHDLMax);
+                }
+
+                String strMinSerumUrea = input_seremUrea.getText().toString();
+                String strMaxSerumUrea = input_seremUrea_max.getText().toString();
+
+                if (strMinSerumUrea != null && !strMinSerumUrea.equals("") && strMaxSerumUrea == null || strMaxSerumUrea.equals("")) {
+
+                    strMaxSerumUrea = String.valueOf(mMaxSerumUrea);
+
+                } else if (strMaxSerumUrea != null && !strMaxSerumUrea.equals("") && strMinSerumUrea == null || strMinSerumUrea.equals("")) {
+
+                    strMinSerumUrea = String.valueOf(mMinSerumUrea);
+
+                } else if (strMaxSerumUrea == null && strMinSerumUrea == null) {
+                    strMinSerumUrea = null;
+                    strMaxSerumUrea = null;
+
+                } else {
+                    // do nothing
+                }
+                if (strMinSerumUrea != null && strMaxSerumUrea != null && !strMinSerumUrea.equals("") && !strMaxSerumUrea.equals("")) {
+
+                    strSerumUrea = strMinSerumUrea;
+                    strSerumUreaMax = strMaxSerumUrea;
+                }
+                if (!strMinSerumUrea.isEmpty() && !strMaxSerumUrea.isEmpty()) {
+
+                    mInvestigationLabel.addLabel("SerumUrea " + strMinSerumUrea + " - " + strMaxSerumUrea);
+                }
+                if(strEcg!=null && !strEcg.isEmpty() && !strEcg.equals("")){
+                    mInvestigationLabel.addLabel("ECG - " + strEcg );
+                }
+                if(strPft!=null && !strPft.isEmpty() && !strPft.equals("")){
+                    mInvestigationLabel.addLabel("PFT - " + strPft );
+                }
+                String valMinSugarFpg = input_min_sugarfpg.getText().toString();
+                String valMaxSugarFpg = input_max_sugarfpg.getText().toString();
+
+                if (valMinSugarFpg != null && valMaxSugarFpg == null || valMaxSugarFpg.equals("")) {
+                    valMaxSugarFpg = String.valueOf(strMaxSugarFPG);
+                } else if (valMaxSugarFpg != null && valMinSugarFpg == null || valMinSugarFpg.equals("")) {
+                    valMinSugarFpg = String.valueOf(strMinSugarFPG);
+                } else if (valMinSugarFpg == null && valMaxSugarFpg == null) {
+                    valMinSugarFpg = null;
+                    valMaxSugarFpg = null;
+                } else {
+                }
+
+                if (valMinSugarFpg != null && valMaxSugarFpg != null && !valMinSugarFpg.equals("") && !valMaxSugarFpg.equals("")) {
+
+                    sugarFpgMinValue = Integer.valueOf(valMinSugarFpg);
+                    sugarFpgMaxValue = Integer.valueOf(valMaxSugarFpg);
+
+                    //  sb.append("  ");
+                    //  sb.append(" SugarFpg: Min ").append(sugarFpgMinValue).append(" -  Max ").append(sugarFpgMaxValue).append(" ;");
+
+
+                    if (sugarFpgMaxValue < sugarFpgMinValue) {
+                        input_max_sugarfpg.setError("Value must be greater from min value");
+                        return;
+                    } else if (sugarFpgMinValue > sugarFpgMaxValue) {
+                        input_min_sugarfpg.setError("Value must be small from max value");
+                        return;
+                    } else if (sugarFpgMaxValue > strMaxSugarFPG) {
+                        input_max_sugarfpg.setError("Entered value must be small from  " + strMaxSugarFPG);
+                        return;
+                    }
+                }
+                if (!valMinSugarFpg.isEmpty() && !valMaxSugarFpg.isEmpty()) {
+
+                    mInvestigationLabel.addLabel("SugarFpg " + valMinSugarFpg + "-" + valMaxSugarFpg);
+                }
+                String valMinSugarPpg = input_min_sugarppg.getText().toString();
+                String valMaxSugarPpg = input_max_sugarppg.getText().toString();
+
+                if (valMinSugarPpg != null && valMaxSugarPpg == null || valMaxSugarPpg.equals("")) {
+                    valMaxSugarPpg = String.valueOf(strMaxSugarPPG);
+                } else if (valMaxSugarFpg != null && valMinSugarPpg == null || valMinSugarPpg.equals("")) {
+                    valMinSugarPpg = String.valueOf(strMinSugarPPG);
+                } else if (valMinSugarPpg == null && valMaxSugarPpg == null) {
+                    valMinSugarPpg = null;
+                    valMaxSugarPpg = null;
+
+                } else {
+                }
+
+                if (valMinSugarPpg != null && valMaxSugarPpg != null && !valMinSugarPpg.equals("") && !valMaxSugarPpg.equals("")) {
+
+                    sugarPpgMinValue = Integer.valueOf(valMinSugarPpg);
+                    sugarPpgMaxValue = Integer.valueOf(valMaxSugarPpg);
+
+                    if (sugarPpgMaxValue < sugarPpgMinValue) {
+                        input_max_sugarppg.setError("Value must be greater from min value");
+                        return;
+                    } else if (sugarPpgMinValue > sugarPpgMaxValue) {
+                        input_min_sugarppg.setError("Value must be small from max value");
+                        return;
+                    } else if (sugarPpgMaxValue > strMaxSugarPPG) {
+                        input_max_sugarppg.setError("Entered value must be small from  " + strMaxSugarPPG);
+                        return;
+                    }
+                }
+                if (!valMinSugarPpg.isEmpty() && !valMaxSugarPpg.isEmpty()) {
+
+                    mInvestigationLabel.addLabel("SugarPpg " + valMinSugarPpg + "-" + valMaxSugarPpg);
+                }
+
                 dialog.dismiss();
             }
         });
         dialog.show();
     }
 
-    private void openHealthLifestyleDialog() {
-        final Dialog dialog = new Dialog(getContext());
+    private void showObservationsDialog() {
+
+        final Dialog dialog;
+
+        dialog = new Dialog(getContext());
         LayoutInflater factory = LayoutInflater.from(getContext());
 
-        final View dialogView = factory.inflate(R.layout.health_and_lifestyle_dialog, null);
-        dialog.setTitle("Health and LifeStyle ");
+        final View f = factory.inflate(R.layout.observation_dialog, null);
+        dialog.setTitle(" Add Observation ");
         dialog.setCanceledOnTouchOutside(false);
-        dialog.setContentView(dialogView);
 
-        final RadioGroup radioSmoker = (RadioGroup) dialogView.findViewById(R.id.radioSmoker);
-        final RadioGroup radioTobaco = (RadioGroup) dialogView.findViewById(R.id.radioTobaco);
+        dialog.setContentView(f);
 
-        final RadioGroup radioAlcoholConsumption = (RadioGroup) dialogView.findViewById(R.id.radioAlcoholConsumption);
-        final RadioGroup radioLifeStyle = (RadioGroup) dialogView.findViewById(R.id.radioLifeStyle);
+        Button cancel = (Button) f.findViewById(R.id.customDialogCancel);
+        Button ok = (Button) f.findViewById(R.id.customDialogOk);
 
-        final RadioGroup radioStressLevel = (RadioGroup) dialogView.findViewById(R.id.radioStressLevel);
-        final RadioGroup radioExcercise = (RadioGroup) dialogView.findViewById(R.id.radioExcercise);
+        RadioGroup radioPallor = (RadioGroup) f.findViewById(R.id.radioPallor);
+        RadioGroup radioCyanosis = (RadioGroup) f.findViewById(R.id.radioCyanosis);
+        RadioGroup radioTremors = (RadioGroup) f.findViewById(R.id.radioTremors);
+        RadioGroup radioIcterus = (RadioGroup) f.findViewById(R.id.radioIcterus);
+        RadioGroup radioClubbing = (RadioGroup) f.findViewById(R.id.radioClubbing);
+        RadioGroup radioOedema = (RadioGroup) f.findViewById(R.id.radioOedema);
+        RadioGroup radioCalfTenderness = (RadioGroup) f.findViewById(R.id.radioCalfTenderness);
+        RadioGroup radioLymphadenopathy = (RadioGroup) f.findViewById(R.id.radioLymphadenopathy);
 
+        final EditText pallorDescription = (EditText) f.findViewById(R.id.pallorDescription);
+        final EditText cyanosisDescription = (EditText) f.findViewById(R.id.cyanosisDescription);
+        final EditText tremorsDescription = (EditText) f.findViewById(R.id.tremorsDescription);
+        final EditText icterusDescription = (EditText) f.findViewById(R.id.icterusDescription);
+        final EditText clubbingDescription = (EditText) f.findViewById(R.id.clubbingDescription);
+        final EditText oedemaDescription = (EditText) f.findViewById(R.id.oedemaDescription);
+        final EditText calfTendernessDescription = (EditText) f.findViewById(R.id.calfTendernessDescription);
+        final EditText lymphadenopathyDescription = (EditText) f.findViewById(R.id.lymphadenopathyDescription);
 
-        final RadioGroup radioBingeEating = (RadioGroup) dialogView.findViewById(R.id.radioBingeEating);
-        final RadioGroup radiosexuallyActive = (RadioGroup) dialogView.findViewById(R.id.radiosexuallyActive);
+        if (strPallorDescription != null) pallorDescription.setText(strPallorDescription);
+        if (strCyanosisDescription != null) cyanosisDescription.setText(strCyanosisDescription);
+        if (strTremorsDescription != null) tremorsDescription.setText(strTremorsDescription);
+        if (strIcterusDescription != null) icterusDescription.setText(strIcterusDescription);
+        if (strClubbingDescription != null) clubbingDescription.setText(strClubbingDescription);
+        if (strOedemaDescription != null) oedemaDescription.setText(strOedemaDescription);
+        if (strCalfTendernessDescription != null)
+            calfTendernessDescription.setText(strCalfTendernessDescription);
+        if (strLymphadenopathyDescription != null)
+            lymphadenopathyDescription.setText(strLymphadenopathyDescription);
 
-        final RadioGroup radioFoodHabit = (RadioGroup) dialogView.findViewById(R.id.radioFoodHabit);
-        final RadioGroup radioFoodPreference = (RadioGroup) dialogView.findViewById(R.id.radioFoodPreference);
+        if (strPallore != null && !strPallore.equals(""))
+            switch (strPallore) {
+                case "Yes":
+                    radioPallor.check(R.id.radioPallorYes);
+                    break;
+                case "No":
+                    radioPallor.check(R.id.radioPallorNo);
+                    break;
 
-        final RadioGroup radioLactoseTolerance = (RadioGroup) dialogView.findViewById(R.id.radioLactoseTolerance);
+            }
+        if (strCyanosis != null && !strCyanosis.equals(""))
+            switch (strCyanosis) {
+                case "Yes":
+                    radioCyanosis.check(R.id.radioCyanosisYes);
+                    break;
+                case "No":
+                    radioCyanosis.check(R.id.radioCyanosisNo);
+                    break;
+            }
+        if (strTremors != null && !strTremors.equals(""))
+            switch (strTremors) {
+                case "Yes":
+                    radioTremors.check(R.id.radioTremorsYes);
+                    break;
+                case "No":
+                    radioTremors.check(R.id.radioTremorsNo);
+                    break;
+            }
+        if (strIcterus != null && !strIcterus.equals(""))
+            switch (strIcterus) {
+                case "Yes":
+                    radioIcterus.check(R.id.radioIcterusYes);
+                    break;
+                case "No":
+                    radioIcterus.check(R.id.radioIcterusNo);
+                    break;
+            }
 
-        final Button update = (Button) dialogView.findViewById(R.id.save);
-        Button cancel = (Button) dialogView.findViewById(R.id.cancel);
+        if (strClubbing != null && !strClubbing.equals(""))
+            switch (strClubbing) {
+                case "Yes":
+                    radioClubbing.check(R.id.radioClubbingYes);
+                    break;
+                case "No":
+                    radioClubbing.check(R.id.radioClubbingNo);
+                    break;
+            }
+        if (strOedema != null && !strOedema.equals(""))
+            switch (strOedema) {
+                case "Yes":
+                    radioOedema.check(R.id.radioOedemaYes);
+                    break;
+                case "No":
+                    radioOedema.check(R.id.radioOedemaNo);
+                    break;
+            }
+        if (strCalfTenderness != null && !strCalfTenderness.equals(""))
+            switch (strCalfTenderness) {
+                case "Yes":
+                    radioCalfTenderness.check(R.id.radioCalfTendernessYes);
+                    break;
+                case "No":
+                    radioCalfTenderness.check(R.id.radioCalfTendernessNo);
+                    break;
+            }
+        if (strLymphadenopathy != null && !strLymphadenopathy.equals(""))
+            switch (strLymphadenopathy) {
+                case "Yes":
+                    radioLymphadenopathy.check(R.id.radioLymphadenopathyYes);
+                    break;
+                case "No":
+                    radioLymphadenopathy.check(R.id.radioLymphadenopathyNo);
+                    break;
+            }
 
-        final EditText noOfSticks = (EditText) dialogView.findViewById(R.id.noOfSticks);
-        final EditText packPerWeer = (EditText) dialogView.findViewById(R.id.packPerWeer);
-        final EditText input_Alergies = (EditText) dialogView.findViewById(R.id.input_Alergies);
+        radioPallor.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
 
-        //setRadioButtons();
+                    case R.id.radioPallorYes:
+                        strPallore = "Yes";
+                        break;
 
-        if (strAllergie != null && !strAllergie.equals("")) {
-            input_Alergies.setText(strAllergie);
-        }
-        if (strNoOfSticks != null && !strNoOfSticks.equals("")) {
-            noOfSticks.setVisibility(View.VISIBLE);
-            noOfSticks.setText(strNoOfSticks);
-        }
-        if (strPackPerWeek != null && !strPackPerWeek.equals("")) {
-            packPerWeer.setVisibility(View.VISIBLE);
-            packPerWeer.setText(strPackPerWeek);
-        }
+                    case R.id.radioPallorNo:
+                        strPallore = "No";
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+
+        radioCyanosis.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+
+                    case R.id.radioCyanosisYes:
+                        strCyanosis = "Yes";
+                        break;
+
+                    case R.id.radioCyanosisNo:
+                        strCyanosis = "No";
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        radioTremors.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+
+                    case R.id.radioTremorsYes:
+                        strTremors = "Yes";
+                        break;
+
+                    case R.id.radioTremorsNo:
+                        strTremors = "No";
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        radioIcterus.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+
+                    case R.id.radioIcterusYes:
+                        strIcterus = "Yes";
+                        break;
+
+                    case R.id.radioIcterusNo:
+                        strIcterus = "No";
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        radioClubbing.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+
+                    case R.id.radioClubbingYes:
+                        strClubbing = "Yes";
+                        break;
+
+                    case R.id.radioClubbingNo:
+                        strClubbing = "No";
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        radioOedema.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+
+                    case R.id.radioOedemaYes:
+                        strOedema = "Yes";
+                        break;
+
+                    case R.id.radioOedemaNo:
+                        strOedema = "No";
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        radioCalfTenderness.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+
+                    case R.id.radioCalfTendernessYes:
+                        strCalfTenderness = "Yes";
+                        break;
+
+                    case R.id.radioCalfTendernessNo:
+                        strCalfTenderness = "No";
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        radioLymphadenopathy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+
+                    case R.id.radioLymphadenopathyYes:
+                        strLymphadenopathy = "Yes";
+                        break;
+
+                    case R.id.radioLymphadenopathyNo:
+                        strLymphadenopathy = "No";
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
         cancel.setOnClickListener(new View.OnClickListener() {
-
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
             }
         });
+
+
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                strPallorDescription = pallorDescription.getText().toString();
+                strCyanosisDescription = cyanosisDescription.getText().toString();
+                strTremorsDescription = tremorsDescription.getText().toString();
+                strIcterusDescription = icterusDescription.getText().toString();
+                strClubbingDescription = clubbingDescription.getText().toString();
+                strOedemaDescription = oedemaDescription.getText().toString();
+                strCalfTendernessDescription = calfTendernessDescription.getText().toString();
+                strLymphadenopathyDescription = lymphadenopathyDescription.getText().toString();
+
+                dialog.dismiss();
+            }
+        });
         dialog.show();
+
     }
-  /*  private void setRadioButtons() {
-        //  strSmoking = "Non Smoker";//set Daefault gender value to Male if not selected any other value to prevent null value. 14-12-2016
-        // Checked change Listener for RadioGroup 1
 
-        radioSmoker.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+    private void setAutoLabelUISettings() {
+
+        AutoLabelUISettings autoLabelUISettings =
+                new AutoLabelUISettings.Builder()
+                        .withBackgroundResource(R.color.colorPrimaryDark)
+                        .withIconCross(R.drawable.cross)
+                        .withMaxLabels(200)
+                        .withShowCross(false)
+                        .withLabelsClickables(false)
+                        .withTextColor(android.R.color.white)
+                        .withTextSize(R.dimen.label_title_size)
+                        .withLabelPadding(10)
+                        .build();
+
+        mAutoLabel.setSettings(autoLabelUISettings);
+        mInvestigationLabel.setSettings(autoLabelUISettings);
+
+    }
+
+    private void setListeners() {
+        mAutoLabel.setOnLabelsCompletedListener(new AutoLabelUI.OnLabelsCompletedListener() {
+            @SuppressWarnings("ConstantConditions")
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onLabelsCompleted() {
+               // Toast.makeText(getContext(), "Completed!", Toast.LENGTH_LONG).show();
 
-
-                    case R.id.radioActiveSmoker:
-                        strSmoking = "Active Smoker";
-                        noOfSticks.setVisibility(View.VISIBLE);
-                        stickVisible = true;
-                        radioSmokeDates.setVisibility(View.VISIBLE);
-                        txtSinceSmoke.setVisibility(View.INVISIBLE);
-                        sinceSmokeYear.setVisibility(View.INVISIBLE);
-                        break;
-
-                    case R.id.radioPassiveSmoker:
-                        //Toast.makeText(getContext(),"Male Selected",Toast.LENGTH_LONG).show();
-                        strSmoking = "Passsive Smoker";
-                        if (stickVisible) {
-                            noOfSticks.setVisibility(View.INVISIBLE);
-                            radioSmokeDates.setVisibility(View.INVISIBLE);
-                            txtSinceSmoke.setVisibility(View.INVISIBLE);
-                            sinceSmokeYear.setVisibility(View.INVISIBLE);
-                        }
-                        break;
-
-                    case R.id.radioExSmoker:
-                        strSmoking = "Ex Smoker";
-                        txtSinceSmoke.setVisibility(View.VISIBLE);
-                        sinceSmokeYear.setVisibility(View.VISIBLE);
-                        noOfSticks.setVisibility(View.INVISIBLE);
-                        radioSmokeDates.setVisibility(View.INVISIBLE);
-                        txtSinceSmoke.setVisibility(View.VISIBLE);
-                        sinceSmokeYear.setVisibility(View.VISIBLE);
-                        break;
-
-                    case R.id.radioNonSmoker:
-                        strSmoking = "Non Smoker";
-                        if (stickVisible) {
-                            noOfSticks.setVisibility(View.INVISIBLE);
-                            radioSmokeDates.setVisibility(View.INVISIBLE);
-                            txtSinceSmoke.setVisibility(View.INVISIBLE);
-                            sinceSmokeYear.setVisibility(View.INVISIBLE);
-                        }
-                        break;
-
-                    default:
-                        break;
-                }
+                //Snackbar.make(getView(), "Completed!", Snackbar.LENGTH_SHORT).show();
             }
         });
 
-        //strsDaysSelectedSmoking = null;
-        radioSmokeDates.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        mAutoLabel.setOnRemoveLabelListener(new AutoLabelUI.OnRemoveLabelListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.radioSmokeDay:
-                        strsDaysSelectedSmoking = "Days";
-                        String daysSelected = noOfSticks.getText().toString();
-                        if (daysSelected != null && !daysSelected.equals("")) {
+            public void onRemoveLabel(View view, int position) {
+               // Toast.makeText(getContext(), "Label with text \" " + ((Label) view).getTag() + "\" has been removed.", Toast.LENGTH_LONG).show();
 
-                            noOfSticksPerYear = String.valueOf(((Integer.parseInt(daysSelected)) * 365));
-                        } else {
-                            noOfSticks.setError("Please Enter Sticks");
-                        }
-                        Toast.makeText(getContext(), " pegs taking " + noOfSticksPerYear, Toast.LENGTH_LONG).show();
-                        break;
-
-                    case R.id.radioSmokeWeek:
-                        strsDaysSelectedSmoking = "Week";
-                        String weekSelected = noOfSticks.getText().toString();
-                        if (weekSelected != null && !weekSelected.equals("")) {
-                            noOfSticksPerYear = String.valueOf(((Integer.parseInt(weekSelected)) * 52));
-                        } else {
-                            noOfSticks.setError("Please Enter Sticks");
-                        }
-                        Toast.makeText(getContext(), " pegs taking " + noOfSticksPerYear, Toast.LENGTH_LONG).show();
-
-                        break;
-
-                    case R.id.radioSmokeMonth:
-                        strsDaysSelectedSmoking = "Month";
-                        String monthSelected = noOfSticks.getText().toString();
-                        if (monthSelected != null && !monthSelected.equals("")) {
-                            noOfSticksPerYear = String.valueOf(((Integer.parseInt(monthSelected)) * 12));
-                        } else {
-                            noOfSticks.setError("Please Enter Sticks");
-                        }
-                        Toast.makeText(getContext(), " pegs taking " + noOfSticksPerYear, Toast.LENGTH_LONG).show();
-
-                        break;
-
-                    default:
-                        break;
-                }
             }
+
+           /* @Override
+            public void onRemoveLabel(Label removedLabel, int position) {
+                Toast.makeText(getApplicationContext(),"Label with text \" " + removedLabel.getTag() + "\" has been removed.",Toast.LENGTH_LONG).show();
+               // Snackbar.make(removedLabel, "Label with text \" " + removedLabel.getTag() + "\" has been removed.", Snackbar.LENGTH_SHORT).show();
+            }*/
         });
-      //  strTobaco = null;
-        radioTobaco.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+        mAutoLabel.setOnLabelsEmptyListener(new AutoLabelUI.OnLabelsEmptyListener() {
+            @SuppressWarnings("ConstantConditions")
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.radioOtherTobacoYes:
-                        strTobaco = "Yes";
-                        otherTobacoEdit.setVisibility(View.VISIBLE);
-                        break;
-                    case R.id.radioOtherTobacoNo:
-                        strTobaco = "No";
-                        otherTobacoEdit.setVisibility(View.GONE);
-                        break;
+            public void onLabelsEmpty() {
+              //  Toast.makeText(getContext(), "EMPTY!", Toast.LENGTH_LONG).show();
 
-                    default:
-                        break;
-                }
-            }
-        });
-       // strDrug = null;
-        radioOtherDrug.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.radioOtherDrugYes:
-                        strDrug = "Yes";
-                        otherDrugEdit.setVisibility(View.VISIBLE);
-                        break;
-                    case R.id.radioOtherDrugNo:
-                        strDrug = "No";
-                        otherDrugEdit.setVisibility(View.GONE);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-       // strAlcoholConsumption = null;
-        radioAlcoholConsumption.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-
-                    case R.id.radioActiveDrinker:
-                        strAlcoholConsumption = "Drinker";
-                        packPerWeer.setVisibility(View.VISIBLE);
-                        packsVisible = true;
-                        radioAlcoholDates.setVisibility(View.VISIBLE);
-                        txtSinceAlcohol.setVisibility(View.INVISIBLE);
-                        sinceAlcoholYear.setVisibility(View.INVISIBLE);
-
-                        break;
-                    case R.id.radioNonDrinker:
-                        strAlcoholConsumption = "Non Drinker";
-                        if (packsVisible) {
-                            packPerWeer.setVisibility(View.INVISIBLE);
-                            radioAlcoholDates.setVisibility(View.INVISIBLE);
-                            txtSinceAlcohol.setVisibility(View.INVISIBLE);
-                            sinceAlcoholYear.setVisibility(View.INVISIBLE);
-                        }
-                        break;
-                    case R.id.radioExDrinker:
-                        strAlcoholConsumption = "Ex Drinker";
-                        packPerWeer.setVisibility(View.INVISIBLE);
-                        radioAlcoholDates.setVisibility(View.INVISIBLE);
-                        txtSinceAlcohol.setVisibility(View.VISIBLE);
-                        sinceAlcoholYear.setVisibility(View.VISIBLE);
-
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-       // strsDaysSelectedDrinking = null;
-        radioAlcoholDates.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-                    case R.id.radioAlcoholDay:
-                        strsDaysSelectedDrinking = "Days";
-                        String daysSelected = packPerWeer.getText().toString();
-                        if (daysSelected != null && !daysSelected.equals("")) {
-                            noOfPegsPerYear = String.valueOf(((Integer.parseInt(daysSelected)) * 365));
-                        } else {
-                            packPerWeer.setError("Please Enter Pegs");
-                        }
-                        Toast.makeText(getContext(), " pegs taking " + noOfPegsPerYear, Toast.LENGTH_LONG).show();
-                        break;
-
-                    case R.id.radioAlcoholWeek:
-                        strsDaysSelectedDrinking = "Week";
-                        String weekSelected = packPerWeer.getText().toString();
-                        if (weekSelected != null && !weekSelected.equals("")) {
-                            noOfPegsPerYear = String.valueOf(((Integer.parseInt(weekSelected)) * 52));
-                        } else {
-                            packPerWeer.setError("Please Enter Pegs");
-                        }
-                        break;
-
-                    case R.id.radioAlcoholMonth:
-                        strsDaysSelectedDrinking = "Month";
-                        String monthSelected = noOfSticks.getText().toString();
-                        if (monthSelected != null && !monthSelected.equals("")) {
-                            noOfSticksPerYear = String.valueOf(((Integer.parseInt(monthSelected)) * 12));
-                        } else {
-                            packPerWeer.setError("Please Enter Pegs");
-                        }
-                        break;
-                    default:
-                        break;
-                }
             }
         });
 
-       // strLifeStyle = null;
-        radioLifeStyle.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        mAutoLabel.setOnLabelClickListener(new AutoLabelUI.OnLabelClickListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClickLabel(View v) {
+               // Toast.makeText(getContext(), ((Label) v).getText(), Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getApplicationContext(),"test",Toast.LENGTH_LONG).show();
 
-                    case R.id.radioSedentary:
-                        strLifeStyle = "Sedentary";
-                        break;
-                    case R.id.radioLightActive:
-                        strLifeStyle = "Light Active";
-                        break;
-                    case R.id.radioActive:
-                        strLifeStyle = "Active";
-                        break;
-                    default:
-                        break;
-                }
             }
+
+
         });
-       // strStressLevel = null;
-        radioStressLevel.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+    }
 
-                    case R.id.radioLowStress:
-                        strStressLevel = "Low";
-                        break;
-
-                    case R.id.radioModerateStrees:
-                        strStressLevel = "Moderate";
-                        break;
-
-                    case R.id.radioHighStrees:
-                        strStressLevel = "High";
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-
-      //  strExcercise = null;
-        radioExcercise.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-
-                    case R.id.radioExcerciseNo:
-                        strExcercise = "No";
-                        break;
-
-                    case R.id.radioExcerciseYes:
-                        strExcercise = "Yes";
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-
-      //  strBingeEating = null;
-        radioBingeEating.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-
-                    case R.id.radioBingeNo:
-                        strBingeEating = "No";
-                        break;
-
-                    case R.id.radioBingeYes:
-                        strBingeEating = "Yes";
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-
-        //strSexuallyActive = null;
-        radiosexuallyActive.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-
-                    case R.id.radioSexStatusNo:
-                        strSexuallyActive = "No";
-                        break;
-
-                    case R.id.radioSexStatusYes:
-                        strSexuallyActive = "Yes";
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-
-        //strFoodHabit = null;
-        radioFoodHabit.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-
-                    case R.id.radioFoodHabitVeg:
-                        strFoodHabit = "Veg";
-                        otherFoodSpinner.setVisibility(View.GONE);
-                        break;
-
-                    case R.id.radioFoodHabitNonVeg:
-                        strFoodHabit = "NonVeg";
-                        otherFoodSpinner.setVisibility(View.GONE);
-                        break;
-
-                    case R.id.radioFoodHabitOther:
-                        strFoodHabit = "Other";
-                        otherFoodSpinner.setVisibility(View.VISIBLE);
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-
-        //strFoodPreference = null;
-        radioFoodPreference.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-
-                    case R.id.radioFoodSweet:
-                        strFoodPreference = "Sweet";
-                        break;
-
-                    case R.id.radioFoodSour:
-                        strFoodPreference = "Sour";
-                        break;
-
-
-                    case R.id.radioFoodSpicy:
-                        strFoodPreference = "Spicy";
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-
-       // strLactoseTolerance = null;
-        radioLactoseTolerance.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-
-                    case R.id.radioLactoseToleranceNo:
-                        strLactoseTolerance = "No";
-                        break;
-
-                    case R.id.radioLactoseToleranceYes:
-                        strLactoseTolerance = "Yes";
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-       // strSleepStatus = null;
-        radioSleep.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
-
-                    case R.id.radioSleepAdequate:
-                        strSleepStatus = "Adequate";
-                        break;
-
-                    case R.id.radioSleepInAdequate:
-                        strSleepStatus = "InAdequate";
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-
-        otherFoodSpinner.setPrompt("Select Type");
-
-
-        // Creating adapter for spinner
-        ArrayAdapter<CharSequence> foodTypeAdapter = ArrayAdapter
-                .createFromResource(getContext(), R.array.otherFoodType,
-                        android.R.layout.simple_spinner_item);
-
-        // Drop down layout style - list view with radio button
-        foodTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // attaching data adapter to spinner
-        otherFoodSpinner.setAdapter(foodTypeAdapter);
-        otherFoodSpinner.setSelection(position);
-        strFoodHabit = null;
-        otherFoodSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
-
-                strFoodHabit = (String) parent.getItemAtPosition(position);
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-
-    }*/
 }
 
 

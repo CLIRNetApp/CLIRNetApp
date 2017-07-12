@@ -62,10 +62,6 @@ import static app.clirnet.com.clirnetapp.R.id.produced_bytxt;
 
 public class AppController extends Application {
 
-    /*  public static RefWatcher getRefWatcher(Context context) {
-          AppController application = (AppController) context.getApplicationContext();
-          return application.refWatcher;
-      }*/
     private static final String TAG = AppController.class.getSimpleName();
 
     public static final String PREFS_NAME = "savedViewValue";
@@ -1240,6 +1236,31 @@ public class AppController extends Application {
             e.printStackTrace();
         }
         return date;
+    }
+
+    public String getObesity(String strBmi) {
+        String obseity = null;
+        if (!strBmi.isEmpty()) {
+
+            double bmi = Double.parseDouble(strBmi);
+
+            if (bmi <= 18.5) {
+                obseity = "under weight";
+            } else if (bmi >= 18.5 && bmi <= 24.9) {
+                obseity = "normal weight";
+            } else if (bmi >= 25.0 && bmi <= 29.9) {
+                obseity = "over weight";
+            } else if (bmi >= 30.0 && bmi <= 34.9) {
+                obseity = "class 1 obesity";
+            } else if (bmi >= 35.0 && bmi <= 39.9) {
+                obseity = "class 2 obesity";
+            } else if (bmi >= 40.0) {
+                obseity = "class 3 obesity";
+            }else{
+                return null;
+            }
+        }
+        return obseity;
     }
 
 }

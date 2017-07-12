@@ -97,7 +97,6 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
             SQLController sqlController = new SQLController(getContext());
             sqlController.open();
 
-
             ArrayList<GenderWiseDataModel> gd;
             gd = sqlController.genderWiseData(mFromDate, mToDate);
 
@@ -105,6 +104,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
             int size1 = gd.size();
             //Log.e("size1", "  " + size1);
             //Removes items from gd when agebound is null 15-02-2017
+
             for (int i = size1-1; i >= 0; i--){
                 String ageBound = gd.get(i).getAgeBound();
                 if(ageBound == null)

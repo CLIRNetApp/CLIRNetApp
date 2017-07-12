@@ -132,7 +132,8 @@
                 android:textColor="@color/bg_main"
                 android:textSize="18sp"
                 android:textStyle="normal"
-                tools:targetApi="jelly_bean" />
+                tools:targetApi="jelly_bean"
+                android:visibility="invisible"/>
 
             <TextView
                 android:id="@+id/email"
@@ -143,7 +144,6 @@
                 android:layout_toRightOf="@+id/txtEmail"
                 android:fontFamily="sans-serif"
                 android:padding="4dp"
-                android:text="a@ashish.com"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/bg_main"
                 android:textSize="18sp"
@@ -167,6 +167,7 @@
                 android:layout_alignTop="@+id/imgDrink"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
+                android:layout_below="@+id/patientImage"
                 android:layout_toEndOf="@+id/patientImage"
                 android:layout_toRightOf="@+id/patientImage"
                 android:contentDescription="@string/desc"
@@ -231,6 +232,30 @@
                 android:contentDescription="@string/desc"
                 android:gravity="end"
                 android:visibility="gone"/>
+            <ImageView
+                android:id="@+id/imgLifeStyle"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/patientImage"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/imgStress"
+                android:contentDescription="@string/desc"
+                android:gravity="end"
+                android:visibility="gone"/>
+            <ImageView
+                android:id="@+id/imgExcercise"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_below="@+id/patientImage"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toRightOf="@+id/imgLifeStyle"
+                android:contentDescription="@string/desc"
+                android:gravity="end"
+                android:visibility="gone"/>
+
+
 
 
         </RelativeLayout>

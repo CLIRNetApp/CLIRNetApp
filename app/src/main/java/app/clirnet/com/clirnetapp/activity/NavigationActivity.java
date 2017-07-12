@@ -26,6 +26,7 @@ import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.fragments.AssociatesFragment;
 import app.clirnet.com.clirnetapp.fragments.BarChartFragment;
 import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
+import app.clirnet.com.clirnetapp.fragments.DashboardFragment;
 import app.clirnet.com.clirnetapp.fragments.HealthVitalsDialogFragment;
 import app.clirnet.com.clirnetapp.fragments.HomeFragment;
 import app.clirnet.com.clirnetapp.fragments.IncompleteListFragment;
@@ -47,7 +48,7 @@ import com.google.firebase.messaging.FirebaseMessaging;*/
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
         , ReportFragment.OnFragmentInteractionListener, PatientReportFragment.OnFragmentInteractionListener, ReportFragmentViewPagerSetup.OnFragmentInteractionListener, TopTenAilmentFragment.OnFragmentInteractionListener,
-        BarChartFragment.OnFragmentInteractionListener, KnowledgeFragment.OnFragmentInteractionListener, IncompleteListFragment.OnFragmentInteractionListener, AssociatesFragment.OnFragmentInteractionListener,HealthVitalsDialogFragment.onSubmitListener {
+        BarChartFragment.OnFragmentInteractionListener, KnowledgeFragment.OnFragmentInteractionListener, IncompleteListFragment.OnFragmentInteractionListener, AssociatesFragment.OnFragmentInteractionListener,HealthVitalsDialogFragment.onSubmitListener,DashboardFragment.OnFragmentInteractionListener {
 
 
     private FragmentManager fragmentManager;
@@ -105,12 +106,10 @@ public class NavigationActivity extends AppCompatActivity
 
         dbController = new SQLiteHandler(getApplicationContext());
 
-
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
 
         try {
-
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
 
@@ -264,6 +263,14 @@ public class NavigationActivity extends AppCompatActivity
 
                 fragment = new KnowledgeFragment();
                 break;
+
+            case R.id.nav_dashboard:
+
+                AppController.getInstance().trackEvent("Dashboard", "Navigation", "Track event");
+
+                fragment = new DashboardFragment();
+                break;
+
             case R.id.nav_prescription:
                 AppController.getInstance().trackEvent("Prsecription", "Navigation", "Track event");
 

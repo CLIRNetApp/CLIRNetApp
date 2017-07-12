@@ -103,6 +103,7 @@ public class PatientReportFragment extends Fragment {
 
 
         appController = new AppController();
+
         this.setValuesSharedPrefrence("one");
 
         ListView lv = (ListView) view.findViewById(R.id.listView1);
@@ -148,6 +149,7 @@ public class PatientReportFragment extends Fragment {
             ArrayList<Counts> countsNo;
             dateList = new ArrayList<>();
             nocountsperday = new ArrayList<>();
+
             countsNo = sqlController.countPerDay(fromDate, toDate);
 
 
@@ -185,7 +187,7 @@ public class PatientReportFragment extends Fragment {
                 end.setTime(d2);
                 end.add(Calendar.DATE, 1);
 
-//here we are checking if date is present in dateList or not which came from db if not we r adding customly date and count which is 0. 29/11-2016 By.Ashish
+           //here we are checking if date is present in dateList or not which came from db if not we r adding customly date and count which is 0. 29/11-2016 By.Ashish
                 for (Date date1 = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date1 = start.getTime()) {
 
                     Format formatter = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
@@ -261,8 +263,6 @@ public class PatientReportFragment extends Fragment {
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
         dataSets.add(set1); // add the datasets
-
-
 
         // create a data object with the datasets
         LineData data = new LineData(newdate,dataSets);

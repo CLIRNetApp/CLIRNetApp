@@ -101,13 +101,14 @@ public class RegistrationModel {
     private String contactForPatient;
     private String altContactPatientIsdCodeType;
     private String selectedContactPhoneType;
-    private  String sugar;
-    private  String sugarFasting;
+    private String sugar;
+    private String sugarFasting;
     private String ecg;
     private String hba1c;
 
 
     private String followUpStatus;
+
 
     public String getFollowUpStatus() {
         return followUpStatus;
@@ -166,7 +167,7 @@ public class RegistrationModel {
     private String packPerWeek;
     private String stressLevel;
     private String smokerType;
-    private String  stickCount;
+    private String stickCount;
 
     private String lifeSyle;
     private String lactoseTolerance;
@@ -177,15 +178,124 @@ public class RegistrationModel {
     private String chewingTobaco;
     private String bingeEating;
     private String allergies;
-    private  String sexuallyActive;
-    private  String sticksGapSelected;
-    private  String pegsGapSelected;
+    private String sexuallyActive;
+    private String sticksGapSelected;
+    private String pegsGapSelected;
     private String otherTobacoConsumption;
     private String drugConsumption;
     private String otherDrugConsumption;
-    private  String sleep;
-    private  String lastSmokeYear;
-    private  String lastDrinkYear;
+    private String sleep;
+    private String lastSmokeYear;
+    private String lastDrinkYear;
+    private String pallor;
+    private String pallorDescription;
+    private String cyanosisDescription;
+    private String cyanosis;
+    private String tremors;
+    private String tremorsDescription;
+    private String icterus;
+    private String icterusDescription;
+    private String clubbing;
+    private String clubbingDescription;
+    private String oedema;
+    private String oedemaDescription;
+    private String calfTenderness;
+    private String calfTendernessDescription;
+    private String lymphadenopathy;
+    private String lymphadenopathyDescription;
+
+    private  String respirataion;
+    private  String  spo2;
+    private  String  familyHistory;
+    private  String hospitalizationSurgery;
+    private  String obesity;
+
+    public String getObesity() {
+        return obesity;
+    }
+
+    public String getFamilyHistory() {
+        return familyHistory;
+    }
+
+    public String getHospitalizationSurgery() {
+        return hospitalizationSurgery;
+    }
+
+
+    public String getRespirataion() {
+        return respirataion;
+    }
+
+    public String getSpo2() {
+        return spo2;
+    }
+
+
+
+    public String getPallor() {
+        return pallor;
+    }
+
+    public String getPallorDescription() {
+        return pallorDescription;
+    }
+
+    public String getCyanosisDescription() {
+        return cyanosisDescription;
+    }
+
+    public String getCyanosis() {
+        return cyanosis;
+    }
+
+    public String getTremors() {
+        return tremors;
+    }
+
+    public String getTremorsDescription() {
+        return tremorsDescription;
+    }
+
+    public String getIcterus() {
+        return icterus;
+    }
+
+    public String getIcterusDescription() {
+        return icterusDescription;
+    }
+
+    public String getClubbing() {
+        return clubbing;
+    }
+
+    public String getClubbingDescription() {
+        return clubbingDescription;
+    }
+
+    public String getOedema() {
+        return oedema;
+    }
+
+    public String getOedemaDescription() {
+        return oedemaDescription;
+    }
+
+    public String getCalfTenderness() {
+        return calfTenderness;
+    }
+
+    public String getCalfTendernessDescription() {
+        return calfTendernessDescription;
+    }
+
+    public String getLymphadenopathy() {
+        return lymphadenopathy;
+    }
+
+    public String getLymphadenopathyDescription() {
+        return lymphadenopathyDescription;
+    }
 
     public String getLastSmokeYear() {
         return lastSmokeYear;
@@ -222,6 +332,7 @@ public class RegistrationModel {
     public String getSexuallyActive() {
         return sexuallyActive;
     }
+
     public String getAlocholConsumption() {
         return alocholConsumption;
     }
@@ -273,12 +384,6 @@ public class RegistrationModel {
     public String getAllergies() {
         return allergies;
     }
-
-
-
-
-
-
 
 
     public String getModiedCounter() {
@@ -612,10 +717,14 @@ public class RegistrationModel {
     public RegistrationModel(String id) {
         this.pat_id = id;
     }
-    public RegistrationModel(){
+
+    public RegistrationModel() {
 
     }
-    public String getTitle() { return title; }
+
+    public String getTitle() {
+        return title;
+    }
 
     public RegistrationModel(String id, String visitId) {
         this.pat_id = id;
@@ -706,7 +815,7 @@ public class RegistrationModel {
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String gender, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String usersellectedDate, String daysSel,
                              String monthSel, String weekSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String modified_on, String actfod, String action, String address, String city, String district, String pin, String state,
-                             String altername_no, String altternate_phType, String phone_type, String visit_date, String email, String uid) {
+                             String altername_no, String altternate_phType, String phone_type, String visit_date, String email, String uid,String familyHistory,String hospitalizationSurgery) {
         this.pat_id = id;
         this.firstName = first_name;
         this.middleName = middle_name;
@@ -743,6 +852,8 @@ public class RegistrationModel {
         this.phone_type = phone_type;
         this.email = email;
         this.uid = uid;
+        this.familyHistory = familyHistory;
+        this.hospitalizationSurgery = hospitalizationSurgery;
 
     }
 
@@ -805,7 +916,7 @@ public class RegistrationModel {
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
                              String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String email, String uid, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo) {
+                             String sugar, String symptoms, String dignosis, String email, String uid, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo,String spo2,String respirataion,String hba1c,String acer,String seremUrea,String lipidProfileHdl,String lipidProfileTc,String lipidProfileTg,String lipidProfileLdl,String lipidProfileVhdl,String ecg,String pft,String pallore,String cyanosis,String tremors,String icterus,String clubbing,String oedema,String calfTenderness,String lymphadenopathy,String obesity) {
 
         this.pat_id = id;
         this.firstName = first_name;
@@ -858,7 +969,28 @@ public class RegistrationModel {
         this.alternate_isd_code = alternate_noisd_code;
         this.referedBy = referedBy;
         this.referedTo = referedTo;
+        this.spo2 = spo2;
+        this.respirataion = respirataion;
 
+        this.hba1c = hba1c;
+        this.acer = acer;
+        this.seremUrea = seremUrea;
+        this.lipidProfileHdl = lipidProfileHdl;
+        this.lipidProfileTc = lipidProfileTc;
+        this.lipidProfileTg = lipidProfileTg;
+        this.lipidProfileLdl = lipidProfileLdl;
+        this.lipidProfileVhdl = lipidProfileVhdl;
+        this.ecg = ecg;
+        this.pft = pft;
+        this.pallor = pallore;
+        this.cyanosis = cyanosis;
+        this.tremors = tremors;
+        this.icterus = icterus;
+        this.clubbing = clubbing;
+        this.oedema = oedema;
+        this.calfTenderness = calfTenderness;
+        this.lymphadenopathy = lymphadenopathy;
+         this.obesity=obesity;
     }
 
 
@@ -881,7 +1013,7 @@ public class RegistrationModel {
 
     }
 
-    public RegistrationModel(String id, String prescription_image, String added_on, String added_by, String status, String phno, String email,String strReferredBy,String strReferredTo) {
+    public RegistrationModel(String id, String prescription_image, String added_on, String added_by, String status, String phno, String email, String strReferredBy, String strReferredTo) {
 
         this.id = id;
         this.pres_img = prescription_image;
@@ -890,11 +1022,11 @@ public class RegistrationModel {
         this.status = status;
         this.mobileNumber = phno;
         this.email = email;
-        this.referedBy=strReferredBy;
-        this.referedTo=strReferredTo;
+        this.referedBy = strReferredBy;
+        this.referedTo = strReferredTo;
     }
 
-    public RegistrationModel(String id, String name, String type, String phoneno, String speciality, String added_on, String modified_counter, String phone_type, String isd_code, String email, String associate_address, String city, String associate_state, String pin_code, String district, String nameTitle,String contactforPatient,String selectedIsd_code_altType,String selectedcontactForPatientType) {
+    public RegistrationModel(String id, String name, String type, String phoneno, String speciality, String added_on, String modified_counter, String phone_type, String isd_code, String email, String associate_address, String city, String associate_state, String pin_code, String district, String nameTitle, String contactforPatient, String selectedIsd_code_altType, String selectedcontactForPatientType) {
         this.id = id;
         this.name = name;
         this.associateType = type;
@@ -911,9 +1043,9 @@ public class RegistrationModel {
         this.pin_code = pin_code;
         this.district = district;
         this.title = nameTitle;
-        this.contactForPatient=contactforPatient;
-        this.altContactPatientIsdCodeType =selectedIsd_code_altType;
-        this.selectedContactPhoneType =selectedcontactForPatientType;
+        this.contactForPatient = contactforPatient;
+        this.altContactPatientIsdCodeType = selectedIsd_code_altType;
+        this.selectedContactPhoneType = selectedcontactForPatientType;
     }
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
@@ -978,51 +1110,53 @@ public class RegistrationModel {
         this.referedTo = referedTo;
         this.email = email;
     }
+
     public RegistrationModel(String ecg, String sugar, String sugar_fasting, String acer, String pft, String hba1c, String serem_urea, String lipid_profile_tc, String lipid_profile_tg, String lipid_profile_ldl, String lipid_profile_vhdl, String lipid_profile_hdl) {
-        this.ecg=ecg;
-        this.sugar=sugar;
-        this.sugarFasting=sugar_fasting;
-        this.acer=acer;
-        this.pft=pft;
-        this.hba1c=hba1c;
-        this.seremUrea=serem_urea;
-        this.lipidProfileTc=lipid_profile_tc;
-        this.lipidProfileTg=lipid_profile_tg;
-        this.lipidProfileLdl=lipid_profile_ldl;
-        this.lipidProfileVhdl=lipid_profile_vhdl;
-        this.lipidProfileHdl=lipid_profile_hdl;
+        this.ecg = ecg;
+        this.sugar = sugar;
+        this.sugarFasting = sugar_fasting;
+        this.acer = acer;
+        this.pft = pft;
+        this.hba1c = hba1c;
+        this.seremUrea = serem_urea;
+        this.lipidProfileTc = lipid_profile_tc;
+        this.lipidProfileTg = lipid_profile_tg;
+        this.lipidProfileLdl = lipid_profile_ldl;
+        this.lipidProfileVhdl = lipid_profile_vhdl;
+        this.lipidProfileHdl = lipid_profile_hdl;
     }
 
-    public RegistrationModel(String alocholConsumption, String packPerWeek, String stressLevel, String smokerType, String stickCount, String lifeSyle, String lactoseTolerance, String foodPreference, String foodHabit, String excercise, String chewingTobaco, String bingeEating,String allergies,String sexuallyActive,String sticksGapSelected,String pegsGapSelected,String otherTobacoConsumption,String drugConsumption,String otherDrugConsumption,String sleep,String lastSmokeYear,String lastDrinkYear) {
+    public RegistrationModel(String alocholConsumption, String packPerWeek, String stressLevel, String smokerType, String stickCount, String lifeSyle, String lactoseTolerance, String foodPreference, String foodHabit, String excercise, String chewingTobaco, String bingeEating, String allergies, String sexuallyActive, String sticksGapSelected, String pegsGapSelected, String otherTobacoConsumption, String drugConsumption, String otherDrugConsumption, String sleep, String lastSmokeYear, String lastDrinkYear) {
 
-        this.alocholConsumption=alocholConsumption;
-        this.packPerWeek=packPerWeek;
-        this.stressLevel=stressLevel;
-        this.smokerType=smokerType;
-        this.stickCount=stickCount;
-        this.lifeSyle=lifeSyle;
-        this.lactoseTolerance=lactoseTolerance;
-        this.foodPreference=foodPreference;
-        this.foodHabit=foodHabit;
-        this.excercise=excercise;
-        this.chewingTobaco=chewingTobaco;
-        this.bingeEating=bingeEating;
-        this.allergies=allergies;
-        this.sexuallyActive=sexuallyActive;
-        this.sticksGapSelected=sticksGapSelected;
-        this.pegsGapSelected=  pegsGapSelected;
+        this.alocholConsumption = alocholConsumption;
+        this.packPerWeek = packPerWeek;
+        this.stressLevel = stressLevel;
+        this.smokerType = smokerType;
+        this.stickCount = stickCount;
+        this.lifeSyle = lifeSyle;
+        this.lactoseTolerance = lactoseTolerance;
+        this.foodPreference = foodPreference;
+        this.foodHabit = foodHabit;
+        this.excercise = excercise;
+        this.chewingTobaco = chewingTobaco;
+        this.bingeEating = bingeEating;
+        this.allergies = allergies;
+        this.sexuallyActive = sexuallyActive;
+        this.sticksGapSelected = sticksGapSelected;
+        this.pegsGapSelected = pegsGapSelected;
 
-        this.otherTobacoConsumption=otherTobacoConsumption;
-        this.drugConsumption=drugConsumption;
-        this.otherDrugConsumption=  otherDrugConsumption;
-        this.sleep= sleep;
-        this.lastSmokeYear=  lastSmokeYear;
-        this.lastDrinkYear= lastDrinkYear;
+        this.otherTobacoConsumption = otherTobacoConsumption;
+        this.drugConsumption = drugConsumption;
+        this.otherDrugConsumption = otherDrugConsumption;
+        this.sleep = sleep;
+        this.lastSmokeYear = lastSmokeYear;
+        this.lastDrinkYear = lastDrinkYear;
 
     }
+
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
                              String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String uid, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo, String email,String followUpStatus) {
+                             String sugar, String symptoms, String dignosis, String uid, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo, String email, String followUpStatus,String spo2,String respiration,String strFamilyHistory,String strHospitalizationSurgeru,String strObestity) {
 
         this.pat_id = id;
         this.firstName = first_name;
@@ -1081,7 +1215,30 @@ public class RegistrationModel {
 
         this.referedTo = referedTo;
         this.email = email;
-        this.followUpStatus=followUpStatus;
+        this.followUpStatus = followUpStatus;
+        this.spo2=spo2;
+        this.respirataion=respiration;
+        this.familyHistory=strFamilyHistory;
+        this.hospitalizationSurgery=strHospitalizationSurgeru;
+        this.obesity=strObestity;
     }
 
+    public RegistrationModel(String strPallore, String strPallorDescription, String strCyanosis, String strCyanosisDescription, String strClubbing, String strClubbingDescription, String strTremors, String strTremorsDescription, String strIcterus, String strIcterusDescription, String strOedema, String strOedemaDescription, String strCalfTenderness, String strCalfTendernessDescription, String strLymphadenopathy, String strLymphadenopathyDescription) {
+        this.pallor = strPallore;
+        this.pallorDescription = strPallorDescription;
+        this.cyanosis = strCyanosis;
+        this.cyanosisDescription = strCyanosisDescription;
+        this.tremors = strTremors;
+        this.tremorsDescription = strTremorsDescription;
+        this.icterus = strIcterus;
+        this.icterusDescription = strIcterusDescription;
+        this.clubbing = strClubbing;
+        this.clubbingDescription = strClubbingDescription;
+        this.oedema = strOedema;
+        this.oedemaDescription = strOedemaDescription;
+        this.calfTenderness = strCalfTenderness;
+        this.calfTendernessDescription = strCalfTendernessDescription;
+        this.lymphadenopathy = strLymphadenopathy;
+        this.lymphadenopathyDescription = strLymphadenopathyDescription;
+    }
 }

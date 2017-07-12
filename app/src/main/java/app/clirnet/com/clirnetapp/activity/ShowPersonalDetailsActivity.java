@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -79,6 +78,8 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private String otherDrugTaking;
     private String otherTobacoTaking;
     private String mSleepStatus;
+    private String strFamilyHistory;
+    private String strHospitalizaionSurgery;
 
 
     @Override
@@ -129,6 +130,8 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
          strPhoneType = getIntent().getStringExtra("PHONETYPE");
          strUid = getIntent().getStringExtra("UID");
         calledFrom=getIntent().getStringExtra("CALLEDFROM");
+        strFamilyHistory=getIntent().getStringExtra("FAMILYHISTORY");
+        strHospitalizaionSurgery =getIntent().getStringExtra("HOSPITALIZATION");
 
 
 
@@ -216,8 +219,8 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             patientPersonalData = new ArrayList<>();
             patientPersonalData = sqlController.getPatientHistoryListAll1(strId); //get all patient data from db
             int size = patientPersonalData.size();
-            if (size > 0) {
 
+            if (size > 0) {
                 ShowPersonalDetailsAdapter showPersonalDetailsAdapter = new ShowPersonalDetailsAdapter(ShowPersonalDetailsActivity.this, patientPersonalData);
                 recyclerView.setAdapter(showPersonalDetailsAdapter);
             }
@@ -326,6 +329,10 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
                     i.putExtra("REFEREDTO", registrationModel.getReferedTo());
                     i.putExtra("UID",registrationModel.getUid());
                     i.putExtra("EMAIL",registrationModel.getEmail());
+                    i.putExtra("FAMILYHISTORY", strFamilyHistory);
+                    i.putExtra("HOSPITALIZATION",strHospitalizaionSurgery);
+                    i.putExtra("SPO2", registrationModel.getSpo2());
+                    i.putExtra("RESPIRATION", registrationModel.getRespirataion());
                     i.putExtra("CALLEDFROM",calledFrom);
                    // i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                    // i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
@@ -387,6 +394,8 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         i.putExtra("ALTERNATENUMBERTYPE", strAlternatephtype);
         i.putExtra("UID",strUid);
         i.putExtra("EMAIL",strEmail);
+        i.putExtra("FAMILYHISTORY", strFamilyHistory);
+        i.putExtra("HOSPITALIZATION", strHospitalizaionSurgery);
         startActivity(i);
         // finish();
     }
@@ -500,10 +509,12 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
         ImageView imgSmoke = (ImageView) findViewById(R.id.imgSmoke);
         ImageView imgDrink = (ImageView) findViewById(R.id.imgDrink);
         ImageView imgTobaco = (ImageView) findViewById(R.id.imgTobaco);
-        ImageView imgFood = (ImageView) findViewById(R.id.imgFood);
-        ImageView imgSleep = (ImageView) findViewById(R.id.imgSleep);
         ImageView imgStress = (ImageView) findViewById(R.id.imgStress);
-        Log.e("mSmokerType",""+mSmokerType + "" +mAlcohol);
+        ImageView imgLifeStyle=(ImageView) findViewById(R.id.imgLifeStyle);
+        ImageView imgExcercise=(ImageView) findViewById(R.id.imgExcercise);
+
+       // Log.e("mSmokerType",""+mSmokerType + "" +mAlcohol);
+
         if(mSmokerType!=null && !mSmokerType.equals("")&& mSmokerType.equals("Active Smoker")){
             imgSmoke.setVisibility(View.VISIBLE);
             imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.smoke));
@@ -518,22 +529,41 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
             imgDrink.setVisibility(View.VISIBLE);
             imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.no_drink));
         }
-        if(mSleepStatus!=null && !mSleepStatus.equals("")&& mSleepStatus.equals("Adequate")){
-            imgSleep.setVisibility(View.VISIBLE);
-            imgSleep.setImageDrawable(getResources().getDrawable(R.drawable.sleep));
-        }else if(mSleepStatus!=null && !mSleepStatus.equals("")&& mSleepStatus.equals("InAdequate")){
-            imgSleep.setVisibility(View.VISIBLE);
-            imgSleep.setImageDrawable(getResources().getDrawable(R.drawable.no_sleep));
+        if(mChewinogTobaco!=null && !mChewinogTobaco.equals("")&& mChewinogTobaco.equals("Yes")){
+            imgTobaco.setVisibility(View.VISIBLE);
+            imgTobaco.setImageDrawable(getResources().getDrawable(R.drawable.tobacco));
+        }else if(mSleepStatus!=null && !mSleepStatus.equals("")&& mSleepStatus.equals("No")){
+            imgTobaco.setVisibility(View.VISIBLE);
+            imgTobaco.setImageDrawable(getResources().getDrawable(R.drawable.no_tobacco));
         }
         if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("Low")){
             imgStress.setVisibility(View.VISIBLE);
-            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stressed));
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stress_low));
         }else if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("Moderate")){
             imgStress.setVisibility(View.VISIBLE);
-            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.no_stressed));
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stress_moderate));
         } else if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("High")){
             imgStress.setVisibility(View.VISIBLE);
-            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.no_stressed));
+            imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stress_high));
+        }
+
+        if(mExcercise!=null && !mExcercise.equals("")&& mExcercise.equals("Yes")){
+            imgExcercise.setVisibility(View.VISIBLE);
+            imgExcercise.setImageDrawable(getResources().getDrawable(R.drawable.exercise));
+        }else if(mExcercise!=null && !mExcercise.equals("")&& mExcercise.equals("No")){
+            imgExcercise.setVisibility(View.VISIBLE);
+            imgExcercise.setImageDrawable(getResources().getDrawable(R.drawable.no_exercise));
+        }
+        if(mLifeStyle!=null && !mLifeStyle.equals("")&& mLifeStyle.equals("Sedentary")){
+            imgLifeStyle.setVisibility(View.VISIBLE);
+            imgLifeStyle.setImageDrawable(getResources().getDrawable(R.drawable.sitting));
+        }else if(mLifeStyle!=null && !mLifeStyle.equals("")&& mLifeStyle.equals("Light Active")){
+            imgLifeStyle.setVisibility(View.VISIBLE);
+            imgLifeStyle.setImageDrawable(getResources().getDrawable(R.drawable.walking));
+        }
+        else if(mLifeStyle!=null && !mLifeStyle.equals("")&& mLifeStyle.equals("Active")){
+            imgLifeStyle.setVisibility(View.VISIBLE);
+            imgLifeStyle.setImageDrawable(getResources().getDrawable(R.drawable.running));
         }
     }
 }

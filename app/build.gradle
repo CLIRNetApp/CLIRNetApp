@@ -7,6 +7,7 @@ android {
             keyPassword 'clirnet'
             storeFile file('C:/Users/CLIRNET1/clirnetappkey.jks')
             storePassword 'clirnet'
+            v2SigningEnabled false
         }
     }
     compileSdkVersion 25
@@ -19,9 +20,8 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         multiDexEnabled true
-        versionCode 9
-        versionName "1.3.1.13"
-        signingConfig signingConfigs.config
+        versionCode 12
+        versionName "1.3.2.0"
     }
     lintOptions {
         abortOnError false
@@ -83,5 +83,8 @@ dependencies {
     compile 'com.android.support:support-v4:25.0.1'
     compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
+    compile 'com.github.davidpizarro:autolabelui:1.0.1'
+    compile 'com.splitwise:tokenautocomplete:2.0.8@aar'
+    compile 'com.moxun:tagcloudlib:1.2.0'
 }
 apply plugin: 'com.google.gms.google-services'

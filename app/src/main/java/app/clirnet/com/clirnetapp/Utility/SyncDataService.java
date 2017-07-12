@@ -106,6 +106,7 @@ public class SyncDataService extends Service {
     }
 
     private volatile boolean running = true;
+
     private final Runnable sendUpdatesToUI = new Runnable() {
         public void run() {
 

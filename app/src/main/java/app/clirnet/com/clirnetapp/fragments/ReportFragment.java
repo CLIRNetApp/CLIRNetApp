@@ -91,6 +91,8 @@ public class ReportFragment extends Fragment {
 
 
         rootview = inflater.inflate(R.layout.fragment_reports, container, false);
+
+
         ((NavigationActivity) getActivity()).setActionBarTitle("Reports");
 
         fromdate = (EditText) rootview.findViewById(R.id.fromdate);
@@ -170,6 +172,8 @@ public class ReportFragment extends Fragment {
 
                     return;
                 }
+
+
 
 
                 ReportFragmentViewPagerSetup fragment = new ReportFragmentViewPagerSetup();
@@ -279,6 +283,7 @@ public class ReportFragment extends Fragment {
     }
 
     private void setCurrentDateOnView(String val) {
+
         final Calendar c = Calendar.getInstance();
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
