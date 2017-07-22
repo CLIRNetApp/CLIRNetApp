@@ -1,11 +1,10 @@
 package app.clirnet.com.clirnetapp.models;
 
 /**
- * Created by ${Ashish} on 8/6/2016.
+ * Created by Ashish on 8/6/2016.
  */
 //model class
 public class RegistrationModel {
-
 
 
     private String uid;
@@ -105,55 +104,7 @@ public class RegistrationModel {
     private String sugarFasting;
     private String ecg;
     private String hba1c;
-
-
     private String followUpStatus;
-
-
-    public String getFollowUpStatus() {
-        return followUpStatus;
-    }
-
-
-    public String getLipidProfileHdl() {
-        return lipidProfileHdl;
-    }
-
-    public String getLipidProfileVhdl() {
-        return lipidProfileVhdl;
-    }
-
-    public String getLipidProfileLdl() {
-        return lipidProfileLdl;
-    }
-
-    public String getLipidProfileTg() {
-        return lipidProfileTg;
-    }
-
-    public String getLipidProfileTc() {
-        return lipidProfileTc;
-    }
-
-    public String getSeremUrea() {
-        return seremUrea;
-    }
-
-    public String getPft() {
-        return pft;
-    }
-
-    public String getAcer() {
-        return acer;
-    }
-
-    public String getHba1c() {
-        return hba1c;
-    }
-
-    public String getEcg() {
-        return ecg;
-    }
 
     private String acer;
     private String pft;
@@ -204,11 +155,99 @@ public class RegistrationModel {
     private String lymphadenopathy;
     private String lymphadenopathyDescription;
 
-    private  String respirataion;
-    private  String  spo2;
-    private  String  familyHistory;
-    private  String hospitalizationSurgery;
-    private  String obesity;
+    private String respirataion;
+    private String spo2;
+    private String familyHistory;
+    private String hospitalizationSurgery;
+    private String obesity;
+
+    private String msId;
+    private String msDateTime;
+    private String msTopic;
+    private String msBrief;
+    private String msDoctorName;
+    private String msSpeciality;
+    private String msCatagoryName;
+    private String msUrl;
+
+
+    public String getMsId() {
+        return msId;
+    }
+
+    public String getMsDateTime() {
+        return msDateTime;
+    }
+
+    public String getMsTopic() {
+        return msTopic;
+    }
+
+    public String getMsBrief() {
+        return msBrief;
+    }
+
+    public String getMsDoctorName() {
+        return msDoctorName;
+    }
+
+    public String getMsSpeciality() {
+        return msSpeciality;
+    }
+
+    public String getMsCatagoryName() {
+        return msCatagoryName;
+    }
+
+    public String getMsUrl() {
+        return msUrl;
+    }
+
+    public String getFollowUpStatus() {
+        return followUpStatus;
+    }
+
+
+    public String getLipidProfileHdl() {
+        return lipidProfileHdl;
+    }
+
+    public String getLipidProfileVhdl() {
+        return lipidProfileVhdl;
+    }
+
+    public String getLipidProfileLdl() {
+        return lipidProfileLdl;
+    }
+
+    public String getLipidProfileTg() {
+        return lipidProfileTg;
+    }
+
+    public String getLipidProfileTc() {
+        return lipidProfileTc;
+    }
+
+    public String getSeremUrea() {
+        return seremUrea;
+    }
+
+    public String getPft() {
+        return pft;
+    }
+
+    public String getAcer() {
+        return acer;
+    }
+
+    public String getHba1c() {
+        return hba1c;
+    }
+
+    public String getEcg() {
+        return ecg;
+    }
+
 
     public String getObesity() {
         return obesity;
@@ -230,7 +269,6 @@ public class RegistrationModel {
     public String getSpo2() {
         return spo2;
     }
-
 
 
     public String getPallor() {
@@ -815,7 +853,7 @@ public class RegistrationModel {
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String gender, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String usersellectedDate, String daysSel,
                              String monthSel, String weekSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String modified_on, String actfod, String action, String address, String city, String district, String pin, String state,
-                             String altername_no, String altternate_phType, String phone_type, String visit_date, String email, String uid,String familyHistory,String hospitalizationSurgery) {
+                             String altername_no, String altternate_phType, String phone_type, String visit_date, String email, String uid, String familyHistory, String hospitalizationSurgery) {
         this.pat_id = id;
         this.firstName = first_name;
         this.middleName = middle_name;
@@ -916,7 +954,7 @@ public class RegistrationModel {
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
                              String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String email, String uid, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo,String spo2,String respirataion,String hba1c,String acer,String seremUrea,String lipidProfileHdl,String lipidProfileTc,String lipidProfileTg,String lipidProfileLdl,String lipidProfileVhdl,String ecg,String pft,String pallore,String cyanosis,String tremors,String icterus,String clubbing,String oedema,String calfTenderness,String lymphadenopathy,String obesity) {
+                             String sugar, String symptoms, String dignosis, String email, String uid, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo, String spo2, String respirataion, String hba1c, String acer, String seremUrea, String lipidProfileHdl, String lipidProfileTc, String lipidProfileTg, String lipidProfileLdl, String lipidProfileVhdl, String ecg, String pft, String pallore, String cyanosis, String tremors, String icterus, String clubbing, String oedema, String calfTenderness, String lymphadenopathy, String obesity) {
 
         this.pat_id = id;
         this.firstName = first_name;
@@ -990,7 +1028,7 @@ public class RegistrationModel {
         this.oedema = oedema;
         this.calfTenderness = calfTenderness;
         this.lymphadenopathy = lymphadenopathy;
-         this.obesity=obesity;
+        this.obesity = obesity;
     }
 
 
@@ -1156,7 +1194,7 @@ public class RegistrationModel {
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
                              String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String uid, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo, String email, String followUpStatus,String spo2,String respiration,String strFamilyHistory,String strHospitalizationSurgeru,String strObestity) {
+                             String sugar, String symptoms, String dignosis, String uid, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo, String email, String followUpStatus, String spo2, String respiration, String strFamilyHistory, String strHospitalizationSurgeru, String strObestity) {
 
         this.pat_id = id;
         this.firstName = first_name;
@@ -1216,11 +1254,11 @@ public class RegistrationModel {
         this.referedTo = referedTo;
         this.email = email;
         this.followUpStatus = followUpStatus;
-        this.spo2=spo2;
-        this.respirataion=respiration;
-        this.familyHistory=strFamilyHistory;
-        this.hospitalizationSurgery=strHospitalizationSurgeru;
-        this.obesity=strObestity;
+        this.spo2 = spo2;
+        this.respirataion = respiration;
+        this.familyHistory = strFamilyHistory;
+        this.hospitalizationSurgery = strHospitalizationSurgeru;
+        this.obesity = strObestity;
     }
 
     public RegistrationModel(String strPallore, String strPallorDescription, String strCyanosis, String strCyanosisDescription, String strClubbing, String strClubbingDescription, String strTremors, String strTremorsDescription, String strIcterus, String strIcterusDescription, String strOedema, String strOedemaDescription, String strCalfTenderness, String strCalfTendernessDescription, String strLymphadenopathy, String strLymphadenopathyDescription) {
@@ -1240,5 +1278,18 @@ public class RegistrationModel {
         this.calfTendernessDescription = strCalfTendernessDescription;
         this.lymphadenopathy = strLymphadenopathy;
         this.lymphadenopathyDescription = strLymphadenopathyDescription;
+    }
+
+    public RegistrationModel(String msId, String msTopic, String msBrief, String msDateTime, String msDoctorName, String specialities_name, String ms_cat_name, String ms_url) {
+
+        this.msId = msId;
+        this.msTopic = msTopic;
+        this.msBrief = msBrief;
+        this.msDateTime = msDateTime;
+        this.msDoctorName = msDoctorName;
+        this.msSpeciality = specialities_name;
+        this.msCatagoryName = ms_cat_name;
+        this.msUrl = ms_url;
+
     }
 }

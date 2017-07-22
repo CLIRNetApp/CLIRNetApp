@@ -1,7 +1,7 @@
 package app.clirnet.com.clirnetapp.helper;
 
 /**
- * Created by ${Ashish} on 01-11-2016.
+ * Created by Ashish on 01-11-2016.
  */
 
 public class ClirNetAppException extends Exception {

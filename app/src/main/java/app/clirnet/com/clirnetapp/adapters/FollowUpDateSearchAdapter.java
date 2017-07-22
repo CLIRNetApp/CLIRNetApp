@@ -15,7 +15,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
 /**
- * Created by ${Ashish} on 9/27/2016.
+ * Created by Ashish on 9/27/2016.
  */
 public class FollowUpDateSearchAdapter extends RecyclerView.Adapter<FollowUpDateSearchAdapter.PatientViewHolder> {
 
@@ -51,7 +51,7 @@ public class FollowUpDateSearchAdapter extends RecyclerView.Adapter<FollowUpDate
         String middle_name = patientList.get(position).getMiddleName();
         String last_name = patientList.get(position).getLastName();
 
-        String name=appController.toCamelCase(first_name + " " + middle_name + " " + last_name);
+        String name=AppController.toCamelCase(first_name + " " + middle_name + " " + last_name);
 
         holder.name.setText(name);
 
@@ -93,7 +93,7 @@ public class FollowUpDateSearchAdapter extends RecyclerView.Adapter<FollowUpDate
         return patientList.size();
     }
 
-    public class PatientViewHolder extends RecyclerView.ViewHolder {
+    class PatientViewHolder extends RecyclerView.ViewHolder {
         private final TextView phone_no;
         private final TextView follow_up_date;
         public final TextView name;
@@ -102,7 +102,7 @@ public class FollowUpDateSearchAdapter extends RecyclerView.Adapter<FollowUpDate
         public final TextView age;
 
 
-        public PatientViewHolder(View view) {
+        PatientViewHolder(View view) {
             super(view);
             id = (TextView) view.findViewById(R.id.id);
             name = (TextView) view.findViewById(R.id.name);

@@ -37,7 +37,6 @@
                 android:paddingLeft="10dp">
 
                 <ImageView
-                    android:id="@+id/prescriptionImg"
                     android:layout_width="280dp"
                     android:layout_height="280dp"
                     android:contentDescription="@string/desc"
@@ -48,7 +47,6 @@
                     />
 
                 <RelativeLayout
-                    android:id="@+id/test_relat_lay2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
@@ -83,7 +81,6 @@
 
 
                         <TextView
-                            android:id="@+id/text1"
                             style="?android:textAppearanceMedium"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -124,7 +121,6 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/ll2"
-                        android:layout_weight="2"
                         android:orientation="horizontal">
 
                         <TextView
@@ -160,11 +156,9 @@
 
 
                     <LinearLayout
-                        android:id="@+id/ll4"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_below="@+id/ll3"
-                        android:layout_weight="1"
                         android:orientation="horizontal">
 
 

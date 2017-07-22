@@ -26,7 +26,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
 /**
- * Created by ${Ashish} on 9/12/2016.
+ * Created by Ashish on 9/12/2016.
  */
 public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.HistoryViewHolder> {
 
@@ -170,7 +170,7 @@ public class EditPatientAdapter extends RecyclerView.Adapter<EditPatientAdapter.
 
     class HistoryViewHolder extends RecyclerView.ViewHolder {
 
-        public final TextView tv_ailment;
+        final TextView tv_ailment;
         final TextView tv_fod;
         private final TextView tv_visit_date;
         final TextView tv_clinical_notes;

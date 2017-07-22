@@ -1,7 +1,7 @@
 package app.clirnet.com.clirnetapp.models;
 
 /**
- * Created by ${Ashish} on 8/28/2016.
+ * Created by Ashish on 8/28/2016.
  */
 //model class
 public class LoginModel {

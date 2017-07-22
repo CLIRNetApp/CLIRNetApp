@@ -342,7 +342,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         }
         //this will disable age edit text if dob is present 31-8-2016 Ashish
         try {
-            if (strDob.length() > 0) {
+            if ((strDob != null ? strDob.length() : 0) > 0) {
                 editage.setEnabled(false);
             }
         } catch (Exception e) {

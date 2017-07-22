@@ -488,6 +488,40 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             }
         }
     }
+    public ArrayList<String> getAllergy() throws ClirNetAppException {
+        ArrayList<String> all_allergyList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "SELECT  allergy_name  FROM Allergy ";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    String user=cursor.getString(0);
+                    //  AilmentModel user = new AilmentModel(cursor.getString(0), cursor.getString(1) );
+
+                    all_allergyList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            appController.appendLog(appController.getDateTime() + "" + "/" + "LastNamedatabase getAllergy" + e);
+
+            throw new ClirNetAppException("Something went wrong while getting getAllergy records");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+        return  all_allergyList;
+    }
 
 }
 

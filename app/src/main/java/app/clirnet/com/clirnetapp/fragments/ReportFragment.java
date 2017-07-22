@@ -40,7 +40,7 @@ import app.clirnet.com.clirnetapp.app.AppController;
 
 
 /**
- * Created by ${Ashish} on 22-04-2016.
+ * Created by Ashish on 22-04-2016.
  */
 public class ReportFragment extends Fragment {
 

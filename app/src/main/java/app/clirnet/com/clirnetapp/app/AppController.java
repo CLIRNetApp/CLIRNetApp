@@ -37,6 +37,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -57,6 +58,7 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
+import app.clirnet.com.clirnetapp.utility.ConnectivityChangeReceiver;
 
 import static app.clirnet.com.clirnetapp.R.id.produced_bytxt;
 
@@ -76,6 +78,7 @@ public class AppController extends Application {
     private String savedUserName;
     private String savedUserPassword;
     private ConnectionDetector connectionDetector;
+
 
 
     @Override
@@ -104,6 +107,9 @@ public class AppController extends Application {
         return analyticsTrackers.get(AnalyticsTrackers.Target.APP);
     }
 
+    public void setConnectivityListener(ConnectivityChangeReceiver.ConnectivityReceiverListener listener) {
+        ConnectivityChangeReceiver.connectivityReceiverListener = listener;
+    }
     /***
      * Tracking screen view
      *
@@ -142,16 +148,14 @@ public class AppController extends Application {
 
     /***
      * Tracking event
-     *
-     * @param category event category
+     *  @param category event category
      * @param action   action of the event
-     * @param label    label
      */
-    public void trackEvent(String category, String action, String label) {
+    public void trackEvent(String category, String action) {
         Tracker t = getGoogleAnalyticsTracker();
 
         // Build and send an Event.
-        t.send(new HitBuilders.EventBuilder().setCategory(category).setAction(action).setLabel(label).build());
+        t.send(new HitBuilders.EventBuilder().setCategory(category).setAction(action).setLabel("Track event").build());
     }
 
     private RequestQueue getRequestQueue() {
@@ -231,6 +235,7 @@ public class AppController extends Application {
 
     //this will gives you a age from the date
     public int getAge(int year, int monthOfYear, int dayOfMonth) {
+
         GregorianCalendar cal = new GregorianCalendar();
         int y, m, d, a;
 
@@ -1261,6 +1266,23 @@ public class AppController extends Application {
             }
         }
         return obseity;
+    }
+    public int getCurrentAge(String birthDate){
+
+        int years=0;
+        Date currentDate=new Date();
+        DateFormat formatter=new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+        try{
+            Date date = formatter.parse(birthDate);     //birthDate is a String, in format dd-MM-yyyy
+            long diff = currentDate.getTime() - date.getTime();
+
+            years = Math.round(diff / 1000 / 60 / 60 / 24 / 365);
+
+        }catch (Exception  e)
+        {
+            e.printStackTrace();
+        }
+        return years;
     }
 
 }

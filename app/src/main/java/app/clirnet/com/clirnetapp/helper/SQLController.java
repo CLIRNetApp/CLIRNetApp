@@ -2989,7 +2989,8 @@ public class SQLController {
             if (cursor.moveToFirst()) {
                 returnString = cursor.getString(cursor.getColumnIndex("name"));
                 String  title = cursor.getString(cursor.getColumnIndex("title"));
-                returnString= title+ " " +returnString;
+
+                    returnString= title+ " " +returnString;
             }
         } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong while getting getDoctorMembershipIdNew");
@@ -3033,6 +3034,170 @@ public class SQLController {
         }
         return returnString;
     }
+
+    //get docot membership id from db
+    public String getSpciality(String id) throws ClirNetAppException {
+
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        String returnString = ""; // Your default if none is found
+        try {
+            db1 = dbHelper.getReadableDatabase();
+
+            String query = "select speciality from associate_master where id="+ id +" ";
+
+            cursor = db1.rawQuery(query, null);
+
+            if (cursor.moveToFirst()) {
+                returnString = cursor.getString(cursor.getColumnIndex("speciality"));
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getDoctorMembershipIdNew");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return returnString;
+    }
+
+    public ArrayList<RegistrationModel> getMasterSession() throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> healthLifestyleList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery="select ms_id,ms_topic,ms_brief,ms_date_time,doctor_name,specialities_name,ms_cat_name,ms_url from recent_data_msession  order by  id desc limit 2;";
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+
+            if (cursor.moveToFirst()) {
+                do {
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                            cursor.getString(7));
+
+                    healthLifestyleList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getInvestigationDeatils");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return healthLifestyleList;
+
+    }
+
+    public HashMap<String, String> getCompandiumFaq() throws ClirNetAppException {
+        HashMap<String, String> compData = new HashMap<>();
+
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            String query = "select kcomp_qa_question,comp_qa_answer,comp_url from recent_data_companium  order by  id desc limit 1";
+            db = dbHelper.getReadableDatabase();
+            cursor = db.rawQuery(query, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    compData.put("kcomp_qa_question", cursor.getString(0));
+                    compData.put("comp_qa_answer", cursor.getString(1));
+                    compData.put("comp_url",cursor.getString(2));
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while geting getReligionOccupation");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        return compData;
+    }
+
+    public HashMap<String, String> getAge(String patId) throws ClirNetAppException {
+        HashMap<String, String> compData = new HashMap<>();
+
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+            //String query = "select added_on,age from patient  where patient_id ="+ patId +" ";
+            String query="select ph.added_on,p.age,ph.key_visit_id from patient p,patient_history ph  where p.patient_id=ph.patient_id and  p.patient_id = "+ patId +" order by ph.key_visit_id desc limit 1";
+            db = dbHelper.getReadableDatabase();
+            cursor = db.rawQuery(query, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    compData.put("added_on", cursor.getString(0));
+                    compData.put("age", cursor.getString(1));
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while geting getReligionOccupation");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        return compData;
+    }
+
+    //get docot membership id from db
+    public String getKCapData() throws ClirNetAppException {
+
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        String returnString = ""; // Your default if none is found
+        try {
+            db1 = dbHelper.getReadableDatabase();
+
+            String query = "select kc_text from recent_data_kcap order by kc_id  desc limit 1";
+
+            cursor = db1.rawQuery(query, null);
+
+            if (cursor.moveToFirst()) {
+                returnString = cursor.getString(cursor.getColumnIndex("kc_text"));
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getKCapData");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return returnString;
+    }
+
 }
 
 

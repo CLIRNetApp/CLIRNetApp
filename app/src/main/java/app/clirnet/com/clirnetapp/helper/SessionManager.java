@@ -18,16 +18,15 @@ public class SessionManager {
 	private static final String PREF_NAME = "Login";
 	
 	private static final String KEY_IS_LOGGED_IN = "isLoggedIn";
-	private final Context mContext;
 
 
-	public SessionManager(Context context) {
+    public SessionManager(Context context) {
 
 		int PRIVATE_MODE = 0;
 		pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
 		editor = pref.edit();
 		editor.apply();
-		mContext=context;
+        Context mContext = context;
 	}
 
 	public void setLogin(boolean isLoggedIn) {

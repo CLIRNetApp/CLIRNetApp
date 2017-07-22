@@ -1791,7 +1791,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 }
                 if (strLipidVHDL != null && !strLipidVHDL.equals("") && strLipidVHDL.length() > 0) {
                     sbInvestigations.append("  ");
-                    sbInvestigations.append(" VHDL:").append(strLipidVHDL).append(" ;");
+                    sbInvestigations.append(" VLDL:").append(strLipidVHDL).append(" ;");
                 }
 
                 dbController.addInvestigation(strPatientId, strVisitId, strSgar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC
@@ -2105,11 +2105,11 @@ public class AddPatientUpdateFragment extends Fragment {
     private void showObservationsData() {
 
         if (strPallore != null && !strPallore.equals("") && strPallore.length() > 0) {
-            sbObservations.append("Pallore : ").append(strPallore).append(" ;");
+            sbObservations.append("Pallor : ").append(strPallore).append(" ;");
         }
         if (strPallorDescription != null && !strPallorDescription.equals("") && strPallorDescription.length() > 0) {
             sbObservations.append("  ");
-            sbObservations.append(" Pallore Desc. : ").append(strPallorDescription).append(" ;");
+            sbObservations.append(" Pallor Desc. : ").append(strPallorDescription).append(" ;");
         }
         if (strCyanosis != null && !strCyanosis.equals("") && strCyanosis.length() > 0) {
             sbObservations.append("  ");
@@ -2153,11 +2153,11 @@ public class AddPatientUpdateFragment extends Fragment {
         }
         if (strCalfTenderness != null && !strCalfTenderness.equals("") && strCalfTenderness.length() > 0) {
             sbObservations.append("  ");
-            sbObservations.append(" CalfTenderness : ").append(strCalfTenderness).append(" ;");
+            sbObservations.append(" Tenderness : ").append(strCalfTenderness).append(" ;");
         }
         if (strCalfTendernessDescription != null && !strCalfTendernessDescription.equals("") && strCalfTendernessDescription.length() > 0) {
             sbObservations.append("  ");
-            sbObservations.append(" CalfTenderness Desc. : ").append(strCalfTendernessDescription).append(" ;");
+            sbObservations.append(" Tenderness Desc. : ").append(strCalfTendernessDescription).append(" ;");
         }
         if (strLymphadenopathy != null && !strLymphadenopathy.equals("") && strLymphadenopathy.length() > 0) {
             sbObservations.append("  ");

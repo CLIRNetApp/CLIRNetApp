@@ -1725,7 +1725,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     @Override
     public void onPause() {
-        Log.e("DEBUG", "OnPause of HomeFragment");
+        //Log.e("DEBUG", "OnPause of HomeFragment");
 
         try {
             InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);

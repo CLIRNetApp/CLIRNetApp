@@ -51,5 +51,7 @@ public class AppConfig {
 
     static final String UPLOAD_BANNER_DATA = LOCAL_DEMO_URL + "/doctor/webapi/bannersstatisticsv2";
 
+    static final String MASTER_SESSION_DATA= "http://43.242.212.136/clirnetapplicationv2/public/doctor/webapi/askKSdata";
+
     public static final String SDCARD_PATH = "sdcard/BannerImages/";
 }

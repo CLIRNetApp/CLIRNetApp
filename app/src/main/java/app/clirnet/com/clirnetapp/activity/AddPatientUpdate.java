@@ -87,18 +87,11 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
 
     private String struid;
     private String strEmail;
-    private ArrayList<RegistrationModel> healthLifeStyleList;
     private String mAlcohol;
     private String mPacsWeek, mStressLevel;
     private String mSmokerType, mStickCount;
-    private String mLifeStyle, mLactoseTolerance;
-    private String mFoodPreference, mFoodHabit;
+    private String mLifeStyle;
     private  String mExcercise, mChewinogTobaco ;
-    private String mBingeEating , mAllergies ;
-    private String mSexuallyActive;
-    private String mDrug;
-    private String otherDrugTaking;
-    private String otherTobacoTaking;
     private String mSleepStatus;
     private String strFamilyHistory;
     private String strHospitalizaionSurgery;
@@ -172,25 +165,25 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
-            healthLifeStyleList = sqlController.getHealthAndLifestyle(strPatientId);
+            ArrayList<RegistrationModel> healthLifeStyleList = sqlController.getHealthAndLifestyle(strPatientId);
 
             if (healthLifeStyleList.size() > 0) {
                 mAlcohol = healthLifeStyleList.get(0).getAlocholConsumption();
                 mStressLevel = healthLifeStyleList.get(0).getStressLevel();
                 mSmokerType = healthLifeStyleList.get(0).getSmokerType();
                 mLifeStyle = healthLifeStyleList.get(0).getLifeSyle();
-                mLactoseTolerance = healthLifeStyleList.get(0).getLactoseTolerance();
-                mFoodPreference = healthLifeStyleList.get(0).getFoodPreference();
-                mFoodHabit = healthLifeStyleList.get(0).getFoodHabit();
+                String mLactoseTolerance = healthLifeStyleList.get(0).getLactoseTolerance();
+                String mFoodPreference = healthLifeStyleList.get(0).getFoodPreference();
+                String mFoodHabit = healthLifeStyleList.get(0).getFoodHabit();
                 mExcercise = healthLifeStyleList.get(0).getExcercise();
                 mChewinogTobaco = healthLifeStyleList.get(0).getChewingTobaco();
-                mBingeEating = healthLifeStyleList.get(0).getBingeEating();
-                mAllergies = healthLifeStyleList.get(0).getAllergies();
-                mSexuallyActive = healthLifeStyleList.get(0).getSexuallyActive();
-                mDrug=healthLifeStyleList.get(0).getDrugConsumption();
-                otherDrugTaking = healthLifeStyleList.get(0).getOtherDrugConsumption();
-                otherTobacoTaking = healthLifeStyleList.get(0).getOtherTobacoConsumption();
-                mSleepStatus=healthLifeStyleList.get(0).getSleep();
+                String mBingeEating = healthLifeStyleList.get(0).getBingeEating();
+                String mAllergies = healthLifeStyleList.get(0).getAllergies();
+                String mSexuallyActive = healthLifeStyleList.get(0).getSexuallyActive();
+                String mDrug = healthLifeStyleList.get(0).getDrugConsumption();
+                String otherDrugTaking = healthLifeStyleList.get(0).getOtherDrugConsumption();
+                String otherTobacoTaking = healthLifeStyleList.get(0).getOtherTobacoConsumption();
+                mSleepStatus= healthLifeStyleList.get(0).getSleep();
             }
         } catch (ClirNetAppException |SQLException e) {
             e.printStackTrace();

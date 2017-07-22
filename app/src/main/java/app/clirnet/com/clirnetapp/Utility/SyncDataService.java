@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -51,8 +50,6 @@ public class SyncDataService extends Service {
     private SQLiteHandler dbController;
     private String patientInfoArayString;
     private String patientVisitHistorArayString;
-    private String investigationArayString;
-    private String healthAndLifestyleArayString;
     private AppController appController;
     private String mUserName;
     private String mPassword;
@@ -178,8 +175,8 @@ public class SyncDataService extends Service {
             patientInfoArayString = String.valueOf(dbController.getResultsForPatientInformation());
 
             patientVisitHistorArayString = String.valueOf(dbController.getResultsForPatientHistory());
-            investigationArayString=String.valueOf(dbController.getResultsForInvestigation());
-            healthAndLifestyleArayString=String.valueOf(dbController.getResultsForHealthAndLifeStyle());
+            String investigationArayString = String.valueOf(dbController.getResultsForInvestigation());
+            String healthAndLifestyleArayString = String.valueOf(dbController.getResultsForHealthAndLifeStyle());
 
             /*count no of patient_id occurance od patient and visit string from db*/
             pat_personal_count = appController.getCharFreq(patientInfoArayString);
@@ -201,7 +198,6 @@ public class SyncDataService extends Service {
 
                 new UploadBannerDataAsyncTask(mUserName, mPassword, getApplicationContext(), bannerDisplayArayString, bannerClickedArayString, doctor_membership_number, docId, bannerDisplayIds_List, bannaerClickedIdsList, start_time);
             }
-
             if (mUserName != null && mPassword != null) {
 
                 new GetBannerImageTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, company_id, start_time); //send log file to server
@@ -221,7 +217,7 @@ public class SyncDataService extends Service {
                 start_time1 = appController.getDateTimenew();
                 appController.appendLog(appController.getDateTime() + " " + " / " + "Sending Data to server from Sync Service" + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
-                sendDataToServer(patientInfoArayString, patientVisitHistorArayString,investigationArayString, healthAndLifestyleArayString,associateMasterDataList,doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size(), new AppController().getDateTimenew(),incompletePrescriptionQueueCount);
+                sendDataToServer(patientInfoArayString, patientVisitHistorArayString, investigationArayString, healthAndLifestyleArayString,associateMasterDataList,doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size(), new AppController().getDateTimenew(),incompletePrescriptionQueueCount);
                 new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, docId, start_time); //send log file to server
 
             }
@@ -319,7 +315,7 @@ public class SyncDataService extends Service {
 
                             String patientVisitId = getInvestigationIdsList.get(i).getPat_id();
                             String flag = "1";
-                            Log.e("getInvestigationIdsList", " : " + patientVisitId);
+                          //  Log.e("getInvestigationIdsList", " : " + patientVisitId);
                             //saved last updated sync time in shared prefrence
                             //update flag after success
                             dbController.FlagupdateInvestigation(patientVisitId, flag);

@@ -265,6 +265,27 @@ public class DatabaseClass extends SQLiteOpenHelper {
             }
         }
     }
+    public void addAllergy(String diagnosis) {
+        SQLiteDatabase db = null;
+
+
+        try {
+            db = this.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+            values.put("allergy_name", diagnosis);
+
+            // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
+            db.insert("Allergy", null, values);
+        } catch (Exception e) {
+            appController.appendLog(appController.getDateTime()+"" +"/"+" Database  "+e);
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+    }
 
     private boolean isTableExists(SQLiteDatabase db, String tableName) {
         if (db == null || !db.isOpen()) {

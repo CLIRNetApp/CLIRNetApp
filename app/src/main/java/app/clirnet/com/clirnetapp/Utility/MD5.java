@@ -1,13 +1,15 @@
 package app.clirnet.com.clirnetapp.utility;
 
 /**
- * Created by ${Ashish} on 8/3/2016.
+ * Created by Ashish on 8/3/2016.
  */
+
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 //class to encrypt the password
 public class MD5 {
+
     public static String getMD5(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");

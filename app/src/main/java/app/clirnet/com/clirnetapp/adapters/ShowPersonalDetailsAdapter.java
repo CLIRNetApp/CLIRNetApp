@@ -197,6 +197,8 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
                 holder.txtRespiration.setVisibility(View.GONE);
             }
 
+
+
             if (strObesity!= null && !strObesity.equals("") && strObesity.length()>0) {
                 holder.tv_obesity.setText(strObesity);
             }else{
@@ -313,6 +315,18 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
                 holder.txtLymphadenopathy.setVisibility(View.GONE);
             }
 
+            if(strWeight!=null && !strWeight.equals("") || strHeight!=null && !strHeight.equals("")  ||strBmi!=null && !strBmi.equals("")  || strObesity!=null && !strObesity.equals("")  || strPulse!=null && !strPulse.equals("")  || strTemp!=null && !strTemp.equals("")  || strSystole!=null && !strSystole.equals("") || strDistole!=null && !strDistole.equals("")  || strSpo2!=null && !strSpo2.equals("") || strRespiration!=null && !strRespiration.equals("") ){
+                holder.txtVitals.setVisibility(View.VISIBLE);
+            }
+            if(strClubbing!=null && !strClubbing.equals("") || strOedema!=null && !strOedema.equals("") ||strCalfTenderness!=null && !strCalfTenderness.equals("") || strLymphadenopathy!=null && !strLymphadenopathy.equals("")){
+                holder.txtObservations.setVisibility(View.VISIBLE);
+            }
+
+            if(strSugarFasting!=null && !strSugarFasting.equals("") || strSugarpp!=null && !strSugarpp.equals("") ||strObesity!=null && !strObesity.equals("") || strHbA1c!=null && !strHbA1c.equals("")|| strAcer!=null && !strAcer.equals("") || strSeremUrea!=null && !strSeremUrea.equals("") || strHdl!=null && !strHdl.equals("") || strTc!=null && !strTc.equals("") || strTg!=null && !strTg.equals("")
+                    || strLdl!=null && !strLdl.equals("")|| strVhdl!=null && !strVhdl.equals("")){
+                holder.txtInvestigation.setVisibility(View.VISIBLE);
+            }
+
             final String imgPath = patientList.get(position).getPres_img();
             if (imgPath != null && !TextUtils.isEmpty(imgPath)) {
 
@@ -368,6 +382,7 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
         private TextView txtEcg,txtPft,txtPallor,txtCyanosis,txtTremors,txtIcterus,txtClubbing,txtOedema,txtCalfTenderness,txtLymphadenopathy;
         private  TextView  tv_ecg,tv_pft,tv_pallor,tv_cyanosis,tv_tremors,tv_icterus,tv_clubbing,tv_oedema,tv_calfTenderness,tv_lymphadenopathy;
          private  TextView txtObesity,tv_obesity;
+        private TextView txtVitals,txtInvestigation,txtObservations;
         HistoryViewHolder(View view) {
             super(view);
             tv_visit_date = (TextView) view.findViewById(R.id.tv_visit_date);
@@ -453,7 +468,9 @@ public class ShowPersonalDetailsAdapter extends RecyclerView.Adapter<ShowPersona
             tv_calfTenderness = (TextView) view.findViewById(R.id.tv_calfTenderness);
             txtLymphadenopathy = (TextView) view.findViewById(R.id.txtLymphadenopathy);
             tv_lymphadenopathy = (TextView) view.findViewById(R.id.tv_lymphadenopathy);
-
+            txtVitals=(TextView)view.findViewById(R.id.txtVitals);
+            txtInvestigation=(TextView)view.findViewById(R.id.txtInvestigation);
+            txtObservations=(TextView)view.findViewById(R.id.txtObservations);
 
         }
     }

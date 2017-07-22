@@ -1,7 +1,7 @@
 package app.clirnet.com.clirnetapp.app;
 
 /**
- * Created by ${Ashish} on 30-04-2016.
+ * Created by Ashish on 30-04-2016.
  */
 
 
@@ -38,8 +38,7 @@ class JsonParsor {
             HttpURLConnection connection=(HttpURLConnection)urlCon.openConnection();
 
             connection.setRequestMethod("GET");
-            if (Build.VERSION.SDK != null
-                    && Build.VERSION.SDK_INT > 13) {
+            if (Build.VERSION.SDK != null) {
                 connection.setRequestProperty("Connection", "close");
             }
             connection.connect();

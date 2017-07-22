@@ -1,8 +1,6 @@
 package app.clirnet.com.clirnetapp.reports;
 
-/**
- *
- */
+
 
 import android.content.Context;
 import android.view.View;

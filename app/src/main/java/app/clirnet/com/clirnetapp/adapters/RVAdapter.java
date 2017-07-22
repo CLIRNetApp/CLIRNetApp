@@ -98,7 +98,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder>
 
         return patientList.size();
     }
-    public class PatientViewHolder extends RecyclerView.ViewHolder {
+    class PatientViewHolder extends RecyclerView.ViewHolder {
         private final TextView phone_no;
         private final TextView follow_up_date;
         public final TextView name;
@@ -107,7 +107,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder>
         public final TextView age;
         public final LinearLayout linearlayout;
 
-        public PatientViewHolder(View view) {
+        PatientViewHolder(View view) {
             super(view);
             id=(TextView)view.findViewById(R.id.id);
             name = (TextView) view.findViewById(R.id.name);

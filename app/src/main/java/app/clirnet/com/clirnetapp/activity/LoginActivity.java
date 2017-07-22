@@ -68,6 +68,7 @@ public class LoginActivity extends Activity {
     private static final String LOGIN_TIME = "loginTime";
     private static final String LOGIN_COUNT = "firstTimeLogin";
     private static final String SUGAR_INTO_INVESTIGATION = "vitalsToInvestigation";
+
     @InjectView(R.id.email)
     EditText inputEmail;
     @InjectView(R.id.password)
@@ -120,6 +121,7 @@ public class LoginActivity extends Activity {
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
+
         TextView btnLinkToForgetScreen = (TextView) findViewById(R.id.btnLinkToForgetScreen);
 
         DatabaseClass databaseClass = new DatabaseClass(getApplicationContext());
@@ -130,6 +132,13 @@ public class LoginActivity extends Activity {
         if (md5 == null) {
             md5 = new MD5();
         }
+
+        if(type!=null && !type.equals("")){
+            goToNavigation();
+        }
+
+        int gap=appController.getCurrentAge("15-04-2015");
+        Log.e("gap","  "+gap);
 
         //this will set value to run  asynctask only once per login session
 
@@ -182,9 +191,7 @@ public class LoginActivity extends Activity {
             appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         } finally {
-            if (databaseClass != null) {
-                databaseClass.close();
-            }
+            databaseClass.close();
         }
 
         try {
@@ -206,9 +213,7 @@ public class LoginActivity extends Activity {
             appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         } finally {
-            if (lastnameDatabaseClass != null) {
-                lastnameDatabaseClass.close();
-            }
+            lastnameDatabaseClass.close();
         }
         btnLogin.setOnTouchListener(new View.OnTouchListener() {
 
@@ -222,7 +227,7 @@ public class LoginActivity extends Activity {
                     strPassword = inputPassword.getText().toString().trim();
 
                     String time = appController.getDateTimenew();
-                    AppController.getInstance().trackEvent("Login", "Login Pressed", "Track event");
+                    AppController.getInstance().trackEvent("Login", "Login Pressed");
 
                     //This code used for Remember Me(ie. save login id and password for future ref.)
                     rememberMe(name, strPassword, time); //save username only
@@ -329,7 +334,7 @@ public class LoginActivity extends Activity {
 
                 sInstance.FlagupdateBannerClicked("0");
                 sInstance.FlagupdateBannerDisplay("0");
-                setupdateBannerClickVisitFlag0("true");
+                setupdateBannerClickVisitFlag0();
             }
         });
     }
@@ -345,7 +350,7 @@ public class LoginActivity extends Activity {
 
                 /*Updating flag to true so wont run 2nd time */ //20-05-2017
 
-                setInsertedInvestigationVitalsFlag("true");
+                setInsertedInvestigationVitalsFlag();
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -391,7 +396,7 @@ public class LoginActivity extends Activity {
                             appController.appendLog(appController.getDateTime() + " " + "/ " + "Login Page" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                         }
                     }
-                    setupdateVisitDateFlag("true");
+                    setupdateVisitDateFlag();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -432,7 +437,7 @@ public class LoginActivity extends Activity {
                 new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword, doctor_membership_number, docId, start_time);
                 new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber, doctor_membership_number, docId, start_time);
                 //startService();
-                savedLoginCounter("true");//to save shrd pref to update login counter
+                savedLoginCounter();//to save shrd pref to update login counter
                 new SessionManager(this).setLogin(true);
                 //registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
 
@@ -579,15 +584,8 @@ public class LoginActivity extends Activity {
             intent.putExtra("ACTION_PATH", actionPath);
             intent.putExtra("HEADER", headerMsg);
         }
-       /* Intent intent = new Intent(this, NewRegistrationPage.class);
-        if (msg != null) {
-            intent.putExtra("MSG", msg);
-            intent.putExtra("TYPE", type);
-            intent.putExtra("ACTION_PATH", actionPath);
-            intent.putExtra("HEADER", headerMsg);
-        }*/
+
         startActivity(intent);
-        //overridePendingTransition(R.anim.slide_out, R.anim.slide_in);
         finish();
     }
 
@@ -612,7 +610,7 @@ public class LoginActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        // overridePendingTransition(R.anim.slide_in, R.anim.slide_out);
+
     }
 
     public void onStart() {
@@ -727,7 +725,7 @@ public class LoginActivity extends Activity {
         return true;
     }
 
-    private void savedLoginCounter(String answer) {
+    private void savedLoginCounter() {
 
         getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .edit()
@@ -735,11 +733,11 @@ public class LoginActivity extends Activity {
                 .apply();
     }
 
-    private void setupdateVisitDateFlag(String answer) {
+    private void setupdateVisitDateFlag() {
 
         getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .edit()
-                .putString("flag1", answer)
+                .putString("flag1", "true")
                 .apply();
     }
 
@@ -756,19 +754,19 @@ public class LoginActivity extends Activity {
         return pref.getString("addedVitals", null);
     }
 
-    private void setInsertedInvestigationVitalsFlag(String answer) {
+    private void setInsertedInvestigationVitalsFlag() {
 
         getSharedPreferences(SUGAR_INTO_INVESTIGATION, Context.MODE_PRIVATE)
                 .edit()
-                .putString("addedVitals", answer)
+                .putString("addedVitals", "true")
                 .apply();
     }
 
-    private void setupdateBannerClickVisitFlag0(String answer) {
+    private void setupdateBannerClickVisitFlag0() {
 
         getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
                 .edit()
-                .putString("bannerflag", answer)
+                .putString("bannerflag", "true")
                 .apply();
     }
 
@@ -876,6 +874,7 @@ public class LoginActivity extends Activity {
                 String symptomscount = sInstance.getTableCount("Symptoms");
                 String last_name_masterCount = sInstance.getTableCount("last_name_master");
                 String occupationCount = sInstance.getTableCount("occupation");
+                String allergyCount = sInstance.getTableCount("Allergy");
 
                 if (symptomscount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("Symptoms.sql"));
@@ -891,6 +890,10 @@ public class LoginActivity extends Activity {
                 }
                 if (occupationCount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("occupation.sql"));
+                }
+                if (allergyCount.equals("0")) {
+                    bannerClass.insertFromFile(getAssets().open("Allergy.sql"));
+                    Log.e("Allergy","Task is ruuning ");
                 }
 
             } catch (IOException | ClirNetAppException e) {

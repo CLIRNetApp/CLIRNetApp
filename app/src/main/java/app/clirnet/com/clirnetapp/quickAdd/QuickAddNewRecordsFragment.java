@@ -108,7 +108,6 @@ public class QuickAddNewRecordsFragment extends Fragment {
     private String daysSel, fowSel, monthSel;
     private ArrayList<String> mSymptomsList;
     private ArrayList<String> mDiagnosisList;
-    private String patientImagePath;
     private LastnameDatabaseClass lastNamedb;
     private DatabaseClass databaseClass;
     private String sex;
@@ -322,11 +321,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
                             sbname.append(",").append(abc.get(i));
                         }
                     }
-                    if (sbname != null) {
-                        textRefredToShow.setText(sbname);
-                    } else {
-                        textRefredToShow.setText("");
-                    }
+                    textRefredToShow.setText(sbname);
                 }
             }
 
@@ -2253,7 +2248,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
 
     private void previewCapturedImage() {
         try {
-            patientImagePath = uriSavedImage.getPath().trim();
+            String patientImagePath = uriSavedImage.getPath().trim();
             if (!TextUtils.isEmpty(patientImagePath)) {
                 if (patientImagePath.length() > 0) {
                     Glide.with(getContext())

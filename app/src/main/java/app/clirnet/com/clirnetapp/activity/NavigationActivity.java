@@ -23,6 +23,8 @@ import com.google.firebase.messaging.FirebaseMessaging;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
+import app.clirnet.com.clirnetapp.app.MasterSessionService;
+import app.clirnet.com.clirnetapp.dialogFragment.MasterSessionDialog;
 import app.clirnet.com.clirnetapp.fragments.AssociatesFragment;
 import app.clirnet.com.clirnetapp.fragments.BarChartFragment;
 import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
@@ -39,6 +41,7 @@ import app.clirnet.com.clirnetapp.fragments.TopTenAilmentFragment;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.helper.SessionManager;
+import app.clirnet.com.clirnetapp.utility.ConnectivityChangeReceiver;
 import app.clirnet.com.clirnetapp.utility.SyncDataService;
 
 /*import com.google.firebase.iid.FirebaseInstanceId;
@@ -48,7 +51,7 @@ import com.google.firebase.messaging.FirebaseMessaging;*/
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
         , ReportFragment.OnFragmentInteractionListener, PatientReportFragment.OnFragmentInteractionListener, ReportFragmentViewPagerSetup.OnFragmentInteractionListener, TopTenAilmentFragment.OnFragmentInteractionListener,
-        BarChartFragment.OnFragmentInteractionListener, KnowledgeFragment.OnFragmentInteractionListener, IncompleteListFragment.OnFragmentInteractionListener, AssociatesFragment.OnFragmentInteractionListener,HealthVitalsDialogFragment.onSubmitListener,DashboardFragment.OnFragmentInteractionListener {
+        BarChartFragment.OnFragmentInteractionListener, KnowledgeFragment.OnFragmentInteractionListener, IncompleteListFragment.OnFragmentInteractionListener, AssociatesFragment.OnFragmentInteractionListener,HealthVitalsDialogFragment.onSubmitListener,DashboardFragment.OnFragmentInteractionListener,MasterSessionDialog.OnFragmentInteractionListener,ConnectivityChangeReceiver.ConnectivityReceiverListener {
 
 
     private FragmentManager fragmentManager;
@@ -62,7 +65,6 @@ public class NavigationActivity extends AppCompatActivity
     private AppController appController;
     private String type, actionPath;
     private String msg, headerMsg;
-    private String calledFrom;
     private String kind;
 
 
@@ -75,7 +77,7 @@ public class NavigationActivity extends AppCompatActivity
             type = getIntent().getStringExtra("TYPE");
             actionPath = getIntent().getStringExtra("ACTION_PATH");
             headerMsg = getIntent().getStringExtra("HEADER");
-            calledFrom=getIntent().getStringExtra("CALLEDFROM");
+            String calledFrom = getIntent().getStringExtra("CALLEDFROM");
             kind=getIntent().getStringExtra("KIND");
 
         } catch (Exception e) {
@@ -119,6 +121,8 @@ public class NavigationActivity extends AppCompatActivity
 
             u_name.setText("Welcome,  Dr. " + docName);
             email.setText(emailId);
+
+            checkConnection();/*Chcking internet connection Manually*/
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,24 +170,30 @@ public class NavigationActivity extends AppCompatActivity
             fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
 
-        }else if(kind!=null && kind.equals("1")){
-            fragment = new PoHistoryFragment();
-            onNavigationItemSelected(navigationView.getMenu().getItem(2));
-            fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
-        } else if(kind!=null && kind.equals("2")){
-            fragment = new ConsultationLogFragment();
-            onNavigationItemSelected(navigationView.getMenu().getItem(1));
-            fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
-        } else {
-            fragment = new HomeFragment();
-            onNavigationItemSelected(navigationView.getMenu().getItem(0));
-            fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
         }
-     //   fragmentManager = getSupportFragmentManager();
-      //  fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+        else if (type != null && !type.equals("") && type.equals("5")) {//for service
+            if (!actionPath.startsWith("http://") && !actionPath.startsWith("https://")) {
+
+                actionPath = "http://" + actionPath;
+            }
+            if (actionPath.length() > 0) {
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(actionPath));
+                    startActivity(Intent.createChooser(intent, "Choose browser"));
+                    callAction("HomeFragment");
+                }
+
+        }else if(kind!=null && kind.equals("1")){
+
+            callAction("PoHistoryFragment");
+        } else if(kind!=null && kind.equals("2")){
+
+           callAction("ConsultationLogFragment");
+        } else {
+
+            callAction("HomeFragment");
+        }
+
         // subscribeToPushService();
 
 
@@ -231,54 +241,55 @@ public class NavigationActivity extends AppCompatActivity
     }
 
     private void selectDrawerItem(MenuItem item) {
+
         Fragment fragment = null;
 
         switch (item.getItemId()) {
             case R.id.nav_po:
                 fragment = new HomeFragment();
-                AppController.getInstance().trackEvent("Patient Central", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Patient Central", "Navigation");
                 break;
 
             case R.id.nav_consultLog:
                 fragment = new ConsultationLogFragment();
-                AppController.getInstance().trackEvent("Consultation Log", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Consultation Log", "Navigation");
 
                 break;
 
             case R.id.nav_pohistory:
                 fragment = new PoHistoryFragment();
-                AppController.getInstance().trackEvent("Patient History", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Patient History", "Navigation");
 
                 break;
 
             case R.id.nav_report:
 
                 fragment = new ReportFragment();
-                AppController.getInstance().trackEvent("Patient Report", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Patient Report", "Navigation");
 
                 break;
 
             case R.id.nav_knowldge:
-                AppController.getInstance().trackEvent("Knowledge", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Knowledge", "Navigation");
 
                 fragment = new KnowledgeFragment();
                 break;
 
             case R.id.nav_dashboard:
 
-                AppController.getInstance().trackEvent("Dashboard", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Dashboard", "Navigation");
 
                 fragment = new DashboardFragment();
                 break;
 
             case R.id.nav_prescription:
-                AppController.getInstance().trackEvent("Prsecription", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Prsecription", "Navigation");
 
                 fragment = new IncompleteListFragment();
                 break;
 
             case R.id.nav_refered:
-                AppController.getInstance().trackEvent("Associates", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Associates", "Navigation");
 
                 fragment = new AssociatesFragment();
                 break;
@@ -286,7 +297,7 @@ public class NavigationActivity extends AppCompatActivity
             case R.id.nav_logout:
 
                 // Launching the login activity
-                AppController.getInstance().trackEvent("Logout", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Logout", "Navigation");
 
                 goToLoginActivity();
                 stopService(new Intent(NavigationActivity.this, SyncDataService.class));
@@ -327,6 +338,8 @@ public class NavigationActivity extends AppCompatActivity
 
     @Override
     protected void onResume() {
+        /*Setting listner to start broadcast receiver*/
+        AppController.getInstance().setConnectivityListener(this);
         super.onResume();
     }
 
@@ -381,44 +394,45 @@ public class NavigationActivity extends AppCompatActivity
         Fragment mFragment;
         fragmentManager = getSupportFragmentManager();
         switch (action) {
+
             case "HomeFragment":
                 mFragment = new HomeFragment();
-                AppController.getInstance().trackEvent("Patient Central", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Patient Central", "Navigation");
 
                 break;
 
             case "ConsultationLogFragment":
                 mFragment = new ConsultationLogFragment();
-                AppController.getInstance().trackEvent("Consultation Log", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Consultation Log", "Navigation");
 
                 break;
 
             case "PoHistoryFragment":
                 mFragment = new PoHistoryFragment();
-                AppController.getInstance().trackEvent("Patient History", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Patient History", "Navigation");
 
                 break;
 
             case "ReportFragment":
 
                 mFragment = new ReportFragment();
-                AppController.getInstance().trackEvent("Patient Report", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Patient Report", "Navigation");
 
                 break;
 
             case "KnowledgeFragment":
-                AppController.getInstance().trackEvent("Knowledge", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Knowledge", "Navigation");
 
                 mFragment = new KnowledgeFragment();
                 break;
             case "IncompleteListFragment":
-                AppController.getInstance().trackEvent("Prsecription", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Prsecription", "Navigation");
 
                 mFragment = new IncompleteListFragment();
                 break;
 
             case "AssociatesFragment":
-                AppController.getInstance().trackEvent("Associates", "Navigation", "Track event");
+                AppController.getInstance().trackEvent("Associates", "Navigation");
 
                 mFragment = new AssociatesFragment();
                 break;
@@ -438,6 +452,31 @@ public class NavigationActivity extends AppCompatActivity
       //  Log.e("Dialog ","  Dialog is Clicked "+arg);
         PoHistoryFragment newFragment = new PoHistoryFragment();
         newFragment.updateDisplay(arg);
+    }
+
+    // Method to manually check connection status
+    private void checkConnection() {
+        boolean isConnected = ConnectivityChangeReceiver.isConnected();
+        if(isConnected){
+        //  callService();
+        }
+        //Log.e("isConnected Manually"," "+isConnected);
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+        if(isConnected){
+          // callService();
+        }
+        //Log.e("isConnected nw change"," "+isConnected);
+    }
+    private void callService(){
+
+        Intent msgIntent = new Intent(this, MasterSessionService.class);
+        msgIntent.putExtra(MasterSessionService.TYPE, "all");
+        msgIntent.putExtra(MasterSessionService.DATE, "ashish");
+        msgIntent.putExtra(MasterSessionService.COUNT, "2");
+        startService(msgIntent);
     }
 }
 

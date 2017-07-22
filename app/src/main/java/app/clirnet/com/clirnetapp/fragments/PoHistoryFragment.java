@@ -95,6 +95,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private ArrayList ageList;
     private MultiAutoCompleteTextView symptomsDiagnosis;
     private DatabaseClass databaseClass;
+    private LastnameDatabaseClass lastnameDatabaseClass;
     private ArrayList<String> mAilmemtArrayList;
     private ArrayList selectedAilmentList;
     private LinearLayoutManager mLayoutManager;
@@ -218,7 +219,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private String strOedemaDescription;
     private String strCalfTendernessDescription;
     private String strLymphadenopathyDescription;
-    private LastnameDatabaseClass lastnameDatabaseClass;
+
     private Button filterObservation;
     private Button filterInvestigation;
     private Integer mMinHbA1c, mMaxHbA1c;
@@ -980,10 +981,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         if (end <= queryCount) {
             try {
                 if (sqlController != null) {
-                    // memberList = sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
-                    //   pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugarFpgMaxValue, sugarPpgMinValue, sugarPpgMaxValue);
-                    //   memberList = sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
-                    //       pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugarFpgMaxValue, sugarPpgMinValue, sugarPpgMaxValue,strLipidTC,strLipidTG,strLipidLDL,strLipidVHDL,strLipidHDL,strHbA1c,strSerumUrea,strAcer,strEcg,strPft);
+
                     memberList = sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
                             pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugarFpgMaxValue, sugarPpgMinValue, sugarPpgMaxValue, strLipidTC, strLipidTCMax, strLipidTG, strLipidTGMax, strLipidLDL, strLipidLDLMax, strLipidVHDL, strLipidVHDLMax, strLipidHDL, strLipidHDLMax, strHbA1c, strHbA1cMax, strSerumUrea, strSerumUreaMax, strAcer, strAcerMax, strEcg, strPft
                             , strSmoking, noOfSticksPerYear, strLeftSmokingSinceYear, strAlcoholConsumption, noOfPegsPerYear, strLeftAlcoholSinceYear, strTobaco, otherTobacoTaking, strDrug, otherDrugTaking, strFoodHabit, strFoodPreference, strBingeEating, strLactoseTolerance, strLifeStyle, strSleepStatus, strStressLevel, strSexuallyActive, strExcercise, strAllergie, strPallore, strPallorDescription, strCyanosis, strCyanosisDescription, strTremors, strTremorsDescription, strIcterus, strIcterusDescription
@@ -1001,12 +999,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 ex.printStackTrace();
             }
             try {
-                //  int afterFilterCount = memberList.size();
 
-                // int totalFilterDataCount = beforeFilterCount - afterFilterCount;
-
-                //  queryCount = queryCount - totalFilterDataCount;
-                /// Log.e("poHistoryAdapter","  "+poHistoryAdapter);
                 if (poHistoryAdapter != null) {
                     poHistoryAdapter.addAll(memberList);
 
@@ -1025,7 +1018,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
     @Override
     public void onPause() {
-        //  Log.e("onPause"," "+"onPause");
         InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
         inputMethodManager.hideSoftInputFromWindow(firstName.getWindowToken(), 0);
@@ -1035,7 +1027,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     @Override
     public void onResume() {
         super.onResume();
-        // Log.e("onResume"," "+"onResume");
         // Tracking the screen view
         AppController.getInstance().trackScreenView("Po History Fragment");
     }
@@ -1071,7 +1062,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         patientData = null;
 
         recyclerView.setOnClickListener(null);
-        //  searchView.setOnClickListener(null);
         norecordtv = null;
 
         recyclerView = null;
@@ -1759,6 +1749,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         strCalfTenderness = null;
         strLymphadenopathy = null;
 
+        mAutoLabel= null;
+        mInvestigationLabel= null;
 
     }
 

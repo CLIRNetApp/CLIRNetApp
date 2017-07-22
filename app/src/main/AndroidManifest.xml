@@ -39,11 +39,11 @@
             android:label="@string/title_activity_navigation"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-        <activity
+      <!--  <activity
             android:name=".activity.EditPatientUpdate"
             android:label="@string/title_activity_patient_update"
             android:theme="@style/AppTheme.NoActionBar"
-            android:windowSoftInputMode="stateAlwaysHidden" />
+            android:windowSoftInputMode="stateAlwaysHidden" />-->
         <activity
             android:name=".activity.EditPersonalInfo"
             android:label="@string/title_activity_edit_personal_info"
@@ -144,6 +144,16 @@
 
         <service android:name="com.google.android.gms.analytics.CampaignTrackingService" />
 
+        <receiver android:name=".utility.ConnectivityChangeReceiver">
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".app.MasterSessionService"
+            android:exported="false" />
+
         <activity
             android:name=".activity.NewEditPersonalInfo"
             android:label="@string/title_activity_new_edit_personal_info"
@@ -151,7 +161,7 @@
         <activity
             android:name=".quickAdd.NewEditIncompleteRecordsActivity"
             android:label="@string/title_activity_new_edit_incomplete_records"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>

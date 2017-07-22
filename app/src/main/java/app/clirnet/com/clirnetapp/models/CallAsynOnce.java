@@ -1,7 +1,7 @@
 package app.clirnet.com.clirnetapp.models;
 
 /**
- * Created by ${Ashish} on 7/13/2016.
+ * Created by Ashish on 7/13/2016.
  */
 public class CallAsynOnce {
 

@@ -14,7 +14,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
 
 /**
- * Created by ${Ashish} on 9/1/2016.
+ * Created by Ashish on 9/1/2016.
  */
 public class PatientHistoryAdapter extends RecyclerView.Adapter<PatientHistoryAdapter.HistoryViewHolder> {
 

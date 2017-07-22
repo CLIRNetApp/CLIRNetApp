@@ -2,7 +2,6 @@
 <resources>
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
     <color name="hint_color">#2CA3E9</color>
     <color name="black">#000000</color>
     <color name="red">#FF0000</color>
@@ -14,15 +13,8 @@
     <color name="white">#ffffff</color>
     <color name="input_login">#222222</color>
     <color name="input_login_hint">#999999</color>
-    <color name="input_register_bg">#3b4148</color>
-    <color name="input_register_hint">#5e6266</color>
-    <color name="btn_login">#26ae90</color>
-    <color name="btn_login_bg">#eceef1</color>
-    <color name="lbl_name">#333333</color>
     <color name="input_register">#888888</color>
-    <color name="btn_logut_bg">#ff6861</color>
     <color name="silver">#C0C0C0</color>
-    <color name="button_text_color">#FF808080</color>
     <color name="bg_list_row">#0a599d</color>
     <color name="text_background">#90000000</color>
     <color name="rate">#0a599d</color>
@@ -30,11 +22,7 @@
     <color name="btn_back_sbmt">#50BAA0</color>
     <color name="cancelbtn">#c0c0c0</color>
 
-    <color name="transparent_background">#00FF0000</color>
     <color name="grey">#808080</color>
-    <color name="colorPrimary2">#1837e6</color>
     <color name="tagLight">#b1c914</color>
     <color name="tagDark">#206fa1</color>
-    <color name="lightGreen">#b2ffb2</color>
-    <color name="lightBlue">#66A6F7</color>
 </resources>

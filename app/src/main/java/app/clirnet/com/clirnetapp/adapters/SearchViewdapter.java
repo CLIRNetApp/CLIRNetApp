@@ -104,7 +104,7 @@ public class SearchViewdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             String middle_name = patientList.get(position).getMiddleName();
             String last_name = patientList.get(position).getLastName();
 
-            String name=appController.toCamelCase(first_name + " " + middle_name + " " + last_name);
+            String name=AppController.toCamelCase(first_name + " " + middle_name + " " + last_name);
             memberViewHolder.name.setText(name);
 
             appController=new AppController();
@@ -124,14 +124,7 @@ public class SearchViewdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 appController.appendLog(appController.getDateTime()+" " +"/ "+"Searach View Adapter"+e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
-           /* if (fod.equals("30-11-0002")) {
 
-            holder.follow_up_date.setText("--");
-
-        } else {
-            holder.follow_up_date.setText(fod);
-        }
-*/
 
 
             int posi=position+1;

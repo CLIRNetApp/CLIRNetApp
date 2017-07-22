@@ -101,7 +101,6 @@
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_weight="1"
                             android:orientation="horizontal"
                             android:padding="3dp">
 
@@ -118,7 +117,6 @@
 
                             <LinearLayout
 
-                                android:id="@+id/nameLayout"
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:layout_weight="0.6"
@@ -163,12 +161,6 @@
 
                         </LinearLayout>
 
-
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight=".1"
-                            android:visibility="invisible" />
 
                         <LinearLayout
 
@@ -395,7 +387,6 @@
                 android:padding="5dp">
 
                 <LinearLayout
-                    android:id="@+id/actVitalsLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -584,7 +575,6 @@
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/actVitalsLayout1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
@@ -756,7 +746,6 @@
                     android:orientation="horizontal">
 
                     <MultiAutoCompleteTextView
-                        android:id="@+id/ailments1"
                         android:layout_width="match_parent"
                         android:layout_height="45dp"
                         android:layout_marginRight="5dp"
@@ -1171,7 +1160,6 @@
                 android:orientation="vertical">
 
                 <ExpandableListView
-                    android:id="@+id/lvExp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent" />
 

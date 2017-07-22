@@ -5,57 +5,22 @@
 
     <string name="prompt_email">User Name</string>
     <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
-    <string name="title_activity_login2">Sign in</string>
     <string name="title_activity_navigation">Home Activity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
-    <string name="hint_email">Email</string>
-    <string name="hint_username">User Name</string>
     <string name="hint_password">New Password</string>
-    <string name="hint_confirm_password"> Confirm Password</string>
-    <string name="hint_name">Fullname</string>
     <string name="btn_login">LOG IN</string>
-    <string name="btn_register">REGISTER</string>
     <string name="btn_link_to_register">Change Password?</string>
-    <string name="btn_link_to_login">Already registred! Login Me.</string>
-    <string name="welcome">Welcome</string>
-    <string name="btn_logout">LOGOUT</string>
     <string name="name">Name</string>
-    <string name="title_activity_nav2">Nav2</string>
-
-    <string name="title_section1">Section 1</string>
-    <string name="title_section2">Section 2</string>
-    <string name="title_section3">Section 3</string>
-
-    <string name="action_example">Example action</string>
-    <string name="title_activity_retailer_navigation">RetailerNavigationActivity</string>
-    <string name="title_activity_register">Registration Page</string>
 
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hint_search">Search Patient By Phone No.</string>
-    <string name="synchronize">Synchoronize</string>
     <string name="help">Help</string>
     <string name="refresh">Refresh from server</string>
-
-    <string-array name="language_group">
-        <item>English</item>
-        <item>Hindi</item>
-        <item>Bengali </item>
-
-    </string-array>
 
     <string-array name="phType_group">
         <item>Mobile</item>
@@ -194,7 +159,6 @@
     <string name="title_activity_edit_personal_info">Edit Personal Info</string>
     <string name="title_activity_add_patient_update">Add Patient Update</string>
     <string name="title_activity_show_personal_details">Show Patient Details</string>
-    <string name="title_activity_privacy">privacy</string>
     <string name="title_activity_privacy_policy">PrivacyPolicy</string>
     <string name="pohistory">Patient History</string>
     <string name="consultation_log">Consultation Log</string>
@@ -205,7 +169,6 @@
     <string name="to">To :</string>
     <string name="mob_no_notfound">Mobile Number Not Found!!!</string>
     <string name="mailid">support@clirnet.com</string>
-    <string name="hash">#</string>
     <string name="logout">Logout</string>
     <string name="desc">profile_pic</string>
     <string name="subject">Subject :</string>
@@ -216,7 +179,6 @@
     <string name="digitspace">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ" "</string>
 
     <string name="digitsnumber">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789," "</string>
-    <string name="accept">Accept</string>
     <string name="spinner_prompt">Select Category</string>
 
     <string name="agree">Yes, I accept the terms and condition</string>
@@ -235,9 +197,6 @@
     <string name="number">Number</string>
     <string name="mobstart">+91</string>
     <string name="recorddetails">Vitals</string>
-    <string name="height">Height</string>
-    <string name="pulse">Pulse</string>
-    <string name="bp">B.P</string>
     <string name="symptomsanddignosis">Symptoms and Diagnosis</string>
     <string name="dignosis">Diagnosis</string>
     <string name="symptoms">Symptoms</string>
@@ -248,7 +207,6 @@
     <string name="day">Day(s)</string>
     <string name="week">Week(s)</string>
     <string name="month">Month(s)</string>
-    <string name="ailmen">Ailment</string>
     <string name="clinicalnotes">Clinical Notes</string>
     <string name="cancel">Cancel</string>
     <string name="add">Save</string>
@@ -259,13 +217,10 @@
     <string name="knowledge">Knowledge</string>
     <string name="old_password">Current Password</string>
     <string name="hint_confirmpassword">Confirm New Password</string>
-    <string name="settings_pwd_equal">Password Match</string>
-    <string name="settings_pwd_not_equal">Password did not match</string>
     <string name="type">Type</string>
     <string name="phtype">Ph.Type</string>
     <string name="altphtype">Alt.Type</string>
     <string name="tools">Tools</string>
-    <string name="service_area">Service Area</string>
     <string name="firstname">First Name</string>
     <string name="lastname">Last Name</string>
     <string name="phoneno">Phone No.</string>
@@ -278,7 +233,7 @@
     <string name="reset">Reset</string>
     <string name="version">Release Version 1.3.2.0</string>
     <string name="aboutApp">About App V 1.3.2.0</string>
-    <string name="updateDate">Last Updated Date 08/07/2017</string>
+    <string name="updateDate">Last Updated Date 18/07/2017</string>
     <string name="quickadd">Quick Add</string>
     <string name="title_edit_quick_add">Quick Edit Patient</string>
     <string name="referedby">Add Referals</string>
@@ -295,16 +250,7 @@
     <string name="servicePassword">clirnet123</string>
     <string name="vitals">Vitals</string>
     <string name="history">History</string>
-    <string name="images">Images</string>
     <string name="referrals">Referrals</string>
-    <string name="weight">Weight</string>
-    <string name="Height">Height</string>
-    <string name="bmi">Bmi</string>
-    <string name="temp">Temp</string>
-    <string name="systole">Systole</string>
-    <string name="distole">Distole</string>
-    <string name="sugarpp">Sugar(FPG)</string>
-    <string name="sugarfast">Sugar(PPG)</string>
     <string name="title_activity_new_registration_page">Add New Patient</string>
     <string name="transgender">T</string>
     <string name="primarytype">Primary Phone</string>
@@ -332,12 +278,9 @@
     <string name="habit">Food Habit    </string>
     <string name="veg">Veg</string>
     <string name="nonVeg">NonVeg</string>
-    <string name="vegan">Vegan</string>
-    <string name="jain">Jain</string>
     <string name="foodPreference">Food Preference</string>
     <string name="sweet">Sweet</string>
     <string name="sour">Sour</string>
-    <string name="fried">Fried</string>
     <string name="spicy">Spicy</string>
     <string name="ecg">ECG</string>
     <string name="pft">PFT</string>
@@ -345,8 +288,6 @@
     <string name="normal">Normal</string>
     <string name="acer">Acer</string>
     <string name="seremUrea">Serum Urea</string>
-    <string name="passiveSmoker">Passive Smoker</string>
-    <string name="activeSmoker">Active Smoker</string>
     <string name="nonDrinker">Non Drinker</string>
     <string name="activeDrinker">Drinker</string>
     <string name="alergies">Allergies</string>
@@ -354,13 +295,12 @@
     <string name="tc">TC</string>
     <string name="tg">TG</string>
     <string name="ldl">LDL</string>
-    <string name="vhdl">VHDL</string>
+    <string name="vhdl">VLDL</string>
     <string name="hdl">HDL</string>
     <string name="investigation">Investigation</string>
     <string name="moreFilters">Filter Vitals</string>
     <string name="healthLifestyle">Health and Lifestyle</string>
     <string name="title_activity_new_edit_personal_info">NewEditPersonalInfo</string>
-    <string name="section_format">Hello World from section: %1$d</string>
     <string name="observations">Observation</string>
     <string name="title_activity_new_edit_incomplete_records">NewEditIncompleteRecordsActivity</string>
     <string name="substanceUse">Substance Use</string>
@@ -369,7 +309,6 @@
     <string name="sticksperweek">#Sticks</string>
     <string name="since">Since</string>
     <string name="selectYear">Select Year</string>
-    <string name="otherTobaco">Other Tobacco</string>
     <string name="otherDrug">Other Drug</string>
     <string name="otherTobacoUse">Other Tobacco Use</string>
     <string name="dietPreference">Diet Prefernce</string>
@@ -387,19 +326,15 @@
     <string name="icterus">Icterus</string>
     <string name="clubbing">Clubbing</string>
     <string name="oedema">Oedema</string>
-    <string name="calf">Calf Tenderness</string>
+    <string name="calf">Tenderness</string>
     <string name="lymphadenopathy">Lymphadenopathy</string>
     <string name="bloodgroup">Blood Group</string>
     <string name="maritalStatus">Marital Status</string>
     <string name="incomeRange">Income Range</string>
     <string name="year">Year</string>
     <string name="back">Back</string>
-    <string name="unmaried">UnMaried</string>
-    <string name="married">Married</string>
-    <string name="widowed">Widowed</string>
-    <string name="separated">Separated</string>
-    <string name="divorced">Divorced</string>
-    <string name="liveIn">LiveIn</string>
     <string name="dashboard">Dashboard</string>
+    <string name="clickReserve">Click To Reserve</string>
+    <string name="viewMore">View More</string>
 
 </resources>

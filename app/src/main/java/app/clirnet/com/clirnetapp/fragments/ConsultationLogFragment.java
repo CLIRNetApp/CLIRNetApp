@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -243,6 +244,8 @@ public class ConsultationLogFragment extends Fragment {
                     Date date1 = sdf1.parse(searchdate);
 
                     Date currentdate = sdf1.parse(String.valueOf(sysdate));
+
+                    Log.e("dateValue", "  " + currentdate +"  " +date1);
 
                              /*Search Patient By Follow up date */
                     if (date1.after(currentdate) || date1.equals(currentdate)) {
