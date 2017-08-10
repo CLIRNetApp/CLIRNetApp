@@ -355,7 +355,6 @@ public class AppController extends Application {
         return result.matches(regex);
     }
 
-
     public Integer findLength(String value) {
 
         return (value.length());
@@ -412,15 +411,7 @@ public class AppController extends Application {
         return isDuplicate;
     }
 
-    //it will remove : from string if it contains 12-13-2016
-    public String removeColunChar(String val) {
-        String result = null;
 
-        if (val.length() > 0) {
-            result = val.replaceAll("[-+.^:,]", "");
-        }
-        return result;
-    }
 
     private long getFileSize(String strfile) {
         long length = 0;
@@ -1187,9 +1178,7 @@ public class AppController extends Application {
                         });
                         String action = "display";
                         saveBannerDataIntoDb(url, context, doctor_membership_number, action, pageTitle);
-                    }/*else{
-                      //  Log.e("NoImage","No Image to Display");
-                    }*/
+                    }
                 }
             }
 
@@ -1237,7 +1226,7 @@ public class AppController extends Application {
             date = format.parse(dtStart);
             System.out.println(date);
         } catch (ParseException e) {
-            // TODO Auto-generated catch block
+
             e.printStackTrace();
         }
         return date;
@@ -1284,7 +1273,13 @@ public class AppController extends Application {
         }
         return years;
     }
+public String getCurrentDate(){
+    Calendar c = Calendar.getInstance();
+    System.out.println("Current time => " + c.getTime());
 
+    SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+    return df.format(c.getTime());
+}
 }
 
 

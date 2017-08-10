@@ -169,6 +169,170 @@ public class RegistrationModel {
     private String msSpeciality;
     private String msCatagoryName;
     private String msUrl;
+    private String sugarRbs;
+    private String lipidProfileTch;
+    private String hdlLdlRatio;
+    private String hb;
+    private String plateletCount;
+    private String esr;
+    private String dcl;
+    private String dcn;
+    private String dce;
+    private String dcm;
+    private String dcb;
+
+    private String indirectBilirubin ;
+    private String totalBilirubin;
+    private String directBilirubin;
+    private String sgpt;
+    private String sgot;
+    private String ggt;
+
+    private String total_protein;
+    private String albumin;
+    private String globulin;
+    private String ag_ratio;
+    private String urinePusCell;
+    private String urineRbc;
+    private String urineCast;
+    private String urineProtein;
+    private String urineCrystal;
+    private String microalbuminuria;
+    private String serumCreatinine;
+    private String acr;
+    private String tsh;
+    private String t3;
+
+    public String getSugarRbs() {
+        return sugarRbs;
+    }
+
+    public String getLipidProfileTch() {
+        return lipidProfileTch;
+    }
+
+    public String getHdlLdlRatio() {
+        return hdlLdlRatio;
+    }
+
+    public String getHb() {
+        return hb;
+    }
+
+    public String getPlateletCount() {
+        return plateletCount;
+    }
+
+    public String getEsr() {
+        return esr;
+    }
+
+    public String getDcl() {
+        return dcl;
+    }
+
+    public String getDcn() {
+        return dcn;
+    }
+
+    public String getDce() {
+        return dce;
+    }
+
+    public String getDcm() {
+        return dcm;
+    }
+
+    public String getDcb() {
+        return dcb;
+    }
+
+    public String getIndirectBilirubin() {
+        return indirectBilirubin;
+    }
+
+    public String getTotalBilirubin() {
+        return totalBilirubin;
+    }
+
+    public String getDirectBilirubin() {
+        return directBilirubin;
+    }
+
+    public String getSgpt() {
+        return sgpt;
+    }
+
+    public String getSgot() {
+        return sgot;
+    }
+
+    public String getGgt() {
+        return ggt;
+    }
+
+    public String getTotal_protein() {
+        return total_protein;
+    }
+
+    public String getAlbumin() {
+        return albumin;
+    }
+
+    public String getGlobulin() {
+        return globulin;
+    }
+
+    public String getAg_ratio() {
+        return ag_ratio;
+    }
+
+    public String getUrinePusCell() {
+        return urinePusCell;
+    }
+
+    public String getUrineRbc() {
+        return urineRbc;
+    }
+
+    public String getUrineCast() {
+        return urineCast;
+    }
+
+    public String getUrineProtein() {
+        return urineProtein;
+    }
+
+    public String getUrineCrystal() {
+        return urineCrystal;
+    }
+
+    public String getMicroalbuminuria() {
+        return microalbuminuria;
+    }
+
+    public String getSerumCreatinine() {
+        return serumCreatinine;
+    }
+
+    public String getAcr() {
+        return acr;
+    }
+
+    public String getTsh() {
+        return tsh;
+    }
+
+    public String getT3() {
+        return t3;
+    }
+
+    public String getT4() {
+        return t4;
+    }
+
+    private String t4;
+
 
 
     public String getMsId() {
@@ -753,6 +917,7 @@ public class RegistrationModel {
     }
 
     public RegistrationModel(String id) {
+
         this.pat_id = id;
     }
 
@@ -806,7 +971,7 @@ public class RegistrationModel {
         this.is_deleted = is_deleted;
         this.deleted_by = deleted_by;
         this.deleted_on = deleted_on;
-        this.flag = deleted_on;
+        this.flag = flag;
 
     }
 
@@ -1291,5 +1456,51 @@ public class RegistrationModel {
         this.msCatagoryName = ms_cat_name;
         this.msUrl = ms_url;
 
+    }
+    public RegistrationModel(String ecg, String sugar, String sugar_fasting,String sugar_rbs, String acer,String pft,String hba1c,String serem_urea,String lipid_profile_tc,String lipid_profile_tg,String lipid_profile_ldl,String lipid_profile_vhdl,String lipid_profile_hdl,String lipid_profile_tch,String hdl_ldl_ratio,String hb,String platelet_count,String esr,String dcl,String dcn,String dce,String dcm,String dcb,String total_bilirubin,String direct_bilirubin,String indirect_bilirubin,String sgpt,String sgot,String ggt,String total_protein,String albumin,String globulin,String ag_ratio,String urine_pus_cell,String urine_rbc,String urine_cast,String urine_protein,String urine_crystal,String microalbuminuria,String serum_creatinine,String acr,String tsh,String t3,String t4  ) {
+        this.ecg = ecg;
+        this.sugar = sugar;
+        this.sugarFasting = sugar_fasting;
+        this.acer = acer;
+        this.pft = pft;
+        this.hba1c = hba1c;
+        this.seremUrea = serem_urea;
+        this.lipidProfileTc = lipid_profile_tc;
+        this.lipidProfileTg = lipid_profile_tg;
+        this.lipidProfileLdl = lipid_profile_ldl;
+        this.lipidProfileVhdl = lipid_profile_vhdl;
+        this.lipidProfileHdl = lipid_profile_hdl;
+        this.sugarRbs=sugar_rbs;
+        this.lipidProfileTch=lipid_profile_tch;
+        this.hdlLdlRatio=hdl_ldl_ratio;
+        this.hb=hb;
+        this.plateletCount=platelet_count;
+        this.esr=esr;
+        this.dcl=dcl;
+        this.dcn=dcn;
+        this.dce=dce;
+        this.dcm=dcm;
+        this.dcb=dcb;
+        this.totalBilirubin=total_bilirubin;
+        this.directBilirubin=direct_bilirubin;
+        this.indirectBilirubin=indirect_bilirubin;
+        this.sgpt=sgpt;
+        this.sgot=sgot;
+        this.ggt=ggt;
+        this.total_protein=total_protein;
+        this.albumin=albumin;
+        this.globulin=globulin;
+        this.ag_ratio=ag_ratio;
+        this.urinePusCell=urine_pus_cell;
+        this.urineRbc=urine_rbc;
+        this.urineCast=urine_cast;
+        this.urineProtein=urine_protein;
+        this.urineCrystal=urine_crystal;
+        this.microalbuminuria=microalbuminuria;
+        this.serumCreatinine=serum_creatinine;
+        this.acr=acr;
+        this.tsh=tsh;
+        this.t3=t3;
+        this.t4=t4;
     }
 }

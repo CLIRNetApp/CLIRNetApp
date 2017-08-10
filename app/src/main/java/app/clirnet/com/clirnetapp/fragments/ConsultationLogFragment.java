@@ -71,6 +71,7 @@ public class ConsultationLogFragment extends Fragment {
     private String doctor_membership_number;
 
     private Button searchRecords;
+    private String strTomorrowsDate;
 
     public ConsultationLogFragment() {
         // this.setHasOptionsMenu(true);
@@ -80,16 +81,18 @@ public class ConsultationLogFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //String greeting = (savedInstanceState != null) ? savedInstanceState.getString("greeting2") : "null";
-        //Log.i(USER, " onViewStateRestoredfrag: " + greeting);
+        if (getArguments() != null) {
+
+            strTomorrowsDate = getArguments().getString("TOMORROWDATE");
+            Log.e("strTomorrowsDate"," "+strTomorrowsDate);
+        }
         setRetainInstance(true);//used to save instance on screen rotation
     }
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
-        /*Log.i(USER, " onSaveInstanceState.");
-        savedInstanceState.putString("greeting2", "Hello");*/
+
     }
 
     @Override
@@ -127,11 +130,11 @@ public class ConsultationLogFragment extends Fragment {
         txtupdateDate = (TextView) view.findViewById(R.id.txtupdateDate);
         txtfod = (TextView) view.findViewById(R.id.txtfod);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM , yyyy", Locale.ENGLISH);
         Date todayDate = new Date();
 
         String dd = sdf.format(todayDate);
-        currdate.setText("Today's Date " + dd);
+        currdate.setText("Today's Date : " + dd);
 
         bannerClass = new BannerClass(getContext());
 
@@ -176,14 +179,21 @@ public class ConsultationLogFragment extends Fragment {
         int month1 = c.get(Calendar.MONTH);
         int day1 = c.get(Calendar.DAY_OF_MONTH);
 
-        // Show current date
+
+/*// Show current date
         date.setText(new StringBuilder()
                 // Month is 0 based, just add 1
                 .append(day1).append("-").append(month1 + 1).append("-")
-                .append(year1).append(" "));
+                .append(year1).append(" "));*/
 
         sysdate = new StringBuilder().append(day1).append("-").append(month1 + 1).append("-").append(year1).append("");
+        // Show current date
+        date.setText(sysdate);
 
+        if(strTomorrowsDate!=null && !strTomorrowsDate.equals("")) {
+            date.setText(strTomorrowsDate);
+            searchRecords();
+        }
 //open date picker dialog
         date.setOnClickListener(new View.OnClickListener() {
 
@@ -219,133 +229,7 @@ public class ConsultationLogFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-                SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-                SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-                norecordtv.setVisibility(View.VISIBLE);
-                recycler_view.setVisibility(View.INVISIBLE);
-
-                searchdate = date.getText().toString();
-                String reformattedStr = "";
-                try {
-
-                    reformattedStr = myFormat.format(fromUser.parse(searchdate));
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Consultation Log" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
-                }
-
-                if (TextUtils.isEmpty(searchdate)) {
-                    date.setError("Please enter Date");
-                    return;
-                }
-
-                try {
-                    SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-                    Date date1 = sdf1.parse(searchdate);
-
-                    Date currentdate = sdf1.parse(String.valueOf(sysdate));
-
-                    Log.e("dateValue", "  " + currentdate +"  " +date1);
-
-                             /*Search Patient By Follow up date */
-                    if (date1.after(currentdate) || date1.equals(currentdate)) {
-
-                        if (filterVistDateList != null && filterVistDateList.size() > 0) {
-
-                            filterVistDateList.clear();
-
-                        }
-
-                        filterfodList = new ArrayList<>();
-                        //get records from database vai entered follow up date
-                        filterfodList = sqlController.getPatientListnew(reformattedStr);
-
-
-                        int filterModelSize = filterfodList.size();
-
-                        if (filterModelSize > 0) {
-                            followUpDateSearchAdapter = new FollowUpDateSearchAdapter(filterfodList);
-                            norecordtv.setVisibility(View.GONE);
-                            txtfod.setVisibility(View.GONE);
-                            recycler_view.setVisibility(View.VISIBLE);
-                            txtupdateDate.setVisibility(View.VISIBLE);
-                            followUpDateSearchAdapter.setFilter(filterfodList);
-                            recycler_view.setLayoutManager(new LinearLayoutManager(getContext()));
-                            recycler_view.setAdapter(followUpDateSearchAdapter);
-
-                        }
-                        if (filterfodList != null && filterModelSize > 0) {
-                            recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
-
-                                @Override
-                                public void onClick(View view, int position) {
-
-                                    followUpDateSearchAdapterToRecyclerView(position);
-
-                                }
-
-                                @Override
-                                public void onLongClick(View view, int position) {
-
-                                }
-
-                            }));
-                        }
-
-                        //  Toast.makeText(getContext(), "Date1 is after sysdate", Toast.LENGTH_LONG).show();
-                         /*Search Patient By Follow up date */
-                    } else if (date1.before(currentdate)) {
-
-                        if (filterfodList != null && filterfodList.size() > 0) {
-
-                            filterfodList.clear();
-
-                        }
-
-                        filterVistDateList = new ArrayList<>();
-                        //get records from database vai entered visit  date
-                        filterVistDateList = sqlController.getPatientListVisitDateSearch(reformattedStr);
-
-                        int filterModelSize = filterVistDateList.size();
-
-                        if (filterModelSize > 0) {
-                            norecordtv.setVisibility(View.GONE);
-                            rvAdapterforUpdateDate = new RVAdapterforUpdateDate(filterfodList);
-                            recycler_view.setLayoutManager(new LinearLayoutManager(getContext()));
-                            txtfod.setVisibility(View.VISIBLE);
-                            txtupdateDate.setVisibility(View.GONE);
-                            recycler_view.setVisibility(View.VISIBLE);
-                            rvAdapterforUpdateDate.setFilter(filterVistDateList);
-                            recycler_view.setAdapter(rvAdapterforUpdateDate);
-                        }
-
-
-                        //   Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
-                        if (filterModelSize > 0) {
-                            recycler_view.addOnItemTouchListener(new RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
-
-                                @Override
-                                public void onClick(View view, int position) {
-
-
-                                    setrvAdapterforUpdateDateToRecyclerView(position);
-
-                                }
-
-                                @Override
-                                public void onLongClick(View view, int position) {
-
-                                }
-
-                            }));
-                        }
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Consultation Log" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
-
-                }
+                searchRecords();
 
             }
 
@@ -355,9 +239,136 @@ public class ConsultationLogFragment extends Fragment {
         setupAnimation();
         return view;
     }
+private void searchRecords(){
 
+    SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+    SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+    norecordtv.setVisibility(View.VISIBLE);
+    recycler_view.setVisibility(View.INVISIBLE);
+
+    searchdate = date.getText().toString();
+    String reformattedStr = "";
+    try {
+
+        reformattedStr = myFormat.format(fromUser.parse(searchdate));
+    } catch (ParseException e) {
+        e.printStackTrace();
+        appController.appendLog(appController.getDateTime() + " " + "/ " + "Consultation Log" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+    }
+
+    if (TextUtils.isEmpty(searchdate)) {
+        date.setError("Please enter Date");
+        return;
+    }
+
+    try {
+        SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        Date date1 = sdf1.parse(searchdate);
+
+        Date currentdate = sdf1.parse(String.valueOf(sysdate));
+
+        //Log.e("dateValue", "  " + currentdate +"  " +date1);
+
+                             /*Search Patient By Follow up date */
+        if (date1.after(currentdate) || date1.equals(currentdate)) {
+
+            if (filterVistDateList != null && filterVistDateList.size() > 0) {
+
+                filterVistDateList.clear();
+
+            }
+
+            filterfodList = new ArrayList<>();
+            //get records from database vai entered follow up date
+            filterfodList = sqlController.getPatientListnew(reformattedStr);
+
+
+            int filterModelSize = filterfodList.size();
+
+            if (filterModelSize > 0) {
+                followUpDateSearchAdapter = new FollowUpDateSearchAdapter(filterfodList);
+                norecordtv.setVisibility(View.GONE);
+                txtfod.setVisibility(View.GONE);
+                recycler_view.setVisibility(View.VISIBLE);
+                txtupdateDate.setVisibility(View.VISIBLE);
+                followUpDateSearchAdapter.setFilter(filterfodList);
+                recycler_view.setLayoutManager(new LinearLayoutManager(getContext()));
+                recycler_view.setAdapter(followUpDateSearchAdapter);
+
+            }
+            if (filterfodList != null && filterModelSize > 0) {
+                recycler_view.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
+
+                    @Override
+                    public void onClick(View view, int position) {
+
+                        followUpDateSearchAdapterToRecyclerView(position);
+
+                    }
+
+                    @Override
+                    public void onLongClick(View view, int position) {
+
+                    }
+
+                }));
+            }
+
+                         /*Search Patient By Follow up date */
+        } else if (date1.before(currentdate)) {
+
+            if (filterfodList != null && filterfodList.size() > 0) {
+
+                filterfodList.clear();
+
+            }
+
+            filterVistDateList = new ArrayList<>();
+            //get records from database vai entered visit  date
+            filterVistDateList = sqlController.getPatientListVisitDateSearch(reformattedStr);
+
+            int filterModelSize = filterVistDateList.size();
+
+            if (filterModelSize > 0) {
+                norecordtv.setVisibility(View.GONE);
+                rvAdapterforUpdateDate = new RVAdapterforUpdateDate(filterfodList);
+                recycler_view.setLayoutManager(new LinearLayoutManager(getContext()));
+                txtfod.setVisibility(View.VISIBLE);
+                txtupdateDate.setVisibility(View.GONE);
+                recycler_view.setVisibility(View.VISIBLE);
+                rvAdapterforUpdateDate.setFilter(filterVistDateList);
+                recycler_view.setAdapter(rvAdapterforUpdateDate);
+            }
+
+
+            //   Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
+            if (filterModelSize > 0) {
+                recycler_view.addOnItemTouchListener(new RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
+
+                    @Override
+                    public void onClick(View view, int position) {
+
+                        setrvAdapterforUpdateDateToRecyclerView(position);
+                    }
+
+                    @Override
+                    public void onLongClick(View view, int position) {
+
+                    }
+
+                }));
+            }
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        appController.appendLog(appController.getDateTime() + " " + "/ " + "Consultation Log" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+    }
+}
 
     private void setrvAdapterforUpdateDateToRecyclerView(int position) {
+
         if (filterVistDateList.size() > 0) {
             RegistrationModel book = filterVistDateList.get(position);
             Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
@@ -441,7 +452,6 @@ public class ConsultationLogFragment extends Fragment {
             i.putExtra("UID", book.getUid());
             i.putExtra("CALLEDFROM","2");
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            //i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
             startActivity(i);
         }
 
@@ -561,10 +571,12 @@ public class ConsultationLogFragment extends Fragment {
         filterfodList = null;
         filterVistDateList = null;
 
+        searchRecords = null;
+        strTomorrowsDate = null;
     }
 
     //class to implement OnClick Listner
-    public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
+    private static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
         private final GestureDetector gestureDetector;
 

@@ -13,7 +13,6 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -172,17 +171,10 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
                 mStressLevel = healthLifeStyleList.get(0).getStressLevel();
                 mSmokerType = healthLifeStyleList.get(0).getSmokerType();
                 mLifeStyle = healthLifeStyleList.get(0).getLifeSyle();
-                String mLactoseTolerance = healthLifeStyleList.get(0).getLactoseTolerance();
-                String mFoodPreference = healthLifeStyleList.get(0).getFoodPreference();
-                String mFoodHabit = healthLifeStyleList.get(0).getFoodHabit();
+
                 mExcercise = healthLifeStyleList.get(0).getExcercise();
                 mChewinogTobaco = healthLifeStyleList.get(0).getChewingTobaco();
-                String mBingeEating = healthLifeStyleList.get(0).getBingeEating();
-                String mAllergies = healthLifeStyleList.get(0).getAllergies();
-                String mSexuallyActive = healthLifeStyleList.get(0).getSexuallyActive();
-                String mDrug = healthLifeStyleList.get(0).getDrugConsumption();
-                String otherDrugTaking = healthLifeStyleList.get(0).getOtherDrugConsumption();
-                String otherTobacoTaking = healthLifeStyleList.get(0).getOtherTobacoConsumption();
+
                 mSleepStatus= healthLifeStyleList.get(0).getSleep();
             }
         } catch (ClirNetAppException |SQLException e) {
@@ -222,11 +214,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
             validator = new Validator(getApplicationContext());
         }
 
-       /* SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
-        Date todayDate = new Date();
 
-        String dd = sdf.format(todayDate);
-        date.setText("Today's Date " + dd);*/
 
         editpatientName.setText(strName);
         editmobileno.setText(strPhone);
@@ -540,8 +528,6 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         ImageView imgStress = (ImageView) findViewById(R.id.imgStress);
         ImageView imgLifeStyle=(ImageView) findViewById(R.id.imgLifeStyle);
         ImageView imgExcercise=(ImageView) findViewById(R.id.imgExcercise);
-
-        Log.e("mSmokerType",""+mSmokerType + "" +mAlcohol);
 
         if(mSmokerType!=null && !mSmokerType.equals("")&& mSmokerType.equals("Active Smoker")){
             imgSmoke.setVisibility(View.VISIBLE);

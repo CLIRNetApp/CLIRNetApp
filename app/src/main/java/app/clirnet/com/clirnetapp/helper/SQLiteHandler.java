@@ -226,6 +226,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     static final String MS_SPECIALITY_NAME = "specialities_name";
     static final String MS_CAT_NAME = "ms_cat_name";
     static final String MS_URL= "ms_url";
+    static final String MS_STATUS= "ms_status";
+    private static final String IS_AGE_CALCULATED= "age_calculated";
 
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -241,7 +243,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
         return sInstance;
     }
-
 
     private static final String BANNER_ID = " banner_id";
     private static final String COMPANY_ID = "company_id";
@@ -269,11 +270,43 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String LIPID_PROFILE_LDL = "lipid_profile_ldl";
     private static final String LIPID_PROFILE_VHDL = "lipid_profile_vhdl";
     private static final String LIPID_PROFILE_HDL = "lipid_profile_hdl";
+    private static  final String LIPID_PROFILE_TCH = "lipid_profile_tch";
     private static final String CHEWING_TOBACO_OTHER = "tobaco_other";
     private static final String LAST_SMOKING_YEAR = "last_smoke_year";
     private static final String LAST_DRINK_YEAR = "last_drink_year";
     private static final String OCCUPATION = "occupation";
     private static final String OCCUPATION_NAME = "name";
+    private static final String HB = "hb";
+    private static final String PLATELET_COUNT = "platelet_count";
+    private static final String ESR = "esr";
+    private static final String DCL = "dcl";
+    private static final String DCN = "dcn";
+    private static final String DCE = "dce";
+    private static final String DCM = "dcm";
+    private static final String DCB = "dcb";
+    private static final String TOTAL_BILIRUBIN = "total_bilirubin";
+    private static final String DIRECT_BILIRUBIN  = "direct_bilirubin";
+    private static final String INDIRECT_BILIRUBIN  = "indirect_bilirubin";
+    private static final String SGPT = "sgpt";
+    private static final String SGOT  = "sgot";
+    private static final String GGT  = "ggt";
+    private static final String TOTAL_PROTEIN = "total_protein";
+    private static final String ALBUMIN  = "albumin";
+    private static final String GLOBULIN  = "globulin";
+    private static final String AG_RATIO  = "ag_ratio";
+    private static final String HDL_LDL_RATIO  = "hdl_ldl_ratio";
+    private static final String SUGAR_RBS  = "sugar_rbs";
+    private static final String URINE_PUC_CELL  = "urine_pus_cell";
+    private static final String URINE_RBC  = "urine_rbc";
+    private static final String URINE_CAST  = "urine_cast";
+    private static final String URINE_PROTEIN = "urine_protein";
+    private static final String URINE_CRYSTAL  = "urine_crystal";
+    private static final String MICROALBUMINURIA  = "microalbuminuria";
+    private static final String SEREM_CREATININE  = "serum_creatinine";
+    private static final String ACR  = "acr";
+    private static final String TSH  = "tsh";
+    private static final String T3 = "t3";
+    private static final String T4 = "t4";
 
 
     static final String CREATE_ASSOCIATE_MASTER_TABLE =
@@ -350,6 +383,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     ECG + " TEXT, " +
                     SUGAR + " INTEGER, " +
                     SUGAR_FASTING + " INTEGER, " +
+                    SUGAR_RBS + " INTEGER, " +
                     ACER + " INTEGER, " +
                     PFT + " TEXT, " +
                     HBA1C + " INTEGER, " +
@@ -359,8 +393,37 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     LIPID_PROFILE_LDL + " INTEGER, " +
                     LIPID_PROFILE_VHDL + " INTEGER, " +
                     LIPID_PROFILE_HDL + " INTEGER, " +
-                    IS_DELETED + " INTEGER , " +
-                    IS_DISABLED + " INTEGER, " +
+                    LIPID_PROFILE_TCH + " INTEGER, " +
+                    HB + " INTEGER, " +
+                    PLATELET_COUNT + " INTEGER, " +
+                    ESR + " INTEGER, " +
+                    DCL + " INTEGER, " +
+                    DCE + " INTEGER, " +
+                    DCN + " INTEGER, " +
+                    DCM + " INTEGER , " +
+                    DCB + " INTEGER, " +
+                    TOTAL_BILIRUBIN + " INTEGER, " +
+                    DIRECT_BILIRUBIN + " INTEGER, " +
+                    INDIRECT_BILIRUBIN + " INTEGER, " +
+                    SGPT + " INTEGER, " +
+                    SGOT + " INTEGER, " +
+                    GGT + " INTEGER , " +
+                    TOTAL_PROTEIN + " INTEGER, " +
+                    ALBUMIN + " INTEGER, " +
+                    GLOBULIN + " INTEGER, " +
+                    AG_RATIO + " INTEGER , " +
+                    HDL_LDL_RATIO + " INTEGER, " +
+                    URINE_PUC_CELL + " INTEGER, " +
+                    URINE_RBC + " INTEGER, " +
+                    URINE_CAST + " INTEGER , " +
+                    URINE_PROTEIN + " INTEGER, " +
+                    URINE_CRYSTAL + " INTEGER, " +
+                    MICROALBUMINURIA + " INTEGER , " +
+                    SEREM_CREATININE + " INTEGER, " +
+                    ACR + " INTEGER, " +
+                    TSH + " INTEGER, " +
+                    T3 + " INTEGER , " +
+                    T4 + " INTEGER, " +
                     DISABLED_BY + " INTEGER, " +
                     DISABLED_ON + " TEXT , " +
                     DELETED_ON + " TEXT ," +
@@ -531,7 +594,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
      * Updating Patient Personal details in database
      */
     public void updatePatientPersonalInfo(String keyid, String firstname, String middlename, String lastname, String gender, String dateofbirth, String age, String phNo, String language, String imgPath, String modified_on_date, String modified_by, String modifiedTime, String action, String flag, String docId,
-                                          String address, String cityortown, String district, String pin, String state, String phoneType, String alternatephoneType, String alternatePhoneNumber, String uid, String uidType, String isd_code, String alternateisd_code, String status, String email, String mOccupation, String mReligion, String strFamilyHistory, String strHospiSurgery, String strBloodGroup, String strMaritalStatus, String strIncomeRange) throws ClirNetAppException {
+                                          String address, String cityortown, String district, String pin, String state, String phoneType, String alternatephoneType, String alternatePhoneNumber, String uid, String uidType, String isd_code, String alternateisd_code, String status, String email, String mOccupation, String mReligion, String strFamilyHistory, String strHospiSurgery, String strBloodGroup, String strMaritalStatus, String strIncomeRange,String isAgeCalculated) throws ClirNetAppException {
 
         SQLiteDatabase db = this.getWritableDatabase();
 
@@ -574,6 +637,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(BLOOD_GROUP, strBloodGroup);
             values.put(MARITIAL_STATUS, strMaritalStatus);
             values.put(INCOME_RANGE, strIncomeRange);
+            values.put(IS_AGE_CALCULATED,isAgeCalculated);
 
             // Inserting Row
             db.update(TABLE_PATIENT, values, KEY_PATIENT_ID + "=" + keyid, null);
@@ -583,7 +647,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             throw new ClirNetAppException("Error inserting data");
         } finally {
             if (db != null) {
-                db.close(); // Closing database connection
+                db.close();    // Closing database connection.
             }
         }
 
@@ -611,7 +675,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
     }
-
 
     //update the patient visit records into db
     public void updatePatientOtherInfo(String strId, String visitId, String usersellectedDate, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String modified_dateon, String modified_time, String modified_by, String action, String patInfoType, String flag,
@@ -1331,6 +1394,30 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
     }
 
+    //update the flag once data send to server successfully
+    public void FlagUpdateObservation(String strPatientId, String flag) {
+        SQLiteDatabase db = null;
+
+        try {
+            db = this.getWritableDatabase();
+
+
+            ContentValues values = new ContentValues();
+
+            values.put(SYCHRONIZED, flag); // Name
+
+            // Inserting Row
+            db.update(TABLE_OBSERVATIONS, values, KEY_PATIENT_ID + "=" + strPatientId, null);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null) {
+                db.close();
+            }
+        }
+    }
+
     //add doctor personal info into db
     public void addDoctorPerInfo(String doc_id, String doctor_login_id, String membership_id, String first_name, String middle_name, String last_name, String email_id, String phone_no, String company_id) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1897,6 +1984,57 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
     }
 
+    //this will give u a json array of patient records where flag =o
+    public JSONArray getObservationsDataDisplay() {
+
+        JSONArray resultSet;
+        //or you can use `conTEXT.getDatabasePath("my_db_test.db")`
+        Cursor cursor = null;
+
+        SQLiteDatabase db1 = getReadableDatabase();
+        //Cursor cursor = db1.rawQuery(selectQuery, null);
+
+        //SQLiteDatabase myDataBase = SQLiteDatabase.openDatabase(DATABASE_NAME, null, SQLiteDatabase.OPEN_READONLY);'
+        try {
+            resultSet = new JSONArray();
+            String searchQuery = "SELECT  * FROM observation where flag = 0 ";
+
+            cursor = db1.rawQuery(searchQuery, null);
+
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+
+                int totalColumn = cursor.getColumnCount();
+                JSONObject rowObject = new JSONObject();
+
+                for (int i = 0; i < totalColumn; i++) {
+                    if (cursor.getColumnName(i) != null) {
+                        try {
+                            if (cursor.getString(i) != null) {
+                                rowObject.put(cursor.getColumnName(i), cursor.getString(i));
+                            } else {
+                                rowObject.put(cursor.getColumnName(i), "");
+                            }
+                        } catch (Exception e) {
+                            //Log.d("TAG_NAME", e.getMessage());
+                        }
+                    }
+                }
+                resultSet.put(rowObject);
+                cursor.moveToNext();
+            }
+            return resultSet;
+
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+    }
+
     public void updateAssociates(String uid, String modified_by, String modiedCounter, String strname, String strmob_no, String selectedPhoneType, String selectedIsd_codeType, String strEmail, String selectedSpeciality, String selectedAssociateType, String straddress, String strcity, String selectedState, String strpin, String strdistrict, String dateTimeddmmyyyy, String flag, String nameTitle, String contactForPatient, String selectedIsd_code_altType, String selectedcontactForPatientType) throws ClirNetAppException {
 
         //update the patient visit records into db
@@ -2281,6 +2419,106 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
     }
 
+    public void updateInvestigation(@NonNull String strPatientId,@NonNull String strVisitId, String strSugar, String strSugarFasting, String strHbA1c, String strAcer, String strSerumUrea, String strLipidHDL, String strLipidTC,String strTch, String strLipidTG, String strLipidLDL, String strLipidVHDL, String strEcg, String strPft, String strHb, String strPlateletCount, String strEsr, String strDcl, String strDcn, String strDce, String strDcm, String strDcb, String strTotalBiliubin, String strDirectBilirubin, String strIndirectBilirubin, String strSgpt,String strSgot, String strGgt, String strTotalProtein, String strAlbumin,String strGlobulin, String strAgRatio, String strLdlHdlRatio, String strSugarRbs, String strUrinaryPusCell, String strUrineRbc, String strUrinaryCast, String strUrineProtein, String strUrineCrystal, String strMicroalbuminuria, String strSerumCreatinine, String strAcr, String strTsh,String strT3,String strT4,String strFlag) {
+
+        SQLiteDatabase db = null;
+        try {
+            db = this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+
+            cv.put(KEY_PATIENT_ID, strPatientId);
+            cv.put(KEY_VISIT_ID, strVisitId);
+            cv.put(ECG, strEcg);
+            cv.put(HBA1C, strHbA1c);
+            cv.put(SEREM_UREA, strSerumUrea);
+            cv.put(ACER, strAcer);
+            cv.put(PFT, strPft);
+            cv.put(SUGAR_FASTING, strSugarFasting);
+            cv.put(SUGAR, strSugar);
+            cv.put(LIPID_PROFILE_TC, strLipidTC);
+            cv.put(LIPID_PROFILE_TG, strLipidTG);
+            cv.put(LIPID_PROFILE_LDL, strLipidLDL);
+            cv.put(LIPID_PROFILE_VHDL, strLipidVHDL);
+            cv.put(LIPID_PROFILE_HDL, strLipidHDL);
+            cv.put(LIPID_PROFILE_TCH, strTch);
+            cv.put(HB,strHb);
+            cv.put(PLATELET_COUNT, strPlateletCount);
+            cv.put(ESR, strEsr);
+            cv.put(DCL, strDcl);
+            cv.put(DCN, strDcn);
+            cv.put(DCE, strDce);
+            cv.put(DCM, strDcm);
+            cv.put(DCB, strDcb);
+            cv.put(TOTAL_BILIRUBIN, strTotalBiliubin);
+            cv.put(DIRECT_BILIRUBIN, strDirectBilirubin);
+            cv.put(INDIRECT_BILIRUBIN, strIndirectBilirubin);
+            cv.put(SGPT, strSgpt);
+            cv.put(SGOT, strSgot);
+            cv.put(GGT, strGgt);
+            cv.put(TOTAL_PROTEIN, strTotalProtein);
+            cv.put(ALBUMIN, strAlbumin);
+            cv.put(GLOBULIN, strGlobulin);
+            cv.put(AG_RATIO, strAgRatio);
+            cv.put(HDL_LDL_RATIO, strLdlHdlRatio);
+            cv.put(SUGAR_RBS, strSugarRbs);
+            cv.put(URINE_PUC_CELL, strUrinaryPusCell);
+            cv.put(URINE_RBC, strUrineRbc);
+            cv.put(URINE_CAST, strUrinaryCast);
+            cv.put(URINE_PROTEIN, strUrineProtein);
+            cv.put(URINE_CRYSTAL, strUrineCrystal);
+            cv.put(MICROALBUMINURIA, strMicroalbuminuria);
+            cv.put(SEREM_CREATININE, strSerumCreatinine);
+            cv.put(ACR, strAcr);
+            cv.put(URINE_CRYSTAL, strUrineCrystal);
+            cv.put(TSH, strTsh);
+            cv.put(T3, strT3);
+            cv.put(T4, strT4);
+            cv.put(FLAG, strFlag);
+
+            db.update(TABLE_INVESTIGATION, cv, KEY_VISIT_ID + "=" + strVisitId, null);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null)
+                db.close();
+        }
+    }
+
+   /* public void addInvestigation(@NonNull String strPatientId, @NonNull String strVisitId, String strSugar, String strSugarFasting, String strHbA1c, String strAcer, String strSerumUrea, String strLipidHDL, String strLipidTC, String strLipidTG, String strLipidLDL, String strLipidVHDL, String strEcg, String strPft, String strFlag) {
+
+        SQLiteDatabase db = null;
+        try {
+            db = this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+
+            cv.put(KEY_PATIENT_ID, strPatientId);
+            cv.put(KEY_VISIT_ID, strVisitId);
+            cv.put(ECG, strEcg);
+            cv.put(HBA1C, strHbA1c);
+            cv.put(SEREM_UREA, strSerumUrea);
+            cv.put(ACER, strAcer);
+            cv.put(PFT, strPft);
+            cv.put(SUGAR_FASTING, strSugarFasting);
+            cv.put(SUGAR, strSugar);
+            cv.put(LIPID_PROFILE_TC, strLipidTC);
+            cv.put(LIPID_PROFILE_TG, strLipidTG);
+            cv.put(LIPID_PROFILE_LDL, strLipidLDL);
+            cv.put(LIPID_PROFILE_VHDL, strLipidVHDL);
+            cv.put(LIPID_PROFILE_HDL, strLipidHDL);
+            cv.put(FLAG, strFlag);
+
+            db.insertWithOnConflict(TABLE_INVESTIGATION, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
+            // db.insert(TABLE_INVESTIGATION, null, cv);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null)
+                db.close();
+        }
+    }*/
     public void addInvestigation(@NonNull String strPatientId, @NonNull String strVisitId, String strSugar, String strSugarFasting, String strHbA1c, String strAcer, String strSerumUrea, String strLipidHDL, String strLipidTC, String strLipidTG, String strLipidLDL, String strLipidVHDL, String strEcg, String strPft, String strFlag) {
 
         SQLiteDatabase db = null;
@@ -2306,6 +2544,71 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
             db.insertWithOnConflict(TABLE_INVESTIGATION, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
             // db.insert(TABLE_INVESTIGATION, null, cv);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if (db != null)
+                db.close();
+        }
+    }
+    public void addInvestigation(@NonNull String strPatientId,@NonNull String strVisitId, String strSugar, String strSugarFasting, String strHbA1c, String strAcer, String strSerumUrea, String strLipidHDL, String strLipidTC,String strTch, String strLipidTG, String strLipidLDL, String strLipidVHDL, String strEcg, String strPft, String strHb, String strPlateletCount, String strEsr, String strDcl, String strDcn, String strDce, String strDcm, String strDcb, String strTotalBiliubin, String strDirectBilirubin, String strIndirectBilirubin, String strSgpt,String strSgot, String strGgt, String strTotalProtein, String strAlbumin,String strGlobulin, String strAgRatio, String strLdlHdlRatio, String strSugarRbs, String strUrinaryPusCell, String strUrineRbc, String strUrinaryCast, String strUrineProtein, String strUrineCrystal, String strMicroalbuminuria, String strSerumCreatinine, String strAcr,String strTsh,String strT3,String strT4, String strFlag) {
+
+        SQLiteDatabase db = null;
+        try {
+            db = this.getWritableDatabase();
+            ContentValues cv = new ContentValues();
+
+            cv.put(KEY_PATIENT_ID, strPatientId);
+            cv.put(KEY_VISIT_ID, strVisitId);
+            cv.put(ECG, strEcg);
+            cv.put(HBA1C, strHbA1c);
+            cv.put(SEREM_UREA, strSerumUrea);
+            cv.put(ACER, strAcer);
+            cv.put(PFT, strPft);
+            cv.put(SUGAR_FASTING, strSugarFasting);
+            cv.put(SUGAR, strSugar);
+            cv.put(LIPID_PROFILE_TC, strLipidTC);
+            cv.put(LIPID_PROFILE_TG, strLipidTG);
+            cv.put(LIPID_PROFILE_LDL, strLipidLDL);
+            cv.put(LIPID_PROFILE_VHDL, strLipidVHDL);
+            cv.put(LIPID_PROFILE_HDL, strLipidHDL);
+            cv.put(LIPID_PROFILE_TCH, strTch);
+            cv.put(HB,strHb);
+            cv.put(PLATELET_COUNT, strPlateletCount);
+            cv.put(ESR, strEsr);
+            cv.put(DCL, strDcl);
+            cv.put(DCN, strDcn);
+            cv.put(DCE, strDce);
+            cv.put(DCM, strDcm);
+            cv.put(DCB, strDcb);
+            cv.put(TOTAL_BILIRUBIN, strTotalBiliubin);
+            cv.put(DIRECT_BILIRUBIN, strDirectBilirubin);
+            cv.put(INDIRECT_BILIRUBIN, strIndirectBilirubin);
+            cv.put(SGPT, strSgpt);
+            cv.put(SGOT, strSgot);
+            cv.put(GGT, strGgt);
+            cv.put(TOTAL_PROTEIN, strTotalProtein);
+            cv.put(ALBUMIN, strAlbumin);
+            cv.put(GLOBULIN, strGlobulin);
+            cv.put(AG_RATIO, strAgRatio);
+            cv.put(HDL_LDL_RATIO, strLdlHdlRatio);
+            cv.put(SUGAR_RBS, strSugarRbs);
+            cv.put(URINE_PUC_CELL, strUrinaryPusCell);
+            cv.put(URINE_RBC, strUrineRbc);
+            cv.put(URINE_CAST, strUrinaryCast);
+            cv.put(URINE_PROTEIN, strUrineProtein);
+            cv.put(URINE_CRYSTAL, strUrineCrystal);
+            cv.put(MICROALBUMINURIA, strMicroalbuminuria);
+            cv.put(SEREM_CREATININE, strSerumCreatinine);
+            cv.put(ACR, strAcr);
+            cv.put(URINE_CRYSTAL, strUrineCrystal);
+            cv.put(TSH, strTsh);
+            cv.put(T3, strT3);
+            cv.put(T4, strT4);
+            cv.put(FLAG, strFlag);
+
+            db.insertWithOnConflict(TABLE_INVESTIGATION, null, cv, SQLiteDatabase.CONFLICT_REPLACE);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -2591,5 +2894,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
     }
+
 }
 

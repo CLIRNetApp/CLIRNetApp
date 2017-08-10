@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -46,6 +47,7 @@ public class SyncDataService extends Service {
     private ArrayList<RegistrationModel> getPatientVisitIdsList = new ArrayList<>();
     private ArrayList<RegistrationModel> getInvestigationIdsList = new ArrayList<>();
     private ArrayList<RegistrationModel> getHealthLifeStyleIdsList = new ArrayList<>();
+    private ArrayList<RegistrationModel> getObservationIdsList= new ArrayList<>();
     private ArrayList<RegistrationModel> getAssociateMasterList;
     private SQLiteHandler dbController;
     private String patientInfoArayString;
@@ -178,6 +180,11 @@ public class SyncDataService extends Service {
             String investigationArayString = String.valueOf(dbController.getResultsForInvestigation());
             String healthAndLifestyleArayString = String.valueOf(dbController.getResultsForHealthAndLifeStyle());
 
+            String observationDataList= String.valueOf(dbController.getObservationsDataDisplay());
+
+            getObservationIdsList=sqlController.getObservationListIdsFalg0();
+
+
             /*count no of patient_id occurance od patient and visit string from db*/
             pat_personal_count = appController.getCharFreq(patientInfoArayString);
 
@@ -217,7 +224,8 @@ public class SyncDataService extends Service {
                 start_time1 = appController.getDateTimenew();
                 appController.appendLog(appController.getDateTime() + " " + " / " + "Sending Data to server from Sync Service" + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
-                sendDataToServer(patientInfoArayString, patientVisitHistorArayString, investigationArayString, healthAndLifestyleArayString,associateMasterDataList,doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size(), new AppController().getDateTimenew(),incompletePrescriptionQueueCount);
+                sendDataToServer(patientInfoArayString, patientVisitHistorArayString, investigationArayString, healthAndLifestyleArayString,associateMasterDataList,doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size(), new AppController().getDateTimenew(),incompletePrescriptionQueueCount,observationDataList);
+
                 new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, docId, start_time); //send log file to server
 
             }
@@ -265,7 +273,7 @@ public class SyncDataService extends Service {
 
         //this will send data to server
 
-    private void sendDataToServer(final String patient_details, final String patient_visits,final String patient_investigation,final String patient_healthLifeStyle,final String associate_data, final String docMemId, final String docId, final int patient_visits_count, final int patient_details_count, final String start_time,final String incompletePrescriptionQueueCount) {
+    private void sendDataToServer(final String patient_details, final String patient_visits,final String patient_investigation,final String patient_healthLifeStyle,final String associate_data, final String docMemId, final String docId, final int patient_visits_count, final int patient_details_count, final String start_time,final String incompletePrescriptionQueueCount,final String observationsList) {
 
         String tag_string_req = "req_sync2";
 
@@ -304,7 +312,6 @@ public class SyncDataService extends Service {
                             String patientVisitId = getPatientVisitIdsList.get(i).getKey_visit_id();
                             String flag = "1";
 
-                            //saved last updated sync time in shared prefrence
                             //update flag after success
                             dbController.FlagupdatePatientVisit(patientVisitId, flag);
                         }
@@ -326,8 +333,8 @@ public class SyncDataService extends Service {
 
                             String patientVisitId = getHealthLifeStyleIdsList.get(i).getPat_id();
                             String flag = "1";
-                            //Log.e("getHealthLifeStyleIds", " : " + patientVisitId);
-                            //saved last updated sync time in shared prefrence
+
+
                             //update flag after success
                             dbController.FlagupdateHealthAndLifestyle(patientVisitId, flag);
                         }
@@ -340,6 +347,17 @@ public class SyncDataService extends Service {
 
                             dbController.FlagupdateAssociateMater(patientVisitId, flag);
                         }
+
+                        int observationListSize=getObservationIdsList.size();
+
+                        for(int i=0;i<observationListSize;i++){
+                            String patientVisitId = getObservationIdsList.get(i).getPat_id();
+                            String flag = "1";
+
+                            //update flag after success
+                            dbController.FlagUpdateObservation(patientVisitId, flag);
+                        }
+
                         getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
                                 .edit()
                                 .putString(PREF_VALUE, "2")
@@ -389,6 +407,7 @@ public class SyncDataService extends Service {
                 params.put("patient_investigation", patient_investigation);
                 params.put("patient_healthLifeStyle", patient_healthLifeStyle);
                 params.put("associate_master", associate_data);
+                params.put("observation", observationsList);
                 params.put("membershipid", docMemId);
                 params.put("docId", docId);
                 params.put("patient_visits_count", String.valueOf(patient_visits_count));

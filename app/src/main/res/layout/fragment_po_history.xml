@@ -191,7 +191,7 @@
             android:background="#50BAA0"
             android:gravity="center"
             android:orientation="horizontal"
-            android:text="Filter Health"
+            android:text="Filter Health Data"
             android:textAllCaps="false"
             android:textColor="@color/white"
             android:textSize="18sp" />
@@ -303,7 +303,9 @@
             android:layout_marginRight="10dp"
             android:layout_weight="0.5"
             android:gravity="center"
-            android:padding="2dp"
+            android:paddingLeft="17dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
             android:text="#"
             android:textColor="@color/white" />
 
@@ -354,7 +356,7 @@
             android:layout_weight="1"
             android:gravity="center"
             android:padding="2dp"
-            android:text="Follow up Date"
+            android:text="Follow-Up Date"
             android:textColor="@color/white" />
 
 

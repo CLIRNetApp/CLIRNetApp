@@ -13,24 +13,35 @@
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:paddingTop="@dimen/small_margin"
         android:contentDescription="@string/desc"
         android:src="@android:drawable/sym_def_app_icon" />
+
+    <TextView
+        android:id="@+id/user_welcome"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/welcome"
+        android:textSize="18sp"
+        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:id="@+id/user_name"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:textSize="16sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
+        android:paddingTop="@dimen/tiny_margin"
+        android:textSize="14sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
 

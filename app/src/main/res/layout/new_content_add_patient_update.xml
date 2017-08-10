@@ -7,8 +7,7 @@
     android:background="@drawable/dep"
     android:orientation="vertical"
     android:padding="3dp"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".activity.EditPatientUpdate">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <ImageView
         android:id="@+id/backChangingImages"
@@ -161,8 +160,8 @@
 
             <ImageView
                 android:id="@+id/imgSmoke"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_alignTop="@+id/imgDrink"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -175,8 +174,8 @@
 
             <ImageView
                 android:id="@+id/imgDrink"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_below="@+id/patientImage"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -187,8 +186,8 @@
 
             <ImageView
                 android:id="@+id/imgTobaco"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_below="@+id/patientImage"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -199,8 +198,8 @@
 
             <ImageView
                 android:id="@+id/imgFood"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_below="@+id/patientImage"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -211,8 +210,8 @@
 
             <ImageView
                 android:id="@+id/imgSleep"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_below="@+id/patientImage"
                 android:layout_margin="5dp"
                 android:layout_toRightOf="@+id/imgFood"
@@ -222,8 +221,8 @@
 
             <ImageView
                 android:id="@+id/imgStress"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_below="@+id/patientImage"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -233,8 +232,8 @@
                 android:visibility="gone"/>
             <ImageView
                 android:id="@+id/imgLifeStyle"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_below="@+id/patientImage"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -242,10 +241,11 @@
                 android:contentDescription="@string/desc"
                 android:gravity="end"
                 android:visibility="gone"/>
+
             <ImageView
                 android:id="@+id/imgExcercise"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_below="@+id/patientImage"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
@@ -253,8 +253,6 @@
                 android:contentDescription="@string/desc"
                 android:gravity="end"
                 android:visibility="gone"/>
-
-
 
 
         </RelativeLayout>

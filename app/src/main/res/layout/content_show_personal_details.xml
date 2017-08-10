@@ -6,8 +6,7 @@
     android:layout_height="match_parent"
     android:background="@drawable/dep"
     android:padding="5dp"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".activity.EditPatientUpdate">
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
     <TextView
         android:id="@+id/sysdate"

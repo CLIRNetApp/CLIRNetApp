@@ -984,6 +984,42 @@ public class SQLController {
         return VisitidList;
 
     }
+
+    //get all patients  visits data which is yet to send to server
+    public ArrayList<RegistrationModel> getObservationListIdsFalg0() throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> ObservationList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "select patient_id from observation where flag = 0 ";
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    RegistrationModel ids = new RegistrationModel(cursor.getString(0));
+
+                    ObservationList.add(ids);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getPatientIdInvestigationFalg0");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return ObservationList;
+
+    }
     //get docot membership id from db
     public String getDoctorMembershipIdNew() throws ClirNetAppException {
         SQLiteDatabase db1 = null;
@@ -1304,6 +1340,7 @@ public class SQLController {
 
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
+            //Log.e("selectQuery", " "+selectQuery);
 
 
             // looping through all rows and adding to list
@@ -2560,7 +2597,7 @@ public class SQLController {
 
     }
 
-    public ArrayList<RegistrationModel> getInvestigationDeatils(String visit_id) throws ClirNetAppException {
+   /* public ArrayList<RegistrationModel> getInvestigationDeatils(String visit_id) throws ClirNetAppException {
 
         ArrayList<RegistrationModel> investigationList = new ArrayList<>();
         SQLiteDatabase db1 = null;
@@ -2577,6 +2614,44 @@ public class SQLController {
                     RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
                             cursor.getString(7), cursor.getString(8),
                             cursor.getString(9), cursor.getString(10), cursor.getString(11));
+                    investigationList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getInvestigationDeatils");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return investigationList;
+
+    }*/
+
+    public ArrayList<RegistrationModel> getInvestigationDeatils(String visit_id) throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> investigationList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery="select ecg,sugar,sugar_fasting,sugar_rbs,acer,pft,hba1c,serem_urea,lipid_profile_tc,lipid_profile_tg,lipid_profile_ldl,lipid_profile_vhdl,lipid_profile_hdl,lipid_profile_tch,hdl_ldl_ratio,hb,platelet_count,esr,dcl,dcn,dce,dcm,dcb,total_bilirubin,direct_bilirubin,indirect_bilirubin,sgpt,sgot,ggt," +
+                    "total_protein,albumin,globulin,ag_ratio,urine_pus_cell,urine_rbc,urine_cast,urine_protein,urine_crystal,microalbuminuria,serum_creatinine,acr,tsh,t3,t4  from table_investigation where key_visit_id =" + visit_id + " limit 1;";
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+
+            if (cursor.moveToFirst()) {
+                do {
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6), cursor.getString(7), cursor.getString(8),
+                            cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
+                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
+                            cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
+                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43));
                     investigationList.add(user);
 
                 } while (cursor.moveToNext());
@@ -2636,7 +2711,7 @@ public class SQLController {
         Cursor cursor = null;
 
         try {
-            String query = "select religion,occupation,blood_group,maritial_status,income_range from patient where patient_id="+patientId+"";
+            String query = "select religion,occupation,blood_group,maritial_status,income_range,age_calculated from patient where patient_id="+patientId+"";
             db = dbHelper.getReadableDatabase();
             cursor = db.rawQuery(query, null);
 
@@ -2649,6 +2724,7 @@ public class SQLController {
                     user.put("bloodGroup", cursor.getString(2));
                     user.put("maritalStatus", cursor.getString(3));
                     user.put("incomeRange", cursor.getString(4));
+                    user.put("ageCalculated", cursor.getString(5));
 
                 } while (cursor.moveToNext());
             }
@@ -2891,7 +2967,7 @@ public class SQLController {
         return patientList;
     }
 
-    public int getSuccessfulFollowups(String date,String[] list) {
+    public int getTodaysSuccessfulFollowups(String date,String[] list) {
 
         SQLiteDatabase db1 = dbHelper.getReadableDatabase();
 
@@ -2902,7 +2978,7 @@ public class SQLController {
 
         try {
             numRows = (int) DatabaseUtils.longForQuery(db1, query, list);
-            Log.e("query","  "+query);
+            Log.e("query","  "+numRows);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -3012,8 +3088,9 @@ public class SQLController {
         String returnString = ""; // Your default if none is found
         try {
             db1 = dbHelper.getReadableDatabase();
-
-            String query = "select count(id) as count from patient_history where follow_up_status ='FollowUp' and visit_date Between '" + fromDate + "' AND '" + toDate + "' ";
+           // follow_up_status ='FollowUp' and
+            String query=" SELECT count(ph.id) as count FROM patient p , patient_history ph   WHERE p.patient_id = ph.patient_id and date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) Between '" + fromDate + "' AND '" + toDate + "' ";
+           // String query = "select count(id) as count from patient_history where  visit_date Between '" + fromDate + "' AND '" + toDate + "' ";
 
             cursor = db1.rawQuery(query, null);
 

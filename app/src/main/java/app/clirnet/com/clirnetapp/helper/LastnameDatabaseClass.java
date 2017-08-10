@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 import app.clirnet.com.clirnetapp.app.AppController;
 
-//this class is used import lastname.db file from asset folder into database for further use
+//this class is used import clirnetApp.db file from asset folder into database for further use
 @SuppressWarnings("ALL")
 public class LastnameDatabaseClass extends SQLiteOpenHelper {
     @SuppressLint("SdCardPath")
@@ -42,9 +42,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             dbHelper = new SQLiteHandler(myContext);
             database = dbHelper.getWritableDatabase();
             appController = new AppController();
-        } /*else {
-            Log.e("DB Opended2", "Database is allready opened");
-        }*/
+        }
     }
 
 
@@ -159,14 +157,6 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
     }
 
 
-    //Delete Database...........................
-    void deletData() {
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-        String deleteSQL = "DELETE FROM  table_name";
-        db.execSQL(deleteSQL);
-
-    }
-
     public int getMaxLastNameId() throws ClirNetAppException {
 
         SQLiteDatabase db1 = null;
@@ -230,7 +220,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
 
     //method to fetch ailments from db
     public ArrayList<String> getLastNameNew() throws ClirNetAppException {
-        ArrayList<String> ailmentList = new ArrayList<>();
+        ArrayList<String> lastNameList = new ArrayList<>();
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
@@ -242,9 +232,8 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     String user=cursor.getString(0);
-                    //  AilmentModel user = new AilmentModel(cursor.getString(0), cursor.getString(1) );
 
-                    ailmentList.add(user);
+                    lastNameList.add(user);
 
                 } while (cursor.moveToNext());
             }
@@ -261,11 +250,11 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
                 database1.close();
             }
         }
-        return  ailmentList;
+        return  lastNameList;
     }
     //method to fetch ailments from db
     public ArrayList<String> getOccupationList() throws ClirNetAppException {
-        ArrayList<String> ailmentList = new ArrayList<>();
+        ArrayList<String> occupationList = new ArrayList<>();
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
@@ -277,9 +266,8 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     String user=cursor.getString(0);
-                    //  AilmentModel user = new AilmentModel(cursor.getString(0), cursor.getString(1) );
 
-                    ailmentList.add(user);
+                    occupationList.add(user);
 
                 } while (cursor.moveToNext());
             }
@@ -296,7 +284,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
                 database1.close();
             }
         }
-        return  ailmentList;
+        return  occupationList;
     }
 
 
@@ -321,8 +309,6 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
                 db.close();
             }
         }
-
-       // Log.d("addedailemnt", "New last_names inserted into sqlite: " + id);
 
     }
 
@@ -351,10 +337,7 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
 
             ContentValues values = new ContentValues();
             values.put("last_name", lastName);
-            // values.put("id", nameid);
 
-            // int rows = db.update("last_name_master", values, "last_name" + "= ?", new String[]{lastName});
-            //id =db.insertWithOnConflict("table_LastNames", null, values, SQLiteDatabase.CONFLICT_REPLACE);
             id = db.insert("last_name_master", null, values);
 
 
@@ -448,7 +431,6 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             values.put("symptoms_name", symptoms_name);
             values.put("added_by", added_by);
             values.put("date_time", date_time);
-            // values.put("id", nameid);
 
             id = db.insert("Symptoms", null, values);
 
@@ -501,7 +483,6 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
             if (cursor.moveToFirst()) {
                 do {
                     String user=cursor.getString(0);
-                    //  AilmentModel user = new AilmentModel(cursor.getString(0), cursor.getString(1) );
 
                     all_allergyList.add(user);
 
@@ -512,7 +493,6 @@ public class LastnameDatabaseClass extends SQLiteOpenHelper {
 
             throw new ClirNetAppException("Something went wrong while getting getAllergy records");
         } finally {
-            //create method & pass cursor & db1 ref.
             if (cursor != null) {
                 cursor.close();
             }

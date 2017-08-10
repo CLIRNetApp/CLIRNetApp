@@ -193,8 +193,6 @@ public class ReportFragment extends Fragment {
             @Override
             public void onClick(View v) {
 
-              /*  date = appController.addDay(new Date(), -7);
-                fromdate.setText(date);*/
 
                 setCurrentDateOnView("1"); //set dates from todays to -7 days to edit text
 

@@ -34,7 +34,7 @@
                     android:layout_height="120dp"
                     android:layout_gravity="end"
                     android:contentDescription="@string/desc"
-                    android:orientation="vertical"/>
+                    android:orientation="vertical" />
 
                 <LinearLayout
                     android:id="@+id/datelayout"
@@ -156,26 +156,23 @@
 
                 </LinearLayout>
 
-                <LinearLayout
+                <TextView
+                    android:id="@+id/todays_patient_updatetxt"
                     android:layout_width="match_parent"
                     android:layout_height="50dp"
-                    android:background="#50BAA0"
-                    android:orientation="horizontal">
+                    android:gravity="start"
+                    android:paddingBottom="14dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="14dp"
+                    android:paddingTop="14dp"
+                    android:text="Today's Patient Updates"
+                    android:textColor="@color/colorPrimary" />
 
-                    <TextView
-                        android:id="@+id/todays_patient_updatetxt"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="start"
-                        android:padding="14dp"
-                        android:text="Today's Patient Updates"
-                        android:textColor="@color/white" />
-                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:background="@drawable/rectangle_corner"
+                    android:background="#50BAA0"
                     android:gravity="center"
                     android:orientation="horizontal"
                     android:padding="5dp">
@@ -186,19 +183,24 @@
                         android:layout_marginRight="10dp"
                         android:layout_weight="0.3"
                         android:gravity="start"
-                        android:padding="2dp"
+                        android:paddingBottom="2dp"
+                        android:paddingLeft="10dp"
+                        android:paddingRight="2dp"
+                        android:paddingTop="2dp"
                         android:text="#"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="10dp"
                         android:layout_weight="1.1"
-                        android:gravity="center"
-                        android:padding="2dp"
+                        android:paddingBottom="2dp"
+                        android:paddingLeft="40dp"
+                        android:paddingRight="2dp"
+                        android:paddingTop="2dp"
                         android:text="Name"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -208,7 +210,7 @@
                         android:gravity="center"
                         android:padding="2dp"
                         android:text="Gender"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -218,7 +220,7 @@
                         android:gravity="center"
                         android:padding="2dp"
                         android:text="Age"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -228,7 +230,7 @@
                         android:gravity="center"
                         android:padding="2dp"
                         android:text="Phone Number"
-                        android:textColor="@color/black" />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -237,8 +239,8 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:padding="2dp"
-                        android:text="Follow up Date"
-                        android:textColor="@color/black" />
+                        android:text="@string/fod"
+                        android:textColor="@color/white" />
 
 
                 </LinearLayout>
@@ -292,14 +294,16 @@
                     app:layoutManager="GridLayoutManager"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     app:spanCount="1" />
+
                 <View
                     android:id="@+id/view"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="@color/input_register"
-                    android:paddingTop="5dp"
                     android:paddingBottom="5dp"
-                    android:visibility="gone"/>
+                    android:paddingTop="5dp"
+                    android:visibility="gone" />
+
                 <TextView
                     android:id="@+id/incompletedisplay_tv"
                     android:layout_width="match_parent"
@@ -309,7 +313,8 @@
                     android:text="Incomplete Prescription Queue."
                     android:textColor="@color/bg_login"
                     android:textSize="16sp"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
+
                 <LinearLayout
                     android:id="@+id/nameheader"
                     android:layout_width="match_parent"
@@ -380,18 +385,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="0.6dp"
                     android:layout_weight="0.6"
-                    android:paddingTop="5dp"
                     android:paddingBottom="2dp"
+                    android:paddingTop="5dp"
                     android:scrollbars="vertical"
+                    android:visibility="gone"
                     app:layoutManager="GridLayoutManager"
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                    app:spanCount="1"
-                    android:visibility="gone"/>
+                    app:spanCount="1" />
 
                 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                    xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:gravity="bottom">
 
 
@@ -407,17 +412,17 @@
                         android:layout_width="match_parent"
                         android:layout_height="55dp"
                         android:layout_below="@+id/view1"
-                        android:gravity="center"
                         android:contentDescription="@string/desc"
+                        android:gravity="center"
                         android:src="@drawable/logon" />
 
                     <Button
                         android:id="@+id/fab"
                         android:layout_width="60dp"
                         android:layout_height="72dp"
-                        android:layout_margin="2dp"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
+                        android:layout_margin="2dp"
                         android:background="@drawable/quickadd"
                         android:visibility="gone" />
 
@@ -436,15 +441,15 @@
                         android:id="@+id/quickaddtxt"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
                         android:layout_below="@+id/copy"
                         android:gravity="right"
                         android:padding="2dp"
                         android:text="Quick Add"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
                         android:textColor="@color/bg_login"
                         android:textSize="14sp"
-                        android:visibility="invisible"/>
+                        android:visibility="invisible" />
 
                     <TextView
                         android:id="@+id/privacyPolicy"
@@ -462,9 +467,9 @@
                         android:id="@+id/termsandCondition"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_below="@+id/copy"
                         android:layout_toLeftOf="@+id/quickaddtxt"
                         android:layout_toStartOf="@+id/quickaddtxt"
-                        android:layout_below="@+id/copy"
                         android:gravity="center"
                         android:padding="3dp"
                         android:text="Terms and Conditions"

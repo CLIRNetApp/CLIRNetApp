@@ -213,7 +213,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         Date todayDate = new Date();
 
-        SimpleDateFormat sdf1 = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
+        SimpleDateFormat sdf1 = new SimpleDateFormat("dd MMMM, yyyy", Locale.ENGLISH);
         Date todayDate1 = new Date();
 
         String dd = sdf1.format(todayDate1);

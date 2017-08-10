@@ -16,6 +16,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.MenuItemCompat;
@@ -24,7 +25,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.text.InputType;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -116,14 +116,21 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private final String mailId = "support@clirnet.com";
 
     private SearchView searchView;
-    @InjectView(recycler_view) RecyclerView recyclerView;
-    @InjectView(R.id.todays_patient_updatetxt) TextView todays_patient_updatetxt;
+    @InjectView(recycler_view)
+    RecyclerView recyclerView;
+    @InjectView(R.id.todays_patient_updatetxt)
+    TextView todays_patient_updatetxt;
     //private RecyclerView recyclerView;
-    @InjectView(R.id.norecordtv) LinearLayout norecordtv;
-    @InjectView(R.id.backChangingImages) ImageView backChangingImages;
-    @InjectView(R.id.fab) Button fab;
-    @InjectView(R.id.addanewPatient) Button addaNewPatient;
-    @InjectView(R.id.sync) Button sync;
+    @InjectView(R.id.norecordtv)
+    LinearLayout norecordtv;
+    @InjectView(R.id.backChangingImages)
+    ImageView backChangingImages;
+    @InjectView(R.id.fab)
+    Button fab;
+    @InjectView(R.id.addanewPatient)
+    Button addaNewPatient;
+    @InjectView(R.id.sync)
+    Button sync;
 
     @InjectView(R.id.Searchrecycler_view)
     RecyclerView Searchrecycler_view;
@@ -176,7 +183,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private String formatedDate;
 
 
-
     public HomeFragment() {
         setHasOptionsMenu(true);
     }
@@ -216,6 +222,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         ButterKnife.inject(this, view);
 
         ((NavigationActivity) getActivity()).setActionBarTitle("Patient Central");
+
 
         TextView date = (TextView) view.findViewById(R.id.date);
 
@@ -378,10 +385,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         norecordtv = (LinearLayout) view.findViewById(R.id.norecordtv);
         Date todayDate = new Date();
 
-        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
+        SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("dd MMMM , yyyy", Locale.ENGLISH);
         String dd = DATE_FORMAT.format(todayDate);
 
-        date.setText("Today's Date: " + dd);
+        date.setText("Today's Date : " + dd);
 
         final Calendar c = Calendar.getInstance();
         int year1 = c.get(Calendar.YEAR);
@@ -498,6 +505,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         return view;
     }
 
+
     private void makeToast(final String msg) {
         Handler handler = new Handler(Looper.getMainLooper());
         handler.post(new Runnable() {
@@ -558,7 +566,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                         if (savedUserName != null && savedUserPassword != null) {
 
-                          new GetBannerImageTask(getContext(), savedUserName, savedUserPassword, doctor_membership_number, company_id, new AppController().getDateTimenew()); //send log file to server
+                            new GetBannerImageTask(getContext(), savedUserName, savedUserPassword, doctor_membership_number, company_id, new AppController().getDateTimenew()); //send log file to server
                         }
                         getPatientRecords(savedUserName, savedUserPassword, doctor_membership_number, docId);
                     }
@@ -606,7 +614,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("UID", registrationModel.getUid());
         i.putExtra("FAMILYHISTORY", registrationModel.getFamilyHistory());
         i.putExtra("HOSPITALIZATION", registrationModel.getHospitalizationSurgery());
-
+        // Log.e("strFamilyHistory1"," "+registrationModel.getFamilyHistory() + "  "+registrationModel.getHospitalizationSurgery());
 
         startActivity(i);
     }
@@ -671,7 +679,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("FAMILYHISTORY", registrationModel.getFamilyHistory());
         i.putExtra("HOSPITALIZATION", registrationModel.getHospitalizationSurgery());
         i.putExtra("OBESITY", registrationModel.getObesity());
-
+        //  Log.e("strFamilyHistory1"," "+registrationModel.getFamilyHistory() + "  "+registrationModel.getHospitalizationSurgery());
         startActivity(i);
 
     }
@@ -707,6 +715,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.navigation, menu);
         MenuItem item = menu.findItem(R.id.search);
+
 
         MenuItemCompat.setOnActionExpandListener(item, new MenuItemCompat.OnActionExpandListener() {
 
@@ -874,6 +883,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private void dateisCurrent(int position) {
 
         RegistrationModel registrationModel = filteredModelList.get(position);
+
         Intent i = new Intent(getActivity().getApplicationContext(), NewEditPatientUpdate.class);
 
         i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
@@ -934,6 +944,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("RESPIRATION", registrationModel.getRespirataion());
         i.putExtra("FAMILYHISTORY", registrationModel.getFamilyHistory());
         i.putExtra("HOSPITALIZATION", registrationModel.getHospitalizationSurgery());
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
 
@@ -942,7 +953,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         RegistrationModel registrationModel = filteredModelList.get(position);
 
         Intent i = new Intent(getContext(), AddPatientUpdate.class);
-        i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
+        /*i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
         i.putExtra("PatientID", registrationModel.getPat_id());
 
         i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
@@ -978,6 +989,68 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         i.putExtra("UID", registrationModel.getUid());
         i.putExtra("EMAIL", registrationModel.getEmail());
         i.putExtra("PHONETYPE", registrationModel.getPhone_type());
+        i.putExtra("FAMILYHISTORY", registrationModel.getFamilyHistory());
+        i.putExtra("HOSPITALIZATION", registrationModel.getHospitalizationSurgery());*/
+
+        i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
+        i.putExtra("PatientID", registrationModel.getPat_id());
+
+        i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
+        i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
+        i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
+        i.putExtra("LASTNAME", registrationModel.getLastName());
+        i.putExtra("DOB", registrationModel.getDob());
+
+        i.putExtra("PHONE", registrationModel.getMobileNumber());
+
+        i.putExtra("AGE", registrationModel.getAge());
+        i.putExtra("LANGUAGE", registrationModel.getLanguage());
+        i.putExtra("GENDER", registrationModel.getGender());
+        i.putExtra("FOD", registrationModel.getFollowUpDate());
+
+        i.putExtra("ACTUALFOD", registrationModel.getActualFollowupDate());
+
+        i.putExtra("AILMENT", registrationModel.getAilments());
+        i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
+        i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
+        i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
+        i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
+        i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
+        i.putExtra("VISITID", registrationModel.getKey_visit_id());
+        i.putExtra("VISITDATE", registrationModel.getVisit_date());
+        i.putExtra("ADDRESS", registrationModel.getAddress());
+        i.putExtra("CITYORTOWN", registrationModel.getCityortown());
+        i.putExtra("DISTRICT", registrationModel.getDistrict());
+        i.putExtra("PIN", registrationModel.getPin_code());
+        i.putExtra("STATE", registrationModel.getState());
+        i.putExtra("WEIGHT", registrationModel.getWeight());
+        i.putExtra("PULSE", registrationModel.getPulse());
+        i.putExtra("BP", registrationModel.getBp());
+        i.putExtra("LOWBP", registrationModel.getlowBp());
+        i.putExtra("TEMPRATURE", registrationModel.getTemprature());
+        i.putExtra("SUGAR", registrationModel.getSugar());
+        i.putExtra("SYMPTOMS", registrationModel.getSymptoms());
+        i.putExtra("DIGNOSIS", registrationModel.getDignosis());
+        i.putExtra("TESTS", registrationModel.getTests());
+        i.putExtra("DRUGS", registrationModel.getDrugs());
+        i.putExtra("BMI", registrationModel.getBmi());
+        i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
+        i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
+        i.putExtra("HEIGHT", registrationModel.getHeight());
+        i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
+        i.putExtra("ISDCODE", registrationModel.getIsd_code());
+        i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
+        i.putExtra("REFEREDBY", registrationModel.getReferedBy());
+        i.putExtra("REFEREDTO", registrationModel.getReferedTo());
+        i.putExtra("UID", registrationModel.getUid());
+        i.putExtra("EMAIL", registrationModel.getEmail());
+        i.putExtra("PHONETYPE", registrationModel.getPhone_type());
+        i.putExtra("FOLLOWUPSTATUS", registrationModel.getFollowUpStatus());
+        i.putExtra("SPO2", registrationModel.getSpo2());
+        i.putExtra("RESPIRATION", registrationModel.getRespirataion());
+        i.putExtra("FAMILYHISTORY", registrationModel.getFamilyHistory());
+        i.putExtra("HOSPITALIZATION", registrationModel.getHospitalizationSurgery());
+        i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
 
@@ -1247,7 +1320,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     }
 
 
-
     private void showDialog() {
         if (!pDialog.isShowing())
 
@@ -1334,7 +1406,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private void setPatientPersonalList(JSONArray jsonArray) throws JSONException {
 
         String flag = "1";
-       // List<RegistrationModel> inputPatientData = new ArrayList<>();
+        // List<RegistrationModel> inputPatientData = new ArrayList<>();
 
         for (int i = 0; i < jsonArray.length(); i++) {
 
@@ -1374,16 +1446,16 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String deleted_on = jsonProsolveObject.getString("deleted_on");
 
 
-            String email =jsonProsolveObject.getString("email");
-           // String status =jsonProsolveObject.getString("status");
-            String alternateNoIsd =jsonProsolveObject.getString("alternative_no_isd");
-            String alternateNumber =jsonProsolveObject.getString("alternative_phone_no");
-            String uidType =jsonProsolveObject.getString("uid_type");
-            String uid =jsonProsolveObject.getString("uid");
-            String alternatePhoneType =jsonProsolveObject.getString("alternative_phone_type");
-            String isdCode =jsonProsolveObject.getString("isd_code");
-            String phoneType =jsonProsolveObject.getString("phone_type");
-            String status =null;
+            String email = jsonProsolveObject.getString("email");
+            // String status =jsonProsolveObject.getString("status");
+            String alternateNoIsd = jsonProsolveObject.getString("alternative_no_isd");
+            String alternateNumber = jsonProsolveObject.getString("alternative_phone_no");
+            String uidType = jsonProsolveObject.getString("uid_type");
+            String uid = jsonProsolveObject.getString("uid");
+            String alternatePhoneType = jsonProsolveObject.getString("alternative_phone_type");
+            String isdCode = jsonProsolveObject.getString("isd_code");
+            String phoneType = jsonProsolveObject.getString("phone_type");
+            String status = null;
 
             String convertedDate = null;
             String convertedTime = null;
@@ -1394,14 +1466,14 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             SimpleDateFormat sd1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
             SimpleDateFormat sd2 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
             try {
-                if(added_on!=null && !added_on.equals("")){
+                if (added_on != null && !added_on.equals("")) {
                     Date formatDate = sdf.parse(added_on);
                     convertedDate = sd1.format(formatDate);
                     convertedTime = sd2.format(formatDate);
                 }
-               // Date formatDate = sdf.parse(added_on);
-                if(pat_date_of_birth!=null && !pat_date_of_birth.equals("")){
-                    formatDateOB   = dobsdf.parse(pat_date_of_birth);
+                // Date formatDate = sdf.parse(added_on);
+                if (pat_date_of_birth != null && !pat_date_of_birth.equals("")) {
+                    formatDateOB = dobsdf.parse(pat_date_of_birth);
                     converteddobDate = sd1.format(formatDateOB);
                 }
             } catch (ParseException e) {
@@ -1411,10 +1483,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             dbController.addPatientPersoanlRecords(pat_id, doctor_id, doc_membership_id, patient_info_type_form, pat_first_name, pat_middle_name, pat_last_name,
                     pat_gender, converteddobDate, pat_age, pat_mobile_no, pat_address, pat_city_town, pat_pincode, pat_district, pref_lang, photo_name, consent,
-                    special_instruction, added_by, convertedDate, convertedTime, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, flag,status,email,phoneType,isdCode,alternateNumber, alternatePhoneType,uid, uidType,
+                    special_instruction, added_by, convertedDate, convertedTime, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, flag, status, email, phoneType, isdCode, alternateNumber, alternatePhoneType, uid, uidType,
                     alternateNoIsd);
 
-           // inputPatientData.add(new RegistrationModel(pat_id, doctor_id, doc_membership_id, patient_info_type_form, pat_first_name, pat_middle_name, pat_last_name,
+            // inputPatientData.add(new RegistrationModel(pat_id, doctor_id, doc_membership_id, patient_info_type_form, pat_first_name, pat_middle_name, pat_last_name,
             //        pat_gender, converteddobDate, pat_age, pat_mobile_no, pat_address, pat_city_town, pat_pincode, pat_district, pref_lang, photo_name, consent,
             //        special_instruction, added_by, added_on, convertedDate, modified_by, modified_on, is_disabled, disabled_by, disabled_on, is_deleted, deleted_by, deleted_on, flag));
 
@@ -1540,7 +1612,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             dbController.addPatientHistoryRecords(visit_id, pat_id, ailment, convertedVisitDate, follow_up_date, follow_up_days,
                     follow_up_weeks, follow_up_months, convertedActualfodDate, notes, added_by, convertedAddedonDate, convertedAddedonTime, modified_by, modified_on, is_disabled, disabled_by, disabled_on,
                     is_deleted, deleted_by, deleted_on, flag, patient_info_type_form, prescription, weight, pulse, bp_high, bp_low, temp, sugar, symptoms, dihnosis, tests, drugs, doctor_membership_number, docId,
-                     height, bmi,recordSource,sugarFast,referredBy , referredTo);
+                    height, bmi, recordSource, sugarFast, referredBy, referredTo);
 
         }
 
@@ -1554,6 +1626,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         startActivity(i);
         makeToast("Application Initialization Successful");
     }
+
     private void setAssociateMaster(JSONArray jsonAssciateMasterArray) throws JSONException {
 
         String flag = "1";
@@ -1574,15 +1647,15 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String selectedSpeciality = jsonProsolveObject.getString("speciality");
             String selectedAssociateType = jsonProsolveObject.getString("associate_type");
             String straddress = jsonProsolveObject.getString("associate_address");
-            String strcity= jsonProsolveObject.getString("patient_city_town");
+            String strcity = jsonProsolveObject.getString("patient_city_town");
             String selectedState = jsonProsolveObject.getString("associate_state");
-            String strpin= jsonProsolveObject.getString("pin_code");
-            String strdistrict= jsonProsolveObject.getString("district");
-            String selectedTitle= jsonProsolveObject.getString("title");
-            String stcontactForPatient= jsonProsolveObject.getString("contactforpatient");
-            String selectedcontactForPatientType=jsonProsolveObject.getString("selectedcontactforPatientType");
-            String selectedIsd_code_altType=jsonProsolveObject.getString("selectedIsd_code_altType");
-            String mCounter=jsonProsolveObject.getString("modified_counter");
+            String strpin = jsonProsolveObject.getString("pin_code");
+            String strdistrict = jsonProsolveObject.getString("district");
+            String selectedTitle = jsonProsolveObject.getString("title");
+            String stcontactForPatient = jsonProsolveObject.getString("contactforpatient");
+            String selectedcontactForPatientType = jsonProsolveObject.getString("selectedcontactforPatientType");
+            String selectedIsd_code_altType = jsonProsolveObject.getString("selectedIsd_code_altType");
+            String mCounter = jsonProsolveObject.getString("modified_counter");
 
             dbController.addAssociates(added_by, mCounter, strname, strmob_no, selectedPhoneType, selectedIsd_codeType, strEmail, selectedSpeciality, selectedAssociateType, straddress, strcity, selectedState, strpin, strdistrict, new AppController().getDateTimeddmmyyyy(), flag, selectedTitle, stcontactForPatient, selectedcontactForPatientType, selectedIsd_code_altType);
 
@@ -1632,6 +1705,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     //custom dialog  for the sync button result
     private void showNoDataToSendAlert(String title, String message) {
+
         final Dialog dialog = new Dialog(getContext());
 
         dialog.setContentView(R.layout.no_datatosend_dialog);
@@ -1725,81 +1799,78 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     @Override
     public void onPause() {
-        //Log.e("DEBUG", "OnPause of HomeFragment");
-
         try {
             InputMethodManager inputMethodManager = (InputMethodManager) getActivity().getSystemService(INPUT_METHOD_SERVICE);
 
             inputMethodManager.hideSoftInputFromWindow(searchView.getWindowToken(), 0);
             getActivity().getWindow().setSoftInputMode(
-                    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
-            );
-        }catch (Exception e){
+                    WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+        } catch (Exception e) {
             e.printStackTrace();
         }
-
+        setData(filteredModelList);
         super.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        //Log.e("DEBUG", "onResume of HomeFragment");
+        try {
+            if (searchNumber == null || searchNumber.equals("")) {
+                if (filteredModelList.size() > 0) {
+                    filteredModelList.clear();
+                }
+                if (sqlController != null) {
 
-        List<RegistrationModel> filteredModelList1 = getData();
-        Log.e("DEBUG", "onResume of HomeFragment " +filteredModelList1.size());
-        {
-          if  (filteredModelList1.size() >0){
-              rvadapter = new RVAdapter(filteredModelList1);
-              recyclerView.setAdapter(rvadapter);
-              rvadapter.notifyDataSetChanged();
-          }
+                    filteredModelList = sqlController.getPatientList(formatedDate);
+
+                    incompleteRecordList = sqlController.getIncompleteRecordList(formatedDate);
+
+                    if (filteredModelList.size() > 0) {
+                        //do nothing
+                        norecordtv.setVisibility(View.GONE);
+                        rvadapter = new RVAdapter(filteredModelList);
+                        recyclerView.setAdapter(rvadapter);
+                        rvadapter.notifyDataSetChanged();
+                    }
+                    View view1 = null;
+                    if (incompleteRecordList.size() > 0) {
+                        incompletedisplay_tv = (TextView) view.findViewById(R.id.incompletedisplay_tv);
+                        incompletedisplay_tv.setVisibility(View.VISIBLE);
+                        nameheader = (LinearLayout) view.findViewById(R.id.nameheader);
+                        nameheader.setVisibility(View.VISIBLE);
+                        view1 = view.findViewById(R.id.view);
+                        view1.setVisibility(View.VISIBLE);
+                        IncompleteRecordsAdapter incompleteRecordsAdapter = new IncompleteRecordsAdapter(incompleteRecordList);
+                        incomplete_recordsRecyclerview.setVisibility(View.VISIBLE);
+                        incomplete_recordsRecyclerview.setAdapter(incompleteRecordsAdapter);
+                        incompleteRecordsAdapter.notifyDataSetChanged();
+                    } else {
+                        if (nameheader != null) {
+                            nameheader.setVisibility(View.GONE);
+                        }
+                        if (incompletedisplay_tv != null) {
+                            incompletedisplay_tv.setVisibility(View.GONE);
+                        }
+                        if (view1 != null) {
+                            view1.setVisibility(View.GONE);
+                        }
+                        incomplete_recordsRecyclerview.setVisibility(View.GONE);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        try {
-            if(filteredModelList.size()>0) {
-                filteredModelList.clear();
+        List<RegistrationModel> filteredModelList1 = getData();
+        //  Log.e("DEBUG", "onResume of HomeFragment " +filteredModelList1.size());
+        {
+            if (filteredModelList1.size() > 0) {
+                rvadapter = new RVAdapter(filteredModelList1);
+                recyclerView.setAdapter(rvadapter);
+                rvadapter.notifyDataSetChanged();
             }
-            if(sqlController!=null) {
-
-                filteredModelList = sqlController.getPatientList(formatedDate);
-
-                incompleteRecordList = sqlController.getIncompleteRecordList(formatedDate);
-
-                if (filteredModelList.size() > 0) {
-                    //do nothing
-                    norecordtv.setVisibility(View.GONE);
-                    rvadapter = new RVAdapter(filteredModelList);
-                    recyclerView.setAdapter(rvadapter);
-                    rvadapter.notifyDataSetChanged();
-                }
-                View view1 = null;
-                if (incompleteRecordList.size() > 0) {
-                    incompletedisplay_tv = (TextView) view.findViewById(R.id.incompletedisplay_tv);
-                    incompletedisplay_tv.setVisibility(View.VISIBLE);
-                    nameheader = (LinearLayout) view.findViewById(R.id.nameheader);
-                    nameheader.setVisibility(View.VISIBLE);
-                    view1 = view.findViewById(R.id.view);
-                    view1.setVisibility(View.VISIBLE);
-                    IncompleteRecordsAdapter incompleteRecordsAdapter = new IncompleteRecordsAdapter(incompleteRecordList);
-                    incomplete_recordsRecyclerview.setVisibility(View.VISIBLE);
-                    incomplete_recordsRecyclerview.setAdapter(incompleteRecordsAdapter);
-                    incompleteRecordsAdapter.notifyDataSetChanged();
-                } else {
-                    if (nameheader != null) {
-                        nameheader.setVisibility(View.GONE);
-                    }
-                    if (incompletedisplay_tv != null) {
-                        incompletedisplay_tv.setVisibility(View.GONE);
-                    }
-                    if (view1 != null) {
-                        view1.setVisibility(View.GONE);
-                    }
-                    incomplete_recordsRecyclerview.setVisibility(View.GONE);
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
         }
         // Tracking the screen view
         AppController.getInstance().trackScreenView("Home Fragment");
@@ -1961,7 +2032,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             e.printStackTrace();
         }
         //  Log.e("index", "" + index + " " + end + " size is " + queryCount);
-
         if (end <= queryCountforTotalPatient) {
             try {
                 memberList = sqlController.getPatientListForPhoneNumberFilter(searchNumber, ival, loadLimit);
@@ -2001,11 +2071,24 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         serviceIntent.putExtra("apikey", apiKey);
         getContext().startService(serviceIntent);
     }
-    public void setData(ArrayList<RegistrationModel> data) {
+
+    public void setData(List<RegistrationModel> data) {
         this.filteredModelList = data;
     }
 
     public List<RegistrationModel> getData() {
         return filteredModelList;
     }
+
+    @Override
+    public void onAttachFragment(Fragment fragment) {
+        super.onAttachFragment(fragment);
+        int id;
+        if (fragment instanceof HomeFragment) id = R.id.nav_po;
+
+        else return;
+        NavigationView navigationView = (NavigationView) view.findViewById(R.id.nav_view);
+        navigationView.setCheckedItem(id);
+    }
+
 }

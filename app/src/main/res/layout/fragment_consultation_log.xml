@@ -93,7 +93,10 @@
                     android:layout_marginRight="10dp"
                     android:layout_weight="0.3"
                     android:gravity="start"
-                    android:padding="2dp"
+                    android:paddingRight="2dp"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
                     android:text="#"
                     android:textColor="@color/white" />
 
@@ -102,8 +105,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1.1"
-                    android:gravity="center"
-                    android:padding="2dp"
+                    android:paddingRight="2dp"
+                    android:paddingLeft="40dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
                     android:text="Name"
                     android:textColor="@color/white" />
 
@@ -111,27 +116,35 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:layout_weight="1.2"
+                    android:layout_weight="0.9"
                     android:gravity="center"
-                    android:padding="2dp"
+                    android:paddingRight="2dp"
+                    android:paddingLeft="44dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
                     android:text="Gender"
                     android:textColor="@color/white" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:layout_weight="0.1"
-                    android:gravity="center"
-                    android:padding="2dp" />
-
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
-                    android:layout_weight="0.6"
+                    android:layout_weight="0.14"
                     android:gravity="center"
                     android:padding="2dp"
+                    android:visibility="invisible"/>
+
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_weight="0.6"
+                    android:paddingRight="2dp"
+                    android:paddingLeft="48dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
                     android:text="Age"
                     android:textColor="@color/white" />
 
@@ -142,17 +155,17 @@
                     android:layout_weight="0.1"
                     android:gravity="center"
                     android:padding="2dp"
-                    android:visibility="gone"/>
-
-
+                    android:visibility="invisible"/>
 
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="10dp"
                     android:layout_weight="1.5"
-                    android:gravity="center"
-                    android:padding="2dp"
+                    android:paddingRight="2dp"
+                    android:paddingLeft="65dp"
+                    android:paddingTop="2dp"
+                    android:paddingBottom="2dp"
                     android:text="Phone Number"
                     android:textColor="@color/white" />
 
@@ -175,7 +188,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:padding="2dp"
-                    android:text="Followup Date"
+                    android:text="@string/fod"
                     android:textColor="@color/white"
                     android:visibility="gone" />
 

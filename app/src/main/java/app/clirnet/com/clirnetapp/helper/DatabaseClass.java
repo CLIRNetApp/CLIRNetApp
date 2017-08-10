@@ -159,7 +159,6 @@ public class DatabaseClass extends SQLiteOpenHelper {
                 db1.close();
             }
         }
-        //  Log.e("returnValue",""+returnValue);
         return returnValue;
     }
 
@@ -189,7 +188,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
             appController.appendLog(appController.getDateTime()+"" +"/"+"Database"+e);
             throw new ClirNetAppException("Something went wrong while getting login records");
         } finally {
-            //create method & pass cursor & db1 ref.
+
             if (cursor != null) {
                 cursor.close();
             }
@@ -200,28 +199,6 @@ public class DatabaseClass extends SQLiteOpenHelper {
         return  loginList;
     }
 
-
-    public void addAilments(String ailments, int ailid) {
-        SQLiteDatabase db = null;
-
-
-        try {
-            db = this.getWritableDatabase();
-
-            ContentValues values = new ContentValues();
-            values.put("ailment_name", ailments);
-            values.put("id", ailid);
-            // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
-            db.insert("ailments", null, values);
-        } catch (Exception e) {
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Database" + e);
-            e.printStackTrace();
-        } finally {
-            if (db != null) {
-                db.close();
-            }
-        }
-    }
     public void addSymptoms(String symptoms) {
         SQLiteDatabase db = null;
 
@@ -232,7 +209,6 @@ public class DatabaseClass extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put("symptoms_name", symptoms);
 
-            // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
             db.insert("Symptoms", null, values);
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime()+"" +"/"+"Database"+e);
@@ -254,7 +230,6 @@ public class DatabaseClass extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put("diagnosis_name", diagnosis);
 
-            // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
             db.insert("Diagnosis", null, values);
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime()+"" +"/"+"Database"+e);
@@ -275,7 +250,6 @@ public class DatabaseClass extends SQLiteOpenHelper {
             ContentValues values = new ContentValues();
             values.put("allergy_name", diagnosis);
 
-            // id =db.insertWithOnConflict("temp_ailment_table", null, values, SQLiteDatabase.CONFLICT_REPLACE);
             db.insert("Allergy", null, values);
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime()+"" +"/"+" Database  "+e);

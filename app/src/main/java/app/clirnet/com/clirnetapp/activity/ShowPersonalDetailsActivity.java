@@ -66,8 +66,8 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
     private String strUid;
     private String calledFrom;
     private String mAlcohol;
-    private String mPacsWeek, mStressLevel;
-    private String mSmokerType, mStickCount;
+    private String  mStressLevel;
+    private String mSmokerType;
     private String mLifeStyle;
     private  String mExcercise, mChewinogTobaco ;
     private String mSleepStatus;
@@ -199,11 +199,11 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
 
         setDatatoText();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);//it will show date as 10 sep,2016
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM , yyyy", Locale.ENGLISH);//it will show date as 10 sep,2016
         Date todayDate = new Date();
 
         String dd = sdf.format(todayDate);
-        txtSysDate.setText("Today's Date " + dd);
+        txtSysDate.setText("Today's Date : " + dd);
         try {
             //getLoaderManager().initLoader(THE_LOADER, null, this).forceLoad();
             sqlController = new SQLController(getApplicationContext());
@@ -234,21 +234,8 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity {
                 mExcercise = healthLifeStyleList.get(0).getExcercise();
                 mChewinogTobaco = healthLifeStyleList.get(0).getChewingTobaco();
                 mSleepStatus= healthLifeStyleList.get(0).getSleep();
-               /* String mLactoseTolerance = healthLifeStyleList.get(0).getLactoseTolerance();
-                String mFoodPreference = healthLifeStyleList.get(0).getFoodPreference();
-                String mFoodHabit = healthLifeStyleList.get(0).getFoodHabit();
-
-                String mBingeEating = healthLifeStyleList.get(0).getBingeEating();
-                String mAllergies = healthLifeStyleList.get(0).getAllergies();
-                String mSexuallyActive = healthLifeStyleList.get(0).getSexuallyActive();
-
-                String mDrug = healthLifeStyleList.get(0).getDrugConsumption();
-                String otherDrugTaking = healthLifeStyleList.get(0).getOtherDrugConsumption();
-                String otherTobacoTaking = healthLifeStyleList.get(0).getOtherTobacoConsumption();*/
 
             }
-
-
 
         } catch (Exception e) {
             e.printStackTrace();

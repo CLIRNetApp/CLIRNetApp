@@ -158,7 +158,7 @@
     <string name="title_activity_patient_update">Edit Patient Update</string>
     <string name="title_activity_edit_personal_info">Edit Personal Info</string>
     <string name="title_activity_add_patient_update">Add Patient Update</string>
-    <string name="title_activity_show_personal_details">Show Patient Details</string>
+    <string name="title_activity_show_personal_details">Patient Details</string>
     <string name="title_activity_privacy_policy">PrivacyPolicy</string>
     <string name="pohistory">Patient History</string>
     <string name="consultation_log">Consultation Log</string>
@@ -231,9 +231,9 @@
     <string name="uid">UID</string>
     <string name="uidtype">UID Type</string>
     <string name="reset">Reset</string>
-    <string name="version">Release Version 1.3.2.0</string>
-    <string name="aboutApp">About App V 1.3.2.0</string>
-    <string name="updateDate">Last Updated Date 18/07/2017</string>
+    <string name="version">Release Version 1.3.2.2</string>
+    <string name="aboutApp">About App V 1.3.2.2</string>
+    <string name="updateDate">Last Updated Date 07/08/2017</string>
     <string name="quickadd">Quick Add</string>
     <string name="title_edit_quick_add">Quick Edit Patient</string>
     <string name="referedby">Add Referals</string>
@@ -264,7 +264,7 @@
     <string name="passive">Passive</string>
     <string name="active">Active</string>
     <string name="nonSmoker">N/A</string>
-    <string name="lifeStyle">Life Style</string>
+    <string name="lifeStyle">Lifestyle</string>
     <string name="alcoholConsumption">Alcohol</string>
     <string name="sedentary">Sedentary</string>
     <string name="lightActive">Lightly Active</string>
@@ -277,7 +277,7 @@
     <string name="sexuallyActive">Sexually Active</string>
     <string name="habit">Food Habit    </string>
     <string name="veg">Veg</string>
-    <string name="nonVeg">NonVeg</string>
+    <string name="nonVeg">Non-Veg</string>
     <string name="foodPreference">Food Preference</string>
     <string name="sweet">Sweet</string>
     <string name="sour">Sour</string>
@@ -286,12 +286,12 @@
     <string name="pft">PFT</string>
     <string name="abnormal">Abnormal</string>
     <string name="normal">Normal</string>
-    <string name="acer">Acer</string>
+    <string name="acer">ACR</string>
     <string name="seremUrea">Serum Urea</string>
-    <string name="nonDrinker">Non Drinker</string>
+    <string name="nonDrinker">Non-Drinker</string>
     <string name="activeDrinker">Drinker</string>
     <string name="alergies">Allergies</string>
-    <string name="lactoseTolerance">Lactose Tolerance</string>
+    <string name="lactoseTolerance">Lactose Intolerance</string>
     <string name="tc">TC</string>
     <string name="tg">TG</string>
     <string name="ldl">LDL</string>
@@ -311,7 +311,7 @@
     <string name="selectYear">Select Year</string>
     <string name="otherDrug">Other Drug</string>
     <string name="otherTobacoUse">Other Tobacco Use</string>
-    <string name="dietPreference">Diet Prefernce</string>
+    <string name="dietPreference">Diet Preference</string>
     <string name="sleep">Sleep</string>
     <string name="adequate">Adequate</string>
     <string name="inadequate">Inadequate</string>
@@ -334,7 +334,19 @@
     <string name="year">Year</string>
     <string name="back">Back</string>
     <string name="dashboard">Dashboard</string>
+    <string name="announcements">Patient Announcements</string>
     <string name="clickReserve">Click To Reserve</string>
     <string name="viewMore">View More</string>
-
+    <string name="esr">ESR</string>
+    <string name="dc">DC</string>
+    <string name="tch">T.Ch</string>
+    <string name="hba1c">HbA1C</string>
+    <string name="acr">ACR = Albumin/Creatinine Ratio</string>
+    <string name="welcome">Welcome !</string>
+    <string name="fod">Follow-Up Date</string>
+    <string name="familyHistory">Family History</string>
+    <string name="otherComments">Other Comments</string>
+    <string name="patientAnnouncement">Patient Announcement</string>
+    <string name="all">All</string>
+    <string name="selectedGroup">Selected Group</string>
 </resources>

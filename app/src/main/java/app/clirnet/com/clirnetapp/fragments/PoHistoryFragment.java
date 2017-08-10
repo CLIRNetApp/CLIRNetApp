@@ -71,6 +71,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private String strpno;
 
     private SQLController sqlController;
+    private AppController appController;
+    private BannerClass bannerClass;
 
     private PoHistoryAdapter poHistoryAdapter;
     private RecyclerView recyclerView;
@@ -78,7 +80,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private ArrayList<RegistrationModel> patientData = new ArrayList<>();
     private LinearLayout norecordtv;
     private View rootview;
-    private AppController appController;
+
     private Button submit;
     private MultiSpinner genderSpinner;
 
@@ -106,9 +108,9 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
     private int queryCount;
     private ArrayList<String> bannerimgNames;
-    private BannerClass bannerClass;
+
     private String doctor_membership_number;
-    private Button selectVitals, resetFilters;
+    private Button  resetFilters;
     private Integer weightMinValue, weightMaxValue;
     private Integer heightMinValue, heightMaxValue;
     private Integer bmiMinValue, bmiMaxValue;
@@ -142,7 +144,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private Integer strMaxSpo2;
     private Integer strMinRespiration;
     private Integer strMaxRespiration;
-    private TextView showData;
     private EditText input_min_weight;
     private EditText input_max_weight;
     private EditText input_min_height;
@@ -164,7 +165,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private EditText input_min_sPo2, input_max_sPo2;
     private EditText input_min_respiration;
     private EditText input_max_respiration;
-    private long mLastClickTime = 0;
+
 
     private StringBuilder sb = new StringBuilder();
     private String strEcg;
@@ -287,7 +288,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         //selectVitals = (Button) rootview.findViewById(R.id.selectVitals);
 
-        showData = (TextView) rootview.findViewById(R.id.showData);
+        //showData = (TextView) rootview.findViewById(R.id.showData);
 
 
         filterInvestigation = (Button) rootview.findViewById(R.id.filterInvestigation);
@@ -303,12 +304,12 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         //initalizeView(rootview);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM,yyyy", Locale.ENGLISH);
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM , yyyy", Locale.ENGLISH);
         Date todayDate = new Date();
         String dd = sdf.format(todayDate);
 
 
-        currdate.setText("Today's Date " + dd);
+        currdate.setText("Today's Date : " + dd);
 
         TextView privacyPolicy = (TextView) rootview.findViewById(R.id.privacyPolicy);
         TextView termsAndCondition = (TextView) rootview.findViewById(R.id.termsandCondition);
@@ -934,7 +935,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             int visibleItemCount = mLayoutManager.getChildCount();
             int totalItemCount = mLayoutManager.getItemCount();
             int firstVisibleItemPosition = mLayoutManager.findFirstVisibleItemPosition();
-            //Log.e("visibleItemCount", "" + visibleItemCount + " totalItemCount  " + totalItemCount + " firstVisibleItemPosition " + firstVisibleItemPosition);
 
             boolean isLastPage = false;
             if (!isLoading && !isLastPage) {
@@ -1217,8 +1217,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     valMinWeight = null;
                     valMaxWeight = null;
 
-                } else {
-                    // do nothing
                 }
 
                 if (valMinWeight != null && valMaxWeight != null && !valMinWeight.equals("") && !valMaxWeight.equals("")) {
@@ -1366,7 +1364,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 } else if (valMinTemp == null && valMaxTemp == null) {
                     valMinTemp = null;
                     valMaxTemp = null;
-                } else {
                 }
 
                 if (valMinTemp != null && valMaxTemp != null && !valMinTemp.equals("") && !valMaxTemp.equals("")) {
@@ -1661,14 +1658,14 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         strMaxSugarFPG = null;
         strMinSugarPPG = null;
         strMaxSugarPPG = null;
-        showData = null;
+
     }
 
     private void reseFiltersData() {
 
         // seekbarWeight.setRangeValues(strMinWeight, strMaxWeight);// if we want to set progrmmatically set range of seekbar
-        mAutoLabel.clear();
-        mInvestigationLabel.clear();
+        if(mAutoLabel!=null)mAutoLabel.clear();
+      if(mInvestigationLabel !=null)mInvestigationLabel.clear();
         weightMinValue = null;
         weightMaxValue = null;
         heightMinValue = null;
@@ -1940,8 +1937,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMinHbA1c = null;
                     strMaxHbA1c = null;
 
-                } else {
-                    // do nothing
                 }
 
                 if (strMinHbA1c != null && strMaxHbA1c != null && !strMinHbA1c.equals("") && !strMaxHbA1c.equals("")) {
@@ -1983,8 +1978,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMinAcer = null;
                     strMaxAcer = null;
 
-                } else {
-                    // do nothing
                 }
                 if (strMinAcer != null && strMaxAcer != null && !strMinAcer.equals("") && !strMaxAcer.equals("")) {
 
@@ -1993,7 +1986,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
                 if (!strMinAcer.isEmpty() && !strMaxAcer.isEmpty()) {
 
-                    mInvestigationLabel.addLabel("Acer " + strMinAcer + " - " + strMaxAcer);
+                    mInvestigationLabel.addLabel("ACR " + strMinAcer + " - " + strMaxAcer);
                 }
                 String strMinLipidHDL = input_LipidHDL.getText().toString();
                 String strMaxLipidHDL = input_LipidHDL_max.getText().toString();
@@ -2010,8 +2003,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMinLipidHDL = null;
                     strMaxLipidHDL = null;
 
-                } else {
-                    // do nothing
                 }
                 if (strMaxLipidHDL != null && strMinLipidHDL != null && !strMaxLipidHDL.equals("") && !strMinLipidHDL.equals("")) {
 
@@ -2038,8 +2029,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMinLipidLDL = null;
                     strMaxLipidLDL = null;
 
-                } else {
-                    // do nothing
                 }
 
                 if (strMinLipidLDL != null && strMaxLipidLDL != null && !strMinLipidLDL.equals("") && !strMaxLipidLDL.equals("")) {
@@ -2068,8 +2057,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMinTC = null;
                     strMaxTC = null;
 
-                } else {
-                    // do nothing
                 }
                 if (strMinTC != null && strMaxTC != null && !strMinTC.equals("") && !strMaxTC.equals("")) {
 
@@ -2096,8 +2083,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMinTG = null;
                     strMaxTG = null;
 
-                } else {
-                    // do nothing
                 }
                 if (strMinTG != null && strMaxTG != null && !strMinTG.equals("") && !strMaxTG.equals("")) {
 
@@ -2124,8 +2109,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMinLipidVHDL = null;
                     strMaxLipidVHDLMax = null;
 
-                } else {
-                    // do nothing
                 }
                 if (strMinLipidVHDL != null && strMaxLipidVHDLMax != null && !strMinLipidVHDL.equals("") && !strMaxLipidVHDLMax.equals("")) {
 
@@ -2152,8 +2135,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMinSerumUrea = null;
                     strMaxSerumUrea = null;
 
-                } else {
-                    // do nothing
                 }
                 if (strMinSerumUrea != null && strMaxSerumUrea != null && !strMinSerumUrea.equals("") && !strMaxSerumUrea.equals("")) {
 
@@ -2180,7 +2161,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 } else if (valMinSugarFpg == null && valMaxSugarFpg == null) {
                     valMinSugarFpg = null;
                     valMaxSugarFpg = null;
-                } else {
                 }
 
                 if (valMinSugarFpg != null && valMaxSugarFpg != null && !valMinSugarFpg.equals("") && !valMaxSugarFpg.equals("")) {

@@ -12,11 +12,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.view.ContextThemeWrapper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -207,7 +207,7 @@ public class QuickAddVisitFragment extends Fragment {
     private String strVisitId;
 
     private String mAlcohol;
-    private String  mStressLevel;
+    private String mStressLevel;
     private String mSmokerType;
     private String mSleepStatus;
     private String strSpo2, strRespirationRate;
@@ -228,6 +228,66 @@ public class QuickAddVisitFragment extends Fragment {
     private String mLifeStyle;
     private String mExcercise;
     private String mChewinogTobaco;
+
+
+    private int counttxthemogram = 1;
+    private int counttxtLiverFunctionTest = 1;
+    private int counttxtLipidProfile = 1;
+    private int counttxtDiabeticProfile = 1;
+    private int counttxtUrineRoutineExamination = 1;
+    private int counttxtRft = 1;
+    private int counttxtThyroidProfile = 1;
+
+
+    LinearLayout hemogramlayout;
+    LinearLayout liverFunctionlayout;
+    LinearLayout lipidProfilelayout;
+    LinearLayout diabeticlayout;
+    LinearLayout urineRoutineExaminationlayout;
+    LinearLayout rftlayout;
+    LinearLayout thyroidProfilelayout;
+
+
+    TextView txthemogram;
+    TextView txtLiverFunctionTest;
+    TextView txtLipidProfile;
+    TextView txtDiabeticProfile;
+    TextView txtUrineRoutineExamination;
+    TextView txtRft;
+    TextView txtThyroidProfile;
+    private String strHb;
+    private String strPlateletCount;
+    private String strEsr;
+    private String strDcl;
+    private String strDcn;
+    private String strDce;
+    private String strDcm;
+    private String strDcb;
+    private String strTotalBiliubin;
+    private String strDirectBilirubin;
+    private String strIndirectBilirubin;
+    private String strSgpt;
+    private String strGgt;
+    private String strTotalProtein;
+    private String strAlbumin;
+    private String strGlobulin;
+    private String strAgRatio;
+    private String strLdlHdlRatio;
+    private String strSugarRbs;
+    private String strUrinaryPusCell;
+    private String strUrineRbc;
+    private String strUrinaryCast;
+    private String strUrineProtein;
+    private String strUrineCrystal;
+    private String strMicroalbuminuria;
+    private String strSerumCreatinine;
+    private String strTsh;
+    private String strT3;
+    private String strT4;
+    private String strAcr;
+    private String strSgot;
+    private String strTch;
+    private String prescriptionimgPath2;
 
     public QuickAddVisitFragment() {
         // Required empty public constructor
@@ -361,7 +421,7 @@ public class QuickAddVisitFragment extends Fragment {
                 startActivity(intent);
             }
         });
-          //open TermsCondition page
+        //open TermsCondition page
         termsandCondition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -467,18 +527,8 @@ public class QuickAddVisitFragment extends Fragment {
                 mStressLevel = healthLifeStyleList.get(0).getStressLevel();
                 mSmokerType = healthLifeStyleList.get(0).getSmokerType();
                 mLifeStyle = healthLifeStyleList.get(0).getLifeSyle();
-                String mLactoseTolerance = healthLifeStyleList.get(0).getLactoseTolerance();
-                String mFoodPreference = healthLifeStyleList.get(0).getFoodPreference();
-                String mFoodHabit = healthLifeStyleList.get(0).getFoodHabit();
                 mExcercise = healthLifeStyleList.get(0).getExcercise();
                 mChewinogTobaco = healthLifeStyleList.get(0).getChewingTobaco();
-                String mBingeEating = healthLifeStyleList.get(0).getBingeEating();
-                String mAllergies = healthLifeStyleList.get(0).getAllergies();
-                String mSexuallyActive = healthLifeStyleList.get(0).getSexuallyActive();
-
-                String mDrug = healthLifeStyleList.get(0).getDrugConsumption();
-                String otherDrugTaking = healthLifeStyleList.get(0).getOtherDrugConsumption();
-                String otherTobacoTaking = healthLifeStyleList.get(0).getOtherTobacoConsumption();
                 mSleepStatus = healthLifeStyleList.get(0).getSleep();
             }
 
@@ -492,7 +542,6 @@ public class QuickAddVisitFragment extends Fragment {
                 textRefredByShow.setVisibility(View.VISIBLE);
                 txtReferredBy.setVisibility(View.VISIBLE);
                 textRefredByShow.setText(referedBy);
-
 
             }
             if (strReferedTo != null && !strReferedTo.equals("")) {
@@ -618,9 +667,9 @@ public class QuickAddVisitFragment extends Fragment {
                 imagesFolder = new File(Environment.getExternalStorageDirectory(), "PatientsImages");
                 imagesFolder.mkdirs();
 
-                prescriptionimgPath = "prescription_" + docId + "_" + appController.getDateTime() + ".jpg";
+                prescriptionimgPath2 = "prescription_" + docId + "_" + appController.getDateTime() + ".jpg";
 
-                imagePathFile = new File(imagesFolder, prescriptionimgPath);
+                imagePathFile = new File(imagesFolder, prescriptionimgPath2);
                 uriSavedImage = Uri.fromFile(imagePathFile);
                 imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
                 imageIntent.putExtra("data", uriSavedImage);
@@ -637,6 +686,7 @@ public class QuickAddVisitFragment extends Fragment {
                     buttonInvestigation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
                     showInvestigationDialog();
+                    //setOnClickListner();
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -712,7 +762,7 @@ public class QuickAddVisitFragment extends Fragment {
         });
 
         setUpAnimation();
-         setImagesToHealthLifeStyle();
+        setImagesToHealthLifeStyle();
         return view;
 
     }
@@ -724,7 +774,7 @@ public class QuickAddVisitFragment extends Fragment {
         LayoutInflater factory = LayoutInflater.from(getContext());
         final View f = factory.inflate(R.layout.refered_by_dialog, null);
 
-        dialog.setTitle("Referred By-To");
+        dialog.setTitle("Referrals");
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(f);
         Button dialogButtonCancel = (Button) f.findViewById(R.id.customDialogCancel);
@@ -1243,15 +1293,26 @@ public class QuickAddVisitFragment extends Fragment {
         String record_source = "QuickAdd New Visit";
         //  String strFollowUpStatus = null;
 
-        dbController.addPatientNextVisitRecord(strVisitId, strPatientId, usersellectedDate, daysSel, fowSel, monthSel, clinical_note, prescriptionimgPath, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
-                strWeight, strPulse, strBp, strLowBp, strTemp, strSymptoms, strDignosis, strHeight, strbmi, strReferedBy, strReferedTo, strPatientFollowUpStatus, record_source, strSpo2, strRespirationRate,strObestity);
+        if (prescriptionimgPath2 != null) {
+            dbController.addPatientNextVisitRecord(strVisitId, strPatientId, usersellectedDate, daysSel, fowSel, monthSel, clinical_note, prescriptionimgPath2, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
+                    strWeight, strPulse, strBp, strLowBp, strTemp, strSymptoms, strDignosis, strHeight, strbmi, strReferedBy, strReferedTo, strPatientFollowUpStatus, record_source, strSpo2, strRespirationRate, strObestity);
+        } else {
+            dbController.addPatientNextVisitRecord(strVisitId, strPatientId, usersellectedDate, daysSel, fowSel, monthSel, clinical_note, prescriptionimgPath, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
+                    strWeight, strPulse, strBp, strLowBp, strTemp, strSymptoms, strDignosis, strHeight, strbmi, strReferedBy, strReferedTo, strPatientFollowUpStatus, record_source, strSpo2, strRespirationRate, strObestity);
+        }
+
 
         dbController.deletePrescriptionImageQueue(prescriptionimgId, prescriptionimgPath);
 
         //saving investigation data
 
-        dbController.addInvestigation(strPatientId, strVisitId, strSgar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC
-                , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft, flag);
+       /* dbController.addInvestigation(strPatientId, strVisitId, strSgar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC
+                , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft, flag);*/
+
+        dbController.addInvestigation(strPatientId, strVisitId, strSgar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC, strTch
+                , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft, strHb, strPlateletCount, strEsr, strDcl, strDcn, strDce, strDcm, strDcb,
+                strTotalBiliubin, strDirectBilirubin, strIndirectBilirubin, strSgpt, strSgot, strGgt, strTotalProtein, strAlbumin, strGlobulin, strAgRatio, strLdlHdlRatio, strSugarRbs, strUrinaryPusCell, strUrineRbc, strUrinaryCast, strUrineProtein, strUrineCrystal, strMicroalbuminuria,
+                strSerumCreatinine, strAcr, strTsh, strT3, strT4, flag);
 
         Toast.makeText(getContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
         //Redirect to navigation Activity
@@ -1678,8 +1739,8 @@ public class QuickAddVisitFragment extends Fragment {
         strSugarFasting = null;
         strHeight = null;
         showReferrals = null;
-        buttonObservations= null;
-        strPatientFollowUpStatus=null;
+        buttonObservations = null;
+        strPatientFollowUpStatus = null;
         imagePathFile = null;
         strEmail = null;
         strPhoneType = null;
@@ -1699,38 +1760,49 @@ public class QuickAddVisitFragment extends Fragment {
         strAlternateIsd_code = null;
         sbVitals = null;
         sbInvestigations = null;
-        strSpo2=null;strRespirationRate=null;
-        mSleepStatus=null;
-        strPallorDescription= null;
-        strCyanosisDescription= null;
-        strTremorsDescription= null;
-        strIcterusDescription= null;
-        strClubbingDescription= null;
-        strOedemaDescription= null;
-        strCalfTendernessDescription= null;
-        strLymphadenopathyDescription= null;
-        edtInput_spo2=null;
-        edtInput_respiration_rate=null;
-        strPallore=null;
-        strCyanosis=null; strTremors=null; strIcterus=null;strClubbing=null; strOedema=null; strCalfTenderness=null;
-        strLymphadenopathy=null;showObservationsData=null;
-        sbVitals= null;sbObservations =null;sbInvestigations=null;
+        strSpo2 = null;
+        strRespirationRate = null;
+        mSleepStatus = null;
+        strPallorDescription = null;
+        strCyanosisDescription = null;
+        strTremorsDescription = null;
+        strIcterusDescription = null;
+        strClubbingDescription = null;
+        strOedemaDescription = null;
+        strCalfTendernessDescription = null;
+        strLymphadenopathyDescription = null;
+        edtInput_spo2 = null;
+        edtInput_respiration_rate = null;
+        strPallore = null;
+        strCyanosis = null;
+        strTremors = null;
+        strIcterus = null;
+        strClubbing = null;
+        strOedema = null;
+        strCalfTenderness = null;
+        strLymphadenopathy = null;
+        showObservationsData = null;
+        sbVitals = null;
+        sbObservations = null;
+        sbInvestigations = null;
 
-        showInvestigationData=null;showVitalsData=null;showObservationsData=null;
-        strEcg=null;
-        strPft=null;
-        strLipidTC=null;
-        strLipidTG=null;
-        strLipidLDL=null;
-        strLipidVHDL=null;
-        strLipidHDL=null;
-        strSgar=null;
-        strHbA1c=null;
-        strSerumUrea=null;
-        strAcer=null;
-        buttonInvestigation=null;
-        strVisitId=null;
-
+        showInvestigationData = null;
+        showVitalsData = null;
+        showObservationsData = null;
+        strEcg = null;
+        strPft = null;
+        strLipidTC = null;
+        strLipidTG = null;
+        strLipidLDL = null;
+        strLipidVHDL = null;
+        strLipidHDL = null;
+        strSgar = null;
+        strHbA1c = null;
+        strSerumUrea = null;
+        strAcer = null;
+        buttonInvestigation = null;
+        strVisitId = null;
+        prescriptionimgPath2=null;
     }
 
     public interface OnFragmentInteractionListener {
@@ -1765,6 +1837,14 @@ public class QuickAddVisitFragment extends Fragment {
             String prescriptionImgPath = uriSavedImage.getPath();
             edtprescriptionImgPath.setVisibility(View.VISIBLE);
             edtprescriptionImgPath.setText(prescriptionImgPath);
+
+            ShowPrescriptionImageFragment fragment = new ShowPrescriptionImageFragment();
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flregistration, fragment).addToBackStack(null).commit();
+            Bundle bundle = new Bundle();
+            bundle.putString("PRESCRIPTIONIMG", prescriptionImgPath);
+            fragment.setArguments(bundle);
+
         } catch (NullPointerException e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "QuickAdd Visit Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1791,7 +1871,7 @@ public class QuickAddVisitFragment extends Fragment {
             edtInput_height = (EditText) f.findViewById(R.id.input_height);
             edtInput_spo2 = (EditText) f.findViewById(R.id.input_spo2);
             edtInput_respiration_rate = (EditText) f.findViewById(R.id.input_respiration_rate);
-            ediInput_obesity=(EditText)f.findViewById(R.id.input_obesity);
+            ediInput_obesity = (EditText) f.findViewById(R.id.input_obesity);
 
             dialog.setTitle(" Add Vitals ");
             dialog.setCanceledOnTouchOutside(false);
@@ -1859,7 +1939,7 @@ public class QuickAddVisitFragment extends Fragment {
 
                     strSpo2 = edtInput_spo2.getText().toString();
                     strRespirationRate = edtInput_respiration_rate.getText().toString();
-                    strObestity=ediInput_obesity.getText().toString();
+                    strObestity = ediInput_obesity.getText().toString();
 
                     if (strTemp.length() > 0) {
                         int intTemp = Integer.parseInt(strTemp);
@@ -1932,7 +2012,7 @@ public class QuickAddVisitFragment extends Fragment {
                                       int before, int count) {
                 String bmi = appController.CalculateBMI(edtInput_weight.getText().toString(), edtInput_height.getText().toString());
                 edtInput_bmi.setText(bmi);
-                strObestity=appController.getObesity(bmi);
+                strObestity = appController.getObesity(bmi);
                 // Log.e("obestity","  "+strObestity);
                 ediInput_obesity.setText(strObestity);
             }
@@ -1952,7 +2032,7 @@ public class QuickAddVisitFragment extends Fragment {
                                       int before, int count) {
                 String bmi = appController.CalculateBMI(edtInput_weight.getText().toString(), edtInput_height.getText().toString());
                 edtInput_bmi.setText(bmi);
-                strObestity=appController.getObesity(bmi);
+                strObestity = appController.getObesity(bmi);
                 // Log.e("obestity","  "+strObestity);
                 ediInput_obesity.setText(strObestity);
             }
@@ -1967,6 +2047,7 @@ public class QuickAddVisitFragment extends Fragment {
         LayoutInflater factory = LayoutInflater.from(getContext());
 
         final View f = factory.inflate(R.layout.investigation_dialog, null);
+        //new_investigation_dialog
         dialog.setTitle(" Edit Investigation ");
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(f);
@@ -1984,6 +2065,57 @@ public class QuickAddVisitFragment extends Fragment {
         final EditText input_LipidVHDL = (EditText) f.findViewById(R.id.input_LipidVHDL);
         edtInput_sugar = (EditText) f.findViewById(R.id.input_sugar);
         edtInput_sugarfasting = (EditText) f.findViewById(R.id.input_sugarfasting);
+
+        /*final EditText input_hb = (EditText) f.findViewById(R.id.input_hb);
+        final  EditText input_tch=(EditText)f.findViewById(R.id.input_tch);
+        final EditText input_plateletcount = (EditText) f.findViewById(R.id.input_plateletcount);
+        final EditText input_esr = (EditText) f.findViewById(R.id.input_esr);
+
+        final EditText input_dcl = (EditText) f.findViewById(R.id.input_dcl);
+        final EditText input_dcn = (EditText) f.findViewById(R.id.input_dcn);
+        final EditText input_dce = (EditText) f.findViewById(R.id.input_dce);
+        final EditText input_dcm = (EditText) f.findViewById(R.id.input_dcm);
+        final EditText input_dcb = (EditText) f.findViewById(R.id.input_dcb);
+        final EditText input_totalbilirubin = (EditText) f.findViewById(R.id.input_totalbilirubin);
+        final EditText input_directbilirubin = (EditText) f.findViewById(R.id.input_directbilirubin);
+        final EditText input_indirectbilirubin = (EditText) f.findViewById(R.id.input_indirectbilirubin);
+        final EditText input_sgpt = (EditText) f.findViewById(R.id.input_sgpt);
+        final EditText input_sgot=(EditText)f.findViewById(R.id.input_sgot);
+        final EditText input_ggt = (EditText) f.findViewById(R.id.input_ggt);
+        final EditText input_totalprotein = (EditText) f.findViewById(R.id.input_totalprotein);
+        final EditText input_albumin = (EditText) f.findViewById(R.id.input_albumin);
+
+        final EditText input_globulin = (EditText) f.findViewById(R.id.input_globulin);
+        final EditText input_agratio = (EditText) f.findViewById(R.id.input_agratio);
+        final EditText input_Lipidlhdl_ratio = (EditText) f.findViewById(R.id.input_Lipidlhdl_ratio);
+        final EditText input_sugarrbs = (EditText) f.findViewById(R.id.input_sugarrbs);
+        final EditText input_urinePusCell = (EditText) f.findViewById(R.id.input_urinePusCell);
+        final EditText input_urineRbc = (EditText) f.findViewById(R.id.input_urineRbc);
+        final EditText input_urinaryCast = (EditText) f.findViewById(R.id.input_urinaryCast);
+        final EditText input_urineProtein = (EditText) f.findViewById(R.id.input_urineProtein);
+        final EditText input_urineCrystal = (EditText) f.findViewById(R.id.input_urineCrystal);
+        final EditText input_microalbuminuria = (EditText) f.findViewById(R.id.input_microalbuminuria);
+        final EditText input_serumCreatinine = (EditText) f.findViewById(R.id.input_serumCreatinine);
+        final EditText input_tsh = (EditText) f.findViewById(R.id.input_tsh);
+        final EditText input_t3 = (EditText) f.findViewById(R.id.input_t3);
+        final EditText input_t4 = (EditText) f.findViewById(R.id.input_t4);
+        final EditText input_acr = (EditText) f.findViewById(R.id.input_acr);
+
+        hemogramlayout = (LinearLayout) f.findViewById(R.id.hemogramlayout);
+        liverFunctionlayout = (LinearLayout) f.findViewById(R.id.liverFunctionlayout);
+        lipidProfilelayout = (LinearLayout) f.findViewById(R.id.lipidProfilelayout);
+        diabeticlayout = (LinearLayout) f.findViewById(R.id.diabeticlayout);
+        urineRoutineExaminationlayout = (LinearLayout) f.findViewById(R.id.urineRoutineExaminationlayout);
+        rftlayout = (LinearLayout) f.findViewById(R.id.rftlayout);
+        thyroidProfilelayout = (LinearLayout) f.findViewById(R.id.thyroidProfilelayout);
+
+        txthemogram = (TextView) f.findViewById(R.id.txthemogram);
+        txtLiverFunctionTest = (TextView) f.findViewById(R.id.txtLiverFunctionTest);
+        txtLipidProfile = (TextView) f.findViewById(R.id.txtLipidProfile);
+        txtDiabeticProfile = (TextView) f.findViewById(R.id.txtDiabeticProfile);
+        txtUrineRoutineExamination = (TextView) f.findViewById(R.id.txtUrineRoutineExamination);
+        txtRft = (TextView) f.findViewById(R.id.txtRft);
+        txtThyroidProfile = (TextView) f.findViewById(R.id.txtThyroidProfile);*/
 
         RadioGroup radioEcg = (RadioGroup) f.findViewById(R.id.radioEcg);
         RadioGroup radioPft = (RadioGroup) f.findViewById(R.id.radioPft);
@@ -2082,7 +2214,40 @@ public class QuickAddVisitFragment extends Fragment {
                 strHbA1c = input_hba1c.getText().toString();
                 strSerumUrea = input_seremUrea.getText().toString();
                 strAcer = input_acer.getText().toString();
-                String flag = "0";
+
+               /* strHb = input_hb.getText().toString();
+                strTch=input_tch.getText().toString();
+                strPlateletCount = input_plateletcount.getText().toString();
+                strEsr = input_esr.getText().toString();
+                strDcl = input_dcl.getText().toString();
+                strDcn = input_dcn.getText().toString();
+                strDce = input_dce.getText().toString();
+                strDcm = input_dcm.getText().toString();
+                strDcb = input_dcb.getText().toString();
+                strTotalBiliubin = input_totalbilirubin.getText().toString();
+                strDirectBilirubin = input_directbilirubin.getText().toString();
+                strIndirectBilirubin = input_indirectbilirubin.getText().toString();
+                strSgpt = input_sgpt.getText().toString();
+                strSgot=input_sgot.getText().toString();
+                strGgt = input_ggt.getText().toString();
+                strTotalProtein = input_totalprotein.getText().toString();
+                strAlbumin = input_albumin.getText().toString();
+                strGlobulin = input_globulin.getText().toString();
+                strAgRatio = input_agratio.getText().toString();
+                strLdlHdlRatio = input_Lipidlhdl_ratio.getText().toString();
+                strSugarRbs = input_sugarrbs.getText().toString();
+                strUrinaryPusCell = input_urinePusCell.getText().toString();
+                strUrineRbc = input_urineRbc.getText().toString();
+                strUrinaryCast = input_urinaryCast.getText().toString();
+                strUrineProtein = input_urineProtein.getText().toString();
+                strUrineCrystal = input_urineCrystal.getText().toString();
+                strMicroalbuminuria = input_microalbuminuria.getText().toString();
+                strSerumCreatinine = input_serumCreatinine.getText().toString();
+                strTsh = input_tsh.getText().toString();
+                strT3 = input_t3.getText().toString();
+                strT4 = input_t4.getText().toString();
+                strAcr=input_acr.getText().toString();*/
+
 
                 if (strSgar != null && !strSgar.equals("") && strSgar.length() > 0) {
                     sbInvestigations.append("Sugar(PPG):").append(strSgar).append(" ;");
@@ -2106,7 +2271,7 @@ public class QuickAddVisitFragment extends Fragment {
                 }
                 if (strAcer != null && !strAcer.equals("") && strAcer.length() > 0) {
                     sbInvestigations.append("  ");
-                    sbInvestigations.append(" Acer:").append(strAcer).append(" ;");
+                    sbInvestigations.append(" ACR:").append(strAcer).append(" ;");
                 }
                 if (strSerumUrea != null && !strSerumUrea.equals("") && strSerumUrea.length() > 0) {
                     sbInvestigations.append("  ");
@@ -2146,62 +2311,61 @@ public class QuickAddVisitFragment extends Fragment {
 
     private void setImagesToHealthLifeStyle() {
 
-        ImageView imgSmoke = (ImageView) view. findViewById(R.id.imgSmoke);
-        ImageView imgDrink = (ImageView)view. findViewById(R.id.imgDrink);
+        ImageView imgSmoke = (ImageView) view.findViewById(R.id.imgSmoke);
+        ImageView imgDrink = (ImageView) view.findViewById(R.id.imgDrink);
         ImageView imgTobaco = (ImageView) view.findViewById(R.id.imgTobaco);
-        ImageView imgStress = (ImageView)view. findViewById(R.id.imgStress);
-        ImageView imgLifeStyle=(ImageView)view. findViewById(R.id.imgLifeStyle);
-        ImageView imgExcercise=(ImageView)view. findViewById(R.id.imgExcercise);
+        ImageView imgStress = (ImageView) view.findViewById(R.id.imgStress);
+        ImageView imgLifeStyle = (ImageView) view.findViewById(R.id.imgLifeStyle);
+        ImageView imgExcercise = (ImageView) view.findViewById(R.id.imgExcercise);
 
-        Log.e("mSmokerType",""+mSmokerType + "" +mAlcohol);
+        // Log.e("mSmokerType",""+mSmokerType + "" +mAlcohol);
 
-        if(mSmokerType!=null && !mSmokerType.equals("")&& mSmokerType.equals("Active Smoker")){
+        if (mSmokerType != null && !mSmokerType.equals("") && mSmokerType.equals("Active Smoker")) {
             imgSmoke.setVisibility(View.VISIBLE);
             imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.smoke));
-        }else if(mSmokerType!=null && !mSmokerType.equals("")&& mSmokerType.equals("Non Smoker")){
+        } else if (mSmokerType != null && !mSmokerType.equals("") && mSmokerType.equals("Non Smoker")) {
             imgSmoke.setVisibility(View.VISIBLE);
             imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.no_smoke));
         }
-        if(mAlcohol!=null && !mAlcohol.equals("")&& mAlcohol.equals("Drinker")){
+        if (mAlcohol != null && !mAlcohol.equals("") && mAlcohol.equals("Drinker")) {
             imgDrink.setVisibility(View.VISIBLE);
             imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.drink));
-        }else if(mAlcohol!=null && !mAlcohol.equals("")&& mAlcohol.equals("Non Drinker")){
+        } else if (mAlcohol != null && !mAlcohol.equals("") && mAlcohol.equals("Non Drinker")) {
             imgDrink.setVisibility(View.VISIBLE);
             imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.no_drink));
         }
-        if(mChewinogTobaco!=null && !mChewinogTobaco.equals("")&& mChewinogTobaco.equals("Yes")){
+        if (mChewinogTobaco != null && !mChewinogTobaco.equals("") && mChewinogTobaco.equals("Yes")) {
             imgTobaco.setVisibility(View.VISIBLE);
             imgTobaco.setImageDrawable(getResources().getDrawable(R.drawable.tobacco));
-        }else if(mSleepStatus!=null && !mSleepStatus.equals("")&& mSleepStatus.equals("No")){
+        } else if (mSleepStatus != null && !mSleepStatus.equals("") && mSleepStatus.equals("No")) {
             imgTobaco.setVisibility(View.VISIBLE);
             imgTobaco.setImageDrawable(getResources().getDrawable(R.drawable.no_tobacco));
         }
-        if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("Low")){
+        if (mStressLevel != null && !mStressLevel.equals("") && mStressLevel.equals("Low")) {
             imgStress.setVisibility(View.VISIBLE);
             imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stress_low));
-        }else if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("Moderate")){
+        } else if (mStressLevel != null && !mStressLevel.equals("") && mStressLevel.equals("Moderate")) {
             imgStress.setVisibility(View.VISIBLE);
             imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stress_moderate));
-        } else if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("High")){
+        } else if (mStressLevel != null && !mStressLevel.equals("") && mStressLevel.equals("High")) {
             imgStress.setVisibility(View.VISIBLE);
             imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stress_high));
         }
 
-        if(mExcercise!=null && !mExcercise.equals("")&& mExcercise.equals("Yes")){
+        if (mExcercise != null && !mExcercise.equals("") && mExcercise.equals("Yes")) {
             imgExcercise.setVisibility(View.VISIBLE);
             imgExcercise.setImageDrawable(getResources().getDrawable(R.drawable.exercise));
-        }else if(mExcercise!=null && !mExcercise.equals("")&& mExcercise.equals("No")){
+        } else if (mExcercise != null && !mExcercise.equals("") && mExcercise.equals("No")) {
             imgExcercise.setVisibility(View.VISIBLE);
             imgExcercise.setImageDrawable(getResources().getDrawable(R.drawable.no_exercise));
         }
-        if(mLifeStyle!=null && !mLifeStyle.equals("")&& mLifeStyle.equals("Sedentary")){
+        if (mLifeStyle != null && !mLifeStyle.equals("") && mLifeStyle.equals("Sedentary")) {
             imgLifeStyle.setVisibility(View.VISIBLE);
             imgLifeStyle.setImageDrawable(getResources().getDrawable(R.drawable.sitting));
-        }else if(mLifeStyle!=null && !mLifeStyle.equals("")&& mLifeStyle.equals("Light Active")){
+        } else if (mLifeStyle != null && !mLifeStyle.equals("") && mLifeStyle.equals("Light Active")) {
             imgLifeStyle.setVisibility(View.VISIBLE);
             imgLifeStyle.setImageDrawable(getResources().getDrawable(R.drawable.walking));
-        }
-        else if(mLifeStyle!=null && !mLifeStyle.equals("")&& mLifeStyle.equals("Active")){
+        } else if (mLifeStyle != null && !mLifeStyle.equals("") && mLifeStyle.equals("Active")) {
             imgLifeStyle.setVisibility(View.VISIBLE);
             imgLifeStyle.setImageDrawable(getResources().getDrawable(R.drawable.running));
         }
@@ -2579,5 +2743,109 @@ public class QuickAddVisitFragment extends Fragment {
 
         showObservationsData.setText(sbObservations);
 
+    }
+
+    private void setOnClickListner() {
+
+
+        txthemogram.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxthemogram == 1) {
+                    hemogramlayout.setVisibility(View.VISIBLE);
+                    txthemogram.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxthemogram = 2;
+                } else {
+                    hemogramlayout.setVisibility(View.GONE);
+                    txthemogram.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxthemogram = 1;
+                }
+                //  txtRecord.setBackground(R.drawable.);
+            }
+        });
+        txtLiverFunctionTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxtLiverFunctionTest == 1) {
+                    liverFunctionlayout.setVisibility(View.VISIBLE);
+                    txtLiverFunctionTest.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxtLiverFunctionTest = 2;
+                } else {
+                    liverFunctionlayout.setVisibility(View.GONE);
+                    txtLiverFunctionTest.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxtLiverFunctionTest = 1;
+                }
+            }
+        });
+        txtLipidProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxtLipidProfile == 1) {
+                    lipidProfilelayout.setVisibility(View.VISIBLE);
+                    txtLipidProfile.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxtLipidProfile = 2;
+                } else {
+                    lipidProfilelayout.setVisibility(View.GONE);
+                    txtLipidProfile.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxtLipidProfile = 1;
+                }
+            }
+        });
+        txtDiabeticProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxtDiabeticProfile == 1) {
+                    diabeticlayout.setVisibility(View.VISIBLE);
+                    txtDiabeticProfile.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxtDiabeticProfile = 2;
+                } else {
+                    diabeticlayout.setVisibility(View.GONE);
+                    txtDiabeticProfile.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxtDiabeticProfile = 1;
+                }
+            }
+        });
+        txtUrineRoutineExamination.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxtUrineRoutineExamination == 1) {
+                    urineRoutineExaminationlayout.setVisibility(View.VISIBLE);
+                    txtUrineRoutineExamination.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxtUrineRoutineExamination = 2;
+                } else {
+                    urineRoutineExaminationlayout.setVisibility(View.GONE);
+                    txtUrineRoutineExamination.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxtUrineRoutineExamination = 1;
+                }
+            }
+        });
+        txtRft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxtRft == 1) {
+                    rftlayout.setVisibility(View.VISIBLE);
+                    txtRft.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxtRft = 2;
+                } else {
+                    rftlayout.setVisibility(View.GONE);
+                    txtRft.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxtRft = 1;
+                }
+            }
+        });
+        txtThyroidProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxtThyroidProfile == 1) {
+                    thyroidProfilelayout.setVisibility(View.VISIBLE);
+                    txtThyroidProfile.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxtThyroidProfile = 2;
+                } else {
+                    thyroidProfilelayout.setVisibility(View.GONE);
+                    txtThyroidProfile.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxtThyroidProfile = 1;
+                }
+            }
+        });
     }
 }

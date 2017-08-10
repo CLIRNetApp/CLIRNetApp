@@ -16,6 +16,7 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -182,6 +183,65 @@ public class AddPatientUpdateFragment extends Fragment {
     private EditText ediInput_obesity;
     private String strObesity;
 
+    private int counttxthemogram = 1;
+    private int counttxtLiverFunctionTest = 1;
+    private int counttxtLipidProfile = 1;
+    private int counttxtDiabeticProfile = 1;
+    private int counttxtUrineRoutineExamination = 1;
+    private int counttxtRft = 1;
+    private int counttxtThyroidProfile = 1;
+
+
+    LinearLayout hemogramlayout;
+    LinearLayout liverFunctionlayout;
+    LinearLayout lipidProfilelayout;
+    LinearLayout diabeticlayout;
+    LinearLayout urineRoutineExaminationlayout;
+    LinearLayout rftlayout;
+    LinearLayout thyroidProfilelayout;
+
+
+    TextView txthemogram;
+    TextView txtLiverFunctionTest;
+    TextView txtLipidProfile;
+    TextView txtDiabeticProfile;
+    TextView txtUrineRoutineExamination;
+    TextView txtRft;
+    TextView txtThyroidProfile;
+    private String strHb;
+    private String strPlateletCount;
+    private String strEsr;
+    private String strDcl;
+    private String strDcn;
+    private String strDce;
+    private String strDcm;
+    private String strDcb;
+    private String strTotalBiliubin;
+    private String strDirectBilirubin;
+    private String strIndirectBilirubin;
+    private String strSgpt;
+    private String strGgt;
+    private String strTotalProtein;
+    private String strAlbumin;
+    private String strGlobulin;
+    private String strAgRatio;
+    private String strLdlHdlRatio;
+    private String strSugarRbs;
+    private String strUrinaryPusCell;
+    private String strUrineRbc;
+    private String strUrinaryCast;
+    private String strUrineProtein;
+    private String strUrineCrystal;
+    private String strMicroalbuminuria;
+    private String strSerumCreatinine;
+    private String strTsh;
+    private String strT3;
+    private String strT4;
+    private String strAcr;
+    private String strSgot;
+    private String strTch;
+
+
 
     public AddPatientUpdateFragment() {
 
@@ -202,7 +262,7 @@ public class AddPatientUpdateFragment extends Fragment {
         if (getArguments() != null) {
             strPatientId = getArguments().getString("PATIENTID");
             // this.viewPager= (ViewPager) getArguments().get("viewpager");
-            //  Log.e("strPatientId"," "+strPatientId);
+              Log.e("strPatientId"," "+strPatientId);
         }
     }
 
@@ -211,7 +271,7 @@ public class AddPatientUpdateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.add_patient_update_fragment, container, false);
-        //strPatientId=getArguments().getString("PATIENTID");
+        // strPatientId=getArguments().getString("PATIENTID");
         //Log.e("strPatientId"," "+strPatientId);
         cancel = (Button) view.findViewById(R.id.cancel);
         addUpdate = (Button) view.findViewById(R.id.addUpdate);
@@ -382,6 +442,7 @@ public class AddPatientUpdateFragment extends Fragment {
                     buttonInvestigation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
                     showInvestigationDialog();//Open Investigation Dialog
+                    //setOnClickListner();
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -788,7 +849,7 @@ public class AddPatientUpdateFragment extends Fragment {
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(f);
 
-        dialog.setTitle("Referred By-To");
+        dialog.setTitle("Referrals");
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(f);
         Button dialogButtonCancel = (Button) f.findViewById(R.id.customDialogCancel);
@@ -1489,6 +1550,14 @@ public class AddPatientUpdateFragment extends Fragment {
         dbController.addPatientNextVisitRecord(visit_id, strPatientId, userSellectedDate, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
                 strWeight, strPulse, strBp, strLowBp, strTemp, strSymptoms, strDignosis, strHeight, strbmi, strReferedBy, strReferedTo,strPatientFollowUpStatus, record_source,strSpo2,strRespirationRate, strObesity);
 
+        dbController.addInvestigation(strPatientId, visit_id, strSgar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC
+                , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft, flag);
+
+        /*dbController.addInvestigation(strPatientId, visit_id, strSgar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC,strTch
+                , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft,strHb,strPlateletCount,strEsr,strDcl,strDcn ,strDce,strDcm,strDcb,
+                strTotalBiliubin,strDirectBilirubin,strIndirectBilirubin,strSgpt,strSgot,strGgt,strTotalProtein,strAlbumin,strGlobulin,strAgRatio,strLdlHdlRatio,strSugarRbs,strUrinaryPusCell,strUrineRbc,strUrinaryCast,strUrineProtein,strUrineCrystal,strMicroalbuminuria,
+                strSerumCreatinine,strAcr,strTsh,strT3,strT4,flag);*/
+
         Toast.makeText(getContext(), "Patient Record Updated", Toast.LENGTH_LONG).show();
         //Redirect to navigation Activity
         goToNavigation();
@@ -1624,6 +1693,7 @@ public class AddPatientUpdateFragment extends Fragment {
         LayoutInflater factory = LayoutInflater.from(getContext());
 
         final View f = factory.inflate(R.layout.investigation_dialog, null);
+        //new_investigation_dialog
         dialog.setTitle(" Add Investigation ");
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(f);
@@ -1642,11 +1712,63 @@ public class AddPatientUpdateFragment extends Fragment {
         final EditText edtInput_sugar = (EditText) f.findViewById(R.id.input_sugar);
         final EditText edtInput_sugarfasting = (EditText) f.findViewById(R.id.input_sugarfasting);
 
+        /*final EditText input_hb = (EditText) f.findViewById(R.id.input_hb);
+        final  EditText input_tch=(EditText)f.findViewById(R.id.input_tch);
+        final EditText input_plateletcount = (EditText) f.findViewById(R.id.input_plateletcount);
+        final EditText input_esr = (EditText) f.findViewById(R.id.input_esr);
+
+        final EditText input_dcl = (EditText) f.findViewById(R.id.input_dcl);
+        final EditText input_dcn = (EditText) f.findViewById(R.id.input_dcn);
+        final EditText input_dce = (EditText) f.findViewById(R.id.input_dce);
+        final EditText input_dcm = (EditText) f.findViewById(R.id.input_dcm);
+        final EditText input_dcb = (EditText) f.findViewById(R.id.input_dcb);
+        final EditText input_totalbilirubin = (EditText) f.findViewById(R.id.input_totalbilirubin);
+        final EditText input_directbilirubin = (EditText) f.findViewById(R.id.input_directbilirubin);
+        final EditText input_indirectbilirubin = (EditText) f.findViewById(R.id.input_indirectbilirubin);
+        final EditText input_sgpt = (EditText) f.findViewById(R.id.input_sgpt);
+        final EditText input_sgot=(EditText)f.findViewById(R.id.input_sgot);
+        final EditText input_ggt = (EditText) f.findViewById(R.id.input_ggt);
+        final EditText input_totalprotein = (EditText) f.findViewById(R.id.input_totalprotein);
+        final EditText input_albumin = (EditText) f.findViewById(R.id.input_albumin);
+
+        final EditText input_globulin = (EditText) f.findViewById(R.id.input_globulin);
+        final EditText input_agratio = (EditText) f.findViewById(R.id.input_agratio);
+        final EditText input_Lipidlhdl_ratio = (EditText) f.findViewById(R.id.input_Lipidlhdl_ratio);
+        final EditText input_sugarrbs = (EditText) f.findViewById(R.id.input_sugarrbs);
+        final EditText input_urinePusCell = (EditText) f.findViewById(R.id.input_urinePusCell);
+        final EditText input_urineRbc = (EditText) f.findViewById(R.id.input_urineRbc);
+        final EditText input_urinaryCast = (EditText) f.findViewById(R.id.input_urinaryCast);
+        final EditText input_urineProtein = (EditText) f.findViewById(R.id.input_urineProtein);
+        final EditText input_urineCrystal = (EditText) f.findViewById(R.id.input_urineCrystal);
+        final EditText input_microalbuminuria = (EditText) f.findViewById(R.id.input_microalbuminuria);
+        final EditText input_serumCreatinine = (EditText) f.findViewById(R.id.input_serumCreatinine);
+        final EditText input_tsh = (EditText) f.findViewById(R.id.input_tsh);
+        final EditText input_t3 = (EditText) f.findViewById(R.id.input_t3);
+        final EditText input_t4 = (EditText) f.findViewById(R.id.input_t4);
+        final EditText input_acr = (EditText) f.findViewById(R.id.input_acr);
+
+        hemogramlayout = (LinearLayout) f.findViewById(R.id.hemogramlayout);
+        liverFunctionlayout = (LinearLayout) f.findViewById(R.id.liverFunctionlayout);
+        lipidProfilelayout = (LinearLayout) f.findViewById(R.id.lipidProfilelayout);
+        diabeticlayout = (LinearLayout) f.findViewById(R.id.diabeticlayout);
+        urineRoutineExaminationlayout = (LinearLayout) f.findViewById(R.id.urineRoutineExaminationlayout);
+        rftlayout = (LinearLayout) f.findViewById(R.id.rftlayout);
+        thyroidProfilelayout = (LinearLayout) f.findViewById(R.id.thyroidProfilelayout);
+
+        txthemogram = (TextView) f.findViewById(R.id.txthemogram);
+        txtLiverFunctionTest = (TextView) f.findViewById(R.id.txtLiverFunctionTest);
+        txtLipidProfile = (TextView) f.findViewById(R.id.txtLipidProfile);
+        txtDiabeticProfile = (TextView) f.findViewById(R.id.txtDiabeticProfile);
+        txtUrineRoutineExamination = (TextView) f.findViewById(R.id.txtUrineRoutineExamination);
+        txtRft = (TextView) f.findViewById(R.id.txtRft);
+        txtThyroidProfile = (TextView) f.findViewById(R.id.txtThyroidProfile);*/
+
+
+
         RadioGroup radioEcg = (RadioGroup) f.findViewById(R.id.radioEcg);
         RadioGroup radioPft = (RadioGroup) f.findViewById(R.id.radioPft);
 
         sbInvestigations.setLength(0);//clearing string builder from previous data
-
 
         if (strLipidTC != null) {
             input_LipidTC.setText(strLipidTC);
@@ -1660,8 +1782,39 @@ public class AddPatientUpdateFragment extends Fragment {
             edtInput_sugarfasting.setText(strSugarFasting);
         if (strHbA1c != null && !strHbA1c.equals("")) input_hba1c.setText(strHbA1c);
         if (strSerumUrea != null && !strSerumUrea.equals("")) input_seremUrea.setText(strSerumUrea);
-        if (strAcer != null && !strAcer.equals("")) input_acer.setText(strAcer);
-
+       if (strAcer != null && !strAcer.equals("")) input_acer.setText(strAcer);
+        /*if (strHb != null && !strHb.equals(""))input_hb.setText(strHb);
+        if (strPlateletCount != null && !strPlateletCount.equals("")) input_plateletcount.setText(strPlateletCount);
+        if (strEsr != null && !strEsr.equals(""))input_esr.setText(strEsr);
+        if (strDcl != null && !strDcl.equals(""))input_dcl.setText(strDcl);
+        if (strDcn != null && !strDcn.equals("")) input_dcn.setText(strDcn);
+        if (strDce != null && !strDce.equals("")) input_dce.setText(strDce);
+        if (strDcm != null && !strDcm.equals("")) input_dcm.setText(strDcm);
+        if (strDcb != null && !strDcb.equals("")) input_dcb.setText(strDcb);
+        if (strTotalBiliubin != null && !strTotalBiliubin.equals("")) input_totalbilirubin.setText(strTotalBiliubin);
+        if (strDirectBilirubin != null && !strDirectBilirubin.equals("")) input_directbilirubin.setText(strDirectBilirubin);
+        if (strIndirectBilirubin != null && !strIndirectBilirubin.equals("")) input_indirectbilirubin.setText(strIndirectBilirubin);
+        if (strSgpt != null && !strSgpt.equals(""))input_sgpt.setText(strSgpt);
+        if (strSgot != null && !strSgot.equals(""))input_sgot.setText(strSgot);
+        if (strGgt != null && !strGgt.equals(""))input_ggt.setText(strGgt);
+        if (strTotalProtein != null && !strTotalProtein.equals(""))input_totalprotein.setText(strTotalProtein);
+        if(strAlbumin!= null && !strAlbumin.equals(""))input_albumin.setText(strAlbumin);
+        if (strGlobulin != null && !strGlobulin.equals(""))input_globulin.setText(strGlobulin);
+        if(strAgRatio!= null && !strAgRatio.equals(""))input_agratio.setText(strAgRatio);
+        if( strTch!= null && !strTch.equals(""))input_tch.setText(strTch);
+        if(strLdlHdlRatio!= null && !strLdlHdlRatio.equals(""))input_Lipidlhdl_ratio.setText(strLdlHdlRatio);
+        if (strSugarRbs!= null && !strSugarRbs.equals(""))input_sugarrbs.setText(strSugarRbs);
+        if(strUrinaryPusCell!= null && !strUrinaryPusCell.equals(""))input_urinePusCell.setText(strUrinaryPusCell);
+        if(strUrineRbc!= null && !strUrineRbc.equals(""))input_urineRbc.setText(strUrineRbc);
+        if(strUrinaryCast!= null && !strUrinaryCast.equals(""))input_urinaryCast.setText(strUrinaryCast);
+        if(strUrineProtein!= null && !strUrineProtein.equals(""))input_urineProtein.setText(strUrineProtein);
+        if(strUrineCrystal!= null && !strUrineCrystal.equals(""))input_urineCrystal.setText(strUrineCrystal);
+        if(strMicroalbuminuria!= null && !strMicroalbuminuria.equals(""))input_microalbuminuria.setText(strMicroalbuminuria);
+        if(strSerumCreatinine!= null && !strSerumCreatinine.equals(""))input_serumCreatinine.setText(strSerumCreatinine);
+        if(strAcr != null && !strAcr.equals(""))input_acr.setText(strAcr);
+        if(strTsh != null && !strTsh.equals(""))input_tsh.setText(strTsh);
+        if(strT3!= null && !strT3.equals(""))input_t3.setText(strT3);
+        if(strT4!= null && !strT4.equals(""))input_t4.setText(strT4);*/
 
         if (strEcg != null && !strEcg.equals(""))
             switch (strEcg) {
@@ -1743,11 +1896,43 @@ public class AddPatientUpdateFragment extends Fragment {
                 strHbA1c = input_hba1c.getText().toString();
                 strSerumUrea = input_seremUrea.getText().toString();
                 strAcer = input_acer.getText().toString();
-                String flag = "0";
+
+               /* strHb = input_hb.getText().toString();
+                strTch=input_tch.getText().toString();
+                strPlateletCount = input_plateletcount.getText().toString();
+                strEsr = input_esr.getText().toString();
+                strDcl = input_dcl.getText().toString();
+                strDcn = input_dcn.getText().toString();
+                strDce = input_dce.getText().toString();
+                strDcm = input_dcm.getText().toString();
+                strDcb = input_dcb.getText().toString();
+                strTotalBiliubin = input_totalbilirubin.getText().toString();
+                strDirectBilirubin = input_directbilirubin.getText().toString();
+                strIndirectBilirubin = input_indirectbilirubin.getText().toString();
+                strSgpt = input_sgpt.getText().toString();
+                strSgot=input_sgot.getText().toString();
+                strGgt = input_ggt.getText().toString();
+                strTotalProtein = input_totalprotein.getText().toString();
+                strAlbumin = input_albumin.getText().toString();
+                strGlobulin = input_globulin.getText().toString();
+                strAgRatio = input_agratio.getText().toString();
+                strLdlHdlRatio = input_Lipidlhdl_ratio.getText().toString();
+                strSugarRbs = input_sugarrbs.getText().toString();
+                strUrinaryPusCell = input_urinePusCell.getText().toString();
+                strUrineRbc = input_urineRbc.getText().toString();
+                strUrinaryCast = input_urinaryCast.getText().toString();
+                strUrineProtein = input_urineProtein.getText().toString();
+                strUrineCrystal = input_urineCrystal.getText().toString();
+                strMicroalbuminuria = input_microalbuminuria.getText().toString();
+                strSerumCreatinine = input_serumCreatinine.getText().toString();
+                strTsh = input_tsh.getText().toString();
+                strT3 = input_t3.getText().toString();
+                strT4 = input_t4.getText().toString();
+                strAcr=input_acr.getText().toString();
+*/
 
                 if (strSgar != null && !strSgar.equals("") && strSgar.length() > 0) {
                     sbInvestigations.append("Sugar(PPG):").append(strSgar).append(" ;");
-
                 }
                 if (strSugarFasting != null && !strSugarFasting.equals("") && strSugarFasting.length() > 0) {
                     sbInvestigations.append("  ");
@@ -1767,7 +1952,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 }
                 if (strAcer != null && !strAcer.equals("") && strAcer.length() > 0) {
                     sbInvestigations.append("  ");
-                    sbInvestigations.append(" Acer:").append(strAcer).append(" ;");
+                    sbInvestigations.append(" ACR:").append(strAcer).append(" ;");
                 }
                 if (strSerumUrea != null && !strSerumUrea.equals("") && strSerumUrea.length() > 0) {
                     sbInvestigations.append("  ");
@@ -1794,8 +1979,8 @@ public class AddPatientUpdateFragment extends Fragment {
                     sbInvestigations.append(" VLDL:").append(strLipidVHDL).append(" ;");
                 }
 
-                dbController.addInvestigation(strPatientId, strVisitId, strSgar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC
-                        , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft, flag);
+                /*dbController.addInvestigation(strPatientId, strVisitId, strSgar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC
+                        , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft, flag);*/
 
                 showInvestigationData.setText(sbInvestigations);
                 dialog.dismiss();
@@ -2169,5 +2354,108 @@ public class AddPatientUpdateFragment extends Fragment {
         }
 
         showObservationsData.setText(sbObservations);
+    }
+    private void setOnClickListner() {
+
+
+        txthemogram.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxthemogram == 1) {
+                    hemogramlayout.setVisibility(View.VISIBLE);
+                    txthemogram.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxthemogram = 2;
+                } else {
+                    hemogramlayout.setVisibility(View.GONE);
+                    txthemogram.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxthemogram = 1;
+                }
+                //  txtRecord.setBackground(R.drawable.);
+            }
+        });
+        txtLiverFunctionTest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxtLiverFunctionTest == 1) {
+                    liverFunctionlayout.setVisibility(View.VISIBLE);
+                    txtLiverFunctionTest.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxtLiverFunctionTest = 2;
+                } else {
+                    liverFunctionlayout.setVisibility(View.GONE);
+                    txtLiverFunctionTest.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxtLiverFunctionTest = 1;
+                }
+            }
+        });
+        txtLipidProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxtLipidProfile == 1) {
+                    lipidProfilelayout.setVisibility(View.VISIBLE);
+                    txtLipidProfile.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxtLipidProfile = 2;
+                } else {
+                    lipidProfilelayout.setVisibility(View.GONE);
+                    txtLipidProfile.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxtLipidProfile = 1;
+                }
+            }
+        });
+        txtDiabeticProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxtDiabeticProfile == 1) {
+                    diabeticlayout.setVisibility(View.VISIBLE);
+                    txtDiabeticProfile.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxtDiabeticProfile = 2;
+                } else {
+                    diabeticlayout.setVisibility(View.GONE);
+                    txtDiabeticProfile.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxtDiabeticProfile = 1;
+                }
+            }
+        });
+        txtUrineRoutineExamination.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxtUrineRoutineExamination == 1) {
+                    urineRoutineExaminationlayout.setVisibility(View.VISIBLE);
+                    txtUrineRoutineExamination.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxtUrineRoutineExamination = 2;
+                } else {
+                    urineRoutineExaminationlayout.setVisibility(View.GONE);
+                    txtUrineRoutineExamination.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxtUrineRoutineExamination = 1;
+                }
+            }
+        });
+        txtRft.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxtRft == 1) {
+                    rftlayout.setVisibility(View.VISIBLE);
+                    txtRft.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxtRft = 2;
+                } else {
+                    rftlayout.setVisibility(View.GONE);
+                    txtRft.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxtRft = 1;
+                }
+            }
+        });
+        txtThyroidProfile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (counttxtThyroidProfile == 1) {
+                    thyroidProfilelayout.setVisibility(View.VISIBLE);
+                    txtThyroidProfile.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.up_arrow, 0); //set drawable right to text view
+                    counttxtThyroidProfile = 2;
+                } else {
+                    thyroidProfilelayout.setVisibility(View.GONE);
+                    txtThyroidProfile.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.down_arrow, 0); //set drawable right to text view
+                    counttxtThyroidProfile = 1;
+                }
+            }
+        });
     }
 }

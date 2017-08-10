@@ -893,7 +893,7 @@ public class LoginActivity extends Activity {
                 }
                 if (allergyCount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("Allergy.sql"));
-                    Log.e("Allergy","Task is ruuning ");
+                   // Log.e("Allergy","Task is ruuning ");
                 }
 
             } catch (IOException | ClirNetAppException e) {
