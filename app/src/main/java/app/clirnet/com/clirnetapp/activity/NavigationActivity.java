@@ -18,12 +18,11 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.app.MasterSessionService;
 import app.clirnet.com.clirnetapp.dialogFragment.MasterSessionDialog;
+import app.clirnet.com.clirnetapp.fcm.MyFirebaseMessagingService;
 import app.clirnet.com.clirnetapp.fragments.AssociatesFragment;
 import app.clirnet.com.clirnetapp.fragments.BarChartFragment;
 import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
@@ -35,6 +34,7 @@ import app.clirnet.com.clirnetapp.fragments.KnowledgeFragment;
 import app.clirnet.com.clirnetapp.fragments.PatientAnnouncements;
 import app.clirnet.com.clirnetapp.fragments.PatientReportFragment;
 import app.clirnet.com.clirnetapp.fragments.PoHistoryFragment;
+import app.clirnet.com.clirnetapp.fragments.ReferralsFragment;
 import app.clirnet.com.clirnetapp.fragments.ReportFragment;
 import app.clirnet.com.clirnetapp.fragments.ReportFragmentViewPagerSetup;
 import app.clirnet.com.clirnetapp.fragments.TopTenAilmentFragment;
@@ -51,7 +51,7 @@ import com.google.firebase.messaging.FirebaseMessaging;*/
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
         , ReportFragment.OnFragmentInteractionListener, PatientReportFragment.OnFragmentInteractionListener, ReportFragmentViewPagerSetup.OnFragmentInteractionListener, TopTenAilmentFragment.OnFragmentInteractionListener,
-        BarChartFragment.OnFragmentInteractionListener, KnowledgeFragment.OnFragmentInteractionListener, IncompleteListFragment.OnFragmentInteractionListener, AssociatesFragment.OnFragmentInteractionListener, HealthVitalsDialogFragment.onSubmitListener, DashboardFragment.OnFragmentInteractionListener, MasterSessionDialog.OnFragmentInteractionListener, PatientAnnouncements.OnFragmentInteractionListener, ConnectivityChangeReceiver.ConnectivityReceiverListener {
+        BarChartFragment.OnFragmentInteractionListener, KnowledgeFragment.OnFragmentInteractionListener, IncompleteListFragment.OnFragmentInteractionListener, AssociatesFragment.OnFragmentInteractionListener, HealthVitalsDialogFragment.onSubmitListener, DashboardFragment.OnFragmentInteractionListener, MasterSessionDialog.OnFragmentInteractionListener, PatientAnnouncements.OnFragmentInteractionListener, ConnectivityChangeReceiver.ConnectivityReceiverListener,ReferralsFragment.OnFragmentInteractionListener {
 
 
     private FragmentManager fragmentManager;
@@ -79,8 +79,9 @@ public class NavigationActivity extends AppCompatActivity
             type = getIntent().getStringExtra("TYPE");
             actionPath = getIntent().getStringExtra("ACTION_PATH");
             headerMsg = getIntent().getStringExtra("HEADER");
-            String calledFrom = getIntent().getStringExtra("CALLEDFROM");
             kind = getIntent().getStringExtra("KIND");
+             /*Clearing notifications ArrayList from MyFirebaseMessagingService fater clicking on it*/
+            MyFirebaseMessagingService.notifications.clear();
 
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -212,7 +213,7 @@ public class NavigationActivity extends AppCompatActivity
 
     private void subscribeToPushService() {
 
-        FirebaseMessaging.getInstance().subscribeToTopic("news");
+        //FirebaseMessaging.getInstance().subscribeToTopic("news");
         //   Log.d("AndroidBash", "Subscribed");
         //Toast.makeText(NavigationActivity.this, "Subscribed", Toast.LENGTH_SHORT).show();
 
@@ -407,7 +408,6 @@ public class NavigationActivity extends AppCompatActivity
     }
 
     public void setActionBarTitle(String title) {
-        // Log.e("getTitle",""+ title);
         try {
             getSupportActionBar().setTitle(title);
         } catch (NullPointerException e) {
@@ -416,22 +416,7 @@ public class NavigationActivity extends AppCompatActivity
 
     }
 
-    /* public void callAction( String demo,String str ) {
 
-         Fragment mFragment;
-         fragmentManager = getSupportFragmentManager();
-
-         try {
-             Class <?> Cref = Class .forName("app.clirnet.com.clirnetapp.fragments."+str );
-         } catch (ClassNotFoundException e) {
-             e.printStackTrace();
-         }
-
-         //  mFragment = getResources().getIdentifier(actionPath,"string","app.clirnet.com.clirnetapp.fragments");
-
-         AppController.getInstance().trackEvent("Patient Central", "Navigation");
-     }
- */
     public void callAction(String action) {
 
         Fragment mFragment;

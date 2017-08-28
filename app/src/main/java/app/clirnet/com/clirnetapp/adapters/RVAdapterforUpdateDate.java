@@ -17,7 +17,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 public class RVAdapterforUpdateDate extends RecyclerView.Adapter<RVAdapterforUpdateDate.PatientViewHolder> {
 
     private List<RegistrationModel> patientList;
-    private AppController appController=new AppController();
+
 
 
     public RVAdapterforUpdateDate(List<RegistrationModel> patientList) {

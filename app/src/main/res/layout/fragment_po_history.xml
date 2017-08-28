@@ -113,14 +113,13 @@
                     android:padding="5dp" />
 
                 <MultiAutoCompleteTextView
-
                     android:id="@+id/symptoms"
                     android:layout_width="wrap_content"
                     android:layout_height="45dp"
                     android:layout_margin="4dp"
                     android:layout_marginRight="5dp"
                     android:layout_weight="0.5"
-                    android:background="@drawable/rectangle_corner"
+                    android:background="@drawable/edittext_bottom_line"
                     android:digits="@string/digitsnumber"
                     android:fontFamily="sans-serif"
                     android:hint="Enter Symptoms and Diagnosis"

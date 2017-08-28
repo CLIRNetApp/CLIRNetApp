@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -535,7 +534,7 @@ public class SQLController {
                 selectQuery = selectQuery.concat(" and hl.allergies like '%" + strAllergie + "%'");
                 countQuery = countQuery.concat("  and hl.allergies like '%" + strAllergie +"%'");
             }
-            Log.e("",""+strPallor);
+           // Log.e("",""+strPallor);
             if (strPallor != null && !strPallor.equals("")) {
                 selectQuery = selectQuery.concat(" and obs.pallor like '%" + strPallor + "%'");
                 countQuery = countQuery.concat("  and obs.pallor like '%" + strPallor +"%'");
@@ -610,8 +609,8 @@ public class SQLController {
 
             new Counts().setCountQuery(countQuery);
 
-            Log.e("selectQuery", "" + selectQuery);
-            Log.e("countQueryQuery", "" + countQuery);
+           // Log.e("selectQuery", "" + selectQuery);
+         //   Log.e("countQueryQuery", "" + countQuery);
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
 
@@ -1296,7 +1295,7 @@ public class SQLController {
                     "patient dpr , patient_history pvd \n" +
                     "WHERE dpr.patient_id = pvd.patient_id \n" +
                     "AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) \n" +
-                    "Between Date('" + fromdate + "') AND Date('" + todate + "') limit 20 \n";
+                    "Between Date('" + fromdate + "') AND Date('" + todate + "') ";
 
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
@@ -1336,11 +1335,11 @@ public class SQLController {
                     "patient dpr , patient_history pvd \n" +
                     "WHERE dpr.patient_id = pvd.patient_id \n" +
                     "AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) \n" +
-                    "Between Date('" + fromdate + "') AND Date('" + todate + "') and pvd.diagnosis !='null' and pvd.diagnosis !=''  limit 20 \n";
+                    "Between Date('" + fromdate + "') AND Date('" + todate + "') and pvd.diagnosis !='null' and pvd.diagnosis !=''  limit 0,20 \n";
 
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
-            //Log.e("selectQuery", " "+selectQuery);
+            //Log.e("getCountTopTenDiagnosis", " "+selectQuery);
 
 
             // looping through all rows and adding to list
@@ -2402,7 +2401,7 @@ public class SQLController {
                     returnStringMin = cursor.getInt(cursor.getColumnIndex("minWeight"));
                     returnStringMax = cursor.getInt(cursor.getColumnIndex("maxWeight"));
                    int returnStringMax1 = cursor.getInt(cursor.getColumnIndex("maxWeight"));
-                    Log.e("returnStringMax1", "  " + returnStringMin + "  " + returnStringMax1);
+                 //   Log.e("returnStringMax1", "  " + returnStringMin + "  " + returnStringMax1);
                     if (returnStringMin != null && !returnStringMin.equals("")) {
                         map.put("MINWEIGHT", returnStringMin);
                         map.put("MAXWEIGHT", returnStringMax);
@@ -2978,7 +2977,7 @@ public class SQLController {
 
         try {
             numRows = (int) DatabaseUtils.longForQuery(db1, query, list);
-            Log.e("query","  "+numRows);
+           // Log.e("query","  "+numRows);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -3022,10 +3021,51 @@ public class SQLController {
 
             cursor = db.rawQuery(query, null);
 
-            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    String id=cursor.getString(cursor.getColumnIndex("id"));
+                    String num =cursor.getString(cursor.getColumnIndex("num"));
+
+                    Counts rm=new Counts(id, num,cursor.getString(1));
+                    list.add(rm);
+
+                } while (cursor.moveToNext());
+            }
+
+
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while geting countPerDa");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db != null) {
+                db.close();
+            }
+        }
+
+        return list;
+    }
+    public  ArrayList<Counts> getMostConnectedDr(String columnName,String fromDate,String toDate) throws ClirNetAppException {
+
+        ArrayList<Counts> list = new ArrayList<>();
+
+        SQLiteDatabase db = null;
+        Cursor cursor = null;
+
+        try {
+
+            String query = "SELECT " + columnName + " as id , COUNT(*) AS `num`,status FROM patient_history where " + columnName + " !='null' and " + columnName + " !=''  and date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) Between '" + fromDate + "' AND '" + toDate + "' GROUP BY " + columnName + " order by num desc limit 20 ";
+            db = dbHelper.getReadableDatabase();
+
+            //Log.e("query","  "+query);
+
+            cursor = db.rawQuery(query, null);
 
             if (cursor.moveToFirst()) {
                 do {
+
                     String id=cursor.getString(cursor.getColumnIndex("id"));
                     String num =cursor.getString(cursor.getColumnIndex("num"));
 
@@ -3058,15 +3098,21 @@ public class SQLController {
         try {
             db1 = dbHelper.getReadableDatabase();
 
-            String query = "select name,title from associate_master where id="+ id +" ";
+            String query = "select name , title from associate_master where id="+ id +" ";
 
             cursor = db1.rawQuery(query, null);
 
             if (cursor.moveToFirst()) {
                 returnString = cursor.getString(cursor.getColumnIndex("name"));
                 String  title = cursor.getString(cursor.getColumnIndex("title"));
+                if(title!=null){
+                    returnString= title + " " +returnString;
+                }else{
+                    returnString= " " +returnString;
+                }
 
-                    returnString= title+ " " +returnString;
+
+
             }
         } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong while getting getDoctorMembershipIdNew");
@@ -3140,16 +3186,45 @@ public class SQLController {
         }
         return returnString;
     }
+    public String getAssociateType(String id) throws ClirNetAppException {
 
-    public ArrayList<RegistrationModel> getMasterSession() throws ClirNetAppException {
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        String returnString = ""; // Your default if none is found
+        try {
+            db1 = dbHelper.getReadableDatabase();
+
+            String query = "select associate_type from associate_master where id="+ id +" ";
+
+            cursor = db1.rawQuery(query, null);
+
+            if (cursor.moveToFirst()) {
+                returnString = cursor.getString(cursor.getColumnIndex("associate_type"));
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getAssociateType");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return returnString;
+    }
+
+    public ArrayList<RegistrationModel> getMasterSession(String date) throws ClirNetAppException {
 
         ArrayList<RegistrationModel> healthLifestyleList = new ArrayList<>();
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery="select ms_id,ms_topic,ms_brief,ms_date_time,doctor_name,specialities_name,ms_cat_name,ms_url from recent_data_msession  order by  id desc limit 2;";
+            String selectQuery="select ms_id,ms_topic,ms_brief,ms_date_time,doctor_name,specialities_name,ms_cat_name,ms_url from recent_data_msession where ms_date_time > '" + date + "' order by  ms_date_time asc limit 10;";
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
+
+            //Log.e("selectQuery","  "+selectQuery);
 
             // looping through all rows and adding to list
 
@@ -3275,6 +3350,32 @@ public class SQLController {
         return returnString;
     }
 
+    public String getLastUpdatedDate() throws ClirNetAppException {
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        String returnString = ""; // Your default if none is found
+        try {
+            db1 = dbHelper.getReadableDatabase();
+
+            String query = "select added_on from recent_data_msession order by id desc limit 1";
+
+            cursor = db1.rawQuery(query, null);
+
+            if (cursor.moveToFirst()) {
+                returnString = cursor.getString(cursor.getColumnIndex("added_on"));
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getKCapData");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return returnString;
+    }
 }
 
 

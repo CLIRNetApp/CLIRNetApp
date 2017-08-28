@@ -381,7 +381,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 strMaxSugarFPG = vitalsMinMaxList.get(0).get("MAXSUGARFPG");
                 strMinSugarPPG = vitalsMinMaxList.get(0).get("MINSUGARPPG");
                 strMaxSugarPPG = vitalsMinMaxList.get(0).get("MAXSUGARPPG");
-             //   Log.e("strMinWeight", "  " + strMinSpo2 + "  " + strMaxSpo2 + "  " + strMinRespiration + "  " + strMaxRespiration);
+               //   Log.e("strMinWeight", "  " + strMinSpo2 + "  " + strMaxSpo2 + "  " + strMinRespiration + "  " + strMaxRespiration);
                 //Log.e("strMin", " " + strMinSugarFPG + " " + strMaxSugarFPG + " " + strMinSugarPPG + "  " + strMaxSugarPPG + "  " + strMinBmi + "  " + strMaxBmi);
             }
             if (investigationMinMaxList.size() > 0) {
@@ -852,12 +852,13 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
     @Override
     public void onItemsSelected(boolean[] selected) {
+
         selectedListGender.clear();
 
         for (int i = 0; i < selected.length; i++) {
             if (selected[i]) {
                 selectedItems[i] = 1;
-                // System.out.println("______________________" + genderList.get(i));
+               // System.out.println("______________________" + genderList.get(i));
                 String selGender = genderList.get(i).toString();
 
                 selectedListGender.add(selGender);
@@ -2236,7 +2237,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         LayoutInflater factory = LayoutInflater.from(getContext());
 
         final View f = factory.inflate(R.layout.observation_dialog, null);
-        dialog.setTitle(" Add Observation ");
+        dialog.setTitle(" Filter Observation ");
         dialog.setCanceledOnTouchOutside(false);
 
         dialog.setContentView(f);

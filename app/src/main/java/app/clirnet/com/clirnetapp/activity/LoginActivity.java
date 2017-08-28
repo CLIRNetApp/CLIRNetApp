@@ -1,15 +1,24 @@
 
 package app.clirnet.com.clirnetapp.activity;
 
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -34,7 +43,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -43,6 +54,7 @@ import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.app.DoctorDeatilsAsynTask;
 import app.clirnet.com.clirnetapp.app.LoginAsyncTask;
 import app.clirnet.com.clirnetapp.app.UpdatePassworsAsynTask;
+import app.clirnet.com.clirnetapp.fcm.MyFirebaseMessagingService;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
@@ -68,6 +80,7 @@ public class LoginActivity extends Activity {
     private static final String LOGIN_TIME = "loginTime";
     private static final String LOGIN_COUNT = "firstTimeLogin";
     private static final String SUGAR_INTO_INVESTIGATION = "vitalsToInvestigation";
+    public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
 
     @InjectView(R.id.email)
     EditText inputEmail;
@@ -117,7 +130,9 @@ public class LoginActivity extends Activity {
             type = getIntent().getStringExtra("TYPE");
             actionPath = getIntent().getStringExtra("ACTION_PATH");
             headerMsg = getIntent().getStringExtra("HEADER");
-
+            Log.e("Loginmsg", "  " + msg + "  header " + headerMsg + "  " +type + "  "+actionPath);
+            /*Clearing notifications ArrayList from MyFirebaseMessagingService fater clicking on it*/
+            MyFirebaseMessagingService.notifications.clear();
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
@@ -133,12 +148,9 @@ public class LoginActivity extends Activity {
             md5 = new MD5();
         }
 
-        if(type!=null && !type.equals("")){
-            goToNavigation();
-        }
 
-        int gap=appController.getCurrentAge("15-04-2015");
-        Log.e("gap","  "+gap);
+        //getCurrentDob(21);
+        //getCurrentDob(10);
 
         //this will set value to run  asynctask only once per login session
 
@@ -263,11 +275,18 @@ public class LoginActivity extends Activity {
         {
 
             public void onClick(View view) {
-
-                showChangePassDialog();
+                boolean isInternetPresent = connectionDetector.isConnectingToInternet();
+                if (isInternetPresent) {
+                    showChangePassDialog();
+                }else{
+                   appController.showNoInternetToast(getApplicationContext(),"Please Connect To Internet And Try Again!");
+                }
 
             }
         });
+        if(checkAndRequestPermissions()) {
+            // carry on the normal flow, as the case of  permissions  granted.
+        }
 
        /* if (getIntent().getExtras() != null) {
 
@@ -319,14 +338,39 @@ public class LoginActivity extends Activity {
                 try {
                     is.close();
                 } catch (IOException e) {
-                    // TODO Auto-generated catch block
+
                     e.printStackTrace();
                 }
         }*/
 
 
     }
+    private  boolean checkAndRequestPermissions() {
+        List<String> listPermissionsNeeded = new ArrayList<>();
+        String[] permissions= new String[]{
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.CAMERA,
+                Manifest.permission.READ_PHONE_STATE,
+                Manifest.permission.ACCESS_NETWORK_STATE,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.INTERNET,
+                Manifest.permission.READ_LOGS};
 
+        int result;
+        for (String p:permissions) {
+            result = ContextCompat.checkSelfPermission(this,p);
+            if (result != PackageManager.PERMISSION_GRANTED) {
+                listPermissionsNeeded.add(p);
+            }
+        }
+
+        if (!listPermissionsNeeded.isEmpty()) {
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
+            return false;
+        }
+        return true;
+    }
     private void updateBannerTableDataFlag() {
         AsyncTask.execute(new Runnable() {
             @Override
@@ -435,7 +479,7 @@ public class LoginActivity extends Activity {
 
                 String start_time = appController.getDateTimenew();
                 new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword, doctor_membership_number, docId, start_time);
-                new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber, doctor_membership_number, docId, start_time);
+                new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber, doctor_membership_number, docId, start_time,type,actionPath,msg,headerMsg);
                 //startService();
                 savedLoginCounter();//to save shrd pref to update login counter
                 new SessionManager(this).setLogin(true);
@@ -462,8 +506,9 @@ public class LoginActivity extends Activity {
                         isLogin = sqlController.validateUser(name, md5EncyptedDataPassword, phoneNumber);
 
                         if (isLogin) {
+                            appController.showNoInternetToast(getApplicationContext(), "Login Successful");
 
-                            Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_LONG).show();
+                            //Toast.makeText(getApplicationContext(), , Toast.LENGTH_LONG).show();
 
                             goToNavigation();
 
@@ -472,7 +517,8 @@ public class LoginActivity extends Activity {
                             new SessionManager(this).setLogin(true);
 
                         } else {
-                            Toast.makeText(getApplicationContext(), "Username/Password Mismatch", Toast.LENGTH_LONG).show();
+                            appController.showNoInternetToast(getApplicationContext(),  "Username/Password Mismatch");
+                            //Toast.makeText(getApplicationContext(), "Username/Password Mismatch", Toast.LENGTH_LONG).show();
                         }
                     }
                 } catch (ClirNetAppException e) {
@@ -486,9 +532,11 @@ public class LoginActivity extends Activity {
 
         } else {
             // Prompt user to enter credentials
-            Toast.makeText(getApplicationContext(),
+            appController.showNoInternetToast(getApplicationContext(), "Username/Password Incomplete");
+
+            /*Toast.makeText(getApplicationContext(),
                     "Username/Password Incomplete", Toast.LENGTH_LONG)
-                    .show();
+                    .show();*/
         }
 
     }
@@ -519,7 +567,7 @@ public class LoginActivity extends Activity {
         dialog.setCanceledOnTouchOutside(false);
 
         // set the custom dialog components - text, image and button
-        TextView btnSubmitPass = (TextView) dialog.findViewById(R.id.submit);
+        Button btnSubmitPass = (Button) dialog.findViewById(R.id.submit);
 
         oldPassword = (EditText) dialog.findViewById(R.id.oldPassword);
         newPassword = (EditText) dialog.findViewById(R.id.password);
@@ -549,20 +597,23 @@ public class LoginActivity extends Activity {
                     return;
                 }
                 if (!newPass.equals(confirmPass)) {
-                    Toast.makeText(getApplicationContext(), "Old and new Password do not match ", Toast.LENGTH_LONG).show();
+                    appController.showNoInternetToast(getApplicationContext(), "Old and new Password do not match ");
+
+                   // Toast.makeText(getApplicationContext(), "Old and new Password do not match ", Toast.LENGTH_LONG).show();
                     confirmPassword.setError("Old and new Password do not match  !");
                     return;
                 }
 
                 String md5oldPassword = MD5.getMD5(oldPass);
                 String md5newPassword = MD5.getMD5(newPass);
+              //  Log.e("md5newPassword","  "+md5oldPassword +"  "+md5newPassword);
                 String start_time = appController.getDateTimenew();
                 new UpdatePassworsAsynTask(LoginActivity.this, username, doctor_membership_number, docId, md5oldPassword, md5newPassword, start_time);
                 dialog.dismiss();
             }
         });
 
-        TextView cancel = (TextView) dialog.findViewById(R.id.cancel);
+        Button cancel = (Button) dialog.findViewById(R.id.cancel);
         // if button is clicked, close the custom dialog
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -791,7 +842,7 @@ public class LoginActivity extends Activity {
 
             @Override
             public void onResponse(String response) {
-                Log.d(TAG, "Register Response: " + response);
+              //  Log.d(TAG, "Register Response: " + response);
                 hideDialog();
 
                 try {
@@ -906,5 +957,106 @@ public class LoginActivity extends Activity {
             //  Toast.makeText(getApplicationContext(),"Rows loaded from file", Toast.LENGTH_SHORT).show();
         }
     }
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[], @NonNull int[] grantResults) {
+       // Log.d(TAG, "Permission callback called-------");
+        switch (requestCode) {
+            case REQUEST_ID_MULTIPLE_PERMISSIONS: {
 
+                Map<String, Integer> perms = new HashMap<>();
+                // Initialize the map with both permissions
+                perms.put(Manifest.permission.READ_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.WRITE_EXTERNAL_STORAGE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.CAMERA, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_PHONE_STATE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.ACCESS_NETWORK_STATE, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.INTERNET, PackageManager.PERMISSION_GRANTED);
+                perms.put(Manifest.permission.READ_LOGS, PackageManager.PERMISSION_GRANTED);
+                // Fill with actual results from user
+                if (grantResults.length > 0) {
+                    for (int i = 0; i < permissions.length; i++)
+                        perms.put(permissions[i], grantResults[i]);
+                    // Check for both permissions
+                    if (perms.get(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.READ_PHONE_STATE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
+                            && perms.get(Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED) {
+                        Log.d(TAG, "sms & location services permission granted");
+                        // process the normal flow
+                        //else any one or both the permissions are not granted
+                    } else {
+                        Log.d(TAG, "Some permissions are not granted ask again ");
+                        //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
+//                        // shouldShowRequestPermissionRationale will return true
+                        //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)   || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE) ||
+                                ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_NETWORK_STATE)   || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET) ||
+                                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_LOGS)) {
+                            showDialogOK("Camera and Location Services Permission required for this app",
+                                    new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            switch (which) {
+                                                case DialogInterface.BUTTON_POSITIVE:
+                                                    checkAndRequestPermissions();
+                                                    break;
+                                                case DialogInterface.BUTTON_NEGATIVE:
+                                                    // proceed with logic by disabling the related features or quit the app.
+                                                    break;
+                                            }
+                                        }
+                                    });
+                        }
+                        //permission is denied (and never ask again is  checked)
+                        //shouldShowRequestPermissionRationale will return false
+                        else {
+                            Toast.makeText(this, "Go to settings and enable permissions", Toast.LENGTH_LONG)
+                                    .show();
+                            //                            //proceed with logic by disabling the related features or quit the app.
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+    private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(this)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", okListener)
+                .create()
+              .show();
+    }
+    private String getCurrentDob(int age){
+
+        final Calendar c2 = Calendar.getInstance();
+        int mYear = c2.get(Calendar.YEAR);
+
+        int mMonth = c2.get(Calendar.MONTH);
+
+        if(mMonth>11){
+            mMonth=mMonth-9;
+        } else if(mMonth>6){
+            mMonth=mMonth-4;
+        }
+        int mDay = c2.get(Calendar.DAY_OF_MONTH);
+        if(mDay>27){
+            mDay=mDay-22;
+        }else if(mDay>16){
+            mDay=mDay-15;
+        }
+        int yr=mYear-age;
+
+        String dob= mDay + "-"
+                + (mMonth + 1) + "-" + yr;
+
+        dob = appController.ConvertDateFormat(dob);
+        return dob;
+    }
 }

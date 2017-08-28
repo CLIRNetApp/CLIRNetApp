@@ -20,9 +20,6 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 public class FollowUpDateSearchAdapter extends RecyclerView.Adapter<FollowUpDateSearchAdapter.PatientViewHolder> {
 
     private List<RegistrationModel> patientList;
-    private  AppController appController=new AppController();
-
-
 
 
     public FollowUpDateSearchAdapter(List<RegistrationModel> patientList) {

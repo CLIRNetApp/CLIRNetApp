@@ -114,6 +114,7 @@ public class ReportFragment extends Fragment {
         //this will by default set reports for the week from todays date
 
         mFragmentManager = getChildFragmentManager();
+
         CallLastWeek();
 
         final AppCompatActivity activity = (AppCompatActivity) getActivity();

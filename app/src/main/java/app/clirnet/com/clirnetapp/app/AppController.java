@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Environment;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -60,8 +61,6 @@ import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.utility.ConnectivityChangeReceiver;
 
-import static app.clirnet.com.clirnetapp.R.id.produced_bytxt;
-
 public class AppController extends Application {
 
     private static final String TAG = AppController.class.getSimpleName();
@@ -80,13 +79,11 @@ public class AppController extends Application {
     private ConnectionDetector connectionDetector;
 
 
-
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
     }
-
 
     @Override
     public void onCreate() {
@@ -110,6 +107,7 @@ public class AppController extends Application {
     public void setConnectivityListener(ConnectivityChangeReceiver.ConnectivityReceiverListener listener) {
         ConnectivityChangeReceiver.connectivityReceiverListener = listener;
     }
+
     /***
      * Tracking screen view
      *
@@ -168,7 +166,7 @@ public class AppController extends Application {
 
     public <T> void addToRequestQueue(Request<T> req, String tag) {
         req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
-        // Log.d("Adding request to ", "" + req.getUrl());
+
         getRequestQueue().add(req);
     }
 
@@ -232,7 +230,6 @@ public class AppController extends Application {
         return val;
     }
 
-
     //this will gives you a age from the date
     public int getAge(int year, int monthOfYear, int dayOfMonth) {
 
@@ -289,10 +286,8 @@ public class AppController extends Application {
                     sb.append(",");
                 }
                 sb.append(retrieveData);
-
             }
         }
-
         str = sb.toString();
         str = str.startsWith(",") ? str.substring(1) : str; //this will remove , from start of the filtered string after removing middle commas from string
 
@@ -347,14 +342,6 @@ public class AppController extends Application {
         return cal.getTime();
     }
 
-
-    //check if the ailment string contains all the nubers or not
-    public boolean findNumbersAilment(String value) {
-        String result = value.replaceAll("[,]", "");
-        String regex = "[0-9]+";
-        return result.matches(regex);
-    }
-
     public Integer findLength(String value) {
 
         return (value.length());
@@ -363,7 +350,6 @@ public class AppController extends Application {
     public String ConvertDateFormat(String date) {
         SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
-
 
         String frmtedDate = "";
 
@@ -380,7 +366,6 @@ public class AppController extends Application {
     }
 
     public boolean PhoneNumberValidation(String value) {
-
         boolean result = true;
         try {
             if (value != null && !value.equals("")) {
@@ -395,9 +380,7 @@ public class AppController extends Application {
         }
 
         return result;
-
     }
-
 
     //Method to validate if there is allready records in db to check
     public boolean isDuplicate(List<String> col, String value) {
@@ -411,24 +394,6 @@ public class AppController extends Application {
         return isDuplicate;
     }
 
-
-
-    private long getFileSize(String strfile) {
-        long length = 0;
-
-        try {
-
-            File file = new File(strfile);
-            length = file.length();
-            length = length / 1024;
-
-        } catch (Exception e) {
-
-            e.printStackTrace();
-        }
-
-        return length;
-    }
 
     //get the hours between two dates
     public static int hoursAgo(String datetime) {
@@ -507,7 +472,7 @@ public class AppController extends Application {
         /////////////////////////////////////
         TextView mktByText = (TextView) dialog.findViewById(R.id.mktByText);
         TextView brand_nameText = (TextView) dialog.findViewById(R.id.brand_name);
-        TextView produced_byText = (TextView) dialog.findViewById(produced_bytxt);
+        TextView produced_byText = (TextView) dialog.findViewById(R.id.produced_bytxt);
         TextView generic_nameText = (TextView) dialog.findViewById(R.id.generic_name);
 
         Button btnrequest_sample = (Button) dialog.findViewById(R.id.request_sample);
@@ -568,7 +533,7 @@ public class AppController extends Application {
             btnrequest_sample.setVisibility(View.INVISIBLE);
         }
 
-        //  dialog.setCancelable(false);
+
         Button close = (Button) dialog.findViewById(R.id.close);
 
         close.setOnClickListener(new View.OnClickListener() {
@@ -592,7 +557,6 @@ public class AppController extends Application {
                     creteCallMeDialog(context, "call_me");
                 } else {
 
-                    // Toast.makeText(context1, "Please Connect to Internet and try again", Toast.LENGTH_LONG).show();
                     callNoInternetDialog(context);
                 }
 
@@ -612,7 +576,6 @@ public class AppController extends Application {
                     creteCallMeDialog(context, "meet_me");
                 } else {
 
-                    // Toast.makeText(context1, "Please Connect to Internet and try again", Toast.LENGTH_LONG).show();
                     callNoInternetDialog(context);
                 }
 
@@ -639,8 +602,7 @@ public class AppController extends Application {
                         appendLog(getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                     }
-                   /* Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(finalLink_to_page));
-                    startActivity(browserIntent);*/
+
                 } else {
                     Toast.makeText(context, "No Link Available ", Toast.LENGTH_LONG).show();
                 }
@@ -898,7 +860,7 @@ public class AppController extends Application {
         mTimePicker = new TimePickerDialog(context1, new TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
-                // textView.setText( selectedHour + ":" + selectedMinute);
+
                 updateTime(selectedHour, selectedMinute, textView);
             }
         }, hour, minute, true);//Yes 24 hour time
@@ -971,9 +933,9 @@ public class AppController extends Application {
                 }, mYear2, mMonth2, mDay2);
         Date newDate = c2.getTime();
         dpd1.getDatePicker().setMinDate(newDate.getTime());
-        //  dpd1.getDatePicker().setMaxDate(System.currentTimeMillis());
+
         dpd1.show();
-        //show age of pateint
+
     }
 
     public void saveBannerDataIntoDb(String BannerImageUrl, Context context, String doctor_membership_number, String action, String sourcepage) {
@@ -984,7 +946,6 @@ public class AppController extends Application {
         String company_id = null;
         String banner_id = null;
         String banner_folder = null;
-        //String banner_image = BannerImageUrl;
         int banner_type_id = 0;
         String module = "patient";
         String is_deleted = "0";
@@ -1000,7 +961,6 @@ public class AppController extends Application {
             banner_folder = sqlController.getFolderName(BannerImageUrl);
             company_id = sqlController.getBannerCompany_id();
             banner_type_id = sqlController.getBannerTypeId(BannerImageUrl);
-            //Log.e("banner_id", "  " + banner_id+""+banner_folder);
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
             this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1117,38 +1077,7 @@ public class AppController extends Application {
         return mediaImage;
     }
 
-    public Bitmap getBitmap(String url) {
-        // initilize the default HTTP client object
-        try {
 
-            if (url != null) {
-
-                try {
-                    //String path = null;
-                    String imageName = getImage(url) + ".png";
-                    final Bitmap bitmap = BitmapFactory.decodeFile(imageName);
-                    File file = getImage(url + ".png");
-
-                    if (file != null) {
-                        long length = file.length();
-                        length = length / 1024;
-                        if (length > 0) {
-                            // path = file.getAbsolutePath();
-                            return bitmap;
-                        }
-                    }
-
-                } catch (Exception e) {
-                    // You Could provide a more explicit error message for IOException
-                    this.appendLog(this.getDateTime() + " " + "/ " + "App Controller " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
-
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
     /*Method to get/display banner image*/
     public void setUpAdd(final Context context, ArrayList<String> bannerimgNamesList, ImageView backChangingImages, final String doctor_membership_number, final String pageTitle) {
@@ -1220,11 +1149,11 @@ public class AppController extends Application {
 
     public Date stringToDate(String dtStart) {
 
-        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         Date date = null;
         try {
             date = format.parse(dtStart);
-            System.out.println(date);
+           // System.out.println(date);
         } catch (ParseException e) {
 
             e.printStackTrace();
@@ -1250,36 +1179,85 @@ public class AppController extends Application {
                 obseity = "class 2 obesity";
             } else if (bmi >= 40.0) {
                 obseity = "class 3 obesity";
-            }else{
+            } else {
                 return null;
             }
         }
         return obseity;
     }
-    public int getCurrentAge(String birthDate){
 
-        int years=0;
-        Date currentDate=new Date();
-        DateFormat formatter=new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
-        try{
+    //get age in years from added on date
+    public int getCurrentAge(String birthDate) {
+
+        int years = 0;
+        Date currentDate = new Date();
+        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        try {
             Date date = formatter.parse(birthDate);     //birthDate is a String, in format dd-MM-yyyy
             long diff = currentDate.getTime() - date.getTime();
 
             years = Math.round(diff / 1000 / 60 / 60 / 24 / 365);
 
-        }catch (Exception  e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return years;
     }
-public String getCurrentDate(){
-    Calendar c = Calendar.getInstance();
-    System.out.println("Current time => " + c.getTime());
 
-    SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
-    return df.format(c.getTime());
-}
+    public String getCurrentDate() {
+        Calendar c = Calendar.getInstance();
+        //System.out.println("Current time => " + c.getTime());
+
+        SimpleDateFormat df = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        return df.format(c.getTime());
+    }
+
+    public String getDate(String strDate) {
+
+        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        Date date;
+        String convertedDate = null;
+        try {
+            date = formatter.parse(strDate);
+            SimpleDateFormat newFormat = new SimpleDateFormat("dd MMMM , yyyy", Locale.ENGLISH);
+            convertedDate = newFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return convertedDate;
+    }
+    //get dob from age
+    private String getDobFromAge(int age){
+
+        final Calendar c2 = Calendar.getInstance();
+        int mYear = c2.get(Calendar.YEAR);
+
+        int mMonth = c2.get(Calendar.MONTH);
+
+        if(mMonth>11){
+            mMonth=mMonth-9;
+        } else if(mMonth>6){
+            mMonth=mMonth-4;
+        }
+        int mDay = c2.get(Calendar.DAY_OF_MONTH);
+        if(mDay>27){
+            mDay=mDay-22;
+        }else if(mDay>16){
+            mDay=mDay-15;
+        }
+        int yr=mYear-age;
+
+        String dob= mDay + "-"
+                + (mMonth + 1) + "-" + yr;
+
+        dob = ConvertDateFormat(dob);
+        return dob;
+    }
+    public  void showNoInternetToast(Context context,String text){
+        Toast toast = Toast.makeText(context,text, Toast.LENGTH_LONG);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
+    }
 }
 
 

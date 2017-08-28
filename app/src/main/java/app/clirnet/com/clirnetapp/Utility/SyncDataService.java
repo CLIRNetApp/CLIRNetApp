@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -112,6 +111,7 @@ public class SyncDataService extends Service {
             //this used to test the service weather it is sending data to activity or not 29/8/2016 Ashish
             try {
                 if (running) {
+
                     sendDataToServerAsyncTask();
                     checkIfImageExist();
                 }

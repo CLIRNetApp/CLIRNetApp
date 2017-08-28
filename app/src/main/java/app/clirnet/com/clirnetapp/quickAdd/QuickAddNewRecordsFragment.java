@@ -212,6 +212,7 @@ public class QuickAddNewRecordsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         view = inflater.inflate(R.layout.fragment_quick_edit_records, container, false);
+
         firstName = (EditText) view.findViewById(R.id.firstname);
         middleName = (EditText) view.findViewById(R.id.middlename);
         lastName = (AutoCompleteTextView) view.findViewById(R.id.lastname);
@@ -1157,23 +1158,37 @@ public class QuickAddNewRecordsFragment extends Fragment {
                 fodtextshow.setText(dateis);
             }
         });
-        btnclear.setOnClickListener(new View.OnClickListener() {
+
+        btnclear.setOnTouchListener(new View.OnTouchListener() {
+
             @Override
-            public void onClick(View v) {
-                btnclear.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
-                btnclear.setTextColor(getResources().getColor(R.color.white));
-                buttonSelected = null;
-                inputnumber.setText("");
-                fodtextshow.setText("");
-                month.setTextColor(getResources().getColor(R.color.black));
-                days.setTextColor(getResources().getColor(R.color.black));
-                week.setTextColor(getResources().getColor(R.color.black));
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    days.setBackground(getResources().getDrawable(R.drawable.circle));
-                    month.setBackground(getResources().getDrawable(R.drawable.circle));
-                    week.setBackground(getResources().getDrawable(R.drawable.circle));
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    btnclear.getBackground().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.MULTIPLY);
+                    btnclear.setTextColor(getResources().getColor(R.color.colorPrimary));
+                    inputnumber.setText("");
+                    fodtextshow.setText("");
+                    daysSel = null;
+                    fowSel = null;
+                    monthSel = null;
+                    month.setTextColor(getResources().getColor(R.color.black));
+                    days.setTextColor(getResources().getColor(R.color.black));
+                    week.setTextColor(getResources().getColor(R.color.black));
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                        days.setBackground(getResources().getDrawable(R.drawable.circle));
+                        month.setBackground(getResources().getDrawable(R.drawable.circle));
+                        week.setBackground(getResources().getDrawable(R.drawable.circle));
+                    }
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    btnclear.getBackground().setColorFilter(getResources().getColor(R.color.colorPrimary), PorterDuff.Mode.MULTIPLY);
+                    btnclear.setTextColor(getResources().getColor(R.color.white));
                 }
+                return false;
             }
+
         });
     }
 

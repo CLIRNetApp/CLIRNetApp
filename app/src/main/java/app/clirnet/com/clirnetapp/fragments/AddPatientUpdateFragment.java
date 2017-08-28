@@ -181,7 +181,7 @@ public class AddPatientUpdateFragment extends Fragment {
     private String strCyanosis, strTremors, strIcterus, strClubbing, strOedema, strCalfTenderness, strLymphadenopathy;
     private TextView showObservationsData;
     private EditText ediInput_obesity;
-    private String strObesity;
+    private String   strObesity;
 
     private int counttxthemogram = 1;
     private int counttxtLiverFunctionTest = 1;
@@ -192,23 +192,25 @@ public class AddPatientUpdateFragment extends Fragment {
     private int counttxtThyroidProfile = 1;
 
 
-    LinearLayout hemogramlayout;
-    LinearLayout liverFunctionlayout;
-    LinearLayout lipidProfilelayout;
-    LinearLayout diabeticlayout;
-    LinearLayout urineRoutineExaminationlayout;
-    LinearLayout rftlayout;
-    LinearLayout thyroidProfilelayout;
+    private LinearLayout hemogramlayout;
+    private LinearLayout liverFunctionlayout;
+    private LinearLayout lipidProfilelayout;
+    private LinearLayout diabeticlayout;
+    private LinearLayout urineRoutineExaminationlayout;
+    private LinearLayout rftlayout;
+    private LinearLayout thyroidProfilelayout;
 
 
-    TextView txthemogram;
-    TextView txtLiverFunctionTest;
-    TextView txtLipidProfile;
-    TextView txtDiabeticProfile;
-    TextView txtUrineRoutineExamination;
-    TextView txtRft;
-    TextView txtThyroidProfile;
-    private String strHb;
+    private TextView txthemogram;
+    private TextView txtLiverFunctionTest;
+    private TextView txtLipidProfile;
+    private TextView txtDiabeticProfile;
+    private TextView txtUrineRoutineExamination;
+    private TextView txtRft;
+    private TextView txtThyroidProfile;
+    private Button refered;
+    private Button buttonVital;
+   /* private String strHb;
     private String strPlateletCount;
     private String strEsr;
     private String strDcl;
@@ -239,7 +241,7 @@ public class AddPatientUpdateFragment extends Fragment {
     private String strT4;
     private String strAcr;
     private String strSgot;
-    private String strTch;
+    private String strTch;*/
 
 
 
@@ -291,8 +293,8 @@ public class AddPatientUpdateFragment extends Fragment {
 
         textRefredByShow = (TextView) view.findViewById(R.id.txtrefredby);
         textRefredToShow = (TextView) view.findViewById(R.id.txtrefredto);
-        Button refered = (Button) view.findViewById(R.id.buttonReferrals);
-        Button buttonVital = (Button) view.findViewById(R.id.buttonVital);
+         refered = (Button) view.findViewById(R.id.buttonReferrals);
+        buttonVital = (Button) view.findViewById(R.id.buttonVital);
         Button buttonHistory = (Button) view.findViewById(R.id.buttonHistory);
         buttonHistory.setVisibility(View.GONE);
         showReferrals = (LinearLayout) view.findViewById(R.id.showReferrals);
@@ -309,20 +311,45 @@ public class AddPatientUpdateFragment extends Fragment {
 
         sdf1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
-        refered.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        refered.setOnTouchListener(new View.OnTouchListener() {
 
-                showReferedDialogBox();
-            }
-        });
-        buttonVital.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
 
-                addVitalsDialog();
+                    showReferedDialogBox();
+                    refered.setBackgroundColor(getResources().getColor(R.color.bg_login));
+
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    refered.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
             }
+
         });
+        buttonVital.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    addVitalsDialog();
+                    buttonVital.setBackgroundColor(getResources().getColor(R.color.bg_login));
+
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    buttonVital.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
+            }
+
+        });
+
+
+
         buttonHistory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -511,22 +538,32 @@ public class AddPatientUpdateFragment extends Fragment {
     }
 
     private void addPrescription() {
-        addPatientprescriptionBtn.setOnClickListener(new View.OnClickListener() {
+        addPatientprescriptionBtn.setOnTouchListener(new View.OnTouchListener() {
+
             @Override
-            public void onClick(View v) {
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    addPatientprescriptionBtn.setBackgroundColor(getResources().getColor(R.color.bg_login));
 
-                imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                imagesFolder = new File(Environment.getExternalStorageDirectory(), "PatientsImages");
-                imagesFolder.mkdirs();
+                    imageIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    imagesFolder = new File(Environment.getExternalStorageDirectory(), "PatientsImages");
+                    imagesFolder.mkdirs();
 
-                PrescriptionimageName = "prescription_" + docId + "_" + appController.getDateTime() + ".jpg";
-                imagePathFile = new File(imagesFolder, PrescriptionimageName);
-                uriSavedImage = Uri.fromFile(imagePathFile);
-                imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
-                imageIntent.putExtra("data", uriSavedImage);
-                startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                    PrescriptionimageName = "prescription_" + docId + "_" + appController.getDateTime() + ".jpg";
+                    imagePathFile = new File(imagesFolder, PrescriptionimageName);
+                    uriSavedImage = Uri.fromFile(imagePathFile);
+                    imageIntent.putExtra(MediaStore.EXTRA_OUTPUT, uriSavedImage);
+                    imageIntent.putExtra("data", uriSavedImage);
+                    startActivityForResult(imageIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    addPatientprescriptionBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
             }
+
         });
+
     }
 
     //Image capture code
@@ -1663,7 +1700,8 @@ public class AddPatientUpdateFragment extends Fragment {
         strCyanosis=null; strTremors=null; strIcterus=null;strClubbing=null; strOedema=null; strCalfTenderness=null;
         strLymphadenopathy=null;showObservationsData=null;
         sbVitals= null;sbObservations =null;sbInvestigations=null;
-
+        ediInput_obesity=null;
+        strObesity=null;
         showInvestigationData=null;showVitalsData=null;showObservationsData=null;
         strPft=null;
         strLipidTC=null;
@@ -1677,6 +1715,24 @@ public class AddPatientUpdateFragment extends Fragment {
         strAcer=null;
         buttonInvestigation=null;
         strVisitId=null;
+
+
+        hemogramlayout=null;
+        liverFunctionlayout=null;
+        lipidProfilelayout=null;
+        diabeticlayout=null;
+        urineRoutineExaminationlayout=null;
+        rftlayout=null;
+        thyroidProfilelayout=null;
+        txthemogram=null;
+        txtLiverFunctionTest=null;
+        txtLipidProfile=null;
+        txtDiabeticProfile=null;
+        txtUrineRoutineExamination=null;
+        txtRft=null;
+        txtThyroidProfile=null;
+        refered=null;
+        refered=null;
     }
 
     public void getViewPager(ViewPager viewPager) {

@@ -53,6 +53,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
      static final String RECENT_DATA_KCAP = "recent_data_kcap";
      static final String RECENT_DATA_COMPANDIUM = "recent_data_companium";
      static final String RECENT_DATA_MSESSION = "recent_data_msession";
+    private static String TABLE_RECORD_IMAGES="record_images";
 
     // Table Columns names
     private static final String KEY_ID = "id";
@@ -228,6 +229,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     static final String MS_URL= "ms_url";
     static final String MS_STATUS= "ms_status";
     private static final String IS_AGE_CALCULATED= "age_calculated";
+    private static final String  IMAGE_URL="image_url";
+    private static final String  IMAGE_TYPE="image_type";
+    private static final String  IMAGE_COUNT="image_count";
 
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -467,6 +471,21 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             + OCCUPATION_NAME + " TEXT ) ";
 
 
+    private static final String CREATE_TABLE_RECORD_IMAGES =
+            "CREATE TABLE " + TABLE_RECORD_IMAGES + " (" +
+                    KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    KEY_VISIT_ID + " INTEGER NOT NULL UNIQUE, " +
+                    KEY_PATIENT_ID + " INTEGER NOT NULL UNIQUE , " +
+                    IMAGE_COUNT + " TEXT, " +
+                    IMAGE_URL + " TEXT, " +
+                    IMAGE_TYPE + " TEXT, " +
+                    ADDED_BY+ " TEXT, " +
+                    ADDED_ON + " TEXT, " +
+                    DELETED_ON + " TEXT ," +
+                    DELETED_BY + " INTEGER ," +
+                    FLAG + " INTEGER ) ";
+
+
     // Creating Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
@@ -570,6 +589,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             db.execSQL(CREATE_INVESTIGATION_TABLE);
             db.execSQL(CREATE_TABLE_OCCUPATION);
             db.execSQL(CREATE_OBSERVATION_TABLE);
+            db.execSQL(CREATE_TABLE_RECORD_IMAGES);//record images table
 
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_OCCUPATION);
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_RELIGION);
@@ -1790,9 +1810,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
 
         } finally {
-            if (db != null) {
+           /* if (db != null && db.isOpen()) {
                 db.close();
-            }
+            }*/
         }
     }
 
@@ -2820,7 +2840,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
     }
     //This will add records from registration page into patient table  28/8/2016 ashish u
-    public void addRecentDataKcap(String kcId, String kcText, String kcSource) {
+    public void addRecentDataKcap(String kcId, String kcText, String kcSource,String addedOn) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         try {
@@ -2828,6 +2848,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(KC_ID, kcId);
             values.put(KC_TEXT, kcText);
             values.put(KC_SOURCE_NAME, kcSource);
+            values.put(ADDED_ON, addedOn);
 
             // Inserting Row
             db.insertWithOnConflict(RECENT_DATA_KCAP, null, values, SQLiteDatabase.CONFLICT_REPLACE);
@@ -2843,7 +2864,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
     }
     //This will add records from registration page into patient table  28/8/2016 ashish u
-    public void addRecentDataCompandium(String compId, String compQuestion,String comp_qa_answer, String compUrl) {
+    public void addRecentDataCompandium(String compId, String compQuestion,String comp_qa_answer, String compUrl,String addedOnDate) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         try {
@@ -2852,6 +2873,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(COMP_QA_QUESTION, compQuestion);
             values.put(COMP_QA_ANSWER, comp_qa_answer);
             values.put(COMP_URL, compUrl);
+            values.put(ADDED_ON,addedOnDate);
 
             // Inserting Row
             db.insertWithOnConflict(RECENT_DATA_COMPANDIUM, null, values, SQLiteDatabase.CONFLICT_REPLACE);
@@ -2866,7 +2888,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
     }
     //This will add records from registration page into patient table  28/8/2016 ashish u
-    public void addRecentDataMsession(String msId, String msTopic, String msBrief,String msDoctorName,String msDateTime,String msSpecialitiesName,String msCatName,String msUrl) {
+    public void addRecentDataMsession(String msId, String msTopic, String msBrief,String msDoctorName,String msDateTime,String msSpecialitiesName,String msCatName,String msUrl,String addedOnDate) {
 
         SQLiteDatabase db = this.getWritableDatabase();
         try {
@@ -2880,6 +2902,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(MS_SPECIALITY_NAME, msSpecialitiesName);
             values.put(MS_CAT_NAME, msCatName);
             values.put(MS_URL, msUrl);
+            values.put(ADDED_ON,addedOnDate);
 
             // Inserting Row
             db.insertWithOnConflict(RECENT_DATA_MSESSION, null, values, SQLiteDatabase.CONFLICT_REPLACE);
@@ -2894,6 +2917,10 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
     }
-
+    public void closeDB() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        if (db != null && db.isOpen())
+            db.close();
+    }
 }
 

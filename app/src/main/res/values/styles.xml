@@ -70,4 +70,6 @@
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:textColorSecondary">@color/black</item>
     </style>
+
+
 </resources>

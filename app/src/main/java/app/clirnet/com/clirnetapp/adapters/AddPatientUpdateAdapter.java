@@ -41,6 +41,7 @@ public class AddPatientUpdateAdapter  extends RecyclerView.Adapter<AddPatientUpd
 
     @Override
     public void onBindViewHolder(HistoryViewHolder holder, int position) {
+
         RegistrationModel model = patientList.get(position);
 
         String follow_up_date = patientList.get(position).getActualFollowupDate();

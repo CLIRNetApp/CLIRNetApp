@@ -65,6 +65,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -182,11 +183,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private RVAdapter rvadapter;
     private String formatedDate;
 
-
     public HomeFragment() {
         setHasOptionsMenu(true);
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -304,7 +303,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             //bannerimgNames = bannerClass.getImageName();
             company_id = sqlController.getCompany_id();
 
-
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -358,7 +356,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             }
 
         });
-
 
         //this code is used to export database to sd card .................
 
@@ -498,7 +495,19 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         }));
         getUsernamePasswordFromDatabase();
 
-        callDataFromServer();
+       /* callDataFromServer();*/
+        Handler handler = new Handler(Looper.getMainLooper());
+        handler.post(
+                new Runnable()
+                {
+                    @Override
+                    public void run()
+                    {
+                        callDataFromServer();
+                    }
+                }
+        );
+
         setupAnimation();
 
 
@@ -865,7 +874,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment  " + e + " Line Number:  " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                 }
             }
 
@@ -953,44 +962,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         RegistrationModel registrationModel = filteredModelList.get(position);
 
         Intent i = new Intent(getContext(), AddPatientUpdate.class);
-        /*i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
-        i.putExtra("PatientID", registrationModel.getPat_id());
-
-        i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
-        i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
-        i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
-        i.putExtra("LASTNAME", registrationModel.getLastName());
-        i.putExtra("DOB", registrationModel.getDob());
-
-        i.putExtra("PHONE", registrationModel.getMobileNumber());
-
-        i.putExtra("AGE", registrationModel.getAge());
-        i.putExtra("LANGUAGE", registrationModel.getLanguage());
-        i.putExtra("GENDER", registrationModel.getGender());
-        i.putExtra("FOD", registrationModel.getFollowUpDate());
-        i.putExtra("AILMENT", registrationModel.getAilments());
-        i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
-
-        i.putExtra("ADDRESS", registrationModel.getAddress());
-        i.putExtra("CITYORTOWN", registrationModel.getCityortown());
-        i.putExtra("DISTRICT", registrationModel.getDistrict());
-        i.putExtra("PIN", registrationModel.getPin_code());
-        i.putExtra("STATE", registrationModel.getState());
-
-        i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
-        i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
-
-        i.putExtra("ISDCODE", registrationModel.getIsd_code());
-        i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
-        i.putExtra("UID", registrationModel.getUid());
-        i.putExtra("EMAIL", registrationModel.getEmail());
-        i.putExtra("PHONETYPE", registrationModel.getPhone_type());
-        i.putExtra("FAMILYHISTORY", registrationModel.getFamilyHistory());
-        i.putExtra("HOSPITALIZATION", registrationModel.getHospitalizationSurgery());*/
 
         i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
         i.putExtra("PatientID", registrationModel.getPat_id());
@@ -1090,35 +1061,58 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         dialog.setCancelable(false);
 
 
-        Button dialogButtonCancel = (Button) dialog.findViewById(R.id.customDialogCancel);
-        Button dialogButtonOk = (Button) dialog.findViewById(R.id.customDialogOk);
+        final Button dialogButtonCancel = (Button) dialog.findViewById(R.id.customDialogCancel);
+        final Button dialogButtonOk = (Button) dialog.findViewById(R.id.customDialogOk);
+
         // Click cancel to dismiss android custom dialog box
-        dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
+        dialogButtonCancel.setOnTouchListener(new View.OnTouchListener() {
+
             @Override
-            public void onClick(View v) {
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
 
-                dialog.dismiss();
+                    dialog.dismiss();
+                    dialogButtonCancel.setBackgroundColor(getResources().getColor(R.color.bg_login));
 
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    dialogButtonCancel.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
             }
+
         });
 
         // Your android custom dialog ok action
         // Action for custom dialog ok button click
-        dialogButtonOk.setOnClickListener(new View.OnClickListener() {
+
+        dialogButtonOk.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
-            public void onClick(View v) {
-                searchView.clearFocus();
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
 
-                Intent i = new Intent(getActivity().getApplicationContext(), NewRegistrationPage.class);
-                i.putExtra("number", number);
-                startActivity(i);
-                getActivity().finish();
 
-                dialog.dismiss();
+                    dialogButtonOk.setBackgroundColor(getResources().getColor(R.color.bg_login));
+                    searchView.clearFocus();
 
+                    Intent i = new Intent(getActivity().getApplicationContext(), NewRegistrationPage.class);
+                    i.putExtra("number", number);
+                    startActivity(i);
+                    getActivity().finish();
+
+                    dialog.dismiss();
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    dialogButtonOk.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                }
+                return false;
             }
+
         });
+
 
         dialog.show();
     }
@@ -1227,7 +1221,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                                 email.putExtra(Intent.EXTRA_SUBJECT, "Help Me");
                                 // email.putExtra(Intent.EXTRA_TEXT, "Doctor Id: "+doctor_membership_number+"\n"+"Name :"+"Dr.PushpalMukherjee"+" \n"+"Phone Number : "+"1234567890");
-                                email.putExtra(Intent.EXTRA_TEXT, "Doctor Id: " + doctor_membership_number + "\n" + "Name :" + finalDocName + " \n" + "Phone Number : " + finalPhoneNumber);
+                                email.putExtra(Intent.EXTRA_TEXT, "Doctor Id: " + doctor_membership_number + "\n" + "Name : " + finalDocName + " \n" + "Phone Number : " + finalPhoneNumber);
                                 //need this to prompts email client only
                                 email.setType("message/rfc822");
 
@@ -1401,7 +1395,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
 
     }
-//This method will get patient personal details from server and stores into db
+    //This method will get patient personal details from server and stores into db
 
     private void setPatientPersonalList(JSONArray jsonArray) throws JSONException {
 
@@ -1444,8 +1438,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String is_deleted = jsonProsolveObject.getString("is_deleted");
             String deleted_by = jsonProsolveObject.getString("deleted_by");
             String deleted_on = jsonProsolveObject.getString("deleted_on");
-
-
             String email = jsonProsolveObject.getString("email");
             // String status =jsonProsolveObject.getString("status");
             String alternateNoIsd = jsonProsolveObject.getString("alternative_no_isd");
@@ -1530,6 +1522,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String bp_low = jsonPatientHistoryObject.getString("bp_low");
             String temp = jsonPatientHistoryObject.getString("temperature");
             String sugar = jsonPatientHistoryObject.getString("sugar");
+            String sugarFast = jsonPatientHistoryObject.getString("sugar_fasting");
+
             String drugs = jsonPatientHistoryObject.getString("drugs");
             String tests = jsonPatientHistoryObject.getString("tests");
             String dihnosis = jsonPatientHistoryObject.getString("diagnosis");
@@ -1558,7 +1552,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             String referredBy = jsonPatientHistoryObject.getString("ref_by");
             String referredTo = jsonPatientHistoryObject.getString("ref_to");
-            String sugarFast = jsonPatientHistoryObject.getString("sugar_fasting");
             String recordSource = null;
             String convertedActualfodDate = null;
 
@@ -1619,7 +1612,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         dbController.addAsync();//set sync value true if data is synced from server successfully.
         String end_time = appController.getDateTimenew();
 
-
         dbController.addAsynctascRun_status("getPatientRecords", pateintrecordasync_start_time, end_time, "");//last parameter is update on which is blank right now
 
         Intent i = new Intent(getContext(), NavigationActivity.class);
@@ -1631,6 +1623,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         String flag = "1";
         // List<RegistrationModel> inputPatientData = new ArrayList<>();
+
+        String[] associateTypeArray = getResources().getStringArray(R.array.associate_group);
+        ArrayList<String> _associateTypeList = new ArrayList<>();
+        Collections.addAll(_associateTypeList, associateTypeArray);//adding all elemnts into list from array
 
         for (int i = 0; i < jsonAssciateMasterArray.length(); i++) {
 
@@ -1646,6 +1642,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             String strEmail = jsonProsolveObject.getString("email");
             String selectedSpeciality = jsonProsolveObject.getString("speciality");
             String selectedAssociateType = jsonProsolveObject.getString("associate_type");
+
+            /*Converting int associate type to name from list of associate type*/
+            selectedAssociateType=_associateTypeList.get(Integer.parseInt(selectedAssociateType));
+
             String straddress = jsonProsolveObject.getString("associate_address");
             String strcity = jsonProsolveObject.getString("patient_city_town");
             String selectedState = jsonProsolveObject.getString("associate_state");
@@ -1904,6 +1904,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     public void onDestroyView() {
         super.onDestroyView();
         view = null;
+        ButterKnife.reset(this);
 
     }
 
