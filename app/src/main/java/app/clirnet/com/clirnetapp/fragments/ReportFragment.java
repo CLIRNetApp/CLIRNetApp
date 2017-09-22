@@ -167,14 +167,12 @@ public class ReportFragment extends Fragment {
 
                 if (diffInHours <= 0) {
 
-                    Toast toast = Toast.makeText(getContext().getApplicationContext(), "To-Date Must Be Greater Than From-Date", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(getContext().getApplicationContext(), "To date should be greater than from date", Toast.LENGTH_LONG);
                     toast.setGravity(Gravity.CENTER, 0, 0);
                     toast.show();
 
                     return;
                 }
-
-
 
 
                 ReportFragmentViewPagerSetup fragment = new ReportFragmentViewPagerSetup();
@@ -190,60 +188,7 @@ public class ReportFragment extends Fragment {
 
             }
         });
-        lastweek.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
-
-                setCurrentDateOnView("1"); //set dates from todays to -7 days to edit text
-
-
-                getDateValues();
-                CallLastWeek();
-
-            }
-        });
-
-        lastmonth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-/*
-                date = appController.addDay(new Date(), -30);
-                fromdate.setText(date);*/
-                setCurrentDateOnView("2");//set dates from todays to -30 days to edit text
-
-                getDateValues();
-
-                ReportFragmentViewPagerSetup fragment = new ReportFragmentViewPagerSetup();
-                Bundle b = new Bundle();
-                b.putString("FROMDATE", startDate);
-                b.putString("TODATE", endDate);
-                fragment.setArguments(b);
-                mFragmentManager.beginTransaction()
-                        .replace(R.id.framecontainer, fragment).commit();
-            }
-        });
-
-        lastquarter.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                /*date = appController.addDay(new Date(), -90);
-                fromdate.setText(date);*/
-
-                setCurrentDateOnView("3"); //set dates from todays to -90 days to edit text
-
-                getDateValues();
-
-                ReportFragmentViewPagerSetup fragment = new ReportFragmentViewPagerSetup();
-                Bundle b = new Bundle();
-                b.putString("FROMDATE", startDate);
-                b.putString("TODATE", endDate);
-                fragment.setArguments(b);
-                mFragmentManager.beginTransaction()
-                        .replace(R.id.framecontainer, fragment).commit();
-            }
-        });
 
         return rootview;
     }
@@ -345,12 +290,17 @@ public class ReportFragment extends Fragment {
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
+                    setCurrentDateOnView("1"); //set dates from todays to -7 days to edit text
 
-                    lastweek.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+
+                    getDateValues();
+                    CallLastWeek();
+
+                    lastweek.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    lastweek.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    lastweek.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }
@@ -362,11 +312,21 @@ public class ReportFragment extends Fragment {
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
-                    lastmonth.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+                    lastmonth.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
+                    setCurrentDateOnView("2");//set dates from todays to -30 days to edit text
 
+                    getDateValues();
+
+                    ReportFragmentViewPagerSetup fragment = new ReportFragmentViewPagerSetup();
+                    Bundle b = new Bundle();
+                    b.putString("FROMDATE", startDate);
+                    b.putString("TODATE", endDate);
+                    fragment.setArguments(b);
+                    mFragmentManager.beginTransaction()
+                            .replace(R.id.framecontainer, fragment).commit();
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    lastmonth.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    lastmonth.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }
@@ -379,11 +339,23 @@ public class ReportFragment extends Fragment {
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
-                    lastquarter.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+                    lastquarter.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
+
+                    setCurrentDateOnView("3"); //set dates from todays to -90 days to edit text
+
+                    getDateValues();
+
+                    ReportFragmentViewPagerSetup fragment = new ReportFragmentViewPagerSetup();
+                    Bundle b = new Bundle();
+                    b.putString("FROMDATE", startDate);
+                    b.putString("TODATE", endDate);
+                    fragment.setArguments(b);
+                    mFragmentManager.beginTransaction()
+                            .replace(R.id.framecontainer, fragment).commit();
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    lastquarter.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    lastquarter.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }

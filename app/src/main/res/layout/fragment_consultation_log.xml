@@ -74,7 +74,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="0.3"
                     android:layout_margin="4dp"
-                    android:background="@color/btn_back_sbmt"
+                    android:background="@drawable/rounded_corner_withbackground"
                     android:text="SUBMIT"
                     android:textColor="@color/white" />
 
@@ -83,7 +83,7 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="45dp"
-                android:background="#50BAA0"
+                android:background="@color/colorPrimary"
                 android:gravity="center"
                 android:orientation="horizontal">
 
@@ -98,7 +98,8 @@
                     android:paddingTop="2dp"
                     android:paddingBottom="2dp"
                     android:text="#"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -110,7 +111,8 @@
                     android:paddingTop="2dp"
                     android:paddingBottom="2dp"
                     android:text="Name"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -123,7 +125,8 @@
                     android:paddingTop="2dp"
                     android:paddingBottom="2dp"
                     android:text="Gender"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -146,7 +149,8 @@
                     android:paddingTop="2dp"
                     android:paddingBottom="2dp"
                     android:text="Age"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:layout_width="0dp"
@@ -167,7 +171,8 @@
                     android:paddingTop="2dp"
                     android:paddingBottom="2dp"
                     android:text="Phone Number"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/txtupdateDate"
@@ -178,7 +183,8 @@
                     android:gravity="center"
                     android:padding="2dp"
                     android:text="Update Date"
-                    android:textColor="@color/white" />
+                    android:textColor="@color/white"
+                    android:textStyle="bold"/>
 
                 <TextView
                     android:id="@+id/txtfod"
@@ -190,7 +196,8 @@
                     android:padding="2dp"
                     android:text="@string/fod"
                     android:textColor="@color/white"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    android:textStyle="bold"/>
 
 
             </LinearLayout>
@@ -208,6 +215,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="No Records Found !!"
+                    android:textColor="@color/light_grey"
                     android:textSize="20sp" />
             </LinearLayout>
 

@@ -17,8 +17,12 @@ public class RegistrationModel {
 
     private String email;
     private String action;
+
+    public String getFlag() {
+        return flag;
+    }
+
     private String flag;
-    private String phadded_on;
     private String id;
     private String pat_id;
     private String firstName;
@@ -44,7 +48,7 @@ public class RegistrationModel {
     private String followUpdays;
     private String followUpWeek;
     private String followUpMonth;
-    private String patient_createdDate;
+
     private String pres_img;
     private String clinicalNotes;
     private String ailments;
@@ -181,7 +185,7 @@ public class RegistrationModel {
     private String dcm;
     private String dcb;
 
-    private String indirectBilirubin ;
+    private String indirectBilirubin;
     private String totalBilirubin;
     private String directBilirubin;
     private String sgpt;
@@ -202,6 +206,15 @@ public class RegistrationModel {
     private String acr;
     private String tsh;
     private String t3;
+
+
+
+    private String pushMessage;
+    private String pushHeader;
+    private String pushType;
+    private String pushActionPath;
+    private String pushImageUrl;
+
 
     public String getSugarRbs() {
         return sugarRbs;
@@ -332,7 +345,6 @@ public class RegistrationModel {
     }
 
     private String t4;
-
 
 
     public String getMsId() {
@@ -659,17 +671,7 @@ public class RegistrationModel {
         return address;
     }
 
-    public String getPatient_city_town() {
-        return patient_city_town;
-    }
 
-    public String getPatient_info_typ() {
-        return patient_info_typ;
-    }
-
-    public String getPatient_address() {
-        return patient_address;
-    }
 
     public String getPin_code() {
         return pin_code;
@@ -679,17 +681,7 @@ public class RegistrationModel {
         return district;
     }
 
-    public String getConsent() {
-        return consent;
-    }
 
-    public String getDoctor_id() {
-        return doctor_id;
-    }
-
-    public String getDoc_mem_id() {
-        return doc_mem_id;
-    }
 
     public String getPhone_type() {
         return phone_type;
@@ -919,6 +911,25 @@ public class RegistrationModel {
     public RegistrationModel(String id) {
 
         this.pat_id = id;
+    }
+    public String getPushMessage() {
+        return pushMessage;
+    }
+
+    public String getPushHeader() {
+        return pushHeader;
+    }
+
+    public String getPushType() {
+        return pushType;
+    }
+
+    public String getPushActionPath() {
+        return pushActionPath;
+    }
+
+    public String getPushImageUrl() {
+        return pushImageUrl;
     }
 
     public RegistrationModel() {
@@ -1457,7 +1468,8 @@ public class RegistrationModel {
         this.msUrl = ms_url;
 
     }
-    public RegistrationModel(String ecg, String sugar, String sugar_fasting,String sugar_rbs, String acer,String pft,String hba1c,String serem_urea,String lipid_profile_tc,String lipid_profile_tg,String lipid_profile_ldl,String lipid_profile_vhdl,String lipid_profile_hdl,String lipid_profile_tch,String hdl_ldl_ratio,String hb,String platelet_count,String esr,String dcl,String dcn,String dce,String dcm,String dcb,String total_bilirubin,String direct_bilirubin,String indirect_bilirubin,String sgpt,String sgot,String ggt,String total_protein,String albumin,String globulin,String ag_ratio,String urine_pus_cell,String urine_rbc,String urine_cast,String urine_protein,String urine_crystal,String microalbuminuria,String serum_creatinine,String acr,String tsh,String t3,String t4  ) {
+
+    public RegistrationModel(String ecg, String sugar, String sugar_fasting, String sugar_rbs, String acer, String pft, String hba1c, String serem_urea, String lipid_profile_tc, String lipid_profile_tg, String lipid_profile_ldl, String lipid_profile_vhdl, String lipid_profile_hdl, String lipid_profile_tch, String hdl_ldl_ratio, String hb, String platelet_count, String esr, String dcl, String dcn, String dce, String dcm, String dcb, String total_bilirubin, String direct_bilirubin, String indirect_bilirubin, String sgpt, String sgot, String ggt, String total_protein, String albumin, String globulin, String ag_ratio, String urine_pus_cell, String urine_rbc, String urine_cast, String urine_protein, String urine_crystal, String microalbuminuria, String serum_creatinine, String acr, String tsh, String t3, String t4) {
         this.ecg = ecg;
         this.sugar = sugar;
         this.sugarFasting = sugar_fasting;
@@ -1470,37 +1482,50 @@ public class RegistrationModel {
         this.lipidProfileLdl = lipid_profile_ldl;
         this.lipidProfileVhdl = lipid_profile_vhdl;
         this.lipidProfileHdl = lipid_profile_hdl;
-        this.sugarRbs=sugar_rbs;
-        this.lipidProfileTch=lipid_profile_tch;
-        this.hdlLdlRatio=hdl_ldl_ratio;
-        this.hb=hb;
-        this.plateletCount=platelet_count;
-        this.esr=esr;
-        this.dcl=dcl;
-        this.dcn=dcn;
-        this.dce=dce;
-        this.dcm=dcm;
-        this.dcb=dcb;
-        this.totalBilirubin=total_bilirubin;
-        this.directBilirubin=direct_bilirubin;
-        this.indirectBilirubin=indirect_bilirubin;
-        this.sgpt=sgpt;
-        this.sgot=sgot;
-        this.ggt=ggt;
-        this.total_protein=total_protein;
-        this.albumin=albumin;
-        this.globulin=globulin;
-        this.ag_ratio=ag_ratio;
-        this.urinePusCell=urine_pus_cell;
-        this.urineRbc=urine_rbc;
-        this.urineCast=urine_cast;
-        this.urineProtein=urine_protein;
-        this.urineCrystal=urine_crystal;
-        this.microalbuminuria=microalbuminuria;
-        this.serumCreatinine=serum_creatinine;
-        this.acr=acr;
-        this.tsh=tsh;
-        this.t3=t3;
-        this.t4=t4;
+        this.sugarRbs = sugar_rbs;
+        this.lipidProfileTch = lipid_profile_tch;
+        this.hdlLdlRatio = hdl_ldl_ratio;
+        this.hb = hb;
+        this.plateletCount = platelet_count;
+        this.esr = esr;
+        this.dcl = dcl;
+        this.dcn = dcn;
+        this.dce = dce;
+        this.dcm = dcm;
+        this.dcb = dcb;
+        this.totalBilirubin = total_bilirubin;
+        this.directBilirubin = direct_bilirubin;
+        this.indirectBilirubin = indirect_bilirubin;
+        this.sgpt = sgpt;
+        this.sgot = sgot;
+        this.ggt = ggt;
+        this.total_protein = total_protein;
+        this.albumin = albumin;
+        this.globulin = globulin;
+        this.ag_ratio = ag_ratio;
+        this.urinePusCell = urine_pus_cell;
+        this.urineRbc = urine_rbc;
+        this.urineCast = urine_cast;
+        this.urineProtein = urine_protein;
+        this.urineCrystal = urine_crystal;
+        this.microalbuminuria = microalbuminuria;
+        this.serumCreatinine = serum_creatinine;
+        this.acr = acr;
+        this.tsh = tsh;
+        this.t3 = t3;
+        this.t4 = t4;
+    }
+
+    /*Notification Mode;*/
+    public RegistrationModel(String header, String message, String type, String action_path, String added_on,String id,String flag) {
+
+        this.pushHeader = header;
+        this.pushMessage = message;
+        this.pushType = type;
+        this.pushActionPath = action_path;
+        this.added_on = added_on;
+        this.id=id;
+        this.flag=flag;
+
     }
 }

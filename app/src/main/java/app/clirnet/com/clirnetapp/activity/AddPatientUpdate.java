@@ -1,7 +1,11 @@
 package app.clirnet.com.clirnetapp.activity;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -10,9 +14,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,6 +30,7 @@ import com.bumptech.glide.signature.StringSignature;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import app.clirnet.com.clirnetapp.R;
@@ -40,8 +48,10 @@ import app.clirnet.com.clirnetapp.utility.Validator;
 
 
 @SuppressWarnings("AccessStaticViaInstance")
-public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFragment.OnFragmentInteractionListener {
+public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFragment.OnFragmentInteractionListener,View.OnClickListener {
 
+    public static final String EXTRA_KEY_NOTIFY = "EXTRA_NOTIFY";
+    public static final String ACTION_MyUpdate = "app.clirnet.com.clirnetapp.app.UPDATE";
 
     private ImageView backChangingImages;
     private String strPhone;
@@ -95,6 +105,15 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
     private String strFamilyHistory;
     private String strHospitalizaionSurgery;
 
+    private MyBroadcastReceiver_Update myBroadcastReceiver_Update;
+    private TextView editpatientName;
+    private  TextView editAge;
+    private TextView editmobileno;
+    private TextView phoneType;
+    private TextView email;
+    private TextView txteMail;
+    private String strPhoneType;
+
     @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +148,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         strAlternatephtype = getIntent().getStringExtra("ALTERNATENUMBERTYPE");
         struid = getIntent().getStringExtra("UID");
         strEmail = getIntent().getStringExtra("EMAIL");
-        String  strPhoneType = getIntent().getStringExtra("PHONETYPE");
+        strPhoneType = getIntent().getStringExtra("PHONETYPE");
 
         strFamilyHistory=getIntent().getStringExtra("FAMILYHISTORY");
         strHospitalizaionSurgery =getIntent().getStringExtra("HOSPITALIZATION");
@@ -150,6 +169,12 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
+
+        myBroadcastReceiver_Update = new MyBroadcastReceiver_Update();
+
+        IntentFilter intentFilter_update = new IntentFilter(ACTION_MyUpdate);
+        intentFilter_update.addCategory(Intent.CATEGORY_DEFAULT);
+        registerReceiver(myBroadcastReceiver_Update, intentFilter_update);
 
         if (databaseClass == null) {
             databaseClass = new DatabaseClass(getApplicationContext());
@@ -191,14 +216,32 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
 
         ImageView patientImage = (ImageView) findViewById(R.id.patientImage);
        // TextView date = (TextView) findViewById(R.id.sysdate);
-        TextView editpatientName = (TextView) findViewById(R.id.patientName);
-        TextView editAge = (TextView) findViewById(R.id.age);
-        TextView editmobileno = (TextView) findViewById(R.id.mobileno);
-        TextView phoneType = (TextView) findViewById(R.id.phoneType);
-        TextView email = (TextView) findViewById(R.id.email);
-        TextView txteMail=(TextView)findViewById(R.id.txtEmail);
+         editpatientName = (TextView) findViewById(R.id.patientName);
+         editAge = (TextView) findViewById(R.id.age);
+         editmobileno = (TextView) findViewById(R.id.mobileno);
+         phoneType = (TextView) findViewById(R.id.phoneType);
+         email = (TextView) findViewById(R.id.email);
+         txteMail=(TextView)findViewById(R.id.txtEmail);
 
         ImageView imgEdit = (ImageView) findViewById(R.id.editPersonalInfo);
+
+        ImageView imgSmoke=(ImageView)findViewById(R.id.imgSmoke);
+        ImageView imgDrink=(ImageView)findViewById(R.id.imgDrink);
+        ImageView imgTobaco=(ImageView)findViewById(R.id.imgTobaco);
+        ImageView imgFood=(ImageView)findViewById(R.id.imgFood);
+        ImageView imgSleep=(ImageView)findViewById(R.id.imgSleep);
+        ImageView imgStress=(ImageView)findViewById(R.id.imgStress);
+        ImageView imgLifeStyle=(ImageView)findViewById(R.id.imgLifeStyle);
+        ImageView imgExcercise=(ImageView)findViewById(R.id.imgExcercise);
+        imgSmoke.setOnClickListener(this);
+        imgDrink.setOnClickListener(this);
+        imgTobaco.setOnClickListener(this);
+        imgFood.setOnClickListener(this);
+        imgSleep.setOnClickListener(this);
+        imgStress.setOnClickListener(this);
+        imgLifeStyle.setOnClickListener(this);
+        imgExcercise.setOnClickListener(this);
+
 
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -219,10 +262,10 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         editpatientName.setText(strName);
         editmobileno.setText(strPhone);
 
-
-        if(strPhoneType!=null) {
+        Log.e("strPhoneTpe","  "+strPhoneType);
+        if (strPhoneType != null && !strPhoneType.equals("") && !strPhone.equals("Select Type")){
             phoneType.setText(strPhoneType + " :");
-        }else{
+        } else {
             phoneType.setText("Mobile :");
         }
 
@@ -266,6 +309,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
                 i.putExtra("MIDDLEAME", strMiddleName);
                 i.putExtra("LASTNAME", strLastName);
                 i.putExtra("PHONE", strPhone);
+                i.putExtra("PHONETYPE",strPhoneType);
                 i.putExtra("DOB", strDob);
                 i.putExtra("AGE", strAge);
                 i.putExtra("LANGUAGE", strLanguage);
@@ -296,7 +340,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
             @Override
             public void onClick(View v) {
                 // back button pressed
-                goToNavigation1();
+                exitByBackKey();
             }
         });
 
@@ -367,6 +411,8 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         //android.os.Process.killProcess(android.os.Process.myPid());
 
         super.onDestroy();
+
+        unregisterReceiver(myBroadcastReceiver_Update);
 
         if (sqlController != null) {
             sqlController = null;
@@ -578,6 +624,124 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         else if(mLifeStyle!=null && !mLifeStyle.equals("")&& mLifeStyle.equals("Active")){
             imgLifeStyle.setVisibility(View.VISIBLE);
             imgLifeStyle.setImageDrawable(getResources().getDrawable(R.drawable.running));
+        }
+    }
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+
+            case R.id.imgSmoke:
+                appController.showToastMsg(getApplicationContext(), "Patient is a "+mSmokerType);
+                break;
+            case R.id.imgDrink:
+                appController.showToastMsg(getApplicationContext(), "Patient is a "+mAlcohol);
+                break;
+            case R.id.imgTobaco:
+                appController.showToastMsg(getApplicationContext(), mChewinogTobaco+" patient consumes other tobacco products");
+                break;
+
+            case R.id.imgSleep:
+                appController.showToastMsg(getApplicationContext(), "Patient gets "+mSleepStatus + " sleep");
+                break;
+            case R.id.imgStress:
+                appController.showToastMsg(getApplicationContext(), "Patient stress level is "+mStressLevel);
+                break;
+            case R.id.imgLifeStyle:
+                appController.showToastMsg(getApplicationContext(), "Patient Lifestyle is "+mLifeStyle);
+                break;
+            case R.id.imgExcercise:
+                appController.showToastMsg(getApplicationContext(), "Patient Exercises? "+mExcercise);
+                break;
+        }
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+
+            exitByBackKey();
+
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    protected void exitByBackKey() {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Confirm Action");
+        builder.setMessage("Do you want to exit?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                goToNavigation1();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+        builder.show();
+
+    }
+    public class MyBroadcastReceiver_Update extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            // int update = intent.getIntExtra(MasterSessionService.EXTRA_KEY_UPDATE, 0);
+            String patId = intent.getStringExtra(EXTRA_KEY_NOTIFY);
+
+            if (patId != null) {
+                // Log.e("update", "" + patId + "  " + sqlController);
+                try {
+                    if (sqlController == null) {
+                        sqlController = new SQLController(getApplicationContext());
+                        sqlController.open();
+                    }
+                    HashMap<String, String> ageAddedOnDate = sqlController.getPatientAndHealthDataUpdate(patId);
+
+                    strFirstName = ageAddedOnDate.get("first_name");
+                    strLastName = ageAddedOnDate.get("last_name");
+                    strAge = ageAddedOnDate.get("age");
+                    strgender = ageAddedOnDate.get("gender");
+                    strEmail = ageAddedOnDate.get("email");
+                    strPhone = ageAddedOnDate.get("phonenumber");
+                    mAlcohol = ageAddedOnDate.get("alcohol_consumption");
+                    mStressLevel = ageAddedOnDate.get("stress_level");
+                    mSmokerType = ageAddedOnDate.get("smoker_type");
+                    mChewinogTobaco = ageAddedOnDate.get("chewing_tobaco");
+                    mLifeStyle = ageAddedOnDate.get("life_style");
+                    mExcercise = ageAddedOnDate.get("excercise");
+                    mSleepStatus = ageAddedOnDate.get("sleep_status");
+                    strPhoneType = ageAddedOnDate.get("phone_type");
+                    // Log.e("first_name", "" + first_name + "  " + last_name);
+
+                    setImagesToHealthLifeStyle();
+
+                    editpatientName.setText(strFirstName + " " + strLastName);
+
+                    editmobileno.setText(strPhone);
+
+                    if (strPhoneType != null && !strPhoneType.equals("") && !strPhoneType.equals("Mobile") && !strPhoneType.equals("Landline")) {
+                        phoneType.setText(strPhoneType + " :");
+                    } else {
+                        phoneType.setText("Mobile :");
+                    }
+                    if (strEmail != null && !TextUtils.isEmpty(strEmail)) {
+                        txteMail.setVisibility(View.VISIBLE);
+                        email.setText(strEmail);
+                    }
+                    if (strgender != null && strgender.equals("Male")) {
+                        editAge.setText("( M - " + strAge + " )");
+                    } else if (strgender != null && strgender.equals("Female")) {
+                        editAge.setText("( F - " + strAge + " )");
+                    } else if (strgender != null && strgender.equals("Trans")) {
+                        editAge.setText("( T - " + strAge + " )");
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 }

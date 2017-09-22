@@ -34,6 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/dep" />
+
     </LinearLayout>
 
 
@@ -51,8 +52,9 @@
             android:fontFamily="sans-serif-medium"
             android:paddingLeft="7dp"
             android:text="Update History"
-            android:textColor="#50BAA0"
+            android:textColor="@color/bg_list_row"
             android:textSize="16sp"
+            android:textStyle="bold"
             tools:targetApi="jelly_bean" />
 
         <TextView
@@ -65,13 +67,12 @@
             android:id="@+id/editlastUpdate"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.85"
-            android:background="#50BAA0"
+            android:layout_weight="0.5"
+            android:background="@drawable/rounded_corner_withbackground"
             android:fontFamily="sans-serif-medium"
             android:gravity="center"
-            android:paddingRight="10dp"
             android:text="Edit Last Update"
-            android:textColor="#ffffff"
+            android:textColor="@color/white"
             android:textSize="16sp"
             tools:targetApi="jelly_bean" />
 

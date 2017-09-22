@@ -12,6 +12,7 @@
     <uses-permission android:name="android.hardware.camera.autofocus" />
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
         android:name=".app.AppController"
@@ -38,7 +39,6 @@
             android:label="@string/title_activity_navigation"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateAlwaysHidden" />
-
         <activity
             android:name=".activity.EditPersonalInfo"
             android:label="@string/title_activity_edit_personal_info"
@@ -94,16 +94,18 @@
 
         <!-- android:configChanges="orientation|screenSize|keyboardHidden" -->
         <!-- Commented this service for test build -->
-        <service android:name=".fcm.MyFirebaseMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
+
         <service android:name=".fcm.MyFirebaseInstanceIDService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
+        <service android:name=".fcm.MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <!--
           Optionally, register AnalyticsReceiver and AnalyticsService to support background
           dispatching on non-Google Play devices
@@ -141,6 +143,8 @@
             </intent-filter>
         </receiver>
 
+        <receiver android:name=".utility.AlarmReceiver" />
+
         <service
             android:name=".app.MasterSessionService"
             android:exported="false" />
@@ -150,9 +154,20 @@
             android:label="@string/title_activity_new_edit_personal_info"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".quickAdd.NewEditIncompleteRecordsActivity"
-            android:label="@string/title_activity_new_edit_incomplete_records"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:name=".activity.SplashActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:label="@string/title_activity_splash"
+            android:theme="@style/SplashTheme" />
+
+
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="8c578d4ed44e30792e5d49000096432edd971943" />
+
+        <activity android:name=".activity.IntroActivity"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.Intro"/>
     </application>
 
 </manifest>

@@ -3,12 +3,14 @@ package app.clirnet.com.clirnetapp.activity;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
@@ -53,6 +55,7 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.utility.ImageCompression;
 
+/*Activity not in used currently*/
 public class EditPersonalInfo extends AppCompatActivity {
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
@@ -293,7 +296,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         }
 
         switch (strLanguage) {
-            case "Englis":
+            case "English":
                 radioLanguage.check(R.id.radioEng);
                 break;
             case "Hindi":
@@ -447,7 +450,7 @@ public class EditPersonalInfo extends AppCompatActivity {
                 editdob.setText("");
             }
         });
-       // RadioGroup gndrbutton = (RadioGroup) findViewById(R.id.radioGender);
+        // RadioGroup gndrbutton = (RadioGroup) findViewById(R.id.radioGender);
 
         sex = "Male";//set Daefault gender value to Male if not selected any other value to prevent null value. 14-12-2016
         // Checked change Listener for RadioGroup 1
@@ -614,10 +617,10 @@ public class EditPersonalInfo extends AppCompatActivity {
                     selectedState = null;
                 }
 
-                if (length >= 4) {
+                /*if (length >= 4) {
                     editage.setError("Invalid Age Entered");
                     return;
-                }
+                }*/
 
                 if (age > 150) {
                     editage.setError("Age should be less than 150 Years");
@@ -688,10 +691,10 @@ public class EditPersonalInfo extends AppCompatActivity {
 
                     if (patientImagePath != null && !TextUtils.isEmpty(patientImagePath)) {
 
-                      //  dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, status, strEmailId,"","");
+                        //dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, patientImagePath, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, status, strEmailId,"","");
                         // Log.e("kt", "1");
                     } else {
-                      //  dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, status, strEmailId,"","");
+                        // dbController.updatePatientPersonalInfo(strId, editfname, editmname, editlname, sex, strdateob, editAge, editPno, selectedLanguage, strPatientPhoto, modified_on_date, modified_by, modifiedTime, action, flag, docId, strAddress, strCity, strDistrict, strPin, selectedState, selectedPhoneType, selectedPhoneTypealternate_no, editAltrntNumber, strUid, selectedUidType, selectedIsd_codeType, selectedAlternateNoIsd_codeType, status, strEmailId,"","");
                         //Log.e("bt", "2");
                     }
 
@@ -1055,7 +1058,7 @@ public class EditPersonalInfo extends AppCompatActivity {
         mLastNameList = null;
         phType = null;
         selectedPhoneType = null;
-        imagePathFile=null;
+        imagePathFile = null;
     }
 
 
@@ -1147,7 +1150,7 @@ public class EditPersonalInfo extends AppCompatActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-            finish();
+            exitByBackKey();
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -1165,6 +1168,26 @@ public class EditPersonalInfo extends AppCompatActivity {
 
     private int getCategoryPos(ArrayList<String> _categories, String category) {
         return _categories.indexOf(category);
+    }
+
+    protected void exitByBackKey() {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setTitle("Confirm Action");
+        builder.setMessage("Do you want to exit Page?");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                goToNavigation();
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+
+            }
+        });
+        builder.show();
+
     }
 }
 

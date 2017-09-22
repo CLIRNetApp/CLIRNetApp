@@ -38,6 +38,8 @@ public class DatabaseClass extends SQLiteOpenHelper {
 
         super(context, DB_NAME, null,SQLiteHandler.DATABASE_VERSION);
         this.myContext = context;
+
+
         if (dbHelper == null) {
             dbHelper = new SQLiteHandler(myContext);
             database = dbHelper.getWritableDatabase();
@@ -130,36 +132,6 @@ public class DatabaseClass extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-    }
-
-
-    public int getMaxAimId() throws ClirNetAppException {
-        SQLiteDatabase db1 =null;
-
-        Cursor cursor=null;
-        int returnValue = 0;
-        try {
-            db1 = dbHelper.getReadableDatabase();
-            // stmt = db1.compileStatement("select max(id) from temp_ailment_table");
-            String query="select max(id) from ailments";
-            cursor=db1.rawQuery(query,null);
-            if(cursor.moveToFirst()){
-                returnValue=cursor.getInt(0);
-            }
-        }catch (Exception e){
-
-            appController.appendLog(appController.getDateTime()+"" +"/"+"Database"+e);
-            throw new ClirNetAppException("Error while getting max id");
-        }
-        finally {
-            if (cursor != null){
-                cursor.close();
-            }
-            if(db1 != null) {
-                db1.close();
-            }
-        }
-        return returnValue;
     }
 
 

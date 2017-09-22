@@ -43,7 +43,7 @@ public class MailActivity extends AppCompatActivity {
                 //need this to prompts email client only
                 email.setType("message/rfc822");
 
-                startActivity(Intent.createChooser(email, "Choose an Email client :"));
+                startActivity(Intent.createChooser(email, "Please select an Email client: "));
 
             }
         });

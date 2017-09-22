@@ -29,7 +29,7 @@
         android:layout_margin="2dp"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:background="@drawable/quickadd"
+        android:background="@drawable/quickadd1"
         android:visibility="gone" />
 
     <TextView

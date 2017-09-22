@@ -23,11 +23,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
-import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.dpizarro.autolabel.library.AutoLabelUI;
@@ -110,7 +110,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private ArrayList<String> bannerimgNames;
 
     private String doctor_membership_number;
-    private Button  resetFilters;
+    private Button resetFilters;
     private Integer weightMinValue, weightMaxValue;
     private Integer heightMinValue, heightMaxValue;
     private Integer bmiMinValue, bmiMaxValue;
@@ -233,6 +233,10 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private Integer mMinVhdl, mMaxVhdl;
     private AutoLabelUI mAutoLabel;
     private AutoLabelUI mInvestigationLabel;
+    private Button filterHealth;
+    private String valMinSpo2;
+    private String valMaxSpo2;
+    LinearLayout tabSubmitWarnig;
 
 
     public PoHistoryFragment() {
@@ -286,19 +290,16 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         phone_no = (EditText) rootview.findViewById(R.id.mobile_no);
 
-        //selectVitals = (Button) rootview.findViewById(R.id.selectVitals);
-
-        //showData = (TextView) rootview.findViewById(R.id.showData);
-
-
         filterInvestigation = (Button) rootview.findViewById(R.id.filterInvestigation);
-        Button filterHealth = (Button) rootview.findViewById(R.id.filterHealth);
+        filterHealth = (Button) rootview.findViewById(R.id.filterHealth);
         filterVitals = (Button) rootview.findViewById(R.id.filterVitals);
         filterObservation = (Button) rootview.findViewById(R.id.filterObservation);
 
+        tabSubmitWarnig = (LinearLayout) rootview.findViewById(R.id.tabSubmitWarnig);
+
 
         mAutoLabel = (AutoLabelUI) rootview.findViewById(R.id.label_view);
-        mInvestigationLabel=(AutoLabelUI)rootview.findViewById(R.id.investigation_label_view);
+        mInvestigationLabel = (AutoLabelUI) rootview.findViewById(R.id.investigation_label_view);
         setListeners();
         setAutoLabelUISettings();
 
@@ -354,7 +355,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             ArrayList<HashMap<String, Integer>> vitalsMinMaxList = sqlController.getMinMaxVitals();
             ArrayList<HashMap<String, Integer>> investigationMinMaxList = sqlController.getMinMaxInvestigation();
-           // Log.e("investigationList", "  " + investigationMinMaxList.size());
+            // Log.e("investigationList", "  " + investigationMinMaxList.size());
 
             if (vitalsMinMaxList.size() > 0) {
 
@@ -381,7 +382,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 strMaxSugarFPG = vitalsMinMaxList.get(0).get("MAXSUGARFPG");
                 strMinSugarPPG = vitalsMinMaxList.get(0).get("MINSUGARPPG");
                 strMaxSugarPPG = vitalsMinMaxList.get(0).get("MAXSUGARPPG");
-               //   Log.e("strMinWeight", "  " + strMinSpo2 + "  " + strMaxSpo2 + "  " + strMinRespiration + "  " + strMaxRespiration);
+                //   Log.e("strMinWeight", "  " + strMinSpo2 + "  " + strMaxSpo2 + "  " + strMinRespiration + "  " + strMaxRespiration);
                 //Log.e("strMin", " " + strMinSugarFPG + " " + strMaxSugarFPG + " " + strMinSugarPPG + "  " + strMaxSugarPPG + "  " + strMinBmi + "  " + strMaxBmi);
             }
             if (investigationMinMaxList.size() > 0) {
@@ -422,126 +423,115 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
+                    tabSubmitWarnig.setVisibility(View.GONE);
 
-                    submit.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+                    submit.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
+                    patientData.clear(); //This method will clear all previous data from  Array list  24-8-2016
+                    if (poHistoryAdapter != null) {
+                        poHistoryAdapter.notifyDataSetChanged();
+                    }
+                    //data from health dialog fragment
+                    if (healthDataBundle != null) {
+
+                        strSmoking = healthDataBundle.getString("SMOKING");
+                        noOfSticksPerYear = healthDataBundle.getString("NUMODSTICKS");
+                        strLeftSmokingSinceYear = healthDataBundle.getString("SMOKELEFTSINCE");
+
+                        strAlcoholConsumption = healthDataBundle.getString("DRINKING");
+                        noOfPegsPerYear = healthDataBundle.getString("NUMOFPEGS");
+                        strLeftAlcoholSinceYear = healthDataBundle.getString("DRINKINGLEFTSINCE");
+                        strTobaco = healthDataBundle.getString("TOBACO");
+                        otherTobacoTaking = healthDataBundle.getString("OTHERTOBACO");
+                        strDrug = healthDataBundle.getString("DRUG");
+                        otherDrugTaking = healthDataBundle.getString("OTHERDRUG");
+                        strFoodHabit = healthDataBundle.getString("FOODHABIT");
+                        strFoodPreference = healthDataBundle.getString("FOODPREFERNCE");
+                        strBingeEating = healthDataBundle.getString("BINFEEATING");
+                        strLactoseTolerance = healthDataBundle.getString("LACTOSETOLERNCE");
+                        strLifeStyle = healthDataBundle.getString("LIFESTYLE");
+                        strSleepStatus = healthDataBundle.getString("SLEEP");
+                        strStressLevel = healthDataBundle.getString("STRESSLEVEL");
+                        strSexuallyActive = healthDataBundle.getString("SEXUALACTIVITY");
+                        strExcercise = healthDataBundle.getString("EXCERCISE");
+                        strAllergie = healthDataBundle.getString("ALLERGIES");
+
+                    }
+                    //   Log.e("weightMinValue", "  " + weightMinValue + " " + weightMaxValue);
+
+                    strfname = firstName.getText().toString().trim();
+                    strlname = lastName.getText().toString().trim();
+                    strpno = phone_no.getText().toString().trim();
+                    String strAilment = symptomsDiagnosis.getText().toString().trim();
+
+                    //remove comma occurance from string
+                    strAilment = appController.removeCommaOccurance(strAilment);
+                    //Remove spaces between text if more than 2 white spaces found 12-12-2016
+                    strAilment = strAilment.replaceAll("\\s+", " ");
+
+                    String delimiter = ",";
+                    String[] temp = strAilment.split(delimiter);
+                    selectedAilmentList = new ArrayList();
+             /* print substrings */
+                    Collections.addAll(selectedAilmentList, temp);
+
+                    try {
+                        ival = 0;
+                        loadLimit = 25;
+                        patientData = sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
+                                pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugarFpgMaxValue, sugarPpgMinValue, sugarPpgMaxValue, strLipidTC, strLipidTCMax, strLipidTG, strLipidTGMax, strLipidLDL, strLipidLDLMax, strLipidVHDL, strLipidVHDLMax, strLipidHDL, strLipidHDLMax, strHbA1c, strHbA1cMax, strSerumUrea, strSerumUreaMax, strAcer, strAcerMax, strEcg, strPft
+                                , strSmoking, noOfSticksPerYear, strLeftSmokingSinceYear, strAlcoholConsumption, noOfPegsPerYear, strLeftAlcoholSinceYear, strTobaco, otherTobacoTaking, strDrug, otherDrugTaking, strFoodHabit, strFoodPreference, strBingeEating, strLactoseTolerance, strLifeStyle, strSleepStatus, strStressLevel, strSexuallyActive, strExcercise, strAllergie, strPallore, strPallorDescription, strCyanosis, strCyanosisDescription, strTremors, strTremorsDescription, strIcterus, strIcterusDescription
+                                , strClubbing, strClubbingDescription, strOedema, strOedemaDescription, strCalfTenderness, strCalfTendernessDescription, strLymphadenopathy, strLymphadenopathyDescription, spo2MinValue, spo2MaxValue, respirationMinValue, respirationMinValue);
+
+
+                        queryCount = sqlController.getCountResult();
+
+
+                        if (patientData.size() > 0) {
+                            removeDuplicate(patientData);
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    } finally {
+                        if (sqlController != null) {
+                            sqlController.close();
+                        }
+                    }
+
+                    int count = patientData.size();
+                    try {
+                        if (count > 0) {
+
+                            recyclerView.setVisibility(View.VISIBLE);
+                            norecordtv.setVisibility(View.GONE);
+
+
+                            poHistoryAdapter = new PoHistoryAdapter(patientData, queryCount);
+
+                            recyclerView.setHasFixedSize(true);
+                            recyclerView.setAdapter(poHistoryAdapter);
+                            recyclerView.addOnScrollListener(recyclerViewOnScrollListener);
+
+                        } else {
+                            recyclerView.setVisibility(View.INVISIBLE);
+                            norecordtv.setVisibility(View.VISIBLE);
+                        }
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    }
+
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    submit.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    submit.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
-
                 return false;
             }
 
         });
-
-
-        submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                patientData.clear(); //This method will clear all previous data from  Array list  24-8-2016
-                if (poHistoryAdapter != null) {
-                    poHistoryAdapter.notifyDataSetChanged();
-                }
-                //data from health dialog fragment
-                if (healthDataBundle != null) {
-
-                    strSmoking = healthDataBundle.getString("SMOKING");
-                    noOfSticksPerYear = healthDataBundle.getString("NUMODSTICKS");
-                    strLeftSmokingSinceYear = healthDataBundle.getString("SMOKELEFTSINCE");
-
-                    strAlcoholConsumption = healthDataBundle.getString("DRINKING");
-                    noOfPegsPerYear = healthDataBundle.getString("NUMOFPEGS");
-                    strLeftAlcoholSinceYear = healthDataBundle.getString("DRINKINGLEFTSINCE");
-                    strTobaco = healthDataBundle.getString("TOBACO");
-                    otherTobacoTaking = healthDataBundle.getString("OTHERTOBACO");
-                    strDrug = healthDataBundle.getString("DRUG");
-                    otherDrugTaking = healthDataBundle.getString("OTHERDRUG");
-                    strFoodHabit = healthDataBundle.getString("FOODHABIT");
-                    strFoodPreference = healthDataBundle.getString("FOODPREFERNCE");
-                    strBingeEating = healthDataBundle.getString("BINFEEATING");
-                    strLactoseTolerance = healthDataBundle.getString("LACTOSETOLERNCE");
-                    strLifeStyle = healthDataBundle.getString("LIFESTYLE");
-                    strSleepStatus = healthDataBundle.getString("SLEEP");
-                    strStressLevel = healthDataBundle.getString("STRESSLEVEL");
-                    strSexuallyActive = healthDataBundle.getString("SEXUALACTIVITY");
-                    strExcercise = healthDataBundle.getString("EXCERCISE");
-                    strAllergie = healthDataBundle.getString("ALLERGIES");
-
-                }
-             //   Log.e("weightMinValue", "  " + weightMinValue + " " + weightMaxValue);
-
-                strfname = firstName.getText().toString().trim();
-                strlname = lastName.getText().toString().trim();
-                strpno = phone_no.getText().toString().trim();
-                String strAilment = symptomsDiagnosis.getText().toString().trim();
-
-                //remove comma occurance from string
-                strAilment = appController.removeCommaOccurance(strAilment);
-                //Remove spaces between text if more than 2 white spaces found 12-12-2016
-                strAilment = strAilment.replaceAll("\\s+", " ");
-
-                String delimiter = ",";
-                String[] temp = strAilment.split(delimiter);
-                selectedAilmentList = new ArrayList();
-             /* print substrings */
-                Collections.addAll(selectedAilmentList, temp);
-
-                try {
-                    ival = 0;
-                    loadLimit = 25;
-                    patientData = sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
-                            pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugarFpgMaxValue, sugarPpgMinValue, sugarPpgMaxValue, strLipidTC, strLipidTCMax, strLipidTG, strLipidTGMax, strLipidLDL, strLipidLDLMax, strLipidVHDL, strLipidVHDLMax, strLipidHDL, strLipidHDLMax, strHbA1c, strHbA1cMax, strSerumUrea, strSerumUreaMax, strAcer, strAcerMax, strEcg, strPft
-                            , strSmoking, noOfSticksPerYear, strLeftSmokingSinceYear, strAlcoholConsumption, noOfPegsPerYear, strLeftAlcoholSinceYear, strTobaco, otherTobacoTaking, strDrug, otherDrugTaking, strFoodHabit, strFoodPreference, strBingeEating, strLactoseTolerance, strLifeStyle, strSleepStatus, strStressLevel, strSexuallyActive, strExcercise, strAllergie, strPallore, strPallorDescription, strCyanosis, strCyanosisDescription, strTremors, strTremorsDescription, strIcterus, strIcterusDescription
-                            , strClubbing, strClubbingDescription, strOedema, strOedemaDescription, strCalfTenderness, strCalfTendernessDescription, strLymphadenopathy, strLymphadenopathyDescription,spo2MinValue,spo2MaxValue,respirationMinValue,respirationMinValue);
-
-
-                    queryCount = sqlController.getCountResult();
-
-
-                    if (patientData.size() > 0) {
-                        removeDuplicate(patientData);
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
-                } finally {
-                    if (sqlController != null) {
-                        sqlController.close();
-                    }
-                }
-
-                int count = patientData.size();
-                try {
-                    if (count > 0) {
-
-                        recyclerView.setVisibility(View.VISIBLE);
-                        norecordtv.setVisibility(View.GONE);
-
-
-                        poHistoryAdapter = new PoHistoryAdapter(patientData, queryCount);
-
-                        recyclerView.setHasFixedSize(true);
-                        recyclerView.setAdapter(poHistoryAdapter);
-                        recyclerView.addOnScrollListener(recyclerViewOnScrollListener);
-
-
-                    } else {
-                        recyclerView.setVisibility(View.INVISIBLE);
-                        norecordtv.setVisibility(View.VISIBLE);
-                    }
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
-                }
-
-            }
-
-        });
-
 
         recyclerView.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext(), recyclerView, new ItemClickListener() {
 
@@ -570,11 +560,11 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     showVitalsDialogBox();
 
-                    filterVitals.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+                    filterVitals.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    filterVitals.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    filterVitals.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }
@@ -586,12 +576,12 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
-                    filterObservation.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+                    filterObservation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
                     showObservationsDialog();
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    filterObservation.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    filterObservation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }
@@ -605,14 +595,22 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             @Override
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
-
+                    ageGapSpinner.setSelection(0);
+                    genderSpinner.setSelection(0);
+                    selectedListGender.clear();
+                    selectedAgeList.clear();
+                    firstName.setText("");
+                    lastName.setText("");
+                    phone_no.setText("");
+                    symptomsDiagnosis.setText("");
+                    setUpSpinner();  //reseting spinner value
                     reseFiltersData();
 
-                    resetFilters.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+                    resetFilters.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    resetFilters.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    resetFilters.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }
@@ -626,33 +624,42 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     openInvestigationDialog();
 
-                    filterInvestigation.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+                    filterInvestigation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    filterInvestigation.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    filterInvestigation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
+                }
+                return false;
+            }
+
+        });
+        filterHealth.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    filterHealth.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
+
+                    FragmentManager fm = getActivity().getSupportFragmentManager();
+                    HealthVitalsDialogFragment testDialog = new HealthVitalsDialogFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putBundle("FILTERDATA", healthDataBundle);
+                    testDialog.setRetainInstance(true);
+                    testDialog.setArguments(bundle);
+
+                    testDialog.show(fm, "fragment_name");
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    filterHealth.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }
 
         });
 
-
-        filterHealth.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                HealthVitalsDialogFragment testDialog = new HealthVitalsDialogFragment();
-                Bundle bundle = new Bundle();
-                bundle.putBundle("FILTERDATA", healthDataBundle);
-                testDialog.setRetainInstance(true);
-                testDialog.setArguments(bundle);
-
-                testDialog.show(fm, "fragment_name");
-
-            }
-        });
 
         return rootview;
     }
@@ -681,6 +688,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                 symptomsDiagnosis.setAdapter(adp);
                 symptomsDiagnosis.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+
             }
             if (mLastNameList.size() > 0) {
                 ArrayAdapter<String> adp = new ArrayAdapter<>(getContext(),
@@ -729,6 +737,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             }
         });
+
         ageList = new ArrayList();
         ageList.add("0-5");
         ageList.add("5-15");
@@ -818,7 +827,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
     }
 
-
     /////////////Show Search Bar//////////////////
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -858,7 +866,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         for (int i = 0; i < selected.length; i++) {
             if (selected[i]) {
                 selectedItems[i] = 1;
-               // System.out.println("______________________" + genderList.get(i));
+                // System.out.println("______________________" + genderList.get(i));
                 String selGender = genderList.get(i).toString();
 
                 selectedListGender.add(selGender);
@@ -888,7 +896,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         healthDataBundle = bundle;
     }
-
 
 
     public interface OnFragmentInteractionListener {
@@ -986,7 +993,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     memberList = sqlController.getFilterDatanew(strfname, strlname, strpno, selectedListGender, selectedAgeList, selectedAilmentList, ival, loadLimit, weightMinValue, weightMaxValue, heightMinValue, heightMaxValue, bmiMinValue, bmiMaxValue,
                             pulseMinValue, pulseMaxValue, tempMinValue, tempMaxValue, systoleMinValue, systoleMaxValue, distoleMinValue, distoleMaxValue, sugarFpgMinValue, sugarFpgMaxValue, sugarPpgMinValue, sugarPpgMaxValue, strLipidTC, strLipidTCMax, strLipidTG, strLipidTGMax, strLipidLDL, strLipidLDLMax, strLipidVHDL, strLipidVHDLMax, strLipidHDL, strLipidHDLMax, strHbA1c, strHbA1cMax, strSerumUrea, strSerumUreaMax, strAcer, strAcerMax, strEcg, strPft
                             , strSmoking, noOfSticksPerYear, strLeftSmokingSinceYear, strAlcoholConsumption, noOfPegsPerYear, strLeftAlcoholSinceYear, strTobaco, otherTobacoTaking, strDrug, otherDrugTaking, strFoodHabit, strFoodPreference, strBingeEating, strLactoseTolerance, strLifeStyle, strSleepStatus, strStressLevel, strSexuallyActive, strExcercise, strAllergie, strPallore, strPallorDescription, strCyanosis, strCyanosisDescription, strTremors, strTremorsDescription, strIcterus, strIcterusDescription
-                            , strClubbing, strClubbingDescription, strOedema, strOedemaDescription, strCalfTenderness, strCalfTendernessDescription, strLymphadenopathy, strLymphadenopathyDescription,spo2MinValue,spo2MaxValue,respirationMinValue,respirationMinValue);
+                            , strClubbing, strClubbingDescription, strOedema, strOedemaDescription, strCalfTenderness, strCalfTendernessDescription, strLymphadenopathy, strLymphadenopathyDescription, spo2MinValue, spo2MaxValue, respirationMinValue, respirationMinValue);
                     //getting count of patient  for filter query
                     queryCount = sqlController.getCountResult();
 
@@ -1089,7 +1096,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         phone_no = null;
         genderSpinner = null;
         healthDataBundle = null;
-        filterObservation= null;
+        filterObservation = null;
+        filterObservation = null;
         clearVitalsValue();
         reseFiltersData();
 
@@ -1131,8 +1139,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         dialog.setTitle("Filter Vitals");
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(f);
-        Button dialogButtonCancel = (Button) f.findViewById(R.id.customDialogCancel);
-        Button dialogButtonOk = (Button) f.findViewById(R.id.customDialogOk);
+        final Button dialogButtonCancel = (Button) f.findViewById(R.id.customDialogCancel);
+        final Button dialogButtonOk = (Button) f.findViewById(R.id.customDialogOk);
 
         //Log.e("weightMinValue", "  " + weightMinValue);
 
@@ -1192,11 +1200,43 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             @Override
             public void onClick(View v) {
 
-                dialog.dismiss();
-
             }
         });
+        dialogButtonCancel.setOnTouchListener(new View.OnTouchListener() {
 
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    dialogButtonCancel.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
+
+                    dialog.dismiss();
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    dialogButtonCancel.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
+
+
+                }
+                return false;
+            }
+
+        });
+
+
+        dialogButtonOk.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    dialogButtonOk.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    dialogButtonOk.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
+                }
+                return false;
+            }
+
+        });
         dialogButtonOk.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -1225,19 +1265,19 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     weightMinValue = Integer.valueOf(valMinWeight);
                     weightMaxValue = Integer.valueOf(valMaxWeight);
 
-                 //   sb.append(" Weight: Min ").append(weightMinValue).append(" - Max ").append(weightMaxValue).append(" ;");
+                    //   sb.append(" Weight: Min ").append(weightMinValue).append(" - Max ").append(weightMaxValue).append(" ;");
 
                     if (weightMaxValue < weightMinValue) {
-                        input_max_weight.setError("Value must be greater from min value");
+                        input_max_weight.setError(getResources().getText(R.string.minmaxvalid));
                         return;
-                    } else if (weightMinValue > weightMaxValue) {
-                        input_min_weight.setError("Value must be small from max value");
+                    } /*else if (weightMinValue > weightMaxValue) {
+                        input_min_weight.setError(getResources().getString(R.string.mingreatmax));
                         return;
-                    } else if (weightMinValue > strMaxWeight) {
-                        input_min_weight.setError("Entered value must be small from  " + strMaxWeight);
+                    }*/ else if (weightMinValue > strMaxWeight) {
+                        input_min_weight.setError(getResources().getString(R.string.mingreatmax) + strMaxWeight);
                         return;
                     } else if (weightMaxValue > strMaxWeight) {
-                        input_max_weight.setError("Entered value must be small from  " + strMaxWeight);
+                        input_max_weight.setError(getResources().getString(R.string.maxgreatdbmax) + " " + strMaxWeight);
                         return;
                     }
                 }
@@ -1259,29 +1299,26 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     valMinHeight = null;
                     valMaxHeight = null;
 
-                } else {
-                    // do nothing
                 }
-
                 if (valMinHeight != null && valMaxHeight != null && !valMinHeight.equals("") && !valMaxHeight.equals("")) {
 
                     heightMinValue = Integer.valueOf(valMinHeight);
                     heightMaxValue = Integer.valueOf(valMaxHeight);
 
-                  //  sb.append("  ");
-                  //  sb.append(" Height: Min ").append(heightMinValue).append(" - Max ").append(heightMaxValue).append(" ;");
+                    //  sb.append("  ");
+                    //  sb.append(" Height: Min ").append(heightMinValue).append(" - Max ").append(heightMaxValue).append(" ;");
 
                     if (heightMaxValue < heightMinValue) {
-                        input_max_height.setError("Value must be greater from min value");
+                        input_max_height.setError(getResources().getString(R.string.minmaxvalid));
                         return;
                     } else if (heightMinValue > heightMaxValue) {
-                        input_min_height.setError("Value must be small from max value");
+                        input_min_height.setError(getResources().getString(R.string.mingreatmax));
                         return;
                     }
                 }
                 if (!valMinHeight.isEmpty() && !valMaxHeight.isEmpty()) {
 
-                       mAutoLabel.addLabel("Height " + valMinHeight + "-" + valMaxHeight);
+                    mAutoLabel.addLabel("Height " + valMinHeight + "-" + valMaxHeight);
                 }
 
                 String valMinBmi = input_min_bmi.getText().toString();
@@ -1294,31 +1331,29 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 } else if (valMinBmi == null && valMaxBmi == null) {
                     valMinBmi = null;
                     valMaxBmi = null;
-                } else {
-
                 }
 
                 if (valMinBmi != null && valMaxBmi != null && !valMinBmi.equals("") && !valMaxBmi.equals("")) {
 
                     bmiMinValue = Integer.valueOf(valMinBmi);
                     bmiMaxValue = Integer.valueOf(valMaxBmi);
-                  //  sb.append("  ");
-                   // sb.append(" Bmi: Min ").append(bmiMinValue).append(" - Max ").append(bmiMaxValue).append(" ;");
+                    //  sb.append("  ");
+                    // sb.append(" Bmi: Min ").append(bmiMinValue).append(" - Max ").append(bmiMaxValue).append(" ;");
 
                     if (bmiMaxValue < bmiMinValue) {
-                        input_max_bmi.setError("Value must be greater from min value");
+                        input_max_bmi.setError(getResources().getString(R.string.minmaxvalid));
                         return;
                     } else if (bmiMinValue > bmiMaxValue) {
-                        input_min_bmi.setError("Value must be small from max value");
+                        input_min_bmi.setError(getResources().getString(R.string.mingreatmax));
                         return;
                     } else if (bmiMaxValue > strMaxBmi) {
-                        input_max_bmi.setError("Entered value must be small from  " + strMaxBmi);
+                        input_max_bmi.setError(getResources().getString(R.string.maxgreatdbmax) + " " + strMaxBmi);
                         return;
                     }
                 }
                 if (!valMinBmi.isEmpty() && !valMaxHeight.isEmpty()) {
 
-                    boolean success = mAutoLabel.addLabel("Bmi " + valMinBmi + "-" + valMaxBmi);
+                    mAutoLabel.addLabel("Bmi " + valMinBmi + "-" + valMaxBmi);
                 }
                 String valMinPulse = input_min_pulse.getText().toString();
                 String valMaxPulse = input_max_pulse.getText().toString();
@@ -1330,30 +1365,29 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 } else if (valMaxPulse == null && valMinPulse == null) {
                     valMinPulse = null;
                     valMaxPulse = null;
-                } else {
                 }
 
                 if (valMinPulse != null && valMaxPulse != null && !valMinPulse.equals("") && !valMaxPulse.equals("")) {
 
                     pulseMinValue = Integer.valueOf(valMinPulse);
                     pulseMaxValue = Integer.valueOf(valMaxPulse);
-                   /// sb.append("  ");
-                   // sb.append(" Pulse: Min ").append(pulseMinValue).append(" -  Max ").append(pulseMaxValue).append(" ;");
+                    /// sb.append("  ");
+                    // sb.append(" Pulse: Min ").append(pulseMinValue).append(" -  Max ").append(pulseMaxValue).append(" ;");
 
                     if (pulseMaxValue < pulseMinValue) {
-                        input_min_pulse.setError("Value must be greater from min value");
+                        input_min_pulse.setError(getResources().getText(R.string.minmaxvalid));
                         return;
                     } else if (pulseMinValue > pulseMaxValue) {
-                        input_min_pulse.setError("Value must be small from max value");
+                        input_min_pulse.setError(getResources().getString(R.string.mingreatmax));
                         return;
                     } else if (pulseMaxValue > strMaxPulse) {
-                        input_max_pulse.setError("Entered value must be small from  " + strMaxPulse);
+                        input_max_pulse.setError(getResources().getString(R.string.maxgreatdbmax) + " " + strMaxPulse);
                         return;
                     }
                 }
                 if (!valMinPulse.isEmpty() && !valMinPulse.isEmpty()) {
 
-                     mAutoLabel.addLabel("Pulse " + valMinPulse + "-" + valMaxPulse);
+                    mAutoLabel.addLabel("Pulse " + valMinPulse + "-" + valMaxPulse);
                 }
                 String valMinTemp = input_min_temp.getText().toString();
                 String valMaxTemp = input_max_temp.getText().toString();
@@ -1372,23 +1406,20 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     tempMinValue = Integer.valueOf(valMinTemp);
                     tempMaxValue = Integer.valueOf(valMaxTemp);
 
-                   // sb.append("  ");
-                   // sb.append(" Temp: Min ").append(tempMinValue).append(" -  Max ").append(tempMaxValue).append(" ;");
-
                     if (tempMaxValue < tempMinValue) {
-                        input_max_temp.setError("Value must be greater from min value");
+                        input_max_temp.setError(getResources().getText(R.string.minmaxvalid));
                         return;
                     } else if (tempMinValue > tempMaxValue) {
-                        input_min_temp.setError("Value must be small from max value");
+                        input_min_temp.setError(getResources().getString(R.string.mingreatmax));
                         return;
                     } else if (tempMaxValue > strMaxTemp) {
-                        input_max_temp.setError("Entered value must be small from  " + strMaxTemp);
+                        input_max_temp.setError(getResources().getString(R.string.maxgreatdbmax) + " " + strMaxTemp);
                         return;
                     }
                 }
                 if (!valMinTemp.isEmpty() && !valMaxTemp.isEmpty()) {
 
-                    boolean success = mAutoLabel.addLabel("Temp " + valMinTemp + "-" + valMaxTemp);
+                    mAutoLabel.addLabel("Temp " + valMinTemp + "-" + valMaxTemp);
                 }
 
                 String valMinSystole = input_min_systole.getText().toString();
@@ -1401,7 +1432,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 } else if (valMinSystole == null && valMaxSystole == null) {
                     valMinSystole = null;
                     valMaxSystole = null;
-                } else {
                 }
 
                 if (valMinSystole != null && valMaxSystole != null && !valMinSystole.equals("") && !valMaxSystole.equals("")) {
@@ -1409,23 +1439,21 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     systoleMinValue = Integer.valueOf(valMinSystole);
                     systoleMaxValue = Integer.valueOf(valMaxSystole);
 
-                  //  sb.append("  ");
-                  //  sb.append(" Systole: Min ").append(systoleMinValue).append(" -  Max  ").append(systoleMaxValue).append(" ;");
 
                     if (systoleMaxValue < systoleMinValue) {
-                        input_max_systole.setError("Value must be greater from min value");
+                        input_max_systole.setError(getResources().getText(R.string.minmaxvalid));
                         return;
                     } else if (systoleMinValue > systoleMaxValue) {
-                        input_min_systole.setError("Value must be small from max value");
+                        input_min_systole.setError(getResources().getString(R.string.mingreatmax));
                         return;
                     } else if (systoleMaxValue > strMaxSystole) {
-                        input_max_systole.setError("Entered value must be small from  " + strMaxSystole);
+                        input_max_systole.setError(getResources().getString(R.string.maxgreatdbmax) + " " + strMaxSystole);
                         return;
                     }
                 }
                 if (!valMinSystole.isEmpty() && !valMaxSystole.isEmpty()) {
 
-                     mAutoLabel.addLabel("Systole " + valMinSystole + "-" + valMaxSystole);
+                    mAutoLabel.addLabel("Systole " + valMinSystole + "-" + valMaxSystole);
                 }
                 String valMinDistole = input_min_distole.getText().toString();
                 String valMaxDistole = input_max_distole.getText().toString();
@@ -1437,7 +1465,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 } else if (valMinDistole == null && valMaxDistole == null) {
                     valMinDistole = null;
                     valMaxDistole = null;
-                } else {
                 }
 
                 if (valMinDistole != null && valMaxDistole != null && !valMinDistole.equals("") && !valMaxDistole.equals("")) {
@@ -1445,28 +1472,27 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     distoleMinValue = Integer.valueOf(valMinDistole);
                     distoleMaxValue = Integer.valueOf(valMaxDistole);
 
-                   // sb.append("  ");
-                   // sb.append(" Distole: Min ").append(distoleMinValue).append(" -  Max ").append(distoleMaxValue).append(" ;");
 
                     if (distoleMaxValue < distoleMinValue) {
-                        input_max_distole.setError("Value must be greater from min value");
+                        input_max_distole.setError(getResources().getText(R.string.minmaxvalid));
                         return;
                     } else if (distoleMinValue > distoleMaxValue) {
-                        input_min_distole.setError("Value must be small from max value");
+                        input_min_distole.setError(getResources().getString(R.string.mingreatmax));
                         return;
                     } else if (distoleMaxValue > strMaxDistole) {
-                        input_max_distole.setError("Entered value must be small from  " + strMaxDistole);
+                        input_max_distole.setError(getResources().getString(R.string.maxgreatdbmax) + " " + strMaxDistole);
                         return;
                     }
                 }
                 if (!valMinDistole.isEmpty() && !valMaxDistole.isEmpty()) {
 
-                    boolean success = mAutoLabel.addLabel("Diastole " + valMinDistole + "-" + valMaxDistole);
+                    mAutoLabel.addLabel("Diastole " + valMinDistole + "-" + valMaxDistole);
                 }
 
                 ///////////////////
-                String valMinSpo2 = input_min_sPo2.getText().toString();
-                String valMaxSpo2 = input_max_sPo2.getText().toString();
+
+                valMinSpo2 = input_min_sPo2.getText().toString();
+                valMaxSpo2 = input_max_sPo2.getText().toString();
 
                 if (valMinSpo2 != null && valMaxSpo2 == null || valMaxSpo2.equals("")) {
                     valMaxSpo2 = String.valueOf(strMaxSpo2);
@@ -1475,7 +1501,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 } else if (valMinSpo2 == null && valMaxSpo2 == null) {
                     valMinSpo2 = null;
                     valMaxSpo2 = null;
-                } else {
                 }
 
                 if (valMinSpo2 != null && valMaxSpo2 != null && !valMinSpo2.equals("") && !valMaxSpo2.equals("")) {
@@ -1483,23 +1508,23 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     spo2MinValue = Integer.valueOf(valMinSpo2);
                     spo2MaxValue = Integer.valueOf(valMaxSpo2);
 
-
                     if (spo2MaxValue < spo2MinValue) {
-                        input_max_sPo2.setError("Value must be greater from min value");
+                        input_max_sPo2.setError(getResources().getText(R.string.minmaxvalid));
                         return;
                     } else if (spo2MinValue > spo2MaxValue) {
-                        input_min_sPo2.setError("Value must be small from max value");
+                        input_min_sPo2.setError(getResources().getString(R.string.mingreatmax));
                         return;
                     } else if (spo2MaxValue > strMaxSpo2) {
-                        input_max_sPo2.setError("Entered value must be small from  " + strMaxSpo2);
+                        //Log.e("strMaxSpo2","  "+spo2MaxValue+"     "+strMaxSpo2);
+                        input_max_sPo2.setError(getResources().getString(R.string.maxgreatdbmax) + " " + strMaxSpo2);
                         return;
                     }
                 }
                 if (!valMinSpo2.isEmpty() && !valMaxSpo2.isEmpty()) {
 
-                   mAutoLabel.addLabel("Spo2 " + valMinSpo2 + "-" + valMaxSpo2);
+                    mAutoLabel.addLabel("Spo2 " + valMinSpo2 + "-" + valMaxSpo2);
                 }
-                ///////////////////
+                //////////////////////////////////////////////////////////////////////
 
                 String valMinRespiration = input_min_respiration.getText().toString();
                 String valMaxRespiration = input_max_respiration.getText().toString();
@@ -1511,7 +1536,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 } else if (valMinSpo2 == null && valMaxRespiration == null) {
                     valMinRespiration = null;
                     valMaxRespiration = null;
-                } else {
                 }
 
                 if (valMinRespiration != null && valMaxRespiration != null && !valMinRespiration.equals("") && !valMaxRespiration.equals("")) {
@@ -1520,13 +1544,13 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     respirationMaxValue = Integer.valueOf(valMaxRespiration);
 
                     if (respirationMaxValue < respirationMinValue) {
-                        input_max_respiration.setError("Value must be greater from min value");
+                        input_max_respiration.setError(getResources().getText(R.string.minmaxvalid));
                         return;
                     } else if (respirationMinValue > respirationMaxValue) {
-                        input_min_respiration.setError("Value must be small from max value");
+                        input_min_respiration.setError(getResources().getString(R.string.mingreatmax));
                         return;
                     } else if (respirationMaxValue > strMaxRespiration) {
-                        input_max_respiration.setError("Entered value must be small from  " + strMaxRespiration);
+                        input_max_respiration.setError(getResources().getString(R.string.maxgreatdbmax) + " " + strMaxRespiration);
                         return;
                     }
                 }
@@ -1534,86 +1558,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     mAutoLabel.addLabel("Respiration " + valMinRespiration + "-" + valMaxRespiration);
                 }
-
-
-
-               /* String valMinSugarFpg = input_min_sugarfpg.getText().toString();
-                String valMaxSugarFpg = input_max_sugarfpg.getText().toString();
-
-                if (valMinSugarFpg != null && valMaxSugarFpg == null || valMaxSugarFpg.equals("")) {
-                    valMaxSugarFpg = String.valueOf(strMaxSugarFPG);
-                } else if (valMaxSugarFpg != null && valMinSugarFpg == null || valMinSugarFpg.equals("")) {
-                    valMinSugarFpg = String.valueOf(strMinSugarFPG);
-                } else if (valMinSugarFpg == null && valMaxSugarFpg == null) {
-                    valMinSugarFpg = null;
-                    valMaxSugarFpg = null;
-                } else {
-                }
-
-                if (valMinSugarFpg != null && valMaxSugarFpg != null && !valMinSugarFpg.equals("") && !valMaxSugarFpg.equals("")) {
-
-                    sugarFpgMinValue = Integer.valueOf(valMinSugarFpg);
-                    sugarFpgMaxValue = Integer.valueOf(valMaxSugarFpg);
-
-                  //  sb.append("  ");
-                  //  sb.append(" SugarFpg: Min ").append(sugarFpgMinValue).append(" -  Max ").append(sugarFpgMaxValue).append(" ;");
-
-
-                    if (sugarFpgMaxValue < sugarFpgMinValue) {
-                        input_max_sugarfpg.setError("Value must be greater from min value");
-                        return;
-                    } else if (sugarFpgMinValue > sugarFpgMaxValue) {
-                        input_min_sugarfpg.setError("Value must be small from max value");
-                        return;
-                    } else if (sugarFpgMaxValue > strMaxSugarFPG) {
-                        input_max_sugarfpg.setError("Entered value must be small from  " + strMaxSugarFPG);
-                        return;
-                    }
-                }
-                if (!valMinSugarFpg.isEmpty() && !valMaxSugarFpg.isEmpty()) {
-
-                    mAutoLabel.addLabel("SugarFpg " + valMinSugarFpg + "-" + valMaxSugarFpg);
-                }
-                String valMinSugarPpg = input_min_sugarppg.getText().toString();
-                String valMaxSugarPpg = input_max_sugarppg.getText().toString();
-
-                if (valMinSugarPpg != null && valMaxSugarPpg == null || valMaxSugarPpg.equals("")) {
-                    valMaxSugarPpg = String.valueOf(strMaxSugarPPG);
-                } else if (valMaxSugarFpg != null && valMinSugarPpg == null || valMinSugarPpg.equals("")) {
-                    valMinSugarPpg = String.valueOf(strMinSugarPPG);
-                } else if (valMinSugarPpg == null && valMaxSugarPpg == null) {
-                    valMinSugarPpg = null;
-                    valMaxSugarPpg = null;
-
-                } else {
-                }
-
-                if (valMinSugarPpg != null && valMaxSugarPpg != null && !valMinSugarPpg.equals("") && !valMaxSugarPpg.equals("")) {
-
-                    sugarPpgMinValue = Integer.valueOf(valMinSugarPpg);
-                    sugarPpgMaxValue = Integer.valueOf(valMaxSugarPpg);
-
-                   // sb.append("  ");
-                   // sb.append("SugarPpg: Min ").append(sugarPpgMinValue).append(" -  Max ").append(sugarPpgMaxValue).append(" ;");
-
-
-                    if (sugarPpgMaxValue < sugarPpgMinValue) {
-                        input_max_sugarppg.setError("Value must be greater from min value");
-                        return;
-                    } else if (sugarPpgMinValue > sugarPpgMaxValue) {
-                        input_min_sugarppg.setError("Value must be small from max value");
-                        return;
-                    } else if (sugarPpgMaxValue > strMaxSugarPPG) {
-                        input_max_sugarppg.setError("Entered value must be small from  " + strMaxSugarPPG);
-                        return;
-                    }
-                }
-                if (!valMinSugarPpg.isEmpty() && !valMaxSugarPpg.isEmpty()) {
-
-                    mAutoLabel.addLabel("SugarPpg " + valMinSugarPpg + "-" + valMaxSugarPpg);
-                }*/
-                //showData.setText(sb);
-                // Log.e("valMinWeight ",""+weightMinValue + ""+weightMaxValue);
                 dialog.dismiss();
             }
         });
@@ -1659,14 +1603,26 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         strMaxSugarFPG = null;
         strMinSugarPPG = null;
         strMaxSugarPPG = null;
+        strMaxRespiration = null;
+        strMinRespiration = null;
+        strMinSpo2 = null;
+        strMaxSpo2 = null;
+        valMinSpo2 = null;
+        valMaxSpo2 = null;
+        spo2MinValue = null;
+        spo2MaxValue = null;
+        respirationMinValue = null;
+        respirationMaxValue = null;
+        strMinRespiration = null;
+        strMaxRespiration = null;
 
     }
 
     private void reseFiltersData() {
 
         // seekbarWeight.setRangeValues(strMinWeight, strMaxWeight);// if we want to set progrmmatically set range of seekbar
-        if(mAutoLabel!=null)mAutoLabel.clear();
-      if(mInvestigationLabel !=null)mInvestigationLabel.clear();
+        if (mAutoLabel != null) mAutoLabel.clear();
+        if (mInvestigationLabel != null) mInvestigationLabel.clear();
         weightMinValue = null;
         weightMaxValue = null;
         heightMinValue = null;
@@ -1697,6 +1653,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         strEcg = null;
         strPft = null;
         strAcerMax = null;
+        strHbA1c = null;
         strHbA1cMax = null;
         strLipidHDLMax = null;
         strLipidLDLMax = null;
@@ -1738,6 +1695,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         strIcterusDescription = null;
         strClubbingDescription = null;
         strOedemaDescription = null;
+        strCalfTendernessDescription = null;
+        strLymphadenopathyDescription = null;
 
         strCyanosis = null;
         strTremors = null;
@@ -1746,9 +1705,12 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         strOedema = null;
         strCalfTenderness = null;
         strLymphadenopathy = null;
-
-        mAutoLabel= null;
-        mInvestigationLabel= null;
+        valMinSpo2 = null;
+        valMaxSpo2 = null;
+        spo2MinValue=null;
+        spo2MaxValue=null;
+        respirationMinValue = null;
+        respirationMaxValue = null;
 
     }
 
@@ -1762,9 +1724,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(f);
 
-
-        Button cancel = (Button) f.findViewById(R.id.customDialogCancel);
-        Button ok = (Button) f.findViewById(R.id.customDialogOk);
+        final Button cancel = (Button) f.findViewById(R.id.customDialogCancel);
+        final Button ok = (Button) f.findViewById(R.id.customDialogOk);
         final EditText input_hba1c = (EditText) f.findViewById(R.id.input_hba1c);
         final EditText input_acer = (EditText) f.findViewById(R.id.input_acer);
         final EditText input_seremUrea = (EditText) f.findViewById(R.id.input_seremUrea);
@@ -1789,10 +1750,11 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         final EditText input_LipidVHDL_max = (EditText) f.findViewById(R.id.input_LipidVHDL_max);
 
 
+        final CheckBox cbPftNormal = (CheckBox) f.findViewById(R.id.cbPftNormal);
+        final CheckBox cbPftAbnormal = (CheckBox) f.findViewById(R.id.cbPftAbnormal);
 
-
-        RadioGroup radioEcg = (RadioGroup) f.findViewById(R.id.radioEcg);
-        RadioGroup radioPft = (RadioGroup) f.findViewById(R.id.radioPft);
+        final CheckBox cbEcgNormal = (CheckBox) f.findViewById(R.id.cbEcgNormal);
+        final CheckBox cbEcgAbnormal = (CheckBox) f.findViewById(R.id.cbEcgAbnormal);
 
         if (sugarFpgMinValue != null && sugarFpgMaxValue != null) {
             input_min_sugarfpg.setText(sugarFpgMinValue.toString());
@@ -1857,63 +1819,128 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         if (strEcg != null && !strEcg.equals(""))
             switch (strEcg) {
                 case "Normal":
-                    radioEcg.check(R.id.radioEcgNormal);
+
+                    cbEcgNormal.setChecked(true);
                     break;
                 case "Abnormal":
-                    radioEcg.check(R.id.radioEcgAbnormal);
+
+                    cbEcgAbnormal.setChecked(true);
                     break;
             }
         if (strPft != null && !strPft.equals(""))
             switch (strPft) {
                 case "Normal":
-                    radioPft.check(R.id.radioPftNormal);
+
+                    cbPftNormal.setChecked(true);
                     break;
                 case "Abnormal":
-                    radioPft.check(R.id.radioPftAbnormal);
+
+                    cbPftAbnormal.setChecked(true);
                     break;
             }
+       /* cbPalloreYes.setOnClickListener(new View.OnClickListener() {
 
-        radioEcg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
+                if (cbPalloreYes.isChecked()) {
+                    strPallore = "Yes";
+                    cbPalloreNo.setChecked(false);
+                } else {
+                    cbPalloreYes.setChecked(false);
+                    strPallore = "";
+                }
+            }
+        });*/
+        cbEcgNormal.setOnClickListener(new View.OnClickListener() {
 
-                    case R.id.radioEcgNormal:
-                        strEcg = "Normal";
-                        break;
-
-                    case R.id.radioEcgAbnormal:
-                        strEcg = "Abnormal";
-                        break;
-
-                    default:
-                        break;
+            @Override
+            public void onClick(View v) {
+                if (cbEcgNormal.isChecked()) {
+                    strEcg = "Normal";
+                    cbEcgAbnormal.setChecked(false);
+                } else {
+                    cbEcgNormal.setChecked(false);
+                    strEcg = "";
                 }
             }
         });
-        radioPft.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbEcgAbnormal.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
 
-                    case R.id.radioPftNormal:
-                        strPft = "Normal";
-                        break;
+                if (cbEcgAbnormal.isChecked()) {
+                    strEcg = "Abnormal";
+                    cbEcgNormal.setChecked(false);
+                } else {
+                    cbEcgAbnormal.setChecked(false);
+                    strEcg = "";
 
-                    case R.id.radioPftAbnormal:
-                        strPft = "Abnormal";
-                        break;
-
-                    default:
-                        break;
                 }
             }
         });
-        cancel.setOnClickListener(new View.OnClickListener() {
+
+
+        cbPftNormal.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View view) {
-                dialog.dismiss();
+            public void onClick(View v) {
+                if (cbPftNormal.isChecked()) {
+                    strPft = "Normal";
+                    cbPftAbnormal.setChecked(false);
+                } else {
+                    cbPftNormal.setChecked(false);
+                    strPft = "";
+                }
             }
+        });
+        cbPftAbnormal.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (cbPftAbnormal.isChecked()) {
+                    strPft = "Abnormal";
+                    cbPftNormal.setChecked(false);
+                } else {
+                    cbPftAbnormal.setChecked(false);
+                    strPft = "";
+
+                }
+            }
+        });
+
+
+        cancel.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    cancel.setBackground(getResources().getDrawable(R.drawable.rounded_corner_color));
+                    dialog.dismiss();
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    cancel.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
+
+                }
+                return false;
+            }
+
+        });
+
+        ok.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    ok.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    ok.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
+                }
+                return false;
+            }
+
         });
 
         ok.setOnClickListener(new View.OnClickListener() {
@@ -1922,8 +1949,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                 mInvestigationLabel.clear();
 
-
                 String strMinHbA1c = input_hba1c.getText().toString();
+
                 String strMaxHbA1c = input_hba1c_max.getText().toString();
 
                 if (strMinHbA1c != null && !strMinHbA1c.equals("") && strMaxHbA1c == null || strMaxHbA1c.equals("")) {
@@ -1937,7 +1964,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 } else if (strMinHbA1c == null && strMaxHbA1c == null) {
                     strMinHbA1c = null;
                     strMaxHbA1c = null;
-
                 }
 
                 if (strMinHbA1c != null && strMaxHbA1c != null && !strMinHbA1c.equals("") && !strMaxHbA1c.equals("")) {
@@ -1946,16 +1972,16 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strHbA1cMax = Integer.valueOf(strMaxHbA1c);
 
                     if (strHbA1cMax < strHbA1c) {
-                        input_hba1c_max.setError("Value must be greater from min value");
+                        input_hba1c_max.setError(getResources().getText(R.string.minmaxvalid));
                         return;
                     } else if (strHbA1c > strHbA1cMax) {
-                        input_hba1c.setError("Value must be small from max value");
+                        input_hba1c.setError(getResources().getString(R.string.mingreatmax));
                         return;
                     } else if (strHbA1c > strHbA1cMax) {
-                        input_hba1c.setError("Entered value must be small from  " + mMaxHbA1c);
+                        input_hba1c.setError("The min value recored in your database is  " + mMaxHbA1c);
                         return;
                     } else if (strHbA1cMax > Integer.valueOf(strMaxHbA1c)) {
-                        input_hba1c_max.setError("Entered value must be small from  " + mMaxHbA1c);
+                        input_hba1c_max.setError("The max value recored in your database is  " + mMaxHbA1c);
                         return;
                     }
                 }
@@ -1981,6 +2007,22 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                 }
                 if (strMinAcer != null && strMaxAcer != null && !strMinAcer.equals("") && !strMaxAcer.equals("")) {
+                    //ashish
+                    int acerMinValue = Integer.valueOf(strMinAcer);
+                    int acerMaxValue = Integer.valueOf(strMaxAcer);
+
+                    if (acerMaxValue < acerMinValue) {
+                        input_acer_max.setError(getResources().getText(R.string.minmaxvalid));
+                        return;
+                    } else if (acerMinValue > acerMaxValue) {
+                        input_acer.setError(getResources().getString(R.string.mingreatmax));
+                        return;
+                    } else if (acerMaxValue > mMaxAcer) {
+                        input_acer_max.setError(getResources().getString(R.string.maxgreatdbmax) + " " + mMaxAcer);
+                        return;
+                    }
+                }
+                if (strMinAcer != null && strMaxAcer != null && !strMinAcer.equals("") && !strMaxAcer.equals("")) {
 
                     strAcer = strMinAcer;
                     strAcerMax = strMaxAcer;
@@ -2004,6 +2046,23 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMinLipidHDL = null;
                     strMaxLipidHDL = null;
 
+                }
+
+                if (strMinLipidHDL != null && strMaxLipidHDL != null && !strMinLipidHDL.equals("") && !strMaxLipidHDL.equals("")) {
+                    //ashish
+                    int hdlMinValue = Integer.valueOf(strMinLipidHDL);
+                    int hdlMaxValue = Integer.valueOf(strMaxLipidHDL);
+
+                    if (hdlMaxValue < hdlMinValue) {
+                        input_LipidHDL_max.setError(getResources().getText(R.string.minmaxvalid));
+                        return;
+                    } else if (hdlMinValue > hdlMaxValue) {
+                        input_LipidHDL.setError(getResources().getString(R.string.mingreatmax));
+                        return;
+                    } else if (hdlMaxValue > mMaxHdl) {
+                        input_LipidHDL_max.setError(getResources().getString(R.string.maxgreatdbmax) + " " + mMaxHdl);
+                        return;
+                    }
                 }
                 if (strMaxLipidHDL != null && strMinLipidHDL != null && !strMaxLipidHDL.equals("") && !strMinLipidHDL.equals("")) {
 
@@ -2031,7 +2090,22 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMaxLipidLDL = null;
 
                 }
+                if (strMinLipidLDL != null && strMaxLipidLDL != null && !strMinLipidLDL.equals("") && !strMaxLipidLDL.equals("")) {
+                    //ashish
+                    int ldlMinValue = Integer.valueOf(strMinLipidLDL);
+                    int ldlMaxValue = Integer.valueOf(strMaxLipidLDL);
 
+                    if (ldlMaxValue < ldlMinValue) {
+                        input_LipidLDL_max.setError(getResources().getText(R.string.minmaxvalid));
+                        return;
+                    } else if (ldlMinValue > ldlMaxValue) {
+                        input_LipidLDL.setError(getResources().getString(R.string.mingreatmax));
+                        return;
+                    } else if (ldlMaxValue > mMaxLdl) {
+                        input_LipidLDL_max.setError(getResources().getString(R.string.maxgreatdbmax) + " " + mMaxLdl);
+                        return;
+                    }
+                }
                 if (strMinLipidLDL != null && strMaxLipidLDL != null && !strMinLipidLDL.equals("") && !strMaxLipidLDL.equals("")) {
 
                     strLipidLDL = strMinLipidLDL;
@@ -2059,6 +2133,23 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMaxTC = null;
 
                 }
+
+                if (strMinTC != null && strMaxTC != null && !strMinTC.equals("") && !strMaxTC.equals("")) {
+                    //ashish
+                    int tcMinValue = Integer.valueOf(strMinTC);
+                    int tcMaxValue = Integer.valueOf(strMaxTC);
+
+                    if (tcMaxValue < tcMinValue) {
+                        input_LipidTC_max.setError(getResources().getText(R.string.minmaxvalid));
+                        return;
+                    } else if (tcMinValue > tcMaxValue) {
+                        input_LipidTC.setError(getResources().getString(R.string.mingreatmax));
+                        return;
+                    } else if (tcMaxValue > mMaxTc) {
+                        input_LipidTC_max.setError(getResources().getString(R.string.maxgreatdbmax) + " " + mMaxTc);
+                        return;
+                    }
+                }
                 if (strMinTC != null && strMaxTC != null && !strMinTC.equals("") && !strMaxTC.equals("")) {
 
                     strLipidTC = strMinTC;
@@ -2070,7 +2161,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
                 String strMinTG = input_LipidTG.getText().toString();
                 String strMaxTG = input_LipidTG_max.getText().toString();
-               // Log.e("strMinTG", "  " + strMinTG + "   " + strMaxTG);
+                // Log.e("strMinTG", "  " + strMinTG + "   " + strMaxTG);
 
                 if (strMinTG != null && !strMinTG.equals("") && strMaxTG == null || strMaxTG.equals("")) {
 
@@ -2085,6 +2176,23 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMaxTG = null;
 
                 }
+
+                if (strMinTG != null && strMaxTG != null && !strMinTG.equals("") && !strMaxTG.equals("")) {
+                    //ashish
+                    int tgMinValue = Integer.valueOf(strMinTG);
+                    int tgMaxValue = Integer.valueOf(strMaxTG);
+
+                    if (tgMaxValue < tgMinValue) {
+                        input_LipidTG_max.setError(getResources().getText(R.string.minmaxvalid));
+                        return;
+                    } else if (tgMinValue > tgMaxValue) {
+                        input_LipidTG.setError(getResources().getString(R.string.mingreatmax));
+                        return;
+                    } else if (tgMaxValue > mMaxTg) {
+                        input_LipidTG_max.setError(getResources().getString(R.string.maxgreatdbmax) + " " + mMaxTg);
+                        return;
+                    }
+                }
                 if (strMinTG != null && strMaxTG != null && !strMinTG.equals("") && !strMaxTG.equals("")) {
 
                     strLipidTG = strMinTG;
@@ -2094,6 +2202,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     mInvestigationLabel.addLabel("TG " + strMinTG + " - " + strMaxTG);
                 }
+
+
                 String strMinLipidVHDL = input_LipidVHDL.getText().toString();
                 String strMaxLipidVHDLMax = input_LipidVHDL_max.getText().toString();
 
@@ -2109,7 +2219,22 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 } else if (strMaxLipidVHDLMax == null && strMinLipidVHDL == null) {
                     strMinLipidVHDL = null;
                     strMaxLipidVHDLMax = null;
+                }
+                if (strMinLipidVHDL != null && strMaxLipidVHDLMax != null && !strMinLipidVHDL.equals("") && !strMaxLipidVHDLMax.equals("")) {
+                    //ashish
+                    int vhdlMinValue = Integer.valueOf(strMinLipidVHDL);
+                    int vhdlMaxValue = Integer.valueOf(strMaxLipidVHDLMax);
 
+                    if (vhdlMaxValue < vhdlMinValue) {
+                        input_LipidVHDL_max.setError(getResources().getText(R.string.minmaxvalid));
+                        return;
+                    } else if (vhdlMinValue > vhdlMaxValue) {
+                        input_LipidVHDL.setError(getResources().getString(R.string.mingreatmax));
+                        return;
+                    } else if (vhdlMaxValue > mMaxVhdl) {
+                        input_LipidVHDL_max.setError(getResources().getString(R.string.maxgreatdbmax) + " " + mMaxVhdl);
+                        return;
+                    }
                 }
                 if (strMinLipidVHDL != null && strMaxLipidVHDLMax != null && !strMinLipidVHDL.equals("") && !strMaxLipidVHDLMax.equals("")) {
 
@@ -2118,7 +2243,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
                 if (!strMinLipidVHDL.isEmpty() && !strMaxLipidVHDLMax.isEmpty()) {
 
-                    mInvestigationLabel.addLabel("VHDL " + strMinLipidVHDL + " - " + strMaxLipidVHDLMax);
+                    mInvestigationLabel.addLabel("VLDL " + strMinLipidVHDL + " - " + strMaxLipidVHDLMax);
                 }
 
                 String strMinSerumUrea = input_seremUrea.getText().toString();
@@ -2137,6 +2262,23 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMaxSerumUrea = null;
 
                 }
+
+                if (strMinSerumUrea != null && strMaxSerumUrea != null && !strMinSerumUrea.equals("") && !strMaxSerumUrea.equals("")) {
+                    //ashish
+                    int seremMinValue = Integer.valueOf(strMinSerumUrea);
+                    int seremMaxValue = Integer.valueOf(strMaxSerumUrea);
+
+                    if (seremMaxValue < seremMinValue) {
+                        input_seremUrea_max.setError(getResources().getText(R.string.minmaxvalid));
+                        return;
+                    } else if (seremMinValue > seremMaxValue) {
+                        input_seremUrea.setError(getResources().getString(R.string.mingreatmax));
+                        return;
+                    } else if (seremMaxValue > mMaxSerumUrea) {
+                        input_seremUrea_max.setError(getResources().getString(R.string.maxgreatdbmax) + " " + mMaxSerumUrea);
+                        return;
+                    }
+                }
                 if (strMinSerumUrea != null && strMaxSerumUrea != null && !strMinSerumUrea.equals("") && !strMaxSerumUrea.equals("")) {
 
                     strSerumUrea = strMinSerumUrea;
@@ -2146,11 +2288,11 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     mInvestigationLabel.addLabel("SerumUrea " + strMinSerumUrea + " - " + strMaxSerumUrea);
                 }
-                if(strEcg!=null && !strEcg.isEmpty() && !strEcg.equals("")){
-                    mInvestigationLabel.addLabel("ECG - " + strEcg );
+                if (strEcg != null && !strEcg.isEmpty() && !strEcg.equals("")) {
+                    mInvestigationLabel.addLabel("ECG - " + strEcg);
                 }
-                if(strPft!=null && !strPft.isEmpty() && !strPft.equals("")){
-                    mInvestigationLabel.addLabel("PFT - " + strPft );
+                if (strPft != null && !strPft.isEmpty() && !strPft.equals("")) {
+                    mInvestigationLabel.addLabel("PFT - " + strPft);
                 }
                 String valMinSugarFpg = input_min_sugarfpg.getText().toString();
                 String valMaxSugarFpg = input_max_sugarfpg.getText().toString();
@@ -2169,18 +2311,14 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     sugarFpgMinValue = Integer.valueOf(valMinSugarFpg);
                     sugarFpgMaxValue = Integer.valueOf(valMaxSugarFpg);
 
-                    //  sb.append("  ");
-                    //  sb.append(" SugarFpg: Min ").append(sugarFpgMinValue).append(" -  Max ").append(sugarFpgMaxValue).append(" ;");
-
-
                     if (sugarFpgMaxValue < sugarFpgMinValue) {
-                        input_max_sugarfpg.setError("Value must be greater from min value");
+                        input_max_sugarfpg.setError(getResources().getText(R.string.minmaxvalid));
                         return;
                     } else if (sugarFpgMinValue > sugarFpgMaxValue) {
-                        input_min_sugarfpg.setError("Value must be small from max value");
+                        input_min_sugarfpg.setError(getResources().getString(R.string.mingreatmax));
                         return;
                     } else if (sugarFpgMaxValue > strMaxSugarFPG) {
-                        input_max_sugarfpg.setError("Entered value must be small from  " + strMaxSugarFPG);
+                        input_max_sugarfpg.setError(getResources().getString(R.string.maxgreatdbmax) + " " + strMaxSugarFPG);
                         return;
                     }
                 }
@@ -2199,22 +2337,20 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     valMinSugarPpg = null;
                     valMaxSugarPpg = null;
 
-                } else {
                 }
-
                 if (valMinSugarPpg != null && valMaxSugarPpg != null && !valMinSugarPpg.equals("") && !valMaxSugarPpg.equals("")) {
 
                     sugarPpgMinValue = Integer.valueOf(valMinSugarPpg);
                     sugarPpgMaxValue = Integer.valueOf(valMaxSugarPpg);
 
                     if (sugarPpgMaxValue < sugarPpgMinValue) {
-                        input_max_sugarppg.setError("Value must be greater from min value");
+                        input_max_sugarppg.setError(getResources().getText(R.string.minmaxvalid));
                         return;
                     } else if (sugarPpgMinValue > sugarPpgMaxValue) {
-                        input_min_sugarppg.setError("Value must be small from max value");
+                        input_min_sugarppg.setError(getResources().getString(R.string.mingreatmax));
                         return;
                     } else if (sugarPpgMaxValue > strMaxSugarPPG) {
-                        input_max_sugarppg.setError("Entered value must be small from  " + strMaxSugarPPG);
+                        input_max_sugarppg.setError(getResources().getString(R.string.maxgreatdbmax) + " " + strMaxSugarPPG);
                         return;
                     }
                 }
@@ -2234,25 +2370,37 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         final Dialog dialog;
 
         dialog = new Dialog(getContext());
-        LayoutInflater factory = LayoutInflater.from(getContext());
+        final LayoutInflater factory = LayoutInflater.from(getContext());
 
-        final View f = factory.inflate(R.layout.observation_dialog, null);
-        dialog.setTitle(" Filter Observation ");
+        final View f = factory.inflate(R.layout.observation_dialog_new, null);
+        dialog.setTitle("Filter Observations");
         dialog.setCanceledOnTouchOutside(false);
 
         dialog.setContentView(f);
 
-        Button cancel = (Button) f.findViewById(R.id.customDialogCancel);
-        Button ok = (Button) f.findViewById(R.id.customDialogOk);
+        final Button cancel = (Button) f.findViewById(R.id.customDialogCancel);
+        final Button ok = (Button) f.findViewById(R.id.customDialogOk);
 
-        RadioGroup radioPallor = (RadioGroup) f.findViewById(R.id.radioPallor);
-        RadioGroup radioCyanosis = (RadioGroup) f.findViewById(R.id.radioCyanosis);
-        RadioGroup radioTremors = (RadioGroup) f.findViewById(R.id.radioTremors);
-        RadioGroup radioIcterus = (RadioGroup) f.findViewById(R.id.radioIcterus);
-        RadioGroup radioClubbing = (RadioGroup) f.findViewById(R.id.radioClubbing);
-        RadioGroup radioOedema = (RadioGroup) f.findViewById(R.id.radioOedema);
-        RadioGroup radioCalfTenderness = (RadioGroup) f.findViewById(R.id.radioCalfTenderness);
-        RadioGroup radioLymphadenopathy = (RadioGroup) f.findViewById(R.id.radioLymphadenopathy);
+        final CheckBox cbPalloreYes = (CheckBox) f.findViewById(R.id.cbPalloreYes);
+        final CheckBox cbPalloreNo = (CheckBox) f.findViewById(R.id.cbPalloreNo);
+
+        final CheckBox cbCyanosiYes = (CheckBox) f.findViewById(R.id.cbCyanosiYes);
+        final CheckBox cbCyanosisNo = (CheckBox) f.findViewById(R.id.cbCyanosiNo);
+        final CheckBox cbTremorsYes = (CheckBox) f.findViewById(R.id.cbTremorsYes);
+        final CheckBox cbTremorsNo = (CheckBox) f.findViewById(R.id.cbTremorsNo);
+
+        final CheckBox cbIcterusYes = (CheckBox) f.findViewById(R.id.cbIcterusYes);
+        final CheckBox cbIcterusNo = (CheckBox) f.findViewById(R.id.cbIcterusNo);
+        final CheckBox cbClubbingYes = (CheckBox) f.findViewById(R.id.cbClubbingYes);
+        final CheckBox cbClubbingNo = (CheckBox) f.findViewById(R.id.cbClubbingNo);
+
+        final CheckBox cbOedemaYes = (CheckBox) f.findViewById(R.id.cbOedemaYes);
+        final CheckBox cbOedemaNo = (CheckBox) f.findViewById(R.id.cbOedemaNo);
+        final CheckBox cbCalfTendernessYes = (CheckBox) f.findViewById(R.id.cbCalfTendernessYes);
+        final CheckBox cbCalfTendernessNo = (CheckBox) f.findViewById(R.id.cbCalfTendernessNo);
+
+        final CheckBox cbLymphadenopathyYes = (CheckBox) f.findViewById(R.id.cbLymphadenopathyYes);
+        final CheckBox cbLymphadenopathyNo = (CheckBox) f.findViewById(R.id.cbLymphadenopathyNo);
 
         final EditText pallorDescription = (EditText) f.findViewById(R.id.pallorDescription);
         final EditText cyanosisDescription = (EditText) f.findViewById(R.id.cyanosisDescription);
@@ -2277,248 +2425,387 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         if (strPallore != null && !strPallore.equals(""))
             switch (strPallore) {
                 case "Yes":
-                    radioPallor.check(R.id.radioPallorYes);
+                    cbPalloreYes.setChecked(true);
+
                     break;
                 case "No":
-                    radioPallor.check(R.id.radioPallorNo);
+                    cbPalloreNo.setChecked(true);
                     break;
 
             }
         if (strCyanosis != null && !strCyanosis.equals(""))
             switch (strCyanosis) {
                 case "Yes":
-                    radioCyanosis.check(R.id.radioCyanosisYes);
+                    cbCyanosiYes.setChecked(true);
                     break;
                 case "No":
-                    radioCyanosis.check(R.id.radioCyanosisNo);
+                    cbCyanosisNo.setChecked(true);
                     break;
             }
         if (strTremors != null && !strTremors.equals(""))
             switch (strTremors) {
                 case "Yes":
-                    radioTremors.check(R.id.radioTremorsYes);
+                    cbTremorsYes.setChecked(true);
                     break;
                 case "No":
-                    radioTremors.check(R.id.radioTremorsNo);
+                    cbTremorsNo.setChecked(true);
                     break;
             }
         if (strIcterus != null && !strIcterus.equals(""))
             switch (strIcterus) {
                 case "Yes":
-                    radioIcterus.check(R.id.radioIcterusYes);
+                    cbIcterusYes.setChecked(true);
+
                     break;
                 case "No":
-                    radioIcterus.check(R.id.radioIcterusNo);
+                    cbIcterusNo.setChecked(true);
+
                     break;
             }
 
         if (strClubbing != null && !strClubbing.equals(""))
             switch (strClubbing) {
                 case "Yes":
-                    radioClubbing.check(R.id.radioClubbingYes);
+                    cbClubbingYes.setChecked(true);
                     break;
                 case "No":
-                    radioClubbing.check(R.id.radioClubbingNo);
+                    cbClubbingNo.setChecked(true);
                     break;
             }
         if (strOedema != null && !strOedema.equals(""))
             switch (strOedema) {
                 case "Yes":
-                    radioOedema.check(R.id.radioOedemaYes);
+                    cbOedemaYes.setChecked(true);
+
                     break;
                 case "No":
-                    radioOedema.check(R.id.radioOedemaNo);
+                    cbOedemaNo.setChecked(true);
                     break;
             }
         if (strCalfTenderness != null && !strCalfTenderness.equals(""))
             switch (strCalfTenderness) {
                 case "Yes":
-                    radioCalfTenderness.check(R.id.radioCalfTendernessYes);
+                    cbCalfTendernessYes.setChecked(true);
+
                     break;
                 case "No":
-                    radioCalfTenderness.check(R.id.radioCalfTendernessNo);
+                    cbCalfTendernessNo.setChecked(true);
                     break;
             }
+
         if (strLymphadenopathy != null && !strLymphadenopathy.equals(""))
             switch (strLymphadenopathy) {
+
                 case "Yes":
-                    radioLymphadenopathy.check(R.id.radioLymphadenopathyYes);
+                    cbLymphadenopathyYes.setChecked(true);
+
                     break;
                 case "No":
-                    radioLymphadenopathy.check(R.id.radioLymphadenopathyNo);
+                    cbLymphadenopathyNo.setChecked(true);
+
                     break;
             }
 
-        radioPallor.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbPalloreYes.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
+                if (cbPalloreYes.isChecked()) {
+                    strPallore = "Yes";
+                    cbPalloreNo.setChecked(false);
+                } else {
+                    cbPalloreYes.setChecked(false);
+                    strPallore = "";
+                }
+            }
+        });
+        cbPalloreNo.setOnClickListener(new View.OnClickListener() {
 
-                    case R.id.radioPallorYes:
-                        strPallore = "Yes";
-                        break;
+            @Override
+            public void onClick(View v) {
 
-                    case R.id.radioPallorNo:
-                        strPallore = "No";
-                        break;
+                if (cbPalloreNo.isChecked()) {
+                    strPallore = "No";
+                    cbPalloreYes.setChecked(false);
+                } else {
+                    cbPalloreNo.setChecked(false);
+                    strPallore = "";
 
-                    default:
-                        break;
                 }
             }
         });
 
-        radioCyanosis.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbCyanosiYes.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
+                if (cbCyanosiYes.isChecked()) {
 
-                    case R.id.radioCyanosisYes:
-                        strCyanosis = "Yes";
-                        break;
+                    strCyanosis = "Yes";
+                    cbCyanosisNo.setChecked(false);
+                } else {
+                    cbCyanosiYes.setChecked(false);
+                    strCyanosis = "";
 
-                    case R.id.radioCyanosisNo:
-                        strCyanosis = "No";
-                        break;
-
-                    default:
-                        break;
                 }
             }
         });
-        radioTremors.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbCyanosisNo.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
 
-                    case R.id.radioTremorsYes:
-                        strTremors = "Yes";
-                        break;
+                if (cbCyanosisNo.isChecked()) {
 
-                    case R.id.radioTremorsNo:
-                        strTremors = "No";
-                        break;
+                    strCyanosis = "No";
+                    cbCyanosiYes.setChecked(false);
+                } else {
+                    cbCyanosisNo.setChecked(false);
+                    strCyanosis = "";
 
-                    default:
-                        break;
                 }
             }
         });
-        radioIcterus.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+        cbTremorsYes.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
+                if (cbTremorsYes.isChecked()) {
 
-                    case R.id.radioIcterusYes:
-                        strIcterus = "Yes";
-                        break;
+                    strTremors = "Yes";
+                    cbTremorsNo.setChecked(false);
+                } else {
+                    cbTremorsYes.setChecked(false);
+                    strTremors = "";
 
-                    case R.id.radioIcterusNo:
-                        strIcterus = "No";
-                        break;
-
-                    default:
-                        break;
                 }
             }
         });
-        radioClubbing.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbTremorsNo.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
 
-                    case R.id.radioClubbingYes:
-                        strClubbing = "Yes";
-                        break;
+                if (cbTremorsNo.isChecked()) {
 
-                    case R.id.radioClubbingNo:
-                        strClubbing = "No";
-                        break;
+                    strTremors = "No";
+                    cbTremorsYes.setChecked(false);
+                } else {
+                    cbTremorsNo.setChecked(false);
+                    strTremors = "";
 
-                    default:
-                        break;
                 }
             }
         });
-        radioOedema.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbIcterusYes.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
+                if (cbIcterusYes.isChecked()) {
 
-                    case R.id.radioOedemaYes:
-                        strOedema = "Yes";
-                        break;
+                    strIcterus = "Yes";
+                    cbIcterusNo.setChecked(false);
+                } else {
+                    cbIcterusYes.setChecked(false);
+                    strIcterus = "";
 
-                    case R.id.radioOedemaNo:
-                        strOedema = "No";
-                        break;
-
-                    default:
-                        break;
                 }
             }
         });
-        radioCalfTenderness.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbIcterusNo.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
 
-                    case R.id.radioCalfTendernessYes:
-                        strCalfTenderness = "Yes";
-                        break;
+                if (cbIcterusNo.isChecked()) {
 
-                    case R.id.radioCalfTendernessNo:
-                        strCalfTenderness = "No";
-                        break;
+                    strIcterus = "No";
+                    cbIcterusYes.setChecked(false);
+                } else {
+                    cbIcterusNo.setChecked(false);
+                    strIcterus = "";
 
-                    default:
-                        break;
                 }
             }
         });
-        radioLymphadenopathy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+        cbClubbingYes.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
+                if (cbClubbingYes.isChecked()) {
 
-                    case R.id.radioLymphadenopathyYes:
-                        strLymphadenopathy = "Yes";
-                        break;
+                    strClubbing = "Yes";
+                    cbClubbingNo.setChecked(false);
+                } else {
+                    cbClubbingYes.setChecked(false);
+                    strClubbing = "";
 
-                    case R.id.radioLymphadenopathyNo:
-                        strLymphadenopathy = "No";
-                        break;
-
-                    default:
-                        break;
                 }
             }
         });
-        cancel.setOnClickListener(new View.OnClickListener() {
+        cbClubbingNo.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onClick(View view) {
-                dialog.dismiss();
+            public void onClick(View v) {
+
+                if (cbClubbingNo.isChecked()) {
+
+                    strClubbing = "No";
+                    cbClubbingYes.setChecked(false);
+                } else {
+                    cbClubbingNo.setChecked(false);
+                    strClubbing = "";
+
+                }
             }
         });
 
+        cbOedemaYes.setOnClickListener(new View.OnClickListener() {
 
-        ok.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
+                if (cbOedemaYes.isChecked()) {
 
+                    strOedema = "Yes";
+                    cbOedemaNo.setChecked(false);
+                } else {
+                    cbOedemaYes.setChecked(false);
+                    strOedema = "";
 
-                strPallorDescription = pallorDescription.getText().toString();
-                strCyanosisDescription = cyanosisDescription.getText().toString();
-                strTremorsDescription = tremorsDescription.getText().toString();
-                strIcterusDescription = icterusDescription.getText().toString();
-                strClubbingDescription = clubbingDescription.getText().toString();
-                strOedemaDescription = oedemaDescription.getText().toString();
-                strCalfTendernessDescription = calfTendernessDescription.getText().toString();
-                strLymphadenopathyDescription = lymphadenopathyDescription.getText().toString();
-
-                dialog.dismiss();
+                }
             }
         });
+        cbOedemaNo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (cbOedemaNo.isChecked()) {
+
+                    strOedema = "No";
+                    cbOedemaYes.setChecked(false);
+                } else {
+                    cbOedemaNo.setChecked(false);
+                    strOedema = "";
+
+                }
+            }
+        });
+
+        cbCalfTendernessYes.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (cbCalfTendernessYes.isChecked()) {
+
+                    strCalfTenderness = "Yes";
+                    cbCalfTendernessNo.setChecked(false);
+                } else {
+                    cbCalfTendernessYes.setChecked(false);
+                    strCalfTenderness = "";
+
+                }
+            }
+        });
+        cbCalfTendernessNo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (cbCalfTendernessNo.isChecked()) {
+
+                    strCalfTenderness = "No";
+                    cbCalfTendernessYes.setChecked(false);
+                } else {
+                    cbCalfTendernessNo.setChecked(false);
+                    strCalfTenderness = "";
+
+                }
+            }
+        });
+
+        cbLymphadenopathyYes.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (cbLymphadenopathyYes.isChecked()) {
+
+                    strLymphadenopathy = "Yes";
+                    cbLymphadenopathyNo.setChecked(false);
+                } else {
+                    cbLymphadenopathyYes.setChecked(false);
+                    strLymphadenopathy = "";
+
+                }
+            }
+        });
+        cbLymphadenopathyNo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (cbLymphadenopathyNo.isChecked()) {
+
+                    strLymphadenopathy = "No";
+                    cbLymphadenopathyYes.setChecked(false);
+                } else {
+                    cbLymphadenopathyNo.setChecked(false);
+                    strLymphadenopathy = "";
+
+                }
+            }
+        });
+
+        cancel.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    cancel.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
+
+                    dialog.dismiss();
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    cancel.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
+                }
+                return false;
+            }
+
+        });
+
+
+        ok.setOnTouchListener(new View.OnTouchListener() {
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+
+                    ok.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
+
+                    strPallorDescription = pallorDescription.getText().toString();
+                    strCyanosisDescription = cyanosisDescription.getText().toString();
+                    strTremorsDescription = tremorsDescription.getText().toString();
+                    strIcterusDescription = icterusDescription.getText().toString();
+                    strClubbingDescription = clubbingDescription.getText().toString();
+                    strOedemaDescription = oedemaDescription.getText().toString();
+                    strCalfTendernessDescription = calfTendernessDescription.getText().toString();
+                    strLymphadenopathyDescription = lymphadenopathyDescription.getText().toString();
+
+                    dialog.dismiss();
+
+                } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
+
+                    ok.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
+                }
+                return false;
+            }
+
+        });
+
+
         dialog.show();
 
     }
@@ -2547,7 +2834,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             @SuppressWarnings("ConstantConditions")
             @Override
             public void onLabelsCompleted() {
-               // Toast.makeText(getContext(), "Completed!", Toast.LENGTH_LONG).show();
+                // Toast.makeText(getContext(), "Completed!", Toast.LENGTH_LONG).show();
 
                 //Snackbar.make(getView(), "Completed!", Snackbar.LENGTH_SHORT).show();
             }
@@ -2556,7 +2843,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         mAutoLabel.setOnRemoveLabelListener(new AutoLabelUI.OnRemoveLabelListener() {
             @Override
             public void onRemoveLabel(View view, int position) {
-               // Toast.makeText(getContext(), "Label with text \" " + ((Label) view).getTag() + "\" has been removed.", Toast.LENGTH_LONG).show();
+                // Toast.makeText(getContext(), "Label with text \" " + ((Label) view).getTag() + "\" has been removed.", Toast.LENGTH_LONG).show();
 
             }
 
@@ -2571,7 +2858,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             @SuppressWarnings("ConstantConditions")
             @Override
             public void onLabelsEmpty() {
-              //  Toast.makeText(getContext(), "EMPTY!", Toast.LENGTH_LONG).show();
+                //  Toast.makeText(getContext(), "EMPTY!", Toast.LENGTH_LONG).show();
 
             }
         });
@@ -2579,7 +2866,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         mAutoLabel.setOnLabelClickListener(new AutoLabelUI.OnLabelClickListener() {
             @Override
             public void onClickLabel(View v) {
-               // Toast.makeText(getContext(), ((Label) v).getText(), Toast.LENGTH_SHORT).show();
+                // Toast.makeText(getContext(), ((Label) v).getText(), Toast.LENGTH_SHORT).show();
                 // Toast.makeText(getApplicationContext(),"test",Toast.LENGTH_LONG).show();
 
             }

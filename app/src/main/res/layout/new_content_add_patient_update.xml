@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/dep"
+    android:background="@color/white"
     android:orientation="vertical"
     android:padding="3dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
@@ -129,7 +129,7 @@
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="@color/bg_main"
                 android:textSize="18sp"
-                android:textStyle="normal"
+                android:textStyle="normal|bold"
                 tools:targetApi="jelly_bean"
                 android:visibility="invisible"/>
 

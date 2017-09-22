@@ -1,4 +1,16 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+apply plugin: 'io.fabric'
+
+
 
 android {
     signingConfigs {
@@ -21,7 +33,8 @@ android {
         targetSdkVersion 25
         multiDexEnabled true
         versionCode 13
-        versionName "1.3.2.7"
+        versionName "1.3.2.16"
+        resConfigs "en"
     }
     lintOptions {
         abortOnError false
@@ -56,6 +69,12 @@ android {
 }
 repositories {
     maven { url "https://jitpack.io" }
+    maven {
+        url "https://maven.google.com" // Google's Maven repository
+    }
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
 }
 
 dependencies {
@@ -63,15 +82,18 @@ dependencies {
     compile('org.apache.httpcomponents:httpmime:4.3') {
         exclude module: "httpclient"
     }
+    compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
+        transitive = true;
+    }
     compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'
-    compile 'com.google.firebase:firebase-core:9.8.0'
-    compile 'com.google.firebase:firebase-crash:9.4.0'
-    compile 'com.google.firebase:firebase-messaging:9.8.0'
-    compile 'com.google.android.gms:play-services-auth:9.8.0'
-    compile 'com.google.android.gms:play-services-analytics:9.8.0'
-    compile 'com.android.support:appcompat-v7:25.0.1'
-    compile 'com.android.support:design:25.0.1'
-    compile 'com.android.support:recyclerview-v7:25.0.1'
+    compile 'com.google.firebase:firebase-core:11.2.0'
+    compile 'com.google.firebase:firebase-crash:11.2.0'
+    compile 'com.google.firebase:firebase-messaging:11.2.0'
+    compile 'com.google.android.gms:play-services-auth:11.2.0'
+    compile 'com.google.android.gms:play-services-analytics:11.2.0'
+    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:design:25.3.1'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.android.volley:volley:1.0.0'
     compile 'com.mikhaellopez:circularimageview:3.0.2'
     compile 'com.github.bumptech.glide:glide:3.7.0'
@@ -79,13 +101,14 @@ dependencies {
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'com.github.PhilJay:MPAndroidChart:v2.2.4'
     compile 'com.beardedhen:androidbootstrap:2.0.1'
-    compile 'com.android.support:cardview-v7:25.0.1'
+    compile 'com.android.support:cardview-v7:25.3.1'
     compile 'com.github.delight-im:Android-AdvancedWebView:v3.0.0'
-    compile 'com.android.support:support-v4:25.0.1'
+    compile 'com.android.support:support-v4:25.3.1'
     compile 'com.jakewharton:butterknife:6.1.0'
     compile 'com.github.davidpizarro:autolabelui:1.0.1'
     compile 'com.splitwise:tokenautocomplete:2.0.8@aar'
-    compile 'com.moxun:tagcloudlib:1.2.0'
     compile 'com.android.support:multidex:1.0.1'
+    compile project(path: ':material-intro-screen')
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
 }
 apply plugin: 'com.google.gms.google-services'

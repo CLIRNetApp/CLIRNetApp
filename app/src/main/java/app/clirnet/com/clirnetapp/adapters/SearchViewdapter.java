@@ -160,7 +160,7 @@ public class SearchViewdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     }
 
 
-    static class MemberViewHolder extends RecyclerView.ViewHolder {
+    private static class MemberViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView phone_no;
         private final TextView follow_up_date;
@@ -169,7 +169,7 @@ public class SearchViewdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         private final TextView id;
         public final TextView age;
 
-        public MemberViewHolder(View view) {
+        MemberViewHolder(View view) {
             super(view);
 
             id=(TextView)view.findViewById(R.id.id);
@@ -184,10 +184,10 @@ public class SearchViewdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
-    static class LoadingViewHolder extends RecyclerView.ViewHolder {
-        public ProgressBar progressBar;
+    private static class LoadingViewHolder extends RecyclerView.ViewHolder {
+        ProgressBar progressBar;
 
-        public LoadingViewHolder(View itemView) {
+        LoadingViewHolder(View itemView) {
             super(itemView);
 
             progressBar = (ProgressBar) itemView.findViewById(R.id.loading);

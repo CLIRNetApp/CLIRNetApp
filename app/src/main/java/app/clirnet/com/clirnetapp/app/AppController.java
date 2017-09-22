@@ -1,5 +1,7 @@
 package app.clirnet.com.clirnetapp.app;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Application;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -15,6 +17,8 @@ import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -28,6 +32,7 @@ import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+import com.crashlytics.android.Crashlytics;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.StandardExceptionParser;
@@ -47,9 +52,11 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,13 +67,16 @@ import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.utility.ConnectivityChangeReceiver;
+import io.fabric.sdk.android.Fabric;
+
+import static java.security.AccessController.getContext;
 
 public class AppController extends Application {
 
     private static final String TAG = AppController.class.getSimpleName();
 
     public static final String PREFS_NAME = "savedViewValue";
-
+    public static final String APP_INTRO_PREFS_NAME = "APPINTRO";
 
     private RequestQueue mRequestQueue;
     private Request.Priority priority = Request.Priority.HIGH;
@@ -88,6 +98,7 @@ public class AppController extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         MultiDex.install(this);
         mInstance = this;
         AnalyticsTrackers.initialize(this);
@@ -156,13 +167,14 @@ public class AppController extends Application {
         t.send(new HitBuilders.EventBuilder().setCategory(category).setAction(action).setLabel("Track event").build());
     }
 
-    private RequestQueue getRequestQueue() {
+    public RequestQueue getRequestQueue() {
         if (mRequestQueue == null) {
             mRequestQueue = Volley.newRequestQueue(getApplicationContext());
         }
 
         return mRequestQueue;
     }
+
 
     public <T> void addToRequestQueue(Request<T> req, String tag) {
         req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
@@ -326,6 +338,15 @@ public class AppController extends Application {
         return sdf.format(cal.getTime());
     }
 
+    public static String addDay2(Date date, int i) {
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.DAY_OF_YEAR, i);
+
+        return sdf.format(cal.getTime());
+    }
+
     public static Date addDay1(Date date, int i) {
 
         Calendar cal = Calendar.getInstance();
@@ -348,6 +369,7 @@ public class AppController extends Application {
     }
 
     public String ConvertDateFormat(String date) {
+
         SimpleDateFormat fromUser = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
         SimpleDateFormat myFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
 
@@ -1011,6 +1033,7 @@ public class AppController extends Application {
     public String CalculateBMI(String strWeight, String strHeight) {
 
         float bmi = 0;
+        long d = 0;
 
         if (strHeight != null && strWeight != null && strHeight.trim().length() > 0 && strWeight.trim().length() > 0) {
 
@@ -1018,9 +1041,11 @@ public class AppController extends Application {
             float height = Float.parseFloat(strHeight) / 100;
 
             bmi = weight / (height * height);
+            bmi=Math.round(bmi);
+             d=(long)bmi;
         }
 
-        return String.valueOf(bmi);
+        return String.valueOf(d);
     }
 
     public String getCharFreq(String s) {
@@ -1076,7 +1101,6 @@ public class AppController extends Application {
         }
         return mediaImage;
     }
-
 
 
     /*Method to get/display banner image*/
@@ -1153,7 +1177,7 @@ public class AppController extends Application {
         Date date = null;
         try {
             date = format.parse(dtStart);
-           // System.out.println(date);
+            // System.out.println(date);
         } catch (ParseException e) {
 
             e.printStackTrace();
@@ -1168,17 +1192,17 @@ public class AppController extends Application {
             double bmi = Double.parseDouble(strBmi);
 
             if (bmi <= 18.5) {
-                obseity = "under weight";
+                obseity = "Under Weight";
             } else if (bmi >= 18.5 && bmi <= 24.9) {
-                obseity = "normal weight";
+                obseity = "Normal Weight";
             } else if (bmi >= 25.0 && bmi <= 29.9) {
-                obseity = "over weight";
+                obseity = "Over Weight";
             } else if (bmi >= 30.0 && bmi <= 34.9) {
-                obseity = "class 1 obesity";
+                obseity = "Class 1 Obesity";
             } else if (bmi >= 35.0 && bmi <= 39.9) {
-                obseity = "class 2 obesity";
+                obseity = "Class 2 Obesity";
             } else if (bmi >= 40.0) {
-                obseity = "class 3 obesity";
+                obseity = "Class 3 Obesity";
             } else {
                 return null;
             }
@@ -1226,38 +1250,45 @@ public class AppController extends Application {
         }
         return convertedDate;
     }
+
     //get dob from age
-    private String getDobFromAge(int age){
+    private String getDobFromAge(int age) {
 
         final Calendar c2 = Calendar.getInstance();
         int mYear = c2.get(Calendar.YEAR);
 
         int mMonth = c2.get(Calendar.MONTH);
 
-        if(mMonth>11){
-            mMonth=mMonth-9;
-        } else if(mMonth>6){
-            mMonth=mMonth-4;
+        if (mMonth > 11) {
+            mMonth = mMonth - 9;
+        } else if (mMonth > 6) {
+            mMonth = mMonth - 4;
         }
         int mDay = c2.get(Calendar.DAY_OF_MONTH);
-        if(mDay>27){
-            mDay=mDay-22;
-        }else if(mDay>16){
-            mDay=mDay-15;
+        if (mDay > 27) {
+            mDay = mDay - 22;
+        } else if (mDay > 16) {
+            mDay = mDay - 15;
         }
-        int yr=mYear-age;
+        int yr = mYear - age;
 
-        String dob= mDay + "-"
+        String dob = mDay + "-"
                 + (mMonth + 1) + "-" + yr;
 
         dob = ConvertDateFormat(dob);
         return dob;
     }
-    public  void showNoInternetToast(Context context,String text){
-        Toast toast = Toast.makeText(context,text, Toast.LENGTH_LONG);
+
+    public void showToastMsg(Context context, String text) {
+        Toast toast = Toast.makeText(context, text, Toast.LENGTH_LONG);
         toast.setGravity(Gravity.CENTER, 0, 0);
         toast.show();
     }
+    public static boolean isValidEmail(CharSequence target) {
+        return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
+    }
+
+
 }
 
 

@@ -26,7 +26,7 @@ public class SessionManager {
 		pref = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
 		editor = pref.edit();
 		editor.apply();
-        Context mContext = context;
+
 	}
 
 	public void setLogin(boolean isLoggedIn) {

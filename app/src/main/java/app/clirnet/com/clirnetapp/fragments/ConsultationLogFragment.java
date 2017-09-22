@@ -74,7 +74,6 @@ public class ConsultationLogFragment extends Fragment {
 
     public ConsultationLogFragment() {
         // this.setHasOptionsMenu(true);
-
     }
 
     @Override
@@ -133,7 +132,7 @@ public class ConsultationLogFragment extends Fragment {
         Date todayDate = new Date();
 
         String dd = sdf.format(todayDate);
-        currdate.setText("Today's Date : " + dd);
+        currdate.setText("Today's Date: " + dd);
 
         bannerClass = new BannerClass(getContext());
 
@@ -178,13 +177,6 @@ public class ConsultationLogFragment extends Fragment {
         int month1 = c.get(Calendar.MONTH);
         int day1 = c.get(Calendar.DAY_OF_MONTH);
 
-
-/*// Show current date
-        date.setText(new StringBuilder()
-                // Month is 0 based, just add 1
-                .append(day1).append("-").append(month1 + 1).append("-")
-                .append(year1).append(" "));*/
-
         sysdate = new StringBuilder().append(day1).append("-").append(month1 + 1).append("-").append(year1).append("");
         // Show current date
         date.setText(sysdate);
@@ -193,6 +185,7 @@ public class ConsultationLogFragment extends Fragment {
             date.setText(strTomorrowsDate);
             searchRecords();
         }
+        searchRecords();
 //open date picker dialog
         date.setOnClickListener(new View.OnClickListener() {
 
@@ -211,31 +204,20 @@ public class ConsultationLogFragment extends Fragment {
 
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
-                    searchRecords.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+                    searchRecords.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
+                    searchRecords();
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    searchRecords.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    searchRecords.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }
 
         });
-        //search the records from user query
-        searchRecords.setOnClickListener(new View.OnClickListener() {
-
-
-            @Override
-            public void onClick(View v) {
-
-                searchRecords();
-
-            }
-
-        });
-
 
         setupAnimation();
+
         return view;
     }
 private void searchRecords(){
@@ -256,7 +238,7 @@ private void searchRecords(){
     }
 
     if (TextUtils.isEmpty(searchdate)) {
-        date.setError("Please enter Date");
+        date.setError("No date selected. Please select one.");
         return;
     }
 

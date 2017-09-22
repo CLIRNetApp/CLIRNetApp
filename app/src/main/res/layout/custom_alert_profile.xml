@@ -64,7 +64,6 @@
             android:id="@+id/customDialogOk"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/bg_main"
             android:background="@drawable/rounded_color_add"
             android:layout_alignParentRight="true"
             android:text="Add New"

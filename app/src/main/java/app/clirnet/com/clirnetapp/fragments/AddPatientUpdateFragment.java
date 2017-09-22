@@ -30,7 +30,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
-import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -61,6 +60,8 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.utility.ContactsCompletionView;
 import app.clirnet.com.clirnetapp.utility.ImageCompression;
+import butterknife.ButterKnife;
+import butterknife.InjectView;
 
 //Our class extending fragment
 public class AddPatientUpdateFragment extends Fragment {
@@ -131,13 +132,20 @@ public class AddPatientUpdateFragment extends Fragment {
     private EditText edtInput_height;
 
 
+    @InjectView(R.id.showObservations)
+    LinearLayout showObservationsDataLayout;
+    @InjectView(R.id.showVitals)
+    LinearLayout showVitalsDataLayout;
+    @InjectView(R.id.showInvestigation)
+    LinearLayout showshowInvestigationDataLayout;
+
     private String strWeight;
     private String strPulse;
     private String strBp;
     private String strLowBp;
     private String strTemp;
     private String strHeight;
-    private String strbmi;
+    private String strBmi;
     private String strSugarFasting;
     private DatabaseClass databaseClass;
     private LinearLayout showReferrals;
@@ -151,7 +159,7 @@ public class AddPatientUpdateFragment extends Fragment {
     private String strLipidLDL;
     private String strLipidVHDL;
     private String strLipidHDL;
-    private String strSgar;
+    private String strSugar;
     private String strHbA1c;
     private String strSerumUrea;
     private String strAcer;
@@ -210,6 +218,8 @@ public class AddPatientUpdateFragment extends Fragment {
     private TextView txtThyroidProfile;
     private Button refered;
     private Button buttonVital;
+    private ArrayList<String> nameReferralsList;
+    private ArrayAdapter<String> referralName;
    /* private String strHb;
     private String strPlateletCount;
     private String strEsr;
@@ -264,7 +274,7 @@ public class AddPatientUpdateFragment extends Fragment {
         if (getArguments() != null) {
             strPatientId = getArguments().getString("PATIENTID");
             // this.viewPager= (ViewPager) getArguments().get("viewpager");
-              Log.e("strPatientId"," "+strPatientId);
+              //Log.e("strPatientId"," "+strPatientId);
         }
     }
 
@@ -273,6 +283,8 @@ public class AddPatientUpdateFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.add_patient_update_fragment, container, false);
+
+        ButterKnife.inject(this, view);
         // strPatientId=getArguments().getString("PATIENTID");
         //Log.e("strPatientId"," "+strPatientId);
         cancel = (Button) view.findViewById(R.id.cancel);
@@ -318,12 +330,12 @@ public class AddPatientUpdateFragment extends Fragment {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
                     showReferedDialogBox();
-                    refered.setBackgroundColor(getResources().getColor(R.color.bg_login));
+                    refered.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    refered.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    refered.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }
@@ -336,12 +348,12 @@ public class AddPatientUpdateFragment extends Fragment {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
                     addVitalsDialog();
-                    buttonVital.setBackgroundColor(getResources().getColor(R.color.bg_login));
+                    buttonVital.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    buttonVital.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    buttonVital.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }
@@ -397,13 +409,12 @@ public class AddPatientUpdateFragment extends Fragment {
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
-                    cancel.setBackgroundColor(getResources().getColor(R.color.cancelbtn));
+                    cancel.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
                     goToNavigation();
-
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    cancel.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    cancel.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }
@@ -423,6 +434,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 }
             }
         });
+
         SimpleDateFormat sdf3 = new SimpleDateFormat("HH:mm:ss", Locale.ENGLISH);
         Date todayDate3 = new Date();
 
@@ -448,13 +460,13 @@ public class AddPatientUpdateFragment extends Fragment {
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
-                    addUpdate.setBackgroundColor(getResources().getColor(R.color.btn_back_sbmt));
+                    addUpdate.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
                     saveDataToDataBase();//saved data int db
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    addUpdate.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    addUpdate.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }
@@ -473,7 +485,7 @@ public class AddPatientUpdateFragment extends Fragment {
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    buttonInvestigation.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    buttonInvestigation.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }
@@ -490,7 +502,7 @@ public class AddPatientUpdateFragment extends Fragment {
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-                    buttonObservations.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    buttonObservations.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
                 }
                 return false;
             }
@@ -513,6 +525,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 edtSymptoms.setThreshold(1);
                 edtSymptoms.setAdapter(lastnamespin);
                 edtSymptoms.setTokenClickStyle(TokenCompleteTextView.TokenClickStyle.Delete);
+                edtSymptoms.allowDuplicates(false);
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
@@ -530,6 +543,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 edtDignosis.setThreshold(1);
                 edtDignosis.setAdapter(lastnamespin);
                 edtDignosis.setTokenClickStyle(TokenCompleteTextView.TokenClickStyle.Delete);
+                edtDignosis.allowDuplicates(false);
             }
         } catch (ClirNetAppException e) {
             e.printStackTrace();
@@ -624,7 +638,7 @@ public class AddPatientUpdateFragment extends Fragment {
                     value = inputnumber.getText().toString().trim();
 
                     if (TextUtils.isEmpty(value)) {
-                        inputnumber.setError("Please Enter Value");
+                        inputnumber.setError(getResources().getString(R.string.foderror));
                         return true;
                     }
 
@@ -678,7 +692,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 value = inputnumber.getText().toString().trim();
 
                 if (TextUtils.isEmpty(value)) {
-                    inputnumber.setError("Please Enter Value");
+                    inputnumber.setError(getResources().getString(R.string.foderror));
                     return;
                 }
                 long val = Long.parseLong(value);
@@ -722,7 +736,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 value = inputnumber.getText().toString().trim();
 
                 if (TextUtils.isEmpty(value)) {
-                    inputnumber.setError("Please Enter Value");
+                    inputnumber.setError(getResources().getString(R.string.foderror));
                     return;
                 }
                 long val = Long.parseLong(value);
@@ -790,11 +804,10 @@ public class AddPatientUpdateFragment extends Fragment {
 
             }
         });
-
-
     }
 
     private void shpwDialog(int id) {
+
         final Calendar c1 = Calendar.getInstance();
         int mYear1 = c1.get(Calendar.YEAR);
         int mMonth1 = c1.get(Calendar.MONTH);
@@ -827,7 +840,6 @@ public class AddPatientUpdateFragment extends Fragment {
                 break;
 
             case DATE_DIALOG_ID2: //for fod
-
 
                 DatePickerDialog dpd3 = new DatePickerDialog(getContext(),
                         new DatePickerDialog.OnDateSetListener() {
@@ -872,11 +884,17 @@ public class AddPatientUpdateFragment extends Fragment {
 
     private void goToNavigation() {
         Intent i = new Intent(getContext(), NavigationActivity.class);
+
+        i.putExtra("ACTION_PATH", "HomeFragment");
+        i.putExtra("HEADER", "goto");//dummy text to activity
+       // i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);  // it will directly jump to navigation activity with called fragment
+
         startActivity(i);
         getActivity().finish();
     }
 
     private void showReferedDialogBox() {
+
         final Dialog dialog = new Dialog(getContext());
         LayoutInflater factory = LayoutInflater.from(getContext());
 
@@ -892,6 +910,8 @@ public class AddPatientUpdateFragment extends Fragment {
         Button dialogButtonCancel = (Button) f.findViewById(R.id.customDialogCancel);
         Button dialogButtonOk = (Button) f.findViewById(R.id.customDialogOk);
         final Button addMore = (Button) f.findViewById(R.id.addMore);
+
+        final Spinner nameRefredTo2Spinner = (Spinner) f.findViewById(R.id.nameRefredTo2Spinner);
 
         specialityArray = new ArrayList<>();
 
@@ -1039,6 +1059,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 if (addCounter == 2) {
                     LinearLayout refred2 = (LinearLayout) dialog.findViewById(R.id.refred2);
                     refred2.setVisibility(View.VISIBLE);
+                    nameRefredTo2Spinner.setAdapter(referralName);
                 }
                 if (addCounter == 3) {
                     LinearLayout refred3 = (LinearLayout) dialog.findViewById(R.id.refred3);
@@ -1050,7 +1071,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 }
                 if (addCounter >= 4) {
                     addMore.setVisibility(View.INVISIBLE);
-                    Toast.makeText(getContext(), "Limit Exceed! You can not add more", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Sorry you can only add up to 5 records", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -1078,11 +1099,11 @@ public class AddPatientUpdateFragment extends Fragment {
 
 
         try {
-            ArrayList<String> nameReferralsList = dbController.getReferalsnew();
+            nameReferralsList = dbController.getReferalsnew();
 
             if (nameReferralsList.size() > 0) {
-                ArrayAdapter<String> referralName = new ArrayAdapter<>(getContext(),
-                        android.R.layout.simple_dropdown_item_1line);
+                referralName = new ArrayAdapter<>(getContext(),
+                        R.layout.spinner_item);
                 referralName.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
                 referralName.add("Select Referrals");
                 referralName.addAll(nameReferralsList);
@@ -1108,6 +1129,8 @@ public class AddPatientUpdateFragment extends Fragment {
 
                 strReferredTo1Name = (String) parent.getItemAtPosition(position);
 
+
+
                 try {
                     if (nameRefredTo1Spinner.getSelectedItem() != "Select Referrals") {
 
@@ -1124,6 +1147,14 @@ public class AddPatientUpdateFragment extends Fragment {
                         if (list.size() > 0) {
                             String strSpeciality = list.get(0).get("SPECIALITY");
                             referredtoSpeciality1.setText(strSpeciality);
+                        }
+
+                        if(position > 0){
+                            nameReferralsList.remove(position);
+                            nameReferralsList.remove(strReferredTo1Name);
+                            referralName.notifyDataSetChanged();
+
+                            Log.e("position","  "+position + "  "+strReferredTo1Name);
                         }
                     }
                 } catch (ClirNetAppException e) {
@@ -1333,9 +1364,9 @@ public class AddPatientUpdateFragment extends Fragment {
                 edtInput_height.setText(strHeight);
             }
 
-            if (strbmi != null && !strbmi.equals("") && strbmi.length() > 0) {
+            if (strBmi != null && !strBmi.equals("") && strBmi.length() > 0) {
 
-                edtInput_bmi.setText(strbmi);
+                edtInput_bmi.setText(strBmi);
             }
 
             if (strPulse != null && !strPulse.equals("") && strPulse.length() > 0) {
@@ -1383,7 +1414,7 @@ public class AddPatientUpdateFragment extends Fragment {
 
 
                     strHeight = edtInput_height.getText().toString().trim();
-                    strbmi = edtInput_bmi.getText().toString().trim();
+                    strBmi = edtInput_bmi.getText().toString().trim();
                     strSpo2=edtInput_spo2.getText().toString();
                     strRespirationRate=edtInput_respiration_rate.getText().toString();
                     strObesity =ediInput_obesity.getText().toString();
@@ -1391,61 +1422,56 @@ public class AddPatientUpdateFragment extends Fragment {
                     if (strTemp.length() > 0) {
                         double valueTemp = Double.parseDouble(strTemp);
                         if (valueTemp > 110) {
-                            edtInput_temp.setError(" Temp can not be more than 110 ");
+                            edtInput_temp.setError("Temperature cannot be more than 110");
                             return;
                         } else {
                             edtInput_temp.setError(null);
                         }
                     }
-                    if (strWeight != null && !strWeight.equals("") && strWeight.length() > 0) {
-                        sbVitals.append("Weight: ").append(strWeight).append(" ;");
+                    if (strWeight != null && strWeight.length() > 0) {
+                        sbVitals.append("Weight - ").append(strWeight).append("  ;  ");
                     }
 
                     if (strHeight != null && !strHeight.equals("") && strHeight.length() > 0) {
-
-                        sbVitals.append("  ");
-                        sbVitals.append(" Height: ").append(strHeight).append(" ;");
+                        //sbVitals.append("  ");
+                        sbVitals.append("Height - ").append(strHeight).append("  ;  ");
                     }
-
-                    if (strbmi != null && !strbmi.equals("") && strbmi.length() > 0) {
-
-                        sbVitals.append("  ");
-                        sbVitals.append(" Bmi: ").append(strbmi).append(" ;");
-                    }
-                    if (strObesity != null && !strObesity.equals("") && strObesity.length() > 0) {
-
-                        sbVitals.append("  ");
-                        sbVitals.append(" Obesity: ").append(strObesity).append(" ;");
+                    if (strBmi != null && !strBmi.equals("") && strBmi.length() > 0) {
+                        //sbVitals.append("  ");
+                        sbVitals.append("BMI - ").append(strBmi).append("  ;  ");
                     }
                     if (strPulse != null && !strPulse.equals("") && strPulse.length() > 0) {
-
-                        sbVitals.append("  ");
-                        sbVitals.append(" Pulse: ").append(strPulse).append(" ;");
+                        //sbVitals.append("  ");
+                        sbVitals.append("Pulse - ").append(strPulse).append("  ;  ");
                     }
                     if (strBp != null && !strBp.equals("") && strBp.length() > 0) {
-
-                        sbVitals.append("  ");
-                        sbVitals.append(" Systole: ").append(strBp).append(" ;");
+                        //sbVitals.append("  ");
+                        sbVitals.append("Systole - ").append(strBp).append("  ;  ");
                     }
-                    if (strLowBp != null && !strLowBp.equals("") && strLowBp.length() > 0) {
 
-                        sbVitals.append("  ");
-                        sbVitals.append(" Diastole: ").append(strLowBp).append(" ;");
+                    if (strLowBp != null && !strLowBp.equals("") && strLowBp.length() > 0) {
+                        //sbVitals.append("  ");
+                        sbVitals.append("Diastole - ").append(strLowBp).append("  ;  ");
                     }
                     if (strTemp != null && !strTemp.equals("") && strTemp.length() > 0) {
-
-                        sbVitals.append("  ");
-                        sbVitals.append(" Temp: ").append(strTemp).append(" ;");
+                        //sbVitals.append("  ");
+                        sbVitals.append("Temp - ").append(strTemp).append("  ;  ");
                     }
                     if (strSpo2 != null && !strSpo2.equals("") && strSpo2.length() > 0) {
-
-                        sbVitals.append("  ");
-                        sbVitals.append(" Spo2: ").append(strSpo2).append(" ;");
+                        //sbVitals.append("  ");
+                        sbVitals.append("SPO2 - ").append(strSpo2).append("  ;  ");
                     }
                     if (strRespirationRate != null && !strRespirationRate.equals("") && strRespirationRate.length() > 0) {
+                        //sbVitals.append("  ");
+                        sbVitals.append("Respiration - ").append(strRespirationRate).append("  ;  ");
+                    }
 
-                        sbVitals.append("  ");
-                        sbVitals.append(" RespirationRate: ").append(strRespirationRate).append(" ;");
+                    if (strObesity != null && !strObesity.equals("") && strObesity.length() > 0) {
+                        //sbVitals.append("  ");
+                        sbVitals.append("Obesity - ").append(strObesity).append("  ;  ");
+                    }
+                    if (sbVitals != null&& sbVitals.length()>1) {
+                       showVitalsDataLayout.setVisibility(View.VISIBLE);
                     }
 
                     showVitalsData.setText(sbVitals);
@@ -1471,7 +1497,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 String bmi = appController.CalculateBMI(edtInput_weight.getText().toString(), edtInput_height.getText().toString());
                 edtInput_bmi.setText(bmi);
                 strObesity =appController.getObesity(bmi);
-                // Log.e("obestity","  "+strObesity);
+                Log.e("obestity","  "+bmi);
                 ediInput_obesity.setText(strObesity);
             }
         });
@@ -1526,7 +1552,7 @@ public class AddPatientUpdateFragment extends Fragment {
         userSellectedDate = fodtextshow.getText().toString();
 
         if (TextUtils.isEmpty(strSymptoms) && TextUtils.isEmpty(strDignosis)) {
-            Toast.makeText(getContext(), "Symptoms or Diagnosis left blank.", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "Please enter at least 1 symptom or diagnosis", Toast.LENGTH_LONG).show();
             // ailment.setError("Please enter Ailment");
             return;
         }
@@ -1585,12 +1611,12 @@ public class AddPatientUpdateFragment extends Fragment {
         String record_source = "Add Patient Update";
 
         dbController.addPatientNextVisitRecord(visit_id, strPatientId, userSellectedDate, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
-                strWeight, strPulse, strBp, strLowBp, strTemp, strSymptoms, strDignosis, strHeight, strbmi, strReferedBy, strReferedTo,strPatientFollowUpStatus, record_source,strSpo2,strRespirationRate, strObesity);
+                strWeight, strPulse, strBp, strLowBp, strTemp, strSymptoms, strDignosis, strHeight, strBmi, strReferedBy, strReferedTo,strPatientFollowUpStatus, record_source,strSpo2,strRespirationRate, strObesity);
 
-        dbController.addInvestigation(strPatientId, visit_id, strSgar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC
+        dbController.addInvestigation(strPatientId, visit_id, strSugar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC
                 , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft, flag);
 
-        /*dbController.addInvestigation(strPatientId, visit_id, strSgar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC,strTch
+        /*dbController.addInvestigation(strPatientId, visit_id, strSugar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC,strTch
                 , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft,strHb,strPlateletCount,strEsr,strDcl,strDcn ,strDce,strDcm,strDcb,
                 strTotalBiliubin,strDirectBilirubin,strIndirectBilirubin,strSgpt,strSgot,strGgt,strTotalProtein,strAlbumin,strGlobulin,strAgRatio,strLdlHdlRatio,strSugarRbs,strUrinaryPusCell,strUrineRbc,strUrinaryCast,strUrineProtein,strUrineCrystal,strMicroalbuminuria,
                 strSerumCreatinine,strAcr,strTsh,strT3,strT4,flag);*/
@@ -1709,7 +1735,7 @@ public class AddPatientUpdateFragment extends Fragment {
         strLipidLDL=null;
         strLipidVHDL=null;
         strLipidHDL=null;
-        strSgar=null;
+        strSugar =null;
         strHbA1c=null;
         strSerumUrea=null;
         strAcer=null;
@@ -1750,7 +1776,7 @@ public class AddPatientUpdateFragment extends Fragment {
 
         final View f = factory.inflate(R.layout.investigation_dialog, null);
         //new_investigation_dialog
-        dialog.setTitle(" Add Investigation ");
+        dialog.setTitle("Add Investigation");
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(f);
 
@@ -1819,10 +1845,14 @@ public class AddPatientUpdateFragment extends Fragment {
         txtRft = (TextView) f.findViewById(R.id.txtRft);
         txtThyroidProfile = (TextView) f.findViewById(R.id.txtThyroidProfile);*/
 
+        final CheckBox cbPftNormal = (CheckBox) f.findViewById(R.id.cbPftNormal);
+        final CheckBox cbPftAbnormal = (CheckBox) f.findViewById(R.id.cbPftAbnormal);
 
+        final CheckBox cbEcgNormal = (CheckBox) f.findViewById(R.id.cbEcgNormal);
+        final CheckBox cbEcgAbnormal = (CheckBox) f.findViewById(R.id.cbEcgAbnormal);
 
-        RadioGroup radioEcg = (RadioGroup) f.findViewById(R.id.radioEcg);
-        RadioGroup radioPft = (RadioGroup) f.findViewById(R.id.radioPft);
+       /* RadioGroup radioEcg = (RadioGroup) f.findViewById(R.id.radioEcg);
+        RadioGroup radioPft = (RadioGroup) f.findViewById(R.id.radioPft);*/
 
         sbInvestigations.setLength(0);//clearing string builder from previous data
 
@@ -1833,7 +1863,7 @@ public class AddPatientUpdateFragment extends Fragment {
         if (strLipidLDL != null && !strLipidLDL.equals("")) input_LipidLDL.setText(strLipidLDL);
         if (strLipidVHDL != null && !strLipidVHDL.equals("")) input_LipidVHDL.setText(strLipidVHDL);
         if (strLipidHDL != null && !strLipidHDL.equals("")) input_LipidHDL.setText(strLipidHDL);
-        if (strSgar != null && !strSgar.equals("")) edtInput_sugar.setText(strSgar);
+        if (strSugar != null && !strSugar.equals("")) edtInput_sugar.setText(strSugar);
         if (strSugarFasting != null && !strSugarFasting.equals(""))
             edtInput_sugarfasting.setText(strSugarFasting);
         if (strHbA1c != null && !strHbA1c.equals("")) input_hba1c.setText(strHbA1c);
@@ -1872,59 +1902,84 @@ public class AddPatientUpdateFragment extends Fragment {
         if(strT3!= null && !strT3.equals(""))input_t3.setText(strT3);
         if(strT4!= null && !strT4.equals(""))input_t4.setText(strT4);*/
 
+
         if (strEcg != null && !strEcg.equals(""))
             switch (strEcg) {
                 case "Normal":
-                    radioEcg.check(R.id.radioEcgNormal);
+
+                    cbEcgNormal.setChecked(true);
                     break;
                 case "Abnormal":
-                    radioEcg.check(R.id.radioEcgAbnormal);
-                    break;
 
+                    cbEcgAbnormal.setChecked(true);
+                    break;
             }
         if (strPft != null && !strPft.equals(""))
             switch (strPft) {
                 case "Normal":
-                    radioPft.check(R.id.radioPftNormal);
+
+                    cbPftNormal.setChecked(true);
                     break;
                 case "Abnormal":
-                    radioPft.check(R.id.radioPftAbnormal);
+
+                    cbPftAbnormal.setChecked(true);
                     break;
             }
-        radioEcg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbEcgNormal.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
+                if (cbEcgNormal.isChecked()) {
+                    strEcg = "Normal";
+                    cbEcgAbnormal.setChecked(false);
+                } else {
+                    cbEcgNormal.setChecked(false);
+                    strEcg = "";
+                }
+            }
+        });
+        cbEcgAbnormal.setOnClickListener(new View.OnClickListener() {
 
-                    case R.id.radioEcgNormal:
-                        strEcg = "Normal";
-                        break;
+            @Override
+            public void onClick(View v) {
 
-                    case R.id.radioEcgAbnormal:
-                        strEcg = "Abnormal";
-                        break;
+                if (cbEcgAbnormal.isChecked()) {
+                    strEcg = "Abnormal";
+                    cbEcgNormal.setChecked(false);
+                } else {
+                    cbEcgAbnormal.setChecked(false);
+                    strEcg = "";
 
-                    default:
-                        break;
                 }
             }
         });
 
-        radioPft.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+        cbPftNormal.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
+                if (cbPftNormal.isChecked()) {
+                    strPft = "Normal";
+                    cbPftAbnormal.setChecked(false);
+                } else {
+                    cbPftNormal.setChecked(false);
+                    strPft = "";
+                }
+            }
+        });
+        cbPftAbnormal.setOnClickListener(new View.OnClickListener() {
 
-                    case R.id.radioPftNormal:
-                        strPft = "Normal";
-                        break;
+            @Override
+            public void onClick(View v) {
 
-                    case R.id.radioPftAbnormal:
-                        strPft = "Abnormal";
-                        break;
+                if (cbPftAbnormal.isChecked()) {
+                    strPft = "Abnormal";
+                    cbPftNormal.setChecked(false);
+                } else {
+                    cbPftAbnormal.setChecked(false);
+                    strPft = "";
 
-                    default:
-                        break;
                 }
             }
         });
@@ -1948,7 +2003,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 strLipidVHDL = input_LipidVHDL.getText().toString();
                 strLipidHDL = input_LipidHDL.getText().toString();
                 strSugarFasting = edtInput_sugarfasting.getText().toString();
-                strSgar = edtInput_sugar.getText().toString();
+                strSugar = edtInput_sugar.getText().toString();
                 strHbA1c = input_hba1c.getText().toString();
                 strSerumUrea = input_seremUrea.getText().toString();
                 strAcer = input_acer.getText().toString();
@@ -1987,58 +2042,56 @@ public class AddPatientUpdateFragment extends Fragment {
                 strAcr=input_acr.getText().toString();
 */
 
-                if (strSgar != null && !strSgar.equals("") && strSgar.length() > 0) {
-                    sbInvestigations.append("Sugar(PPG):").append(strSgar).append(" ;");
+                /*if (strObesity != null && !strObesity.equals("") && strObesity.length() > 0) {
+                    //sbVitals.append("  ");
+                    sbVitals.append("Obesity - ").append(strObesity).append("  ;  ");
+                }*/
+
+                if (strSugar != null && strSugar.length() > 0) {
+                    sbInvestigations.append("Sugar(PPG) - ").append(strSugar).append("  ;  ");
                 }
-                if (strSugarFasting != null && !strSugarFasting.equals("") && strSugarFasting.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" Sugar(FPG):").append(strSugarFasting).append(" ;");
+                if (strSugarFasting != null && strSugarFasting.length() > 0) {
+                    sbInvestigations.append("Sugar(FPG) - ").append(strSugarFasting).append("  ;  ");
                 }
-                if (strEcg != null && !strEcg.equals("") && strEcg.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" ECG:").append(strEcg).append(" ;");
+                if (strEcg != null && strEcg.length() > 0) {
+                    sbInvestigations.append("ECG  - ").append(strEcg).append("  ;  ");
                 }
-                if (strPft != null && !strPft.equals("") && strPft.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" PFT:").append(strPft).append(" ;");
+                if (strPft != null && strPft.length() > 0) {
+                    sbInvestigations.append("PFT - ").append(strPft).append("  ;  ");
                 }
-                if (strHbA1c != null && !strHbA1c.equals("") && strHbA1c.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" HbA1c:").append(strHbA1c).append(" ;");
+                if (strHbA1c != null && strHbA1c.length() > 0) {
+                    sbInvestigations.append("HbA1c - ").append(strHbA1c).append("  ;  ");
                 }
-                if (strAcer != null && !strAcer.equals("") && strAcer.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" ACR:").append(strAcer).append(" ;");
+                if (strAcer != null && strAcer.length() > 0) {
+                    sbInvestigations.append("ACR - ").append(strAcer).append("  ;  ");
                 }
-                if (strSerumUrea != null && !strSerumUrea.equals("") && strSerumUrea.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" SerumUrea:").append(strSerumUrea).append(" ;");
+                if (strSerumUrea != null && strSerumUrea.length() > 0) {
+                    sbInvestigations.append("SerumUrea - ").append(strSerumUrea).append("  ;  ");
                 }
-                if (strLipidHDL != null && !strLipidHDL.equals("") && strLipidHDL.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" HDL:").append(strLipidHDL).append(" ;");
+                if (strLipidHDL != null && strLipidHDL.length() > 0) {
+                    sbInvestigations.append("HDL - ").append(strLipidHDL).append("  ;  ");
                 }
-                if (strLipidTC != null && !strLipidTC.equals("") && strLipidTC.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" TC:").append(strLipidTC).append(" ;");
+                if (strLipidTC != null && strLipidTC.length() > 0) {
+                    sbInvestigations.append("TC - ").append(strLipidTC).append("  ;  ");
                 }
-                if (strLipidTG != null && !strLipidTG.equals("") && strLipidTG.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" TG:").append(strLipidTG).append(" ;");
+                if (strLipidTG != null && strLipidTG.length() > 0) {
+                    sbInvestigations.append("TG - ").append(strLipidTG).append("  ;  ");
                 }
-                if (strLipidLDL != null && !strLipidLDL.equals("") && strLipidLDL.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" LDL:").append(strLipidLDL).append(" ;");
+                if (strLipidLDL != null && strLipidLDL.length() > 0) {
+                    sbInvestigations.append("LDL - ").append(strLipidLDL).append("  ;  ");
                 }
-                if (strLipidVHDL != null && !strLipidVHDL.equals("") && strLipidVHDL.length() > 0) {
-                    sbInvestigations.append("  ");
-                    sbInvestigations.append(" VLDL:").append(strLipidVHDL).append(" ;");
+                if (strLipidVHDL != null && strLipidVHDL.length() > 0) {
+                    sbInvestigations.append("VLDL - ").append(strLipidVHDL).append("  ;  ");
+                }
+                if(sbInvestigations!=null && sbInvestigations.length()>1){
+                   showshowInvestigationDataLayout.setVisibility(View.VISIBLE);
+                    showInvestigationData.setText(sbInvestigations);
                 }
 
-                /*dbController.addInvestigation(strPatientId, strVisitId, strSgar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC
+                /*dbController.addInvestigation(strPatientId, strVisitId, strSugar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC
                         , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft, flag);*/
 
-                showInvestigationData.setText(sbInvestigations);
+
                 dialog.dismiss();
             }
         });
@@ -2052,8 +2105,8 @@ public class AddPatientUpdateFragment extends Fragment {
         dialog = new Dialog(getContext());
         LayoutInflater factory = LayoutInflater.from(getContext());
 
-        final View f = factory.inflate(R.layout.observation_dialog, null);
-        dialog.setTitle(" Add Observation ");
+        final View f = factory.inflate(R.layout.observation_dialog_new, null);
+        dialog.setTitle("Add Observation");
         dialog.setCanceledOnTouchOutside(false);
 
         dialog.setContentView(f);
@@ -2062,14 +2115,26 @@ public class AddPatientUpdateFragment extends Fragment {
         Button cancel = (Button) f.findViewById(R.id.customDialogCancel);
         Button ok = (Button) f.findViewById(R.id.customDialogOk);
 
-        RadioGroup radioPallor = (RadioGroup) f.findViewById(R.id.radioPallor);
-        RadioGroup radioCyanosis = (RadioGroup) f.findViewById(R.id.radioCyanosis);
-        RadioGroup radioTremors = (RadioGroup) f.findViewById(R.id.radioTremors);
-        RadioGroup radioIcterus = (RadioGroup) f.findViewById(R.id.radioIcterus);
-        RadioGroup radioClubbing = (RadioGroup) f.findViewById(R.id.radioClubbing);
-        RadioGroup radioOedema = (RadioGroup) f.findViewById(R.id.radioOedema);
-        RadioGroup radioCalfTenderness = (RadioGroup) f.findViewById(R.id.radioCalfTenderness);
-        RadioGroup radioLymphadenopathy = (RadioGroup) f.findViewById(R.id.radioLymphadenopathy);
+        final CheckBox cbPalloreYes = (CheckBox) f.findViewById(R.id.cbPalloreYes);
+        final CheckBox cbPalloreNo = (CheckBox) f.findViewById(R.id.cbPalloreNo);
+
+        final CheckBox cbCyanosiYes = (CheckBox) f.findViewById(R.id.cbCyanosiYes);
+        final CheckBox cbCyanosisNo = (CheckBox) f.findViewById(R.id.cbCyanosiNo);
+        final CheckBox cbTremorsYes = (CheckBox) f.findViewById(R.id.cbTremorsYes);
+        final CheckBox cbTremorsNo = (CheckBox) f.findViewById(R.id.cbTremorsNo);
+
+        final CheckBox cbIcterusYes = (CheckBox) f.findViewById(R.id.cbIcterusYes);
+        final CheckBox cbIcterusNo = (CheckBox) f.findViewById(R.id.cbIcterusNo);
+        final CheckBox cbClubbingYes = (CheckBox) f.findViewById(R.id.cbClubbingYes);
+        final CheckBox cbClubbingNo = (CheckBox) f.findViewById(R.id.cbClubbingNo);
+
+        final CheckBox cbOedemaYes = (CheckBox) f.findViewById(R.id.cbOedemaYes);
+        final CheckBox cbOedemaNo = (CheckBox) f.findViewById(R.id.cbOedemaNo);
+        final CheckBox cbCalfTendernessYes = (CheckBox) f.findViewById(R.id.cbCalfTendernessYes);
+        final CheckBox cbCalfTendernessNo = (CheckBox) f.findViewById(R.id.cbCalfTendernessNo);
+
+        final CheckBox cbLymphadenopathyYes = (CheckBox) f.findViewById(R.id.cbLymphadenopathyYes);
+        final CheckBox cbLymphadenopathyNo = (CheckBox) f.findViewById(R.id.cbLymphadenopathyNo);
 
         final EditText pallorDescription = (EditText) f.findViewById(R.id.pallorDescription);
         final EditText cyanosisDescription = (EditText) f.findViewById(R.id.cyanosisDescription);
@@ -2092,220 +2157,333 @@ public class AddPatientUpdateFragment extends Fragment {
         if (strPallore != null && !strPallore.equals(""))
             switch (strPallore) {
                 case "Yes":
-                    radioPallor.check(R.id.radioPallorYes);
+                    cbPalloreYes.setChecked(true);
+
                     break;
                 case "No":
-                    radioPallor.check(R.id.radioPallorNo);
+                    cbPalloreNo.setChecked(true);
                     break;
 
             }
         if (strCyanosis != null && !strCyanosis.equals(""))
             switch (strCyanosis) {
                 case "Yes":
-                    radioCyanosis.check(R.id.radioCyanosisYes);
+                    cbCyanosiYes.setChecked(true);
                     break;
                 case "No":
-                    radioCyanosis.check(R.id.radioCyanosisNo);
+                    cbCyanosisNo.setChecked(true);
                     break;
             }
         if (strTremors != null && !strTremors.equals(""))
             switch (strTremors) {
                 case "Yes":
-                    radioTremors.check(R.id.radioTremorsYes);
+                    cbTremorsYes.setChecked(true);
                     break;
                 case "No":
-                    radioTremors.check(R.id.radioTremorsNo);
+                    cbTremorsNo.setChecked(true);
                     break;
             }
         if (strIcterus != null && !strIcterus.equals(""))
             switch (strIcterus) {
                 case "Yes":
-                    radioIcterus.check(R.id.radioIcterusYes);
+                    cbIcterusYes.setChecked(true);
+
                     break;
                 case "No":
-                    radioIcterus.check(R.id.radioIcterusNo);
+                    cbIcterusNo.setChecked(true);
+
                     break;
             }
 
         if (strClubbing != null && !strClubbing.equals(""))
             switch (strClubbing) {
                 case "Yes":
-                    radioClubbing.check(R.id.radioClubbingYes);
+                    cbClubbingYes.setChecked(true);
                     break;
                 case "No":
-                    radioClubbing.check(R.id.radioClubbingNo);
+                    cbClubbingNo.setChecked(true);
                     break;
             }
         if (strOedema != null && !strOedema.equals(""))
             switch (strOedema) {
                 case "Yes":
-                    radioOedema.check(R.id.radioOedemaYes);
+                    cbOedemaYes.setChecked(true);
+
                     break;
                 case "No":
-                    radioOedema.check(R.id.radioOedemaNo);
+                    cbOedemaNo.setChecked(true);
                     break;
             }
         if (strCalfTenderness != null && !strCalfTenderness.equals(""))
             switch (strCalfTenderness) {
                 case "Yes":
-                    radioCalfTenderness.check(R.id.radioCalfTendernessYes);
+                    cbCalfTendernessYes.setChecked(true);
+
                     break;
                 case "No":
-                    radioCalfTenderness.check(R.id.radioCalfTendernessNo);
+                    cbCalfTendernessNo.setChecked(true);
                     break;
             }
         if (strLymphadenopathy != null && !strLymphadenopathy.equals(""))
             switch (strLymphadenopathy) {
                 case "Yes":
-                    radioLymphadenopathy.check(R.id.radioLymphadenopathyYes);
+                    cbLymphadenopathyYes.setChecked(true);
+
                     break;
                 case "No":
-                    radioLymphadenopathy.check(R.id.radioLymphadenopathyNo);
+                    cbLymphadenopathyNo.setChecked(true);
+
                     break;
             }
 
-        radioPallor.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbPalloreYes.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
+                if (cbPalloreYes.isChecked()) {
+                    strPallore = "Yes";
+                    cbPalloreNo.setChecked(false);
+                } else {
+                    cbPalloreYes.setChecked(false);
+                    strPallore = "";
+                }
+            }
+        });
+        cbPalloreNo.setOnClickListener(new View.OnClickListener() {
 
-                    case R.id.radioPallorYes:
-                        strPallore = "Yes";
-                        break;
+            @Override
+            public void onClick(View v) {
 
-                    case R.id.radioPallorNo:
-                        strPallore = "No";
-                        break;
+                if (cbPalloreNo.isChecked()) {
+                    strPallore = "No";
+                    cbPalloreYes.setChecked(false);
+                } else {
+                    cbPalloreNo.setChecked(false);
+                    strPallore = "";
 
-                    default:
-                        break;
                 }
             }
         });
 
-        radioCyanosis.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbCyanosiYes.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
+                if (cbCyanosiYes.isChecked()) {
 
-                    case R.id.radioCyanosisYes:
-                        strCyanosis = "Yes";
-                        break;
+                    strCyanosis = "Yes";
+                    cbCyanosisNo.setChecked(false);
+                } else {
+                    cbCyanosiYes.setChecked(false);
+                    strCyanosis = "";
 
-                    case R.id.radioCyanosisNo:
-                        strCyanosis = "No";
-                        break;
-
-                    default:
-                        break;
                 }
             }
         });
-        radioTremors.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbCyanosisNo.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
 
-                    case R.id.radioTremorsYes:
-                        strTremors = "Yes";
-                        break;
+                if (cbCyanosisNo.isChecked()) {
 
-                    case R.id.radioTremorsNo:
-                        strTremors = "No";
-                        break;
+                    strCyanosis = "No";
+                    cbCyanosiYes.setChecked(false);
+                } else {
+                    cbCyanosisNo.setChecked(false);
+                    strCyanosis = "";
 
-                    default:
-                        break;
                 }
             }
         });
-        radioIcterus.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+        cbTremorsYes.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
+                if (cbTremorsYes.isChecked()) {
 
-                    case R.id.radioIcterusYes:
-                        strIcterus = "Yes";
-                        break;
+                    strTremors = "Yes";
+                    cbTremorsNo.setChecked(false);
+                } else {
+                    cbTremorsYes.setChecked(false);
+                    strTremors = "";
 
-                    case R.id.radioIcterusNo:
-                        strIcterus = "No";
-                        break;
-
-                    default:
-                        break;
                 }
             }
         });
-        radioClubbing.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbTremorsNo.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
 
-                    case R.id.radioClubbingYes:
-                        strClubbing = "Yes";
-                        break;
+                if (cbTremorsNo.isChecked()) {
 
-                    case R.id.radioClubbingNo:
-                        strClubbing = "No";
-                        break;
+                    strTremors = "No";
+                    cbTremorsYes.setChecked(false);
+                } else {
+                    cbTremorsNo.setChecked(false);
+                    strTremors = "";
 
-                    default:
-                        break;
                 }
             }
         });
-        radioOedema.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbIcterusYes.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
+                if (cbIcterusYes.isChecked()) {
 
-                    case R.id.radioOedemaYes:
-                        strOedema = "Yes";
-                        break;
+                    strIcterus = "Yes";
+                    cbIcterusNo.setChecked(false);
+                } else {
+                    cbIcterusYes.setChecked(false);
+                    strIcterus = "";
 
-                    case R.id.radioOedemaNo:
-                        strOedema = "No";
-                        break;
-
-                    default:
-                        break;
                 }
             }
         });
-        radioCalfTenderness.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+        cbIcterusNo.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
 
-                    case R.id.radioCalfTendernessYes:
-                        strCalfTenderness = "Yes";
-                        break;
+                if (cbIcterusNo.isChecked()) {
 
-                    case R.id.radioCalfTendernessNo:
-                        strCalfTenderness = "No";
-                        break;
+                    strIcterus = "No";
+                    cbIcterusYes.setChecked(false);
+                } else {
+                    cbIcterusNo.setChecked(false);
+                    strIcterus = "";
 
-                    default:
-                        break;
                 }
             }
         });
-        radioLymphadenopathy.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+
+        cbClubbingYes.setOnClickListener(new View.OnClickListener() {
+
             @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                switch (checkedId) {
+            public void onClick(View v) {
+                if (cbClubbingYes.isChecked()) {
 
-                    case R.id.radioLymphadenopathyYes:
-                        strLymphadenopathy = "Yes";
-                        break;
+                    strClubbing = "Yes";
+                    cbClubbingNo.setChecked(false);
+                } else {
+                    cbClubbingYes.setChecked(false);
+                    strClubbing = "";
 
-                    case R.id.radioLymphadenopathyNo:
-                        strLymphadenopathy = "No";
-                        break;
+                }
+            }
+        });
+        cbClubbingNo.setOnClickListener(new View.OnClickListener() {
 
-                    default:
-                        break;
+            @Override
+            public void onClick(View v) {
+
+                if (cbClubbingNo.isChecked()) {
+
+                    strClubbing = "No";
+                    cbClubbingYes.setChecked(false);
+                } else {
+                    cbClubbingNo.setChecked(false);
+                    strClubbing = "";
+
+                }
+            }
+        });
+
+        cbOedemaYes.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (cbOedemaYes.isChecked()) {
+
+                    strOedema = "Yes";
+                    cbOedemaNo.setChecked(false);
+                } else {
+                    cbOedemaYes.setChecked(false);
+                    strOedema = "";
+
+                }
+            }
+        });
+        cbOedemaNo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (cbOedemaNo.isChecked()) {
+
+                    strOedema = "No";
+                    cbOedemaYes.setChecked(false);
+                } else {
+                    cbOedemaNo.setChecked(false);
+                    strOedema = "";
+
+                }
+            }
+        });
+
+        cbCalfTendernessYes.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (cbCalfTendernessYes.isChecked()) {
+
+                    strCalfTenderness = "Yes";
+                    cbCalfTendernessNo.setChecked(false);
+                } else {
+                    cbCalfTendernessYes.setChecked(false);
+                    strCalfTenderness = "";
+
+                }
+            }
+        });
+        cbCalfTendernessNo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (cbCalfTendernessNo.isChecked()) {
+
+                    strCalfTenderness = "No";
+                    cbCalfTendernessYes.setChecked(false);
+                } else {
+                    cbCalfTendernessNo.setChecked(false);
+                    strCalfTenderness = "";
+
+                }
+            }
+        });
+
+        cbLymphadenopathyYes.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (cbLymphadenopathyYes.isChecked()) {
+
+                    strLymphadenopathy = "Yes";
+                    cbLymphadenopathyNo.setChecked(false);
+                } else {
+                    cbLymphadenopathyYes.setChecked(false);
+                    strLymphadenopathy = "";
+
+                }
+            }
+        });
+        cbLymphadenopathyNo.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (cbLymphadenopathyNo.isChecked()) {
+
+                    strLymphadenopathy = "No";
+                    cbLymphadenopathyYes.setChecked(false);
+                } else {
+                    cbLymphadenopathyNo.setChecked(false);
+                    strLymphadenopathy = "";
+
                 }
             }
         });
@@ -2334,6 +2512,11 @@ public class AddPatientUpdateFragment extends Fragment {
 
                 showObservationsData();
 
+                if(sbObservations!=null && sbObservations.length()>1){
+                  //  labelshowObservationsData.setVisibility(View.VISIBLE);
+                }
+
+
                 dbController.addObservations(strPatientId, strVisitId, strPallore, strPallorDescription, strCyanosis, strCyanosisDescription, strTremors, strTremorsDescription, strIcterus,strIcterusDescription
                         , strClubbing, strClubbingDescription, strOedema, strOedemaDescription, strCalfTenderness,strCalfTendernessDescription, strLymphadenopathy,strLymphadenopathyDescription,new AppController().getDateTimeddmmyyyy(),flag);
 
@@ -2345,70 +2528,34 @@ public class AddPatientUpdateFragment extends Fragment {
     }
     private void showObservationsData() {
 
-        if (strPallore != null && !strPallore.equals("") && strPallore.length() > 0) {
-            sbObservations.append("Pallor : ").append(strPallore).append(" ;");
-        }
-        if (strPallorDescription != null && !strPallorDescription.equals("") && strPallorDescription.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Pallor Desc. : ").append(strPallorDescription).append(" ;");
-        }
-        if (strCyanosis != null && !strCyanosis.equals("") && strCyanosis.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Cyanosis : ").append(strCyanosis).append(" ;");
-        }
-        if (strCyanosisDescription != null && !strCyanosisDescription.equals("") && strCyanosisDescription.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Cyanosis Desc. : ").append(strCyanosisDescription).append(" ;");
-        }
-        if (strTremors != null && !strTremors.equals("") && strTremors.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Tremors : ").append(strTremors).append(" ;");
-        }
-        if (strTremorsDescription != null && !strTremorsDescription.equals("") && strTremorsDescription.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Tremors Desc. : ").append(strTremorsDescription).append(" ;");
-        }
-        if (strIcterus != null && !strIcterus.equals("") && strIcterus.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Icterus : ").append(strIcterus).append(" ;");
-        }
-        if (strIcterusDescription != null && !strIcterusDescription.equals("") && strIcterusDescription.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Icterus Desc. : ").append(strIcterusDescription).append(" ;");
-        }
-        if (strClubbing != null && !strClubbing.equals("") && strClubbing.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Clubbing : ").append(strClubbing).append(" ;");
-        }
-        if (strClubbingDescription != null && !strClubbingDescription.equals("") && strClubbingDescription.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Clubbing Desc. : ").append(strClubbingDescription).append(" ;");
-        }
-        if (strOedema != null && !strOedema.equals("") && strOedema.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Oedema : ").append(strOedema).append(" ;");
-        }
-        if (strOedemaDescription != null && !strOedemaDescription.equals("") && strOedemaDescription.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Oedema Desc. : ").append(strOedemaDescription).append(" ;");
-        }
-        if (strCalfTenderness != null && !strCalfTenderness.equals("") && strCalfTenderness.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Tenderness : ").append(strCalfTenderness).append(" ;");
-        }
-        if (strCalfTendernessDescription != null && !strCalfTendernessDescription.equals("") && strCalfTendernessDescription.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Tenderness Desc. : ").append(strCalfTendernessDescription).append(" ;");
-        }
-        if (strLymphadenopathy != null && !strLymphadenopathy.equals("") && strLymphadenopathy.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Lymphadenopathy : ").append(strLymphadenopathy).append(" ;");
-        }
-        if (strLymphadenopathyDescription != null && !strLymphadenopathyDescription.equals("") && strLymphadenopathyDescription.length() > 0) {
-            sbObservations.append("  ");
-            sbObservations.append(" Lymphadenopathy Desc. : ").append(strLymphadenopathyDescription).append(" ;");
+        if (strPallore != null && strPallore.length() > 0) {
+            sbObservations.append("Pallor - ").append(strPallore).append(" (").append(strPallorDescription).append(")").append("  ;  ");
         }
 
+        if (strCyanosis != null && strCyanosis.length() > 0) {
+            sbObservations.append("Cyanosis - ").append(strCyanosis).append(" (").append(strCyanosisDescription).append(")").append("  ;  ");
+        }
+
+        if (strTremors != null && strTremors.length() > 0) {
+            sbObservations.append("Tremors - ").append(strTremors).append(" (").append(strTremorsDescription).append(")").append("  ;  ");
+        }
+
+        if (strIcterus != null && strIcterus.length() > 0) {
+            sbObservations.append("Icterus - ").append(strIcterus).append(" (").append(strIcterusDescription).append(")").append("  ;  ");
+        }
+        if (strClubbing != null && strClubbing.length() > 0) {
+            sbObservations.append("Clubbing - ").append(strClubbing).append(" (").append(strClubbingDescription).append(")").append("  ;  ");
+        }
+        if (strOedema != null && strOedema.length() > 0) {
+            sbObservations.append("Oedema - ").append(strOedema).append(" (").append(strOedemaDescription).append(")").append("  ;  ");
+        }
+        if (strCalfTenderness != null && strCalfTenderness.length() > 0) {
+            sbObservations.append("Tenderness - ").append(strCalfTenderness).append(" (").append(strCalfTendernessDescription).append(")").append("  ;  ");
+        }
+        if (strLymphadenopathy != null && strLymphadenopathy.length() > 0) {
+            sbObservations.append("Lymphadenopathy - ").append(strLymphadenopathy).append(" (").append(strLymphadenopathyDescription).append(")").append("  ;  ");
+        }
+        showObservationsDataLayout.setVisibility(View.VISIBLE);
         showObservationsData.setText(sbObservations);
     }
     private void setOnClickListner() {
@@ -2514,4 +2661,5 @@ public class AddPatientUpdateFragment extends Fragment {
             }
         });
     }
+
 }

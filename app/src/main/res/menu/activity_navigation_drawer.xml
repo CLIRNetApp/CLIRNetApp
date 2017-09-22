@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-
     <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/nav_dashboard"
+            android:icon="@drawable/dashboard"
+            android:title="@string/dashboard" />
 
         <item
             android:id="@+id/nav_po"
             android:icon="@drawable/icon_1_green"
             android:title="@string/patient_central" />
+
         <item
             android:id="@+id/nav_consultLog"
             android:icon="@drawable/icon_2_green"
@@ -32,30 +37,50 @@
             android:title="@string/reports" />
 
         <item
-            android:id="@+id/nav_dashboard"
-            android:icon="@drawable/dashboard"
-            android:title="@string/dashboard" />
-
-        <item
             android:id="@+id/nav_announcement"
             android:icon="@drawable/announcement"
             android:title="@string/announcements" />
+
+        <!--<item
+            android:id="@+id/nav_notification"
+            android:icon="@android:drawable/sym_action_chat"
+            android:title="@string/notification" />-->
 
     </group>
 
     <item android:title="Knowledge Suite ">
         <menu>
             <group android:checkableBehavior="single">
-            <item
-                android:id="@+id/nav_knowldge"
-                android:icon="@drawable/ic_menu_manage"
-                android:title="@string/knowledge" />
-            <item
-                android:id="@+id/nav_logout"
-                android:icon="@drawable/ic_menu_send"
-                android:title="@string/logout" />
+                <item
+                    android:id="@+id/nav_knowldge"
+                    android:icon="@drawable/ic_menu_manage"
+                    android:title="@string/knowledge" />
+
             </group>
         </menu>
     </item>
+
+
+    <item android:title="Help Menu ">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/nav_notification"
+                    android:icon="@drawable/notification"
+                    android:title="@string/notification" />
+
+                <item
+                    android:id="@+id/nav_help"
+                    android:icon="@android:drawable/ic_menu_help"
+                    android:title="@string/help" />
+
+                <item
+                    android:id="@+id/nav_logout"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/logout" />
+            </group>
+        </menu>
+    </item>
+
 
 </menu>

@@ -504,15 +504,27 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_below="@+id/showReferrals"
-                android:layout_marginTop="15dp"
-                android:padding="5dp">
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="5dp"
+                android:padding="5dp"
+                android:visibility="gone">
+                <TextView
+                    android:id="@+id/labelshowVitalsData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Vitals"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16sp"
+                    android:layout_margin="5dp"/>
 
                 <TextView
                     android:id="@+id/showVitalsData"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"/>
 
             </LinearLayout>
 
@@ -522,8 +534,18 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_below="@+id/showVitals"
-                android:layout_marginTop="15dp"
-                android:padding="5dp">
+                android:layout_marginTop="5dp"
+                android:padding="5dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/labelshowObservationsData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Observation Details"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16sp"
+                    android:layout_margin="5dp"/>
 
                 <TextView
                     android:id="@+id/showObservationsData"
@@ -543,14 +565,26 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_below="@+id/showObservations"
-                android:layout_marginTop="15dp"
-                android:padding="5dp">
+                android:layout_marginTop="5dp"
+                android:padding="5dp"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/labelshowInvestigationData"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Investigation Details"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="16sp"
+                    android:layout_margin="5dp"/>
 
                 <TextView
                     android:id="@+id/showInvestigationData"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:textColor="@color/black"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
                     android:textSize="16sp" />
 
             </LinearLayout>
@@ -572,7 +606,7 @@
                     android:layout_width="0dp"
                     android:layout_height="45dp"
                     android:layout_weight="0.5"
-                    android:background="#c0c0c0"
+                    android:background="@drawable/rounded_corner_with_transparant"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
                     android:paddingLeft="5dp"
@@ -591,7 +625,7 @@
                     android:layout_width="0dp"
                     android:layout_height="45dp"
                     android:layout_weight="0.5"
-                    android:background="#50BAA0"
+                    android:background="@drawable/rounded_corner_withbackground"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
                     android:paddingRight="5dp"

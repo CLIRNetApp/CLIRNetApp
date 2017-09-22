@@ -14,7 +14,7 @@
         android:id="@+id/help"
         android:orderInCategory="100"
         android:showAsAction="ifRoom|withText"
-        android:title="@string/help"
+        android:title="@string/helpme"
         tools:ignore="AppCompatResource" />
 
     <item

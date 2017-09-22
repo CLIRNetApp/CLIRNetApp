@@ -1,7 +1,9 @@
 package app.clirnet.com.clirnetapp.activity;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -13,10 +15,13 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
@@ -28,6 +33,7 @@ import app.clirnet.com.clirnetapp.fragments.BarChartFragment;
 import app.clirnet.com.clirnetapp.fragments.ConsultationLogFragment;
 import app.clirnet.com.clirnetapp.fragments.DashboardFragment;
 import app.clirnet.com.clirnetapp.fragments.HealthVitalsDialogFragment;
+import app.clirnet.com.clirnetapp.fragments.HelpFragment;
 import app.clirnet.com.clirnetapp.fragments.HomeFragment;
 import app.clirnet.com.clirnetapp.fragments.IncompleteListFragment;
 import app.clirnet.com.clirnetapp.fragments.KnowledgeFragment;
@@ -37,10 +43,12 @@ import app.clirnet.com.clirnetapp.fragments.PoHistoryFragment;
 import app.clirnet.com.clirnetapp.fragments.ReferralsFragment;
 import app.clirnet.com.clirnetapp.fragments.ReportFragment;
 import app.clirnet.com.clirnetapp.fragments.ReportFragmentViewPagerSetup;
+import app.clirnet.com.clirnetapp.fragments.ShowNotifications;
 import app.clirnet.com.clirnetapp.fragments.TopTenAilmentFragment;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.helper.SessionManager;
+import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectivityChangeReceiver;
 import app.clirnet.com.clirnetapp.utility.SyncDataService;
 
@@ -51,8 +59,7 @@ import com.google.firebase.messaging.FirebaseMessaging;*/
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
         , ReportFragment.OnFragmentInteractionListener, PatientReportFragment.OnFragmentInteractionListener, ReportFragmentViewPagerSetup.OnFragmentInteractionListener, TopTenAilmentFragment.OnFragmentInteractionListener,
-        BarChartFragment.OnFragmentInteractionListener, KnowledgeFragment.OnFragmentInteractionListener, IncompleteListFragment.OnFragmentInteractionListener, AssociatesFragment.OnFragmentInteractionListener, HealthVitalsDialogFragment.onSubmitListener, DashboardFragment.OnFragmentInteractionListener, MasterSessionDialog.OnFragmentInteractionListener, PatientAnnouncements.OnFragmentInteractionListener, ConnectivityChangeReceiver.ConnectivityReceiverListener,ReferralsFragment.OnFragmentInteractionListener {
-
+        BarChartFragment.OnFragmentInteractionListener, KnowledgeFragment.OnFragmentInteractionListener, IncompleteListFragment.OnFragmentInteractionListener, AssociatesFragment.OnFragmentInteractionListener, HealthVitalsDialogFragment.onSubmitListener, DashboardFragment.OnFragmentInteractionListener, MasterSessionDialog.OnFragmentInteractionListener, PatientAnnouncements.OnFragmentInteractionListener, ConnectivityChangeReceiver.ConnectivityReceiverListener, ReferralsFragment.OnFragmentInteractionListener, ShowNotifications.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener {
 
     private FragmentManager fragmentManager;
 
@@ -68,6 +75,12 @@ public class NavigationActivity extends AppCompatActivity
     private String kind;
     private String docId;
     private NavigationView navigationView;
+    private Context context;
+    private String savedUserName;
+    private String savedUserPassword;
+    private String doctor_membership_number;
+    private String clubbingFlag;
+    private int notificationTreySize;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +93,9 @@ public class NavigationActivity extends AppCompatActivity
             actionPath = getIntent().getStringExtra("ACTION_PATH");
             headerMsg = getIntent().getStringExtra("HEADER");
             kind = getIntent().getStringExtra("KIND");
-             /*Clearing notifications ArrayList from MyFirebaseMessagingService fater clicking on it*/
+            clubbingFlag = getIntent().getStringExtra("CLUBBINGFLAG");
+            notificationTreySize = getIntent().getIntExtra("NOTIFITREYSIZE", 0);
+             /*Clearing notifications ArrayList from MyFirebaseMessagingService faster clicking on it*/
             MyFirebaseMessagingService.notifications.clear();
 
         } catch (Exception e) {
@@ -94,6 +109,8 @@ public class NavigationActivity extends AppCompatActivity
 
         appController = new AppController();
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -101,7 +118,10 @@ public class NavigationActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
+       /* NavigationView navigation_drawer=(NavigationView)findViewById(R.id.navigation_drawer);
+        navigation_drawer.setNavigationItemSelectedListener(this);
+        NavigationView navigation_drawer_bottom=(NavigationView)findViewById(R.id.navigation_drawer_bottom);
+        navigation_drawer_bottom.setNavigationItemSelectedListener(this);*/
 
         View hView = navigationView.getHeaderView(0);
         ImageView imgvw = (ImageView) hView.findViewById(R.id.imageView);
@@ -109,6 +129,8 @@ public class NavigationActivity extends AppCompatActivity
         TextView email = (TextView) hView.findViewById(R.id.email);
         imgvw.setImageResource(R.drawable.emp_img);
 
+       /*Checking if last login time is more than 8 hours*/
+        checkLastLoginTime();
 
         pDialog = new ProgressDialog(this);
         pDialog.setCancelable(false);
@@ -128,6 +150,15 @@ public class NavigationActivity extends AppCompatActivity
 
             docId = sqlController.getDoctorId();
 
+            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
+
+            ArrayList<LoginModel> al;
+            al = sqlController.getUserLoginRecrodsNew();
+            if (al.size() != 0) {
+                savedUserName = al.get(0).getUserName();
+                savedUserPassword = al.get(0).getPassowrd();
+            }
+
             u_name.setText("Dr. " + docName);
             email.setText(emailId);
 
@@ -142,73 +173,18 @@ public class NavigationActivity extends AppCompatActivity
             }
         }
 
-        Fragment fragment;
-
         /*Handle push notification messages*/
-
-        if (type != null && !type.equals("") && actionPath != null && !actionPath.equals("") && type.equals("2")) {
-            //for web-page
+        Log.e("type", "   " + notificationTreySize + "  " + actionPath);
+        // if(notificationTreySize > 1){
+        if (type != null && !type.equals("") && notificationTreySize > 0) {
+            callAction("notification");
+        } else if (actionPath!=null && notificationTreySize <= 0) {
             callAction(actionPath);
-
-        } else if (type != null && !type.equals("") && actionPath != null && !actionPath.equals("") && type.equals("1")) {
-            //for app-page
-            fragment = new KnowledgeFragment();
-
-            Bundle bundle2 = new Bundle();
-            bundle2.putString("URL", actionPath);
-            fragment.setArguments(bundle2);
-            fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
-
-        } else if (type != null && !type.equals("") && type.equals("3")) {//for announcement
-            fragment = new HomeFragment();
-            Bundle bundle2 = new Bundle();
-            bundle2.putString("SERVICE", "3");
-            bundle2.putString("MESSAGE", msg);
-            bundle2.putString("HEADER", headerMsg);
-            fragment.setArguments(bundle2);
-            fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
-
-        } else if (type != null && !type.equals("") && type.equals("4")) {//for service
-            fragment = new HomeFragment();
-            Bundle bundle2 = new Bundle();
-            bundle2.putString("SERVICE", "START");
-            fragment.setArguments(bundle2);
-            onNavigationItemSelected(navigationView.getMenu().getItem(0));
-            fragmentManager = getSupportFragmentManager();
-            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
-
-        } else if (type != null && !type.equals("") && type.equals("5")) {//for service
-            if (!actionPath.startsWith("http://") && !actionPath.startsWith("https://")) {
-
-                actionPath = "http://" + actionPath;
-            }
-            if (actionPath.length() > 0) {
-
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(actionPath));
-                startActivity(Intent.createChooser(intent, "Choose browser"));
-                // callAction(HomeFragment);
-                callAction(actionPath);
-            }
-
-        } else if (kind != null && kind.equals("1")) {
-
-            // callAction("PoHistoryFragment");
+        } else if (headerMsg != null && !headerMsg.equals("") && actionPath != null && !actionPath.equals("") && headerMsg.equals("goto")) {
             callAction(actionPath);
-        } else if (kind != null && kind.equals("2")) {
-
-            // callAction("ConsultationLogFragment");
-            callAction(actionPath);
-
         } else {
-
-            callAction("HomeFragment");
+            callAction("DashboardFragment");
         }
-
-        // subscribeToPushService();
-
-
     }
 
     private void subscribeToPushService() {
@@ -222,7 +198,7 @@ public class NavigationActivity extends AppCompatActivity
         // Log and toast
         // Log.d("AndroidBash", token);
         // Toast.makeText(NavigationActivity.this, token, Toast.LENGTH_SHORT).show();
-      }
+    }
 
     @Override
     public void onBackPressed() {
@@ -277,7 +253,7 @@ public class NavigationActivity extends AppCompatActivity
                 break;
 
             case R.id.nav_prescription:
-                AppController.getInstance().trackEvent("Prsecription", "Navigation");
+                AppController.getInstance().trackEvent("Prescription", "Navigation");
 
                 fragment = new IncompleteListFragment();
                 break;
@@ -292,7 +268,7 @@ public class NavigationActivity extends AppCompatActivity
             case R.id.nav_report:
 
                 fragment = new ReportFragment();
-                AppController.getInstance().trackEvent("Patient Report", "Navigation");
+                AppController.getInstance().trackEvent("Reports", "Navigation");
 
                 break;
 
@@ -310,6 +286,13 @@ public class NavigationActivity extends AppCompatActivity
                 fragment = new PatientAnnouncements();
                 break;
 
+            case R.id.nav_notification:
+
+                AppController.getInstance().trackEvent("Notification", "Navigation");
+
+                fragment = new ShowNotifications();
+                break;
+
             case R.id.nav_knowldge:
                 AppController.getInstance().trackEvent("Knowledge", "Navigation");
 
@@ -324,6 +307,14 @@ public class NavigationActivity extends AppCompatActivity
                 goToLoginActivity();
                 stopService(new Intent(NavigationActivity.this, SyncDataService.class));
                 fragment = new HomeFragment();
+                break;
+
+            case R.id.nav_help:
+
+                // Launching the login activity
+                AppController.getInstance().trackEvent("Help", "Navigation");
+
+                fragment = new HelpFragment();
                 break;
         }
 
@@ -376,6 +367,8 @@ public class NavigationActivity extends AppCompatActivity
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+
         // session.setLogin(false);
         //Close the all database connection opened here 31/10/2016 By. Ashish
         if (sqlController != null) {
@@ -403,8 +396,8 @@ public class NavigationActivity extends AppCompatActivity
         actionPath = null;
         type = null;
         headerMsg = null;
-        kind= null;
-        docId= null;
+        kind = null;
+        docId = null;
     }
 
     public void setActionBarTitle(String title) {
@@ -422,6 +415,12 @@ public class NavigationActivity extends AppCompatActivity
         Fragment mFragment;
         fragmentManager = getSupportFragmentManager();
         switch (action) {
+
+            case "DashboardFragment":
+                AppController.getInstance().trackEvent("Dashboard", "Navigation");
+
+                mFragment = new DashboardFragment();
+                break;
 
             case "HomeFragment":
                 mFragment = new HomeFragment();
@@ -453,6 +452,7 @@ public class NavigationActivity extends AppCompatActivity
 
                 mFragment = new KnowledgeFragment();
                 break;
+
             case "IncompleteListFragment":
                 AppController.getInstance().trackEvent("Prsecription", "Navigation");
 
@@ -465,11 +465,6 @@ public class NavigationActivity extends AppCompatActivity
                 mFragment = new AssociatesFragment();
                 break;
 
-            case "DashboardFragment":
-                AppController.getInstance().trackEvent("Dashboard", "Navigation");
-
-                mFragment = new DashboardFragment();
-                break;
 
             case "PatientAnnouncements":
                 AppController.getInstance().trackEvent("PatientAnnouncements", "Navigation");
@@ -477,9 +472,15 @@ public class NavigationActivity extends AppCompatActivity
                 mFragment = new PatientAnnouncements();
                 break;
 
+            case "notification":
+                AppController.getInstance().trackEvent("notification", "Navigation");
+
+                mFragment = new ShowNotifications();
+                break;
+
 
             default:
-                mFragment = new HomeFragment();
+                mFragment = new DashboardFragment();
 
         }
 
@@ -500,22 +501,32 @@ public class NavigationActivity extends AppCompatActivity
         boolean isConnected = ConnectivityChangeReceiver.isConnected();
         if (isConnected) callService();
 
-        //Log.e("isConnected Manually"," "+isConnected);
     }
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
+
         if (isConnected) callService();
 
-        //Log.e("isConnected nw change"," "+isConnected);
     }
 
     private void callService() {
-        Intent msgIntent = new Intent(this, MasterSessionService.class);
+        this.context = this;
+
+        Intent msgIntent = new Intent(this.context, MasterSessionService.class);
         msgIntent.putExtra(MasterSessionService.TYPE, "all");
         msgIntent.putExtra(MasterSessionService.COUNT, "2");
         msgIntent.putExtra(MasterSessionService.DOC_ID, docId);
+        msgIntent.putExtra(MasterSessionService.USERNAME, savedUserName);
+        msgIntent.putExtra(MasterSessionService.DOC_MEM_ID, doctor_membership_number);
         startService(msgIntent);
+
+       /* boolean alarmRunning = (PendingIntent.getBroadcast(this.context, 0, msgIntent, PendingIntent.FLAG_NO_CREATE) != null);
+        if (!alarmRunning) {
+            PendingIntent pendingIntent = PendingIntent.getBroadcast(this.context, 0, msgIntent, 0);
+            AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 1800000, pendingIntent);
+        }*/
     }
 
     /* this function used to check item from navigation list when perticular fragment gets called.*/
@@ -524,6 +535,30 @@ public class NavigationActivity extends AppCompatActivity
             navigationView.getMenu().getItem(count).setChecked(true);
     }
 
+
+    private void checkLastLoginTime() {
+
+        SharedPreferences pref = getSharedPreferences("savedCredit", MODE_PRIVATE);
+
+        String loginTime = pref.getString("loginTime", null);
+
+        int hrs = AppController.hoursAgo(loginTime);
+        if (hrs >= 8) {
+            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
+            if (msg != null) {
+
+                i.putExtra("MSG", msg);
+                i.putExtra("TYPE", type);
+                i.putExtra("ACTION_PATH", actionPath);
+                i.putExtra("HEADER", headerMsg);
+
+            }
+
+            startActivity(i);
+            System.gc();
+        }
+
+    }
 }
 
 

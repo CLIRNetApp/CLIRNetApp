@@ -19,17 +19,9 @@
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="hint_search">Search Patient By Phone No.</string>
-    <string name="help">Help</string>
+    <string name="help">Help Manual</string>
     <string name="refresh">Refresh from server</string>
 
-    <string-array name="phType_group">
-        <item>Mobile</item>
-        <item>Landline</item>
-        <item>Personal </item>
-        <item>Office</item>
-        <item>Home</item>
-        <item>NA</item>
-    </string-array>
 
     <string-array name="associate_group">
         <item>Physician</item>
@@ -79,6 +71,7 @@
     </string-array>
 
     <string-array name="uid_group">
+        <item>Select UID</item>
         <item>Adhaar</item>
         <item>Passport</item>
         <item>Driving License</item>
@@ -87,7 +80,14 @@
         <item>Bank PassBook</item>
     </string-array>
 
+    <string-array name="phType_group">
+        <item>Select Type</item>
+        <item>Mobile</item>
+        <item>Landline</item>
+
+    </string-array>
     <string-array name="isd_code">
+        <item>Select ISD</item>
         <item>+91</item>
         <item>+880</item>
         <item>+977</item>
@@ -102,7 +102,7 @@
         <item>Mr.</item>
         <item>Ms.</item>
         <item>Mrs.</item>
-        <item>NA.</item>
+        <item>NA</item>
     </string-array>
 
     <string-array name="name_abbreviations2">
@@ -110,7 +110,7 @@
         <item>Ms.</item>
         <item>Mrs.</item>
         <item>Miss</item>
-        <item>NA.</item>
+        <item>NA</item>
     </string-array>
 
     <string-array name="religion">
@@ -121,12 +121,13 @@
         <item>Jainism</item>
         <item>Islam</item>
         <item>Christianity</item>
-        <item>Zoroastaianism</item>
+        <item>Zoroastrianism</item>
         <item>Judaism</item>
         <item>Other</item>
     </string-array>
 
     <string-array name="otherFoodType">
+        <item>Select Food Type</item>
         <item>Jain</item>
         <item>Vegan</item>
         <item>Raw Vegan</item>
@@ -165,14 +166,14 @@
     <string name="patient_central">Patient Central</string>
     <string name="reports">Reports</string>
     <string name="prescriptionqueue">Prescription Queue</string>
-    <string name="change_password">Change Password !</string>
+    <string name="change_password">Change Password!</string>
     <string name="to">To :</string>
-    <string name="mob_no_notfound">Mobile Number Not Found!!!</string>
+    <string name="mob_no_notfound">Mobile Number Not Found!</string>
     <string name="mailid">support@clirnet.com</string>
     <string name="logout">Logout</string>
     <string name="desc">profile_pic</string>
-    <string name="subject">Subject :</string>
-    <string name="message">Message :</string>
+    <string name="subject">Subject:</string>
+    <string name="message">Message:</string>
     <string name="send">Send</string>
     <string name="apikey">PFFt0436yjfn0945DevOp0958732Cons3214556</string>
     <string name="digits">abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
@@ -226,14 +227,14 @@
     <string name="phoneno">Phone No.</string>
     <string name="docmemid">Doctor mem.Id</string>
     <string name="emailid">Email ID</string>
-    <string name="doc_id">Doctor Id</string>
+    <string name="doc_id">Doctor ID</string>
     <string name="clear">Clear</string>
     <string name="uid">UID</string>
     <string name="uidtype">UID Type</string>
     <string name="reset">Reset</string>
-    <string name="version">Release Version 1.3.2.7</string>
-    <string name="aboutApp">About App V 1.3.2.7</string>
-    <string name="updateDate">Last Updated Date 23/08/2017</string>
+    <string name="version">Release Version 1.3.2.16</string>
+    <string name="aboutApp">About App V 1.3.2.16</string>
+    <string name="updateDate">Last Updated Date 22/09/2017</string>
     <string name="quickadd">Quick Add</string>
     <string name="title_edit_quick_add">Quick Edit Patient</string>
     <string name="referedby">Add Referals</string>
@@ -247,8 +248,10 @@
     <string name="pin">Pin Code</string>
     <string name="refered">Referred By</string>
     <string name="referedto">Referred To</string>
-    <string name="noExist">Phone Number Already exist</string>
-    <string name="servicePassword">clirnet123</string>
+    <string name="noExist">Existing Associate Mobile Number Entered</string>
+    <string name="enterNo">Please enter Mobile number</string>
+    <string name="mobnovalidation">Mobile number should be 10 digits</string>
+    <string name="servicePassword">CLIRNet</string>
     <string name="vitals">Vitals</string>
     <string name="history">History</string>
     <string name="referrals">Referrals</string>
@@ -259,7 +262,7 @@
     <string name="degree">"&#xb0;F"</string><!--Degree Sign-->
     <string name="occupation">Occupation</string>
     <string name="religion">Religion</string>
-    <string name="chewingTobaco">Chewing Tobaco</string>
+    <string name="chewingTobaco">Chewing Tobacco</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="passive">Passive</string>
@@ -301,9 +304,9 @@
     <string name="investigation">Investigation</string>
     <string name="moreFilters">Filter Vitals</string>
     <string name="healthLifestyle">Health and Lifestyle</string>
-    <string name="title_activity_new_edit_personal_info">NewEditPersonalInfo</string>
+    <string name="title_activity_new_edit_personal_info">Edit Personal Info</string>
     <string name="observations">Observation</string>
-    <string name="title_activity_new_edit_incomplete_records">NewEditIncompleteRecordsActivity</string>
+    <string name="title_activity_new_edit_incomplete_records">Edit Prescription Queue Record</string>
     <string name="substanceUse">Substance Use</string>
     <string name="smoking">Smoking</string>
     <string name="ex">Ex</string>
@@ -350,4 +353,21 @@
     <string name="patientAnnouncement">Patient Announcement</string>
     <string name="all">All</string>
     <string name="selectedGroup">Selected Group</string>
+    <string name="title_activity_splash">SplashActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="nodatadisplay">No Data To Display</string>
+    <string name="notification">Notification</string>
+    <string name="sendsms">Send SMS</string>
+    <string name="morecontact">More Contact</string>
+    <string name="moredemographic">More Demographics</string>
+    <string name="medical_history">Medical History</string>
+    <string name="foderror">Field cannot be blank</string>
+    <string name="minmaxvalid">Min value should be less than Max value</string>
+    <string name="mingreatmax">Entered value is greater than the maximum available value in database of  </string>
+    <string name="maxgreatdbmax">Entered value is greater than the maximum available value in database of  </string>
+    <string name="count">Count</string>
+    <string name="error_message">Please accept terms and conditions first.</string>
+    <string name="helpme">Help Me</string>
+
 </resources>
