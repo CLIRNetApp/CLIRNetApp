@@ -29,7 +29,6 @@ import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
-import app.clirnet.com.clirnetapp.logfilesending.LogFileAsyncTask;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 
@@ -226,7 +225,8 @@ public class SyncDataService extends Service {
 
                 sendDataToServer(patientInfoArayString, patientVisitHistorArayString, investigationArayString, healthAndLifestyleArayString,associateMasterDataList,doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size(), new AppController().getDateTimenew(),incompletePrescriptionQueueCount,observationDataList);
 
-                new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, docId, start_time); //send log file to server
+                //commented log file sending code on 23-09-2017 By Ashish
+               // new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, docId, start_time); //send log file to server
 
             }
         }
