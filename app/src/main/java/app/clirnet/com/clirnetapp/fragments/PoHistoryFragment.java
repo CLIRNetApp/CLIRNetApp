@@ -236,7 +236,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private Button filterHealth;
     private String valMinSpo2;
     private String valMaxSpo2;
-    LinearLayout tabSubmitWarnig;
+    private LinearLayout tabSubmitWarnig;
 
 
     public PoHistoryFragment() {
@@ -355,7 +355,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             ArrayList<HashMap<String, Integer>> vitalsMinMaxList = sqlController.getMinMaxVitals();
             ArrayList<HashMap<String, Integer>> investigationMinMaxList = sqlController.getMinMaxInvestigation();
-            // Log.e("investigationList", "  " + investigationMinMaxList.size());
 
             if (vitalsMinMaxList.size() > 0) {
 
@@ -382,8 +381,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 strMaxSugarFPG = vitalsMinMaxList.get(0).get("MAXSUGARFPG");
                 strMinSugarPPG = vitalsMinMaxList.get(0).get("MINSUGARPPG");
                 strMaxSugarPPG = vitalsMinMaxList.get(0).get("MAXSUGARPPG");
-                //   Log.e("strMinWeight", "  " + strMinSpo2 + "  " + strMaxSpo2 + "  " + strMinRespiration + "  " + strMaxRespiration);
-                //Log.e("strMin", " " + strMinSugarFPG + " " + strMaxSugarFPG + " " + strMinSugarPPG + "  " + strMaxSugarPPG + "  " + strMinBmi + "  " + strMaxBmi);
             }
             if (investigationMinMaxList.size() > 0) {
 
@@ -403,8 +400,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 mMaxLdl = investigationMinMaxList.get(0).get("MAXLDL");
                 mMinVhdl = investigationMinMaxList.get(0).get("MINVHDL");
                 mMaxVhdl = investigationMinMaxList.get(0).get("MAXVHDL");
-                //Log.e("mMinTc", "  " + mMinTc + "  " + mMaxTc + "  " + mMinLdl + "  " + mMaxLdl);
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -456,8 +451,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                         strAllergie = healthDataBundle.getString("ALLERGIES");
 
                     }
-                    //   Log.e("weightMinValue", "  " + weightMinValue + " " + weightMaxValue);
-
                     strfname = firstName.getText().toString().trim();
                     strlname = lastName.getText().toString().trim();
                     strpno = phone_no.getText().toString().trim();
@@ -471,7 +464,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     String delimiter = ",";
                     String[] temp = strAilment.split(delimiter);
                     selectedAilmentList = new ArrayList();
-             /* print substrings */
+                           /* print substrings */
                     Collections.addAll(selectedAilmentList, temp);
 
                     try {
@@ -821,7 +814,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         i.putExtra("FAMILYHISTORY", book.getFamilyHistory());
         i.putExtra("HOSPITALIZATION", book.getHospitalizationSurgery());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        // i.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+
         startActivity(i);
 
 
@@ -866,7 +859,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         for (int i = 0; i < selected.length; i++) {
             if (selected[i]) {
                 selectedItems[i] = 1;
-                // System.out.println("______________________" + genderList.get(i));
                 String selGender = genderList.get(i).toString();
 
                 selectedListGender.add(selGender);
@@ -882,8 +874,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         for (int i = 0; i < selected.length; i++) {
             if (selected[i]) {
                 selectedItems2[i] = 1;
-                // System.out.println("______________________2" + ageList.get(i));
-
                 String ageString = ageList.get(i).toString();
                 selectedAgeList.add(ageString);
 
@@ -920,14 +910,14 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             // Log.e("element", "" + element);
             for (int j = i + 1; j < al.size(); j++) {
                 if (element.equals(al.get(j).getPat_id())) {
-                    // Log.e("element1", "" + al.get(j).getPat_id());
+
                     al.remove(j);
                     j--;
 
                 }
             }
         }
-        //  System.out.println(al);
+
     }
 
 
@@ -981,7 +971,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 int index = poHistoryAdapter.getItemCount();
                 end = index + PAGE_SIZE;
             }
-            //  Log.e("index", "" + index + " " + end + " size is " + queryCount);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1194,7 +1183,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             input_max_sugarppg.setText(sugarPpgMaxValue.toString());
         }
 
-
         // Click cancel to dismiss android custom dialog box
         dialogButtonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1257,9 +1245,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 } else if (valMinWeight == null && valMaxWeight == null) {
                     valMinWeight = null;
                     valMaxWeight = null;
-
                 }
-
                 if (valMinWeight != null && valMaxWeight != null && !valMinWeight.equals("") && !valMaxWeight.equals("")) {
 
                     weightMinValue = Integer.valueOf(valMinWeight);
@@ -1270,10 +1256,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     if (weightMaxValue < weightMinValue) {
                         input_max_weight.setError(getResources().getText(R.string.minmaxvalid));
                         return;
-                    } /*else if (weightMinValue > weightMaxValue) {
-                        input_min_weight.setError(getResources().getString(R.string.mingreatmax));
-                        return;
-                    }*/ else if (weightMinValue > strMaxWeight) {
+                    }else if (weightMinValue > strMaxWeight) {
                         input_min_weight.setError(getResources().getString(R.string.mingreatmax) + strMaxWeight);
                         return;
                     } else if (weightMaxValue > strMaxWeight) {
@@ -1284,9 +1267,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 if (!valMinWeight.isEmpty() && !valMaxWeight.isEmpty()) {
 
                     mAutoLabel.addLabel("Weight " + valMinWeight + "-" + valMaxWeight);
-                    /*if (success) {
-                        Toast.makeText(getContext(),"Label added!",Toast.LENGTH_LONG).show();
-                    }*/
+
                 }
                 String valMinHeight = input_min_height.getText().toString();
                 String valMaxHeight = input_max_height.getText().toString();
@@ -1304,9 +1285,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     heightMinValue = Integer.valueOf(valMinHeight);
                     heightMaxValue = Integer.valueOf(valMaxHeight);
-
-                    //  sb.append("  ");
-                    //  sb.append(" Height: Min ").append(heightMinValue).append(" - Max ").append(heightMaxValue).append(" ;");
 
                     if (heightMaxValue < heightMinValue) {
                         input_max_height.setError(getResources().getString(R.string.minmaxvalid));
@@ -1337,8 +1315,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     bmiMinValue = Integer.valueOf(valMinBmi);
                     bmiMaxValue = Integer.valueOf(valMaxBmi);
-                    //  sb.append("  ");
-                    // sb.append(" Bmi: Min ").append(bmiMinValue).append(" - Max ").append(bmiMaxValue).append(" ;");
 
                     if (bmiMaxValue < bmiMinValue) {
                         input_max_bmi.setError(getResources().getString(R.string.minmaxvalid));
@@ -1371,9 +1347,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     pulseMinValue = Integer.valueOf(valMinPulse);
                     pulseMaxValue = Integer.valueOf(valMaxPulse);
-                    /// sb.append("  ");
-                    // sb.append(" Pulse: Min ").append(pulseMinValue).append(" -  Max ").append(pulseMaxValue).append(" ;");
-
                     if (pulseMaxValue < pulseMinValue) {
                         input_min_pulse.setError(getResources().getText(R.string.minmaxvalid));
                         return;
@@ -1515,7 +1488,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                         input_min_sPo2.setError(getResources().getString(R.string.mingreatmax));
                         return;
                     } else if (spo2MaxValue > strMaxSpo2) {
-                        //Log.e("strMaxSpo2","  "+spo2MaxValue+"     "+strMaxSpo2);
                         input_max_sPo2.setError(getResources().getString(R.string.maxgreatdbmax) + " " + strMaxSpo2);
                         return;
                     }
@@ -1838,19 +1810,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     cbPftAbnormal.setChecked(true);
                     break;
             }
-       /* cbPalloreYes.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                if (cbPalloreYes.isChecked()) {
-                    strPallore = "Yes";
-                    cbPalloreNo.setChecked(false);
-                } else {
-                    cbPalloreYes.setChecked(false);
-                    strPallore = "";
-                }
-            }
-        });*/
         cbEcgNormal.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -1996,7 +1956,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     strMaxAcer = String.valueOf(mMaxAcer);
 
-
                 } else if (strMaxAcer != null && !strMaxAcer.equals("") && strMinAcer == null || strMinAcer.equals("")) {
 
                     strMinAcer = String.valueOf(mMinAcer);
@@ -2007,7 +1966,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                 }
                 if (strMinAcer != null && strMaxAcer != null && !strMinAcer.equals("") && !strMaxAcer.equals("")) {
-                    //ashish
                     int acerMinValue = Integer.valueOf(strMinAcer);
                     int acerMaxValue = Integer.valueOf(strMaxAcer);
 
@@ -2049,7 +2007,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
 
                 if (strMinLipidHDL != null && strMaxLipidHDL != null && !strMinLipidHDL.equals("") && !strMaxLipidHDL.equals("")) {
-                    //ashish
                     int hdlMinValue = Integer.valueOf(strMinLipidHDL);
                     int hdlMaxValue = Integer.valueOf(strMaxLipidHDL);
 
@@ -2091,7 +2048,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                 }
                 if (strMinLipidLDL != null && strMaxLipidLDL != null && !strMinLipidLDL.equals("") && !strMaxLipidLDL.equals("")) {
-                    //ashish
                     int ldlMinValue = Integer.valueOf(strMinLipidLDL);
                     int ldlMaxValue = Integer.valueOf(strMaxLipidLDL);
 
@@ -2135,7 +2091,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
 
                 if (strMinTC != null && strMaxTC != null && !strMinTC.equals("") && !strMaxTC.equals("")) {
-                    //ashish
                     int tcMinValue = Integer.valueOf(strMinTC);
                     int tcMaxValue = Integer.valueOf(strMaxTC);
 
@@ -2161,7 +2116,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
                 String strMinTG = input_LipidTG.getText().toString();
                 String strMaxTG = input_LipidTG_max.getText().toString();
-                // Log.e("strMinTG", "  " + strMinTG + "   " + strMaxTG);
 
                 if (strMinTG != null && !strMinTG.equals("") && strMaxTG == null || strMaxTG.equals("")) {
 
@@ -2178,7 +2132,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
 
                 if (strMinTG != null && strMaxTG != null && !strMinTG.equals("") && !strMaxTG.equals("")) {
-                    //ashish
+
                     int tgMinValue = Integer.valueOf(strMinTG);
                     int tgMaxValue = Integer.valueOf(strMaxTG);
 
@@ -2202,11 +2156,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
                     mInvestigationLabel.addLabel("TG " + strMinTG + " - " + strMaxTG);
                 }
-
-
                 String strMinLipidVHDL = input_LipidVHDL.getText().toString();
                 String strMaxLipidVHDLMax = input_LipidVHDL_max.getText().toString();
-
 
                 if (strMinLipidVHDL != null && !strMinLipidVHDL.equals("") && strMaxLipidVHDLMax == null || strMaxLipidVHDLMax.equals("")) {
 
@@ -2221,7 +2172,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     strMaxLipidVHDLMax = null;
                 }
                 if (strMinLipidVHDL != null && strMaxLipidVHDLMax != null && !strMinLipidVHDL.equals("") && !strMaxLipidVHDLMax.equals("")) {
-                    //ashish
                     int vhdlMinValue = Integer.valueOf(strMinLipidVHDL);
                     int vhdlMaxValue = Integer.valueOf(strMaxLipidVHDLMax);
 
@@ -2264,7 +2214,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 }
 
                 if (strMinSerumUrea != null && strMaxSerumUrea != null && !strMinSerumUrea.equals("") && !strMaxSerumUrea.equals("")) {
-                    //ashish
                     int seremMinValue = Integer.valueOf(strMinSerumUrea);
                     int seremMaxValue = Integer.valueOf(strMaxSerumUrea);
 
@@ -2305,7 +2254,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     valMinSugarFpg = null;
                     valMaxSugarFpg = null;
                 }
-
                 if (valMinSugarFpg != null && valMaxSugarFpg != null && !valMinSugarFpg.equals("") && !valMaxSugarFpg.equals("")) {
 
                     sugarFpgMinValue = Integer.valueOf(valMinSugarFpg);
@@ -2834,16 +2782,13 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             @SuppressWarnings("ConstantConditions")
             @Override
             public void onLabelsCompleted() {
-                // Toast.makeText(getContext(), "Completed!", Toast.LENGTH_LONG).show();
 
-                //Snackbar.make(getView(), "Completed!", Snackbar.LENGTH_SHORT).show();
             }
         });
 
         mAutoLabel.setOnRemoveLabelListener(new AutoLabelUI.OnRemoveLabelListener() {
             @Override
             public void onRemoveLabel(View view, int position) {
-                // Toast.makeText(getContext(), "Label with text \" " + ((Label) view).getTag() + "\" has been removed.", Toast.LENGTH_LONG).show();
 
             }
 
@@ -2858,7 +2803,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             @SuppressWarnings("ConstantConditions")
             @Override
             public void onLabelsEmpty() {
-                //  Toast.makeText(getContext(), "EMPTY!", Toast.LENGTH_LONG).show();
+
 
             }
         });
@@ -2866,8 +2811,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         mAutoLabel.setOnLabelClickListener(new AutoLabelUI.OnLabelClickListener() {
             @Override
             public void onClickLabel(View v) {
-                // Toast.makeText(getContext(), ((Label) v).getText(), Toast.LENGTH_SHORT).show();
-                // Toast.makeText(getApplicationContext(),"test",Toast.LENGTH_LONG).show();
+
 
             }
 

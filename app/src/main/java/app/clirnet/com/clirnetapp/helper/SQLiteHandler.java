@@ -237,7 +237,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String HEADER = "header";
     private static final String ACTION_PATH="action_path";
     private static final String TYPE = "type";
-    private  static final String SEND_SMS_FLAG="msg_flag";
+  //  private  static final String SEND_SMS_FLAG="msg_flag";
 
     public SQLiteHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -271,9 +271,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String SPECIALTY = "speciality";
     private static final String ASSOCIATE_TYPE = "associate_type";
     private static final String MODIFIED_COUNTER = "modified_counter";
-    private static final String ECG = "ecg";
-    private static final String HBA1C = "hba1c";
-    private static final String ACER = "acer";
+    private static final String ECG ="ecg";
+    private static final String HBA1C ="hba1c";
+    private static final String ACER ="acer";
     private static final String PFT = "pft";
     private static final String SEREM_UREA = "serem_urea";
     private static final String LIPID_PROFILE_TC = "lipid_profile_tc";
@@ -2346,7 +2346,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 } while (cursor.moveToNext());
             }
         } catch (Exception e) {
-            throw new ClirNetAppException("Something went wrong while geting getAllDataAssociateMaster");
+            throw new ClirNetAppException("Something went wrong while geting getReferals");
 
         } finally {
             if (cursor != null) {
@@ -2481,7 +2481,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             cv.put(FLAG, strFlag);
 
             db.update(TABLE_INVESTIGATION, cv, KEY_VISIT_ID + "=" + strVisitId, null);
-            // db.insert(TABLE_INVESTIGATION, null, cv);
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -2989,17 +2989,16 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
         SQLiteDatabase db = null;
         try {
+
             db = this.getWritableDatabase();
 
             db.execSQL("UPDATE diagnosis SET diagnosis_name = replace( diagnosis_name, ',', '-' ) ");
             db.execSQL("UPDATE diagnosis SET diagnosis_name = replace( diagnosis_name, '(', '( ' ) ");
-            //Log.e("UPDATE","UPDATE SUCCESSFUL");
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        //Log.d("updated", "banner flag data modified into sqlite: " + id);
     }
 }
 

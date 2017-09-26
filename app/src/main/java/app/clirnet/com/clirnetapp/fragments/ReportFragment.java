@@ -89,7 +89,6 @@ public class ReportFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-
         rootview = inflater.inflate(R.layout.fragment_reports, container, false);
 
 
@@ -143,7 +142,6 @@ public class ReportFragment extends Fragment {
 
                     diffInHours = TimeUnit.MILLISECONDS.toHours(duration);
 
-                    //  Log.e("diffInHours", "       " + diffInHours);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -213,12 +211,10 @@ public class ReportFragment extends Fragment {
         SimpleDateFormat fromUser = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
         SimpleDateFormat myFormat = new SimpleDateFormat("yyyy-MM-dd",Locale.ENGLISH);
 
-
         try {
 
             startDate = myFormat.format(fromUser.parse(startDate));
             endDate = myFormat.format(fromUser.parse(endDate));
-            //Log.e("reformattedStr123", "" + startDate + "  ??/  " + endDate);
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -398,9 +394,6 @@ public class ReportFragment extends Fragment {
 
                         if (s.equals("1")) {
 
-                           // String date = dayOfMonth + "-"
-                                //    + (monthOfYear + 1) + "-" + year;
-
                             fromdate.setText(year + "-" + (monthOfYear + 1) + "-"
                                     + dayOfMonth);
                         } else {
@@ -414,7 +407,7 @@ public class ReportFragment extends Fragment {
         dpd1.getDatePicker().setMaxDate(System.currentTimeMillis());
         dpd1.show();
 
-        //show age of pateint
+
     }
 
 

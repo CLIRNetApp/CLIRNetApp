@@ -52,8 +52,6 @@ import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectivityChangeReceiver;
 import app.clirnet.com.clirnetapp.utility.SyncDataService;
 
-/*import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;*/
 
 
 public class NavigationActivity extends AppCompatActivity
@@ -118,10 +116,6 @@ public class NavigationActivity extends AppCompatActivity
 
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-       /* NavigationView navigation_drawer=(NavigationView)findViewById(R.id.navigation_drawer);
-        navigation_drawer.setNavigationItemSelectedListener(this);
-        NavigationView navigation_drawer_bottom=(NavigationView)findViewById(R.id.navigation_drawer_bottom);
-        navigation_drawer_bottom.setNavigationItemSelectedListener(this);*/
 
         View hView = navigationView.getHeaderView(0);
         ImageView imgvw = (ImageView) hView.findViewById(R.id.imageView);
@@ -402,6 +396,7 @@ public class NavigationActivity extends AppCompatActivity
 
     public void setActionBarTitle(String title) {
         try {
+            if(getSupportActionBar()!=null)
             getSupportActionBar().setTitle(title);
         } catch (NullPointerException e) {
             e.printStackTrace();

@@ -42,13 +42,12 @@ import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
-import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 import app.clirnet.com.clirnetapp.utility.Validator;
 
 
 @SuppressWarnings("AccessStaticViaInstance")
-public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFragment.OnFragmentInteractionListener,View.OnClickListener {
+public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFragment.OnFragmentInteractionListener, View.OnClickListener {
 
     public static final String EXTRA_KEY_NOTIFY = "EXTRA_NOTIFY";
     public static final String ACTION_MyUpdate = "app.clirnet.com.clirnetapp.app.UPDATE";
@@ -68,7 +67,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
     private String strPatientId;
 
     private SQLController sqlController;
-    private SQLiteHandler dbController;
+
 
     private String doctor_membership_number;
 
@@ -87,7 +86,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
     private LastnameDatabaseClass lastNamedb;
-    private ArrayList<String> mSymptomsList;
+
 
     private String strAlternatenumber;
     private String strAlternatephtype;
@@ -97,17 +96,17 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
     private String struid;
     private String strEmail;
     private String mAlcohol;
-    private String mPacsWeek, mStressLevel;
-    private String mSmokerType, mStickCount;
+    private String mStressLevel;
+    private String mSmokerType;
     private String mLifeStyle;
-    private  String mExcercise, mChewinogTobaco ;
+    private String mExcercise, mChewinogTobaco;
     private String mSleepStatus;
     private String strFamilyHistory;
     private String strHospitalizaionSurgery;
 
     private MyBroadcastReceiver_Update myBroadcastReceiver_Update;
     private TextView editpatientName;
-    private  TextView editAge;
+    private TextView editAge;
     private TextView editmobileno;
     private TextView phoneType;
     private TextView email;
@@ -150,8 +149,8 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         strEmail = getIntent().getStringExtra("EMAIL");
         strPhoneType = getIntent().getStringExtra("PHONETYPE");
 
-        strFamilyHistory=getIntent().getStringExtra("FAMILYHISTORY");
-        strHospitalizaionSurgery =getIntent().getStringExtra("HOSPITALIZATION");
+        strFamilyHistory = getIntent().getStringExtra("FAMILYHISTORY");
+        strHospitalizaionSurgery = getIntent().getStringExtra("HOSPITALIZATION");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -167,7 +166,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
             ab.setDisplayShowTitleEnabled(true);
         } catch (NullPointerException e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient Update  " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         myBroadcastReceiver_Update = new MyBroadcastReceiver_Update();
@@ -182,8 +181,8 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         if (lastNamedb == null) {
             lastNamedb = new LastnameDatabaseClass(getApplicationContext());
         }
-        if(bannerClass==null){
-            bannerClass=new BannerClass(getApplicationContext());
+        if (bannerClass == null) {
+            bannerClass = new BannerClass(getApplicationContext());
         }
         try {
             sqlController = new SQLController(getApplicationContext());
@@ -200,13 +199,12 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
                 mExcercise = healthLifeStyleList.get(0).getExcercise();
                 mChewinogTobaco = healthLifeStyleList.get(0).getChewingTobaco();
 
-                mSleepStatus= healthLifeStyleList.get(0).getSleep();
+                mSleepStatus = healthLifeStyleList.get(0).getSleep();
             }
-        } catch (ClirNetAppException |SQLException e) {
+        } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient Update" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
-
 
 
         backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
@@ -215,24 +213,24 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
 
 
         ImageView patientImage = (ImageView) findViewById(R.id.patientImage);
-       // TextView date = (TextView) findViewById(R.id.sysdate);
-         editpatientName = (TextView) findViewById(R.id.patientName);
-         editAge = (TextView) findViewById(R.id.age);
-         editmobileno = (TextView) findViewById(R.id.mobileno);
-         phoneType = (TextView) findViewById(R.id.phoneType);
-         email = (TextView) findViewById(R.id.email);
-         txteMail=(TextView)findViewById(R.id.txtEmail);
+        // TextView date = (TextView) findViewById(R.id.sysdate);
+        editpatientName = (TextView) findViewById(R.id.patientName);
+        editAge = (TextView) findViewById(R.id.age);
+        editmobileno = (TextView) findViewById(R.id.mobileno);
+        phoneType = (TextView) findViewById(R.id.phoneType);
+        email = (TextView) findViewById(R.id.email);
+        txteMail = (TextView) findViewById(R.id.txtEmail);
 
         ImageView imgEdit = (ImageView) findViewById(R.id.editPersonalInfo);
 
-        ImageView imgSmoke=(ImageView)findViewById(R.id.imgSmoke);
-        ImageView imgDrink=(ImageView)findViewById(R.id.imgDrink);
-        ImageView imgTobaco=(ImageView)findViewById(R.id.imgTobaco);
-        ImageView imgFood=(ImageView)findViewById(R.id.imgFood);
-        ImageView imgSleep=(ImageView)findViewById(R.id.imgSleep);
-        ImageView imgStress=(ImageView)findViewById(R.id.imgStress);
-        ImageView imgLifeStyle=(ImageView)findViewById(R.id.imgLifeStyle);
-        ImageView imgExcercise=(ImageView)findViewById(R.id.imgExcercise);
+        ImageView imgSmoke = (ImageView) findViewById(R.id.imgSmoke);
+        ImageView imgDrink = (ImageView) findViewById(R.id.imgDrink);
+        ImageView imgTobaco = (ImageView) findViewById(R.id.imgTobaco);
+        ImageView imgFood = (ImageView) findViewById(R.id.imgFood);
+        ImageView imgSleep = (ImageView) findViewById(R.id.imgSleep);
+        ImageView imgStress = (ImageView) findViewById(R.id.imgStress);
+        ImageView imgLifeStyle = (ImageView) findViewById(R.id.imgLifeStyle);
+        ImageView imgExcercise = (ImageView) findViewById(R.id.imgExcercise);
         imgSmoke.setOnClickListener(this);
         imgDrink.setOnClickListener(this);
         imgTobaco.setOnClickListener(this);
@@ -241,7 +239,6 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         imgStress.setOnClickListener(this);
         imgLifeStyle.setOnClickListener(this);
         imgExcercise.setOnClickListener(this);
-
 
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
@@ -258,31 +255,30 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         }
 
 
-
         editpatientName.setText(strName);
         editmobileno.setText(strPhone);
 
-        Log.e("strPhoneTpe","  "+strPhoneType);
-        if (strPhoneType != null && !strPhoneType.equals("") && !strPhone.equals("Select Type")){
+        Log.e("strPhoneTpe", "  " + strPhoneType);
+        if (strPhoneType != null && !strPhoneType.equals("") && !strPhone.equals("Select Type")) {
             phoneType.setText(strPhoneType + " :");
         } else {
             phoneType.setText("Mobile :");
         }
 
-        if(strEmail!=null &&!TextUtils.isEmpty(strEmail) ){
+        if (strEmail != null && !TextUtils.isEmpty(strEmail)) {
             txteMail.setVisibility(View.VISIBLE);
             email.setText(strEmail);
         }
-        if(strgender!=null && strgender.equals("Male")){
-            editAge.setText("( M - "+ strAge + " )");
-        }else if(strgender!=null && strgender.equals("Female")) {
-            editAge.setText("( F - "+ strAge + " )");
-        }else if(strgender!=null && strgender.equals("Trans")) {
-            editAge.setText("( T - "+ strAge + " )");
+        if (strgender != null && strgender.equals("Male")) {
+            editAge.setText("( M - " + strAge + " )");
+        } else if (strgender != null && strgender.equals("Female")) {
+            editAge.setText("( F - " + strAge + " )");
+        } else if (strgender != null && strgender.equals("Trans")) {
+            editAge.setText("( T - " + strAge + " )");
         }
 
-        if(strPatientPhoto!=null && !TextUtils.isEmpty(strPatientPhoto)){
-            setUpGlide(strPatientPhoto,patientImage);
+        if (strPatientPhoto != null && !TextUtils.isEmpty(strPatientPhoto)) {
+            setUpGlide(strPatientPhoto, patientImage);
         }
 
 
@@ -309,7 +305,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
                 i.putExtra("MIDDLEAME", strMiddleName);
                 i.putExtra("LASTNAME", strLastName);
                 i.putExtra("PHONE", strPhone);
-                i.putExtra("PHONETYPE",strPhoneType);
+                i.putExtra("PHONETYPE", strPhoneType);
                 i.putExtra("DOB", strDob);
                 i.putExtra("AGE", strAge);
                 i.putExtra("LANGUAGE", strLanguage);
@@ -332,8 +328,6 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
                 // finish();
             }
         });
-
-
 
 
         toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -363,7 +357,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
     }
 
     private void setupAnimation() {
-        backChangingImages=(ImageView)findViewById(R.id.backChangingImages);
+        backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
 
         try {
             bannerimgNames = bannerClass.getImageName();
@@ -417,9 +411,7 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         if (sqlController != null) {
             sqlController = null;
         }
-        if (dbController != null) {
-            dbController = null;
-        }
+
         if (databaseClass != null) {
             databaseClass = null;
         }
@@ -434,9 +426,6 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         if (bannerClass != null) {
             bannerClass = null;
         }
-        if (mSymptomsList != null) {
-            mSymptomsList = null;
-        }
 
         if (lastNamedb != null) {
             lastNamedb = null;
@@ -446,9 +435,9 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
 
         cleanResources();
     }
+
     private void cleanResources() {
 
-        patientHistoryData = null;
         strPhone = null;
         strAge = null;
         strLanguage = null;
@@ -474,15 +463,32 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         strAlternateIsd_code = null;
         struid = null;
         strEmail = null;
+        editpatientName = null;
+        editAge = null;
+        editmobileno = null;
+        phoneType = null;
+        email = null;
+        txteMail = null;
+        strPhoneType = null;
+
+        mAlcohol= null;
+        mStressLevel= null;
+        mSmokerType= null;
+        mLifeStyle= null;
+        mExcercise= null; mChewinogTobaco= null;
+        mSleepStatus= null;
+        strFamilyHistory= null;
+        strHospitalizaionSurgery= null;
     }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
 
     }
+
     private void setupViewPager(ViewPager viewPager) {
 
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(),viewPager);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager(), viewPager);
 
         AddPatientUpdateFragment addPatientUpdateFragment = new AddPatientUpdateFragment();
 
@@ -511,44 +517,39 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
             super(manager);
         }
 
-        ViewPagerAdapter(FragmentManager manager,ViewPager viewPager) {
+        ViewPagerAdapter(FragmentManager manager, ViewPager viewPager) {
 
             super(manager);
-            this.viewPager=viewPager;
+            this.viewPager = viewPager;
         }
-        //this method is also working fine bt we have do spcl so we used below getItem code to pass tab view position from button
-        //ie we call view pager from external button call
-      /*  @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }*/
-      @Override
-      public Fragment getItem(int index) {
 
-          switch (index) {
-              case 0:
-                  // Top Rated fragment activity
-                  AddPatientUpdateFragment argumentFragment = new AddPatientUpdateFragment();//Get Fragment Instance
-                  argumentFragment.getViewPager(viewPager);
-                  Bundle data = new Bundle();//Use bundle to pass data
-                  data.putString("PATIENTID", strPatientId);
-                  argumentFragment.setArguments(data);
-                  return argumentFragment;
+        @Override
+        public Fragment getItem(int index) {
 
-              case 1:
-                  // Games fragment activity
-                  OldHistoryFragment oldHistoryFragment = new OldHistoryFragment();
-                 // oldHistoryFragment.getViewPager(viewPager);
-                  Bundle bundle = new Bundle();
-                  bundle.putString("PATIENTID", strPatientId);
+            switch (index) {
+                case 0:
+                    // Top Rated fragment activity
+                    AddPatientUpdateFragment argumentFragment = new AddPatientUpdateFragment();//Get Fragment Instance
+                    argumentFragment.getViewPager(viewPager);
+                    Bundle data = new Bundle();//Use bundle to pass data
+                    data.putString("PATIENTID", strPatientId);
+                    argumentFragment.setArguments(data);
+                    return argumentFragment;
 
-                  oldHistoryFragment.setArguments(bundle);
-                  return  oldHistoryFragment;
+                case 1:
+                    // Games fragment activity
+                    OldHistoryFragment oldHistoryFragment = new OldHistoryFragment();
+                    // oldHistoryFragment.getViewPager(viewPager);
+                    Bundle bundle = new Bundle();
+                    bundle.putString("PATIENTID", strPatientId);
 
-          }
+                    oldHistoryFragment.setArguments(bundle);
+                    return oldHistoryFragment;
 
-          return null;
-      }
+            }
+
+            return null;
+        }
 
         @Override
         public int getCount() {
@@ -566,91 +567,91 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         }
     }
 
-    private void setImagesToHealthLifeStyle(){
+    private void setImagesToHealthLifeStyle() {
 
         ImageView imgSmoke = (ImageView) findViewById(R.id.imgSmoke);
         ImageView imgDrink = (ImageView) findViewById(R.id.imgDrink);
         ImageView imgTobaco = (ImageView) findViewById(R.id.imgTobaco);
         ImageView imgStress = (ImageView) findViewById(R.id.imgStress);
-        ImageView imgLifeStyle=(ImageView) findViewById(R.id.imgLifeStyle);
-        ImageView imgExcercise=(ImageView) findViewById(R.id.imgExcercise);
+        ImageView imgLifeStyle = (ImageView) findViewById(R.id.imgLifeStyle);
+        ImageView imgExcercise = (ImageView) findViewById(R.id.imgExcercise);
 
-        if(mSmokerType!=null && !mSmokerType.equals("")&& mSmokerType.equals("Active Smoker")){
+        if (mSmokerType != null && !mSmokerType.equals("") && mSmokerType.equals("Active Smoker")) {
             imgSmoke.setVisibility(View.VISIBLE);
             imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.smoke));
-        }else if(mSmokerType!=null && !mSmokerType.equals("")&& mSmokerType.equals("Non Smoker")){
+        } else if (mSmokerType != null && !mSmokerType.equals("") && mSmokerType.equals("Non Smoker")) {
             imgSmoke.setVisibility(View.VISIBLE);
             imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.no_smoke));
         }
-        if(mAlcohol!=null && !mAlcohol.equals("")&& mAlcohol.equals("Drinker")){
+        if (mAlcohol != null && !mAlcohol.equals("") && mAlcohol.equals("Drinker")) {
             imgDrink.setVisibility(View.VISIBLE);
             imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.drink));
-        }else if(mAlcohol!=null && !mAlcohol.equals("")&& mAlcohol.equals("Non Drinker")){
+        } else if (mAlcohol != null && !mAlcohol.equals("") && mAlcohol.equals("Non Drinker")) {
             imgDrink.setVisibility(View.VISIBLE);
             imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.no_drink));
         }
-        if(mChewinogTobaco!=null && !mChewinogTobaco.equals("")&& mChewinogTobaco.equals("Yes")){
+        if (mChewinogTobaco != null && !mChewinogTobaco.equals("") && mChewinogTobaco.equals("Yes")) {
             imgTobaco.setVisibility(View.VISIBLE);
             imgTobaco.setImageDrawable(getResources().getDrawable(R.drawable.tobacco));
-        }else if(mSleepStatus!=null && !mSleepStatus.equals("")&& mSleepStatus.equals("No")){
+        } else if (mSleepStatus != null && !mSleepStatus.equals("") && mSleepStatus.equals("No")) {
             imgTobaco.setVisibility(View.VISIBLE);
             imgTobaco.setImageDrawable(getResources().getDrawable(R.drawable.no_tobacco));
         }
-        if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("Low")){
+        if (mStressLevel != null && !mStressLevel.equals("") && mStressLevel.equals("Low")) {
             imgStress.setVisibility(View.VISIBLE);
             imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stress_low));
-        }else if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("Moderate")){
+        } else if (mStressLevel != null && !mStressLevel.equals("") && mStressLevel.equals("Moderate")) {
             imgStress.setVisibility(View.VISIBLE);
             imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stress_moderate));
-        } else if(mStressLevel!=null && !mStressLevel.equals("")&& mStressLevel.equals("High")){
+        } else if (mStressLevel != null && !mStressLevel.equals("") && mStressLevel.equals("High")) {
             imgStress.setVisibility(View.VISIBLE);
             imgStress.setImageDrawable(getResources().getDrawable(R.drawable.stress_high));
         }
 
-        if(mExcercise!=null && !mExcercise.equals("")&& mExcercise.equals("Yes")){
+        if (mExcercise != null && !mExcercise.equals("") && mExcercise.equals("Yes")) {
             imgExcercise.setVisibility(View.VISIBLE);
             imgExcercise.setImageDrawable(getResources().getDrawable(R.drawable.exercise));
-        }else if(mExcercise!=null && !mExcercise.equals("")&& mExcercise.equals("No")){
+        } else if (mExcercise != null && !mExcercise.equals("") && mExcercise.equals("No")) {
             imgExcercise.setVisibility(View.VISIBLE);
             imgExcercise.setImageDrawable(getResources().getDrawable(R.drawable.no_exercise));
         }
-        if(mLifeStyle!=null && !mLifeStyle.equals("")&& mLifeStyle.equals("Sedentary")){
+        if (mLifeStyle != null && !mLifeStyle.equals("") && mLifeStyle.equals("Sedentary")) {
             imgLifeStyle.setVisibility(View.VISIBLE);
             imgLifeStyle.setImageDrawable(getResources().getDrawable(R.drawable.sitting));
-        }else if(mLifeStyle!=null && !mLifeStyle.equals("")&& mLifeStyle.equals("Light Active")){
+        } else if (mLifeStyle != null && !mLifeStyle.equals("") && mLifeStyle.equals("Light Active")) {
             imgLifeStyle.setVisibility(View.VISIBLE);
             imgLifeStyle.setImageDrawable(getResources().getDrawable(R.drawable.walking));
-        }
-        else if(mLifeStyle!=null && !mLifeStyle.equals("")&& mLifeStyle.equals("Active")){
+        } else if (mLifeStyle != null && !mLifeStyle.equals("") && mLifeStyle.equals("Active")) {
             imgLifeStyle.setVisibility(View.VISIBLE);
             imgLifeStyle.setImageDrawable(getResources().getDrawable(R.drawable.running));
         }
     }
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
 
             case R.id.imgSmoke:
-                appController.showToastMsg(getApplicationContext(), "Patient is a "+mSmokerType);
+                appController.showToastMsg(getApplicationContext(), "Patient is a " + mSmokerType);
                 break;
             case R.id.imgDrink:
-                appController.showToastMsg(getApplicationContext(), "Patient is a "+mAlcohol);
+                appController.showToastMsg(getApplicationContext(), "Patient is a " + mAlcohol);
                 break;
             case R.id.imgTobaco:
-                appController.showToastMsg(getApplicationContext(), mChewinogTobaco+" patient consumes other tobacco products");
+                appController.showToastMsg(getApplicationContext(), mChewinogTobaco + " patient consumes other tobacco products");
                 break;
 
             case R.id.imgSleep:
-                appController.showToastMsg(getApplicationContext(), "Patient gets "+mSleepStatus + " sleep");
+                appController.showToastMsg(getApplicationContext(), "Patient gets " + mSleepStatus + " sleep");
                 break;
             case R.id.imgStress:
-                appController.showToastMsg(getApplicationContext(), "Patient stress level is "+mStressLevel);
+                appController.showToastMsg(getApplicationContext(), "Patient stress level is " + mStressLevel);
                 break;
             case R.id.imgLifeStyle:
-                appController.showToastMsg(getApplicationContext(), "Patient Lifestyle is "+mLifeStyle);
+                appController.showToastMsg(getApplicationContext(), "Patient Lifestyle is " + mLifeStyle);
                 break;
             case R.id.imgExcercise:
-                appController.showToastMsg(getApplicationContext(), "Patient Exercises? "+mExcercise);
+                appController.showToastMsg(getApplicationContext(), "Patient Exercises? " + mExcercise);
                 break;
         }
     }
@@ -684,10 +685,10 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
         builder.show();
 
     }
+
     public class MyBroadcastReceiver_Update extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-            // int update = intent.getIntExtra(MasterSessionService.EXTRA_KEY_UPDATE, 0);
             String patId = intent.getStringExtra(EXTRA_KEY_NOTIFY);
 
             if (patId != null) {
@@ -713,7 +714,6 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
                     mExcercise = ageAddedOnDate.get("excercise");
                     mSleepStatus = ageAddedOnDate.get("sleep_status");
                     strPhoneType = ageAddedOnDate.get("phone_type");
-                    // Log.e("first_name", "" + first_name + "  " + last_name);
 
                     setImagesToHealthLifeStyle();
 
@@ -739,6 +739,8 @@ public class AddPatientUpdate extends AppCompatActivity implements  OldHistoryFr
                     }
 
                 } catch (Exception e) {
+                    appController.appendLog(appController.getDateTime() + "" + "/" + "Add Patient Update " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
                     e.printStackTrace();
                 }
             }

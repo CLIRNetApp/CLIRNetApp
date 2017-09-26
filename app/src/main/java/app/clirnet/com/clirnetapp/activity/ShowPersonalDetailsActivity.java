@@ -446,6 +446,9 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
         strgender = null;
         strAge = null;
         strDob = null;
+        strId=null;
+        strFirstName=null;
+        strMiddleName=null;
         strLastName = null;
         if (bannerClass != null) {
             bannerClass = null;
@@ -462,7 +465,17 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
         strState = null;
         strAlternatenumber = null;
         strAlternatephtype = null;
-        // System.gc();
+        strEmail=null;
+        strUid=null;
+        calledFrom=null;
+        mAlcohol=null;
+        mStressLevel=null;
+        mSmokerType=null;
+        mLifeStyle=null;
+        mExcercise=null; mChewinogTobaco=null;
+        mSleepStatus=null;
+        strFamilyHistory=null;
+        strHospitalizaionSurgery=null;
     }
 
 

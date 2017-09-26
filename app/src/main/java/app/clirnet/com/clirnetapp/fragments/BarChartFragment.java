@@ -35,8 +35,8 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
     private OnFragmentInteractionListener mListener;
     private View view;
 
-    private BarEntry v1e1;
-    private BarEntry v2e1;
+    private BarEntry maleCountBarEntry;
+    private BarEntry femaleCountBarEntry;
     private BarChart chart;
     private AppController appController;
 
@@ -100,9 +100,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
             ArrayList<GenderWiseDataModel> gd;
             gd = sqlController.genderWiseData(mFromDate, mToDate);
 
-
             int size1 = gd.size();
-            //Log.e("size1", "  " + size1);
             //Removes items from gd when agebound is null 15-02-2017
 
             for (int i = size1-1; i >= 0; i--){
@@ -114,19 +112,18 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
             }
 
             int size2 = gd.size();
-           // Log.e("size2", "  " + size2);
+
             if (size2 > 0) {
                 for (int im = 0; im < size2; im++) {
                     int mcount = Integer.parseInt(gd.get(im).getmCount());//getting male count
                     int fCount = Integer.parseInt(gd.get(im).getfCount());//getting female count
                     String ageBound = gd.get(im).getAgeBound();
-                    //  Log.e("ageBound", "  " + ageBound + " " + mcount + " " + fCount);
 
                     if (ageBound != null) {
-                        v1e1 = new BarEntry(mcount, im);
-                        v2e1 = new BarEntry(fCount, im);
-                        male.add(v1e1);
-                        female.add(v2e1);
+                        maleCountBarEntry = new BarEntry(mcount, im);
+                        femaleCountBarEntry = new BarEntry(fCount, im);
+                        male.add(maleCountBarEntry);
+                        female.add(femaleCountBarEntry);
                         listSetAgeBound.add(ageBound);
                     }
                 }
@@ -172,8 +169,6 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
             rightAxis.setTextColor(Color.BLACK);
             rightAxis.setEnabled(false);
 
-
-            //  BarData data = new BarData(getXAxisValues(), dataSets);
             BarData data = new BarData(listSetAgeBound, dataSets);
             data.setValueFormatter(new LargeValueFormatter());
             data.setValueTextColor(Color.BLACK);
@@ -183,7 +178,7 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
 
             chart.setData(data);
             chart.setDescription(null);//this will not show the chart description
-            //  chart.invalidate();
+
         } catch (Exception e) {
              appController.appendLog(appController.getDateTime() + " " + "/ " + "BarChartFragment" + e+ "  Line Number: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
             e.printStackTrace();
@@ -227,22 +222,18 @@ public class BarChartFragment extends android.support.v4.app.Fragment {
         mListener = null;
         mFromDate = null;
         mToDate = null;
-        if (v1e1 != null) {
-            v1e1 = null;
+        if (maleCountBarEntry != null) {
+            maleCountBarEntry = null;
         }
-        if (v2e1 != null) {
-            v2e1 = null;
+        if (femaleCountBarEntry != null) {
+            femaleCountBarEntry = null;
         }
         if (chart != null) {
             chart = null;
         }
-
-
     }
 
-
     public interface OnFragmentInteractionListener {
-
         void onFragmentInteraction(Uri uri);
     }
 

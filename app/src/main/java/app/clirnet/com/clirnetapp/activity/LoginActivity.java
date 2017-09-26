@@ -20,16 +20,32 @@ import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
 import com.crashlytics.android.Crashlytics;
+import com.google.firebase.iid.FirebaseInstanceId;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -45,7 +61,6 @@ import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.app.DoctorDeatilsAsynTask;
-import app.clirnet.com.clirnetapp.app.LoginAsyncTask;
 import app.clirnet.com.clirnetapp.app.UpdatePassworsAsynTask;
 import app.clirnet.com.clirnetapp.fcm.MyFirebaseMessagingService;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
@@ -73,6 +88,8 @@ public class LoginActivity extends Activity {
     private static final String LOGIN_COUNT = "firstTimeLogin";
     private static final String SUGAR_INTO_INVESTIGATION = "vitalsToInvestigation";
     public static final int REQUEST_ID_MULTIPLE_PERMISSIONS = 1;
+
+    private static final String PREF_TERMSANDCONDITION = "terms";
 
     @InjectView(R.id.email)
     EditText inputEmail;
@@ -102,6 +119,7 @@ public class LoginActivity extends Activity {
     private String doctor_membership_number;
 
     private BannerClass bannerClass;
+    private SQLiteHandler dbController;
 
     private Dialog dialog;
     private SQLiteHandler sInstance;
@@ -110,6 +128,8 @@ public class LoginActivity extends Activity {
     private String msg, headerMsg;
     private String clubbingFlag;
     private int notificationTreySize;
+    private String start_time;
+    private boolean responceCheck;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -139,6 +159,7 @@ public class LoginActivity extends Activity {
         DatabaseClass databaseClass = new DatabaseClass(getApplicationContext());
         bannerClass = new BannerClass(getApplicationContext());
         LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
+        dbController = SQLiteHandler.getInstance(getApplicationContext());
         appController = new AppController();
 
         if (md5 == null) {
@@ -154,8 +175,6 @@ public class LoginActivity extends Activity {
         new CallAsynOnce().setValue("1");//this set value which helps to call asyntask only once while app is running.
 
         // Progress dialog
-        pDialog = new ProgressDialog(this);
-        pDialog.setCancelable(false);
 
         connectionDetector = new ConnectionDetector(getApplicationContext());
 
@@ -440,13 +459,14 @@ public class LoginActivity extends Activity {
             // login user
             boolean isInternetPresent = connectionDetector.isConnectingToInternet();
             if (isInternetPresent) {
-
-                String start_time = appController.getDateTimenew();
+                start_time = appController.getDateTimenew();
                 new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword, doctor_membership_number, docId, start_time);
                 // Removing url response cache from volley.............
                 AppController.getInstance().getRequestQueue().getCache().remove(AppConfig.URL_LOGIN);
-                new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber, doctor_membership_number, docId, start_time,type,actionPath,msg,headerMsg,clubbingFlag,notificationTreySize);
+              //  new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber, doctor_membership_number, docId, start_time,type,actionPath,msg,headerMsg,clubbingFlag,notificationTreySize);
                 //startService();
+                checkLogin(name, md5EncyptedDataPassword, doctor_membership_number, docId);
+
                 savedLoginCounter(); //to save shared pref to update login counter
 
                 new SessionManager(this).setLogin(true);
@@ -478,8 +498,6 @@ public class LoginActivity extends Activity {
                         if (isLogin) {
                             appController.showToastMsg(getApplicationContext(), "Login Successful");
 
-                            //Toast.makeText(getApplicationContext(), , Toast.LENGTH_LONG).show();
-
                             goToNavigation();
 
                             startService();
@@ -488,7 +506,6 @@ public class LoginActivity extends Activity {
 
                         } else {
                             appController.showToastMsg(getApplicationContext(),  "Username/Password Mismatch");
-                            //Toast.makeText(getApplicationContext(), "Username/Password Mismatch", Toast.LENGTH_LONG).show();
                         }
                     }
                 } catch (ClirNetAppException e) {
@@ -504,9 +521,6 @@ public class LoginActivity extends Activity {
             // Prompt user to enter credentials
             appController.showToastMsg(getApplicationContext(), "Username/Password Incomplete");
 
-            /*Toast.makeText(getApplicationContext(),
-                    "Username/Password Incomplete", Toast.LENGTH_LONG)
-                    .show();*/
         }
 
     }
@@ -546,7 +560,6 @@ public class LoginActivity extends Activity {
         name = inputEmail.getText().toString().trim();
 
 
-        //  image.setImageResource(R.drawable.ic_launcher);
         btnSubmitPass.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -573,16 +586,13 @@ public class LoginActivity extends Activity {
                     return;
                 }
                 if (!newPass.equals(confirmPass)) {
-                   // appController.showToastMsg(getApplicationContext(), "new Password and Confirm Password do not match ");
 
-                   // Toast.makeText(getApplicationContext(), "Old and new Password do not match ", Toast.LENGTH_LONG).show();
                     confirmPassword.setError("New and confirmation password do not match. Please re-enter.");
                     return;
                 }
 
                 String md5oldPassword = MD5.getMD5(oldPass);
                 String md5newPassword = MD5.getMD5(newPass);
-               //  Log.e("md5newPassword","  "+md5oldPassword +"  "+md5newPassword);
                 String start_time = appController.getDateTimenew();
                 new UpdatePassworsAsynTask(LoginActivity.this, username, doctor_membership_number, docId, md5oldPassword, md5newPassword, start_time);
                 dialog.dismiss();
@@ -590,7 +600,6 @@ public class LoginActivity extends Activity {
         });
 
         Button cancel = (Button) dialog.findViewById(R.id.cancel);
-        // if button is clicked, close the custom dialog
         cancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -655,7 +664,6 @@ public class LoginActivity extends Activity {
         if (username != null || password != null) {
 
             inputEmail.setText(username);
-            // inputPassword.setText(password);
         }
     }
 
@@ -664,7 +672,7 @@ public class LoginActivity extends Activity {
         super.onDestroy();
 
         ButterKnife.reset(this);
-
+        dismissProgressDialog();
         //Close the all database connection opened here 31/10/2016 By. Ashish
         if (sqlController != null) {
             sqlController = null;
@@ -678,9 +686,7 @@ public class LoginActivity extends Activity {
         if (bannerClass != null) {
             bannerClass = null;
         }
-        if (pDialog != null) {
-            pDialog = null;
-        }
+
         md5 = null;
         strPassword = null;
         md5EncyptedDataPassword = null;
@@ -815,24 +821,11 @@ public class LoginActivity extends Activity {
     }
 
 
-    ////////////////////////
-    //this method will set username and password to edit text if remember me chkbox is checked previously
-
-
     //this method will set username and password to edit text if remember me chkbox is checked previously
     private String getDiagnosisUpdateFlag() {
 
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         return pref.getString("diagnosisFlag", null);
-    }
-    private void showDialog() {
-        if (!pDialog.isShowing())
-            pDialog.show();
-    }
-
-    private void hideDialog() {
-        if (pDialog.isShowing())
-            pDialog.dismiss();
     }
 
     private class InsertDataLocally extends AsyncTask<String, String, String> {
@@ -886,7 +879,7 @@ public class LoginActivity extends Activity {
             return null;
         }
         protected void onPostExecute(String e) {
-            //  Toast.makeText(getApplicationContext(),"Rows loaded from file", Toast.LENGTH_SHORT).show();
+
         }
     }
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -990,5 +983,269 @@ public class LoginActivity extends Activity {
 
         dob = appController.ConvertDateFormat(dob);
         return dob;
+    }
+    private void checkLogin(final String email, final String password, final String docMemId, final String docId) {
+
+        String tag_string_req = "req_login";
+
+        showProgressDialog();
+        // showDialog();
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                AppConfig.URL_LOGIN, new Response.Listener<String>() {
+
+
+            @Override
+            public void onResponse(String response) {
+
+                Log.e("Loginresponse", " " + response);
+
+                if (LoginActivity.this.isDestroyed()) { // or call isFinishing() if min sdk version < 17
+                    return;
+                }
+                dismissProgressDialog();
+
+                try {
+                    JSONObject jObj = new JSONObject(response);
+
+                    AppController appController = new AppController();
+                    String end_time = appController.getDateTimenew();
+
+
+                    // Create login session
+                    JSONObject user = jObj.getJSONObject("data");
+                    String result = user.getString("result");
+                    String msg = user.getString("msg");
+                    String response_end_time = user.getString("process_end_time");
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Login Async Task:  Message :" + msg + "  Result : " + result + " response_end_time:  " + response_end_time + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+                    if (result.equals("true")) {
+
+                        dbController.addLoginRecord(email, password, phoneNumber);
+
+                        getTermsAndCondition();
+                        //update last sync time if sync from server
+                        lastSyncTime(end_time);
+
+                    } else {
+
+                        appController.showToastMsg(getApplicationContext(),"Username/Password Mismatch");
+                        //Toast.makeText(mContext, "Username/Password Mismatch", Toast.LENGTH_SHORT).show();
+                    }
+
+                } catch (JSONException | ClirNetAppException e) {
+                    // JSON error
+                    e.printStackTrace();
+                    new AppController().appendLog(new AppController().getDateTime() + " " + "/ " + "Login Async Task" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                } finally {
+                    if (dbController != null) {
+                        dbController.close();
+                    }
+
+                }
+            }
+
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //Toast.makeText(mContext, " " +error.getMessage(), Toast.LENGTH_SHORT).show();
+                dismissProgressDialog();
+            }
+        }) {
+
+            @Override
+            protected Map<String, String> getParams() {
+
+                TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+                String imeiNo = manager.getDeviceId();
+                // Posting parameters to login url
+                Map<String, String> params = new HashMap<>();
+                String keyid = getResources().getString(R.string.apikey);
+                String fcm_id = FirebaseInstanceId.getInstance().getToken();
+                params.put("username", email);
+                params.put("password", password);
+                params.put("apikey", keyid);
+                params.put("process_start_time", start_time);
+                params.put("fcm_id", fcm_id);
+                params.put("membershipid", docMemId);
+                params.put("docId", docId);
+                params.put("imei_no",imeiNo);
+                return checkParams(params);
+            }
+
+            private Map<String, String> checkParams(Map<String, String> map) {
+                for (Map.Entry<String, String> pairs : map.entrySet()) {
+                    if (pairs.getValue() == null) {
+                        map.put(pairs.getKey(), "");
+                    }
+                }
+                return map;
+            }
+        };
+        int socketTimeout = 30000;//30 seconds - change to what you want
+        int retryforTimes = 2;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, retryforTimes, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        strReq.setRetryPolicy(policy);
+        AppController.getInstance().setPriority(Request.Priority.HIGH);
+        // Adding request to request queue
+        strReq.setShouldCache(false);//set cache false
+
+        AppController.getInstance().getRequestQueue().getCache().clear(); //removing all previous cache
+        AppController.getInstance().addToRequestQueue(strReq, tag_string_req);
+
+    }
+    private void getTermsAndCondition() {
+
+        SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        String username = pref.getString(PREF_TERMSANDCONDITION
+                , null);
+
+        if (username == null) {
+            showDialog12();
+        } else if (username.equals("Yes")) {
+
+            Intent intent = new Intent(getApplicationContext(), SplashActivity.class);
+            intent.putExtra("MSG", msg);
+            intent.putExtra("TYPE", type);
+            intent.putExtra("ACTION_PATH", actionPath);
+            intent.putExtra("HEADER", headerMsg);
+            intent.putExtra("UNAME",username);
+            intent.putExtra("CLUBBINGFLAG", clubbingFlag);
+            intent.putExtra("NOTIFITREYSIZE",notificationTreySize);
+            startActivity(intent);
+            new AppController().showToastMsg(getApplicationContext(), "Login Successful");
+            startService();//here we are starting service to start background task
+
+        } else if (username.equals("No")) {
+            showDialog12();
+        } else if (username.equals("Cancel")) {
+            showDialog12();
+        }
+
+    }
+
+    private void showDialog12() {
+
+        final View checkBoxView = View.inflate(this, R.layout.alert_checkbox, null);
+        final CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.checkBox);
+        final WebView wv = (WebView) checkBoxView.findViewById(R.id.webview);
+
+
+        //  checkBox.setText("Yes, I accept the terms and condition");
+        final AlertDialog.Builder ad = new AlertDialog.Builder(this)
+                // .setMessage(termsnconditiomessage)
+                .setView(checkBoxView)
+                .setIcon(R.drawable.info)
+                .setTitle("Terms of Service");
+
+        checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+                if (isChecked) {
+                    //Method will send radio button checked status to yes button for further process of redirection
+                    checkedStatus(true);
+
+                } else {
+
+                    checkedStatus(false);
+                    Toast.makeText(getApplicationContext(), "Please accept the terms and condition to proceed ", Toast.LENGTH_LONG).show();
+                }
+
+
+            }
+
+        });
+
+        wv.setVisibility(View.VISIBLE);
+        wv.loadUrl("http://doctor.clirnet.com/doctor/patientcentral/termsandcondition");
+        wv.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+                view.loadUrl(url);
+
+                return true;
+            }
+        });
+
+
+        ad.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                //Toast.makeText(mContext.getApplicationContext(), "You have accepted the TOS. Welcom to the site", Toast.LENGTH_SHORT).show();
+                if (responceCheck) {
+                    rememberTermsCondition("Yes");
+                    Intent intent = new Intent(getApplicationContext(),
+                            SplashActivity.class);
+                    startActivity(intent);
+                    new AppController().showToastMsg(getApplicationContext(), "Login Successful");
+                    startService();
+
+                } else {
+                    new AppController().showToastMsg(getApplicationContext(), "Please accept the terms and condition to proceed");
+                    // Toast.makeText(mContext.getApplicationContext(), "Please accept the terms and condition to proceed", Toast.LENGTH_SHORT).show();
+
+                }
+
+            }
+        });
+        ad.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(), "You have denied the TOS. You may not access the site", Toast.LENGTH_SHORT).show();
+                rememberTermsCondition("No");
+            }
+        });
+
+
+        ad.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Toast.makeText(getApplicationContext(), "Please select yes or no", Toast.LENGTH_SHORT).show();
+                rememberTermsCondition("No");
+            }
+        });
+
+        ad.setCancelable(false);
+        ad.setView(checkBoxView);
+        ad.show();
+
+    }
+    private void rememberTermsCondition(String answer) {
+       getSharedPreferences(PREFS_NAME, MODE_PRIVATE)
+                .  edit()
+                .putString(PREF_TERMSANDCONDITION, answer)
+                .apply();
+
+    }
+    //store last sync time in prefrence
+    private void lastSyncTime(String lastSyncTime) {
+
+        getSharedPreferences("SyncFlag", MODE_PRIVATE)
+                .edit()
+                .putString("lastSyncTime", lastSyncTime)
+                .apply();
+
+    }
+    private void checkedStatus(boolean b) {
+        responceCheck = b;
+    }
+
+    private void showProgressDialog() {
+        if (pDialog == null) {
+            pDialog = new ProgressDialog(LoginActivity.this);
+            pDialog.setMessage("Logging in ......");
+            pDialog.setIndeterminate(false);
+            pDialog.setCancelable(false);
+        }
+        pDialog.show();
+    }
+
+    private void dismissProgressDialog() {
+        if (pDialog != null && pDialog.isShowing()) {
+            pDialog.dismiss();
+        }
     }
 }

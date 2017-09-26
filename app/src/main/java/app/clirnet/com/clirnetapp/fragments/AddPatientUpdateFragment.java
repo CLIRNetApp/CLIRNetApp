@@ -103,7 +103,7 @@ public class AddPatientUpdateFragment extends Fragment {
     private ArrayList<String> mSymptomsList;
     private ArrayList<String> mDiagnosisList;
     private String value;
-    private String buttonSelected;
+
     private SimpleDateFormat sdf1;
     private EditText visitDate;
     private String addedTime;
@@ -273,8 +273,6 @@ public class AddPatientUpdateFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             strPatientId = getArguments().getString("PATIENTID");
-            // this.viewPager= (ViewPager) getArguments().get("viewpager");
-              //Log.e("strPatientId"," "+strPatientId);
         }
     }
 
@@ -285,8 +283,7 @@ public class AddPatientUpdateFragment extends Fragment {
         View view = inflater.inflate(R.layout.add_patient_update_fragment, container, false);
 
         ButterKnife.inject(this, view);
-        // strPatientId=getArguments().getString("PATIENTID");
-        //Log.e("strPatientId"," "+strPatientId);
+
         cancel = (Button) view.findViewById(R.id.cancel);
         addUpdate = (Button) view.findViewById(R.id.addUpdate);
         edtSymptoms = (ContactsCompletionView) view.findViewById(R.id.symptoms);
@@ -586,7 +583,6 @@ public class AddPatientUpdateFragment extends Fragment {
         super.onActivityResult(requestCode, resultCode, data);
 
         try {
-//        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE && resultCode == Activity.RESULT_OK) {
             if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
 
                 if (resultCode == Activity.RESULT_OK) {
@@ -653,7 +649,7 @@ public class AddPatientUpdateFragment extends Fragment {
                     } else {
                         inputnumber.setError(null);
                     }
-                    buttonSelected = "days";
+
                     String strVisitDate=visitDate.getText().toString();
                     Date calDate= appController.stringToDate(strVisitDate);
                     String dateis = sdf1.format(AppController.addDay1(calDate, val));
@@ -707,7 +703,7 @@ public class AddPatientUpdateFragment extends Fragment {
                     }
                 }
                 int fVal = (int) (val * 7);
-                buttonSelected = "week";
+
                 String strVisitDate=visitDate.getText().toString();
                 Date calDate=appController.stringToDate(strVisitDate);
                 String dateis = sdf1.format(AppController.addDay1(calDate, fVal));
@@ -746,7 +742,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 } else {
                     inputnumber.setError(null);
                 }
-                buttonSelected = "month";
+
                 String strVisitDate=visitDate.getText().toString();
                 Date calDate=appController.stringToDate(strVisitDate);
                 String dateis = sdf1.format(AppController.addMonth(calDate, Integer.parseInt(value)));
@@ -822,7 +818,6 @@ public class AddPatientUpdateFragment extends Fragment {
                             @Override
                             public void onDateSet(DatePicker view, int year,
                                                   int monthOfYear, int dayOfMonth) {
-
 
                                 visitDate.setText(dayOfMonth + "-"
                                         + (monthOfYear + 1) + "-" + year);
@@ -1153,8 +1148,6 @@ public class AddPatientUpdateFragment extends Fragment {
                             nameReferralsList.remove(position);
                             nameReferralsList.remove(strReferredTo1Name);
                             referralName.notifyDataSetChanged();
-
-                            Log.e("position","  "+position + "  "+strReferredTo1Name);
                         }
                     }
                 } catch (ClirNetAppException e) {
@@ -1497,7 +1490,6 @@ public class AddPatientUpdateFragment extends Fragment {
                 String bmi = appController.CalculateBMI(edtInput_weight.getText().toString(), edtInput_height.getText().toString());
                 edtInput_bmi.setText(bmi);
                 strObesity =appController.getObesity(bmi);
-                Log.e("obestity","  "+bmi);
                 ediInput_obesity.setText(strObesity);
             }
         });
@@ -1517,7 +1509,6 @@ public class AddPatientUpdateFragment extends Fragment {
                 String bmi = appController.CalculateBMI(edtInput_weight.getText().toString(), edtInput_height.getText().toString());
                 edtInput_bmi.setText(bmi);
                 strObesity =appController.getObesity(bmi);
-                // Log.e("obestity","  "+strObesity);
                 ediInput_obesity.setText(strObesity);
             }
         });
@@ -1553,7 +1544,7 @@ public class AddPatientUpdateFragment extends Fragment {
 
         if (TextUtils.isEmpty(strSymptoms) && TextUtils.isEmpty(strDignosis)) {
             Toast.makeText(getContext(), "Please enter at least 1 symptom or diagnosis", Toast.LENGTH_LONG).show();
-            // ailment.setError("Please enter Ailment");
+
             return;
         }
 
@@ -1689,7 +1680,6 @@ public class AddPatientUpdateFragment extends Fragment {
         strReferredTo3Name = null;
         strReferredTo4Name = null;
         strReferredTo5Name = null;
-
         strReferedTo = null;
         strReferedBy = null;
         NameData = null;
@@ -1704,7 +1694,6 @@ public class AddPatientUpdateFragment extends Fragment {
         docId = null;
         PrescriptionimageName = null;
         prescriptionImgPath = null;
-
         addedTime = null;
         addedOnDate = null;
         specialityArray = null;
@@ -1742,7 +1731,6 @@ public class AddPatientUpdateFragment extends Fragment {
         buttonInvestigation=null;
         strVisitId=null;
 
-
         hemogramlayout=null;
         liverFunctionlayout=null;
         lipidProfilelayout=null;
@@ -1763,8 +1751,6 @@ public class AddPatientUpdateFragment extends Fragment {
 
     public void getViewPager(ViewPager viewPager) {
         this.viewPager = viewPager;
-        // Log.e("viewPager",""+viewPager);
-
     }
 
     private void showInvestigationDialog() {
@@ -1779,7 +1765,6 @@ public class AddPatientUpdateFragment extends Fragment {
         dialog.setTitle("Add Investigation");
         dialog.setCanceledOnTouchOutside(false);
         dialog.setContentView(f);
-
 
         Button cancel = (Button) f.findViewById(R.id.customDialogCancel);
         Button ok = (Button) f.findViewById(R.id.customDialogOk);

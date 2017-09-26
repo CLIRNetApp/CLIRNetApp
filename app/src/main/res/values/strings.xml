@@ -166,7 +166,6 @@
     <string name="patient_central">Patient Central</string>
     <string name="reports">Reports</string>
     <string name="prescriptionqueue">Prescription Queue</string>
-    <string name="change_password">Change Password!</string>
     <string name="to">To :</string>
     <string name="mob_no_notfound">Mobile Number Not Found!</string>
     <string name="mailid">support@clirnet.com</string>
@@ -188,7 +187,7 @@
     <string name="lastquarter">Last Quarter</string>
     <string name="quickview">Quick View</string>
     <string name="about">About</string>
-    <string name="personadetails">Personal Details</string>
+
 
     <string name="language">Language</string>
     <string name="eng">Eng</string>
@@ -197,24 +196,22 @@
     <string name="addPhoto">Add Photo</string>
     <string name="number">Number</string>
     <string name="mobstart">+91</string>
-    <string name="recorddetails">Vitals</string>
-    <string name="symptomsanddignosis">Symptoms and Diagnosis</string>
+
+
     <string name="dignosis">Diagnosis</string>
     <string name="symptoms">Symptoms</string>
     <string name="prescription">Prescription</string>
     <string name="addimage">Add Prescription</string>
-    <string name="changeimage">Change Prescription</string>
     <string name="visitDate">Visit Date</string>
     <string name="day">Day(s)</string>
     <string name="week">Week(s)</string>
     <string name="month">Month(s)</string>
-    <string name="clinicalnotes">Clinical Notes</string>
+
     <string name="cancel">Cancel</string>
-    <string name="add">Save</string>
     <string name="m">M</string>
     <string name="female">F</string>
     <string name="other">Other</string>
-    <string name="na">NA</string>
+
     <string name="knowledge">Knowledge</string>
     <string name="old_password">Current Password</string>
     <string name="hint_confirmpassword">Confirm New Password</string>
@@ -237,7 +234,7 @@
     <string name="updateDate">Last Updated Date 22/09/2017</string>
     <string name="quickadd">Quick Add</string>
     <string name="title_edit_quick_add">Quick Edit Patient</string>
-    <string name="referedby">Add Referals</string>
+
     <string name="associates">Associates</string>
     <string name="associates_type">Associates Type</string>
     <string name="speciality">Specialty</string>
@@ -249,7 +246,7 @@
     <string name="refered">Referred By</string>
     <string name="referedto">Referred To</string>
     <string name="noExist">Existing Associate Mobile Number Entered</string>
-    <string name="enterNo">Please enter Mobile number</string>
+
     <string name="mobnovalidation">Mobile number should be 10 digits</string>
     <string name="servicePassword">CLIRNet</string>
     <string name="vitals">Vitals</string>
@@ -306,7 +303,7 @@
     <string name="healthLifestyle">Health and Lifestyle</string>
     <string name="title_activity_new_edit_personal_info">Edit Personal Info</string>
     <string name="observations">Observation</string>
-    <string name="title_activity_new_edit_incomplete_records">Edit Prescription Queue Record</string>
+
     <string name="substanceUse">Substance Use</string>
     <string name="smoking">Smoking</string>
     <string name="ex">Ex</string>
@@ -341,21 +338,14 @@
     <string name="announcements">Patient Announcements</string>
     <string name="clickReserve">Reserve</string>
     <string name="viewMore">View More</string>
-    <string name="esr">ESR</string>
-    <string name="dc">DC</string>
-    <string name="tch">T.Ch</string>
-    <string name="hba1c">HbA1C</string>
-    <string name="acr">ACR = Albumin/Creatinine Ratio</string>
     <string name="welcome">Welcome !</string>
     <string name="fod">Follow-Up Date</string>
     <string name="familyHistory">Family History</string>
     <string name="otherComments">Other Comments</string>
-    <string name="patientAnnouncement">Patient Announcement</string>
+
     <string name="all">All</string>
     <string name="selectedGroup">Selected Group</string>
     <string name="title_activity_splash">SplashActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="nodatadisplay">No Data To Display</string>
     <string name="notification">Notification</string>
     <string name="sendsms">Send SMS</string>

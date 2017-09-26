@@ -77,7 +77,6 @@ public class PatientReportFragment extends Fragment {
         if (bundle != null) {
             fromDate = bundle.getString("FROMDATE");
             toDate = bundle.getString("TODATE");
-           // Log.e("dateis", "" + fromDate + "" + toDate);
         }
     }
     @Override
@@ -112,17 +111,11 @@ public class PatientReportFragment extends Fragment {
 
 
         list.add(new LineChartItem(generateDataLine(), getContext(), fromDate, toDate));
-       //list.add(new BarChartItem(generateDataBarNew(), getContext()));
-
-
 
         ChartDataAdapter cda = new ChartDataAdapter(getContext(), list);
         lv.setAdapter(cda);
 
-
-
         BarChartFragment fragment2 = new BarChartFragment();
-
         Bundle bundle = new Bundle();
         bundle.putString("FROMDATE", fromDate);
         bundle.putString("TODATE", toDate);
@@ -273,22 +266,6 @@ public class PatientReportFragment extends Fragment {
 
 
     }
-
-
-   /* private void sortDate(ArrayList<String> date) {
-        Collections.sort(date, new Comparator<String>() {
-            DateFormat f = new SimpleDateFormat("dd-MM-yyyy");
-            @Override
-            public int compare(String o1, String o2) {
-                try {
-                    return f.parse(o1).compareTo(f.parse(o2));
-                } catch (ParseException e) {
-                    throw new IllegalArgumentException(e);
-                }
-            }
-        });
-    }*/
-
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
