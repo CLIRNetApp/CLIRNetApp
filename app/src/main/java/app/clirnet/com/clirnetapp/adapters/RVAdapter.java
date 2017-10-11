@@ -52,11 +52,6 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder>
 
         holder.name.setText(name);
 
-         /*String status=patientList.get(position).getStatus();
-        if(status != null && status.equals("incomplete")){
-            holder.linearlayout.setBackgroundColor(Color.LTGRAY);
-        }*/
-        //holder.follow_up_date.setText(model.getActualFollowupDate());
 
         String follow_up_date = model.getActualFollowupDate();
 
@@ -83,12 +78,7 @@ public class RVAdapter extends RecyclerView.Adapter<RVAdapter.PatientViewHolder>
         holder.phone_no.setText(model.getMobileNumber());
 
 
-       // String stringdistance = String.valueOf(model.getLanguage());//Need to convert to string to set into text view Ashish U 21-04-2016
-
-        // Log.d("dis", "" + stringdistance);
-
-
-            holder.gender.setText(model.getGender());
+        holder.gender.setText(model.getGender());
 
 
     }

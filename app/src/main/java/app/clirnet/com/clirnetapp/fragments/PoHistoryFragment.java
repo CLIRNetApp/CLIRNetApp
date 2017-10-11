@@ -2,15 +2,21 @@ package app.clirnet.com.clirnetapp.fragments;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,6 +39,8 @@ import android.widget.TextView;
 import com.dpizarro.autolabel.library.AutoLabelUI;
 import com.dpizarro.autolabel.library.AutoLabelUISettings;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,6 +48,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.activity.NavigationActivity;
@@ -52,7 +61,10 @@ import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.DatabaseClass;
 import app.clirnet.com.clirnetapp.helper.LastnameDatabaseClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
+import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
+import app.clirnet.com.clirnetapp.models.Counts;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
+import app.clirnet.com.clirnetapp.utility.CSVWriter;
 import app.clirnet.com.clirnetapp.utility.ItemClickListener;
 import app.clirnet.com.clirnetapp.utility.MultiSpinner;
 import app.clirnet.com.clirnetapp.utility.MultiSpinner2;
@@ -294,6 +306,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         filterHealth = (Button) rootview.findViewById(R.id.filterHealth);
         filterVitals = (Button) rootview.findViewById(R.id.filterVitals);
         filterObservation = (Button) rootview.findViewById(R.id.filterObservation);
+        final Button exportData = (Button) rootview.findViewById(R.id.export_data);
 
         tabSubmitWarnig = (LinearLayout) rootview.findViewById(R.id.tabSubmitWarnig);
 
@@ -419,6 +432,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
                     tabSubmitWarnig.setVisibility(View.GONE);
+                    exportData.setVisibility(View.VISIBLE);
 
                     submit.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
                     patientData.clear(); //This method will clear all previous data from  Array list  24-8-2016
@@ -516,7 +530,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                         appController.appendLog(appController.getDateTime() + " " + "/ " + "Po History Fragment" + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
                     }
 
-
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
                     submit.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
@@ -524,6 +537,15 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 return false;
             }
 
+        });
+
+        exportData.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+
+                exportDB();
+            }
         });
 
         recyclerView.addOnItemTouchListener(new HomeFragment.RecyclerTouchListener(getContext(), recyclerView, new ItemClickListener() {
@@ -536,6 +558,34 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             @Override
             public void onLongClick(View view, int position) {
+                final int posi=position;
+
+                AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
+                builder1.setMessage("Do you want to export patient data?");
+                builder1.setCancelable(true);
+
+                builder1.setPositiveButton(
+                        "All",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id)
+                            {
+                                exportDB();
+                            }
+                        });
+
+                builder1.setNegativeButton(
+                        "Single",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                exportDB(posi);
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alert11 = builder1.create();
+                alert11.show();
+
+               // exportDB(position);
 
             }
 
@@ -552,6 +602,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
 
                     showVitalsDialogBox();
+
 
                     filterVitals.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
@@ -598,6 +649,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     symptomsDiagnosis.setText("");
                     setUpSpinner();  //reseting spinner value
                     reseFiltersData();
+                    exportData.setVisibility(View.INVISIBLE);
 
                     resetFilters.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
@@ -657,6 +709,100 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         return rootview;
     }
 
+    private void exportDB(int position) {
+
+        RegistrationModel book = patientData.get(position);
+        String patId = book.getPat_id();
+        File exportDir = new File(Environment.getExternalStorageDirectory(), "");
+
+        if (!exportDir.exists()) {
+            exportDir.mkdirs();
+        }
+        File file = new File(exportDir, "SelectedPatientHistory.csv");
+        try {
+
+            file.createNewFile();
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = new SQLiteHandler(getContext()).getReadableDatabase();
+
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ti.sugar,ph.symptoms, ph.diagnosis,p.email," +
+                    "p.uid,p.alternate_no,ph.height,ph.bmi,ti.sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd ,ph.refered_by,ph.refered_to,ph.spo2,ph.respiration,ti.hba1c,ti.acer,ti.serem_urea,ti.lipid_profile_hdl,ti.lipid_profile_tc,lipid_profile_tg,ti.lipid_profile_ldl,ti.lipid_profile_vhdl,ti.ecg,ti.pft,obs.pallor,obs.cyanosis,obs.tremors,obs.icterus,obs.clubbing,obs.oedema,obs.calf_tenderness,obs.lympadenopathy,ph.obesity from  patient p  LEFT JOIN patient_history ph ON p.patient_id = ph.patient_id LEFT JOIN table_investigation ti ON ph.key_visit_id = ti.key_visit_id LEFT JOIN observation obs ON obs.key_visit_id = ph.key_visit_id where p.patient_id=" + patId + "  order by ph.key_visit_id desc ";
+
+
+            Cursor curCSV = db.rawQuery(selectQuery, null);
+
+
+            csvWrite.writeNext(curCSV.getColumnNames());
+
+
+            while (curCSV.moveToNext()) {
+                //Which column you want to exprort
+                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4), curCSV.getString(5), curCSV.getString(6), curCSV.getString(7), curCSV.getString(8), curCSV.getString(9), curCSV.getString(10), curCSV.getString(11), curCSV.getString(12), curCSV.getString(13), curCSV.getString(14), curCSV.getString(15), curCSV.getString(16), curCSV.getString(17), curCSV.getString(18), curCSV.getString(19), curCSV.getString(20), curCSV.getString(21), curCSV.getString(22), curCSV.getString(23), curCSV.getString(24), curCSV.getString(25), curCSV.getString(26), curCSV.getString(27), curCSV.getString(28), curCSV.getString(29), curCSV.getString(30), curCSV.getString(31), curCSV.getString(32), curCSV.getString(33), curCSV.getString(34), curCSV.getString(35), curCSV.getString(36), curCSV.getString(37), curCSV.getString(38), curCSV.getString(39), curCSV.getString(40), curCSV.getString(41), curCSV.getString(42), curCSV.getString(43), curCSV.getString(44), curCSV.getString(45), curCSV.getString(46), curCSV.getString(47), curCSV.getString(48), curCSV.getString(49), curCSV.getString(50), curCSV.getString(51), curCSV.getString(52), curCSV.getString(53), curCSV.getString(54), curCSV.getString(55), curCSV.getString(56), curCSV.getString(57), curCSV.getString(58), curCSV.getString(59), curCSV.getString(60), curCSV.getString(61), curCSV.getString(62), curCSV.getString(63), curCSV.getString(64), curCSV.getString(65), curCSV.getString(66)};
+                csvWrite.writeNext(arrStr);
+            }
+            csvWrite.close();
+            curCSV.close();
+
+            Intent emialIntent = new Intent(Intent.ACTION_SEND);
+            //  emialIntent.setType("*/*");
+            emialIntent.setType("message/rfc822");
+
+            String mailId = "ashish.umredkar@clirnet.com";
+            emialIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{mailId});
+            Random r = new Random();
+            emialIntent.putExtra(Intent.EXTRA_SUBJECT, "Local Db" + r.nextInt());
+            emialIntent.putExtra(Intent.EXTRA_SUBJECT, "Local Database  Name " + "doctor name "  + "  Membership Id:  "+doctor_membership_number);
+
+            emialIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));//actual data
+            startActivity(Intent.createChooser(emialIntent, "Choose an Email client :"));
+        } catch (Exception sqlEx) {
+            Log.e("MainActivity", sqlEx.getMessage(), sqlEx);
+        }
+    }
+
+    private void exportDB() {
+
+        File exportDir = new File(Environment.getExternalStorageDirectory(), "");
+
+        if (!exportDir.exists()) {
+            exportDir.mkdirs();
+        }
+        File file = new File(exportDir, "AllPatientSearchList.csv");
+        try {
+
+            file.createNewFile();
+            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            SQLiteDatabase db = new SQLiteHandler(getContext()).getReadableDatabase();
+            String selectQuery = new Counts().getSelectQuery();
+
+            Cursor curCSV = db.rawQuery(selectQuery, null);
+
+            csvWrite.writeNext(curCSV.getColumnNames());
+
+            while (curCSV.moveToNext()) {
+                //Which column you want to exprort
+                String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4), curCSV.getString(5), curCSV.getString(6), curCSV.getString(7), curCSV.getString(8), curCSV.getString(9), curCSV.getString(10), curCSV.getString(11), curCSV.getString(12), curCSV.getString(13), curCSV.getString(14), curCSV.getString(15), curCSV.getString(16), curCSV.getString(17), curCSV.getString(18), curCSV.getString(19), curCSV.getString(20), curCSV.getString(21), curCSV.getString(22), curCSV.getString(23), curCSV.getString(24), curCSV.getString(25), curCSV.getString(26), curCSV.getString(27), curCSV.getString(28), curCSV.getString(29), curCSV.getString(30), curCSV.getString(31), curCSV.getString(32), curCSV.getString(33), curCSV.getString(34)};
+                csvWrite.writeNext(arrStr);
+            }
+            csvWrite.close();
+            curCSV.close();
+           // Log.e("curCSV", "" + csvWrite.toString());
+            Intent emialIntent = new Intent(Intent.ACTION_SEND);
+            //  emialIntent.setType("*/*");
+            emialIntent.setType("message/rfc822");
+
+            String mailId = "ashish.umredkar@clirnet.com";
+            emialIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{mailId});
+            Random r = new Random();
+            emialIntent.putExtra(Intent.EXTRA_SUBJECT, "Local Db" + r.nextInt());
+            emialIntent.putExtra(Intent.EXTRA_SUBJECT, "Local Database  Name " + "ashish" + "  Membership Id:  ");
+
+            emialIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));//actual data
+            startActivity(Intent.createChooser(emialIntent, "Choose an Email client :"));
+        } catch (Exception sqlEx) {
+            Log.e("MainActivity", sqlEx.getMessage(), sqlEx);
+        }
+    }
 
     private void setAilmentData() {
         try {
@@ -720,14 +866,10 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int position, long arg3) {
-
                 //  selectColoursButton.setText(al.get(position).toString());
             }
-
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
-
-
             }
         });
 
@@ -747,9 +889,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             @Override
             public void onItemSelected(AdapterView<?> arg0, View arg1,
                                        int position, long arg3) {
-
                 //Log.e("", "" + (ageList.get(position).toString()));
-
             }
 
             @Override
@@ -1256,7 +1396,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                     if (weightMaxValue < weightMinValue) {
                         input_max_weight.setError(getResources().getText(R.string.minmaxvalid));
                         return;
-                    }else if (weightMinValue > strMaxWeight) {
+                    } else if (weightMinValue > strMaxWeight) {
                         input_min_weight.setError(getResources().getString(R.string.mingreatmax) + strMaxWeight);
                         return;
                     } else if (weightMaxValue > strMaxWeight) {
@@ -1679,8 +1819,8 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         strLymphadenopathy = null;
         valMinSpo2 = null;
         valMaxSpo2 = null;
-        spo2MinValue=null;
-        spo2MaxValue=null;
+        spo2MinValue = null;
+        spo2MaxValue = null;
         respirationMinValue = null;
         respirationMaxValue = null;
 

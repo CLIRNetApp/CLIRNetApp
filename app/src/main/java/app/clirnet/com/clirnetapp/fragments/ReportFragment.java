@@ -91,7 +91,6 @@ public class ReportFragment extends Fragment {
 
         rootview = inflater.inflate(R.layout.fragment_reports, container, false);
 
-
         ((NavigationActivity) getActivity()).setActionBarTitle("Reports");
 
         fromdate = (EditText) rootview.findViewById(R.id.fromdate);
@@ -107,6 +106,7 @@ public class ReportFragment extends Fragment {
         Utils.init(getResources());//this is for initialize the graph lib........30-1-2017
 
         setCurrentDateOnView("1");//set dates from todays to -7 days to edit text
+
         addListenerOnButton();
 
         getDateValues();
@@ -122,13 +122,13 @@ public class ReportFragment extends Fragment {
         appController = new AppController();
 
         filterDate = (ImageView) rootview.findViewById(R.id.filterDate);
+
         filterDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
 
                 getDateValues();
-
 
                 String format = "yyyy-MM-dd";
                 SimpleDateFormat sdf = new SimpleDateFormat(format,Locale.ENGLISH);
@@ -378,6 +378,7 @@ public class ReportFragment extends Fragment {
     }
 
     private void callDatePicker(final String s) {
+
         final Calendar c2 = Calendar.getInstance();
         int mYear2 = c2.get(Calendar.YEAR);
 

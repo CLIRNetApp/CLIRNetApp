@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -176,15 +177,20 @@ public class SyncDataService extends Service {
             patientInfoArayString = String.valueOf(dbController.getResultsForPatientInformation());
 
             patientVisitHistorArayString = String.valueOf(dbController.getResultsForPatientHistory());
+
+           // Log.e("patientVisitHisg",""+patientVisitHistorArayString);
+
             String investigationArayString = String.valueOf(dbController.getResultsForInvestigation());
+
             String healthAndLifestyleArayString = String.valueOf(dbController.getResultsForHealthAndLifeStyle());
 
             String observationDataList= String.valueOf(dbController.getObservationsDataDisplay());
 
             getObservationIdsList=sqlController.getObservationListIdsFalg0();
 
+            Log.e("observationDataList",""+observationDataList);
 
-            /*count no of patient_id occurance od patient and visit string from db*/
+            /*count no of patient_id occurance of patient and visit string from db*/
             pat_personal_count = appController.getCharFreq(patientInfoArayString);
 
             pat_visit_count = appController.getCharFreq(patientVisitHistorArayString);
@@ -221,7 +227,8 @@ public class SyncDataService extends Service {
                         .apply();
 
                 start_time1 = appController.getDateTimenew();
-                appController.appendLog(appController.getDateTime() + " " + " / " + "Sending Data to server from Sync Service" + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+                //appController.appendLog(appController.getDateTime() + " " + " / " + "Sending Data to server from Sync Service " + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                 sendDataToServer(patientInfoArayString, patientVisitHistorArayString, investigationArayString, healthAndLifestyleArayString,associateMasterDataList,doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size(), new AppController().getDateTimenew(),incompletePrescriptionQueueCount,observationDataList);
 
@@ -283,7 +290,7 @@ public class SyncDataService extends Service {
             @Override
             public void onResponse(String response) {
 
-                appController.appendLog(appController.getDateTimenew() + " " + " / " + "Response from Server Service" + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+               // appController.appendLog(appController.getDateTimenew() + " " + " / " + "Response from Server Service" + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -292,7 +299,7 @@ public class SyncDataService extends Service {
 
                     String msg = user.getString("msg");
 
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync DataService data is sync to server : Messaage: " + msg);
+                   // appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync DataService data is sync to server : Messaage: " + msg);
 
                     if (msg.equals("OK")) {
 
@@ -371,7 +378,7 @@ public class SyncDataService extends Service {
 
                     } else if (msg.equals("Credentials Mismatch or Not Found")) {
 
-                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Data Service:" + msg);
+                        appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Data Service: " + msg);
 
 
                     }
@@ -379,7 +386,7 @@ public class SyncDataService extends Service {
                 } catch (JSONException e) {
                     // JSON error
                     e.printStackTrace();
-                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Data Service Exception" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                    appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync Data Service Exception  " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
 
                 }

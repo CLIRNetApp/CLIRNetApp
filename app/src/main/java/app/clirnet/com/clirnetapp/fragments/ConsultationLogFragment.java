@@ -312,7 +312,7 @@ private void searchRecords(){
 
             if (filterModelSize > 0) {
                 norecordtv.setVisibility(View.GONE);
-                rvAdapterforUpdateDate = new RVAdapterforUpdateDate(filterfodList);
+                rvAdapterforUpdateDate = new RVAdapterforUpdateDate(filterfodList);//filterfodList
                 recycler_view.setLayoutManager(new LinearLayoutManager(getContext()));
                 txtfod.setVisibility(View.VISIBLE);
                 txtupdateDate.setVisibility(View.GONE);
@@ -321,8 +321,6 @@ private void searchRecords(){
                 recycler_view.setAdapter(rvAdapterforUpdateDate);
             }
 
-
-            //   Toast.makeText(getContext(), "Date1 is before sysdate", Toast.LENGTH_LONG).show();
             if (filterModelSize > 0) {
                 recycler_view.addOnItemTouchListener(new RecyclerTouchListener(getContext().getApplicationContext(), recycler_view, new ItemClickListener() {
 

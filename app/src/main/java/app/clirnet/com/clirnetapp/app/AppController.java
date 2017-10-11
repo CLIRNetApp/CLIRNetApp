@@ -1,7 +1,5 @@
 package app.clirnet.com.clirnetapp.app;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Application;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -17,8 +15,6 @@ import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -52,11 +48,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,8 +62,6 @@ import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.utility.ConnectivityChangeReceiver;
 import io.fabric.sdk.android.Fabric;
-
-import static java.security.AccessController.getContext;
 
 public class AppController extends Application {
 
@@ -264,6 +256,7 @@ public class AppController extends Application {
     }
 
     public String getDateTime() {
+
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy_HH:mm:ss", Locale.ENGLISH);
         return (sdf.format(cal.getTime()));
@@ -891,6 +884,7 @@ public class AppController extends Application {
     }
 
     public void getCurrentTime(TextView fromtime) {
+
         final Calendar c = Calendar.getInstance();
         int hour;
         int minute;
@@ -1055,7 +1049,6 @@ public class AppController extends Application {
         while (m.find()) {
             i++;
         }
-        // System.out.println(i); // Prints 2
         return String.valueOf(i);
     }
 
@@ -1105,6 +1098,7 @@ public class AppController extends Application {
 
     /*Method to get/display banner image*/
     public void setUpAdd(final Context context, ArrayList<String> bannerimgNamesList, ImageView backChangingImages, final String doctor_membership_number, final String pageTitle) {
+
         final String url;
         try {
 
@@ -1288,7 +1282,38 @@ public class AppController extends Application {
         return target != null && android.util.Patterns.EMAIL_ADDRESS.matcher(target).matches();
     }
 
+  public int getDates(String value,int age){
+      Calendar c2 = Calendar.getInstance();
+      int returnValue=0;
 
+      int mDay = c2.get(Calendar.DAY_OF_MONTH);
+      if(value.equals("days")){
+          returnValue= 0;
+      }
+
+      int mMonth = c2.get(Calendar.MONTH);
+      if(value.equals("month")){
+          returnValue= mMonth;
+      }
+
+      int mYear = c2.get(Calendar.YEAR);
+      if(value.equals("year")){
+          returnValue=mYear-age;
+      }
+
+      return returnValue;
+  }
+    public String getAgeFromYearDob(int year){
+        Calendar c2 = Calendar.getInstance();
+        int returnValue=0;
+
+        int mYear = c2.get(Calendar.YEAR);
+        if(year!=0){
+            returnValue=mYear-year;
+        }
+
+        return String.valueOf(returnValue);
+    }
 }
 
 

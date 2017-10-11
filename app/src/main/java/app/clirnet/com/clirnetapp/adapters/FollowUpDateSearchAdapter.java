@@ -67,11 +67,18 @@ public class FollowUpDateSearchAdapter extends RecyclerView.Adapter<FollowUpDate
         int posi=position+1;
         String id=""+posi;
         holder.id.setText(id); // this will add i value in desc order ie fifo order as per client req. 25-8-16 ,this id is not stored in db.
-// this will add i value in desc order ie fifo order as per client req. 25-8-16 ,this id is not stored in db.
+     // this will add i value in desc order ie fifo order as per client req. 25-8-16 ,this id is not stored in db.
 
+        int dobYear=model.getDob_year();
 
+        if(dobYear!=0) {
+            String ageFinal = new AppController().getAgeFromYearDob(dobYear);
+            holder.age.setText(ageFinal);
+        }else{
+            holder.age.setText(model.getAge());
+        }
 
-        holder.age.setText(model.getAge());
+       // holder.age.setText(model.getAge());
         holder.phone_no.setText(model.getMobileNumber());
 
 

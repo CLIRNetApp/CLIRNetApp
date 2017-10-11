@@ -18,7 +18,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -112,6 +111,7 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
     private TextView email;
     private TextView txteMail;
     private String strPhoneType;
+    private int year_dob;
 
     @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
     @Override
@@ -188,6 +188,9 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
+            year_dob=sqlController.getDobYear(strPatientId);
+
+
             ArrayList<RegistrationModel> healthLifeStyleList = sqlController.getHealthAndLifestyle(strPatientId);
 
             if (healthLifeStyleList.size() > 0) {
@@ -258,7 +261,6 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
         editpatientName.setText(strName);
         editmobileno.setText(strPhone);
 
-        Log.e("strPhoneTpe", "  " + strPhoneType);
         if (strPhoneType != null && !strPhoneType.equals("") && !strPhone.equals("Select Type")) {
             phoneType.setText(strPhoneType + " :");
         } else {
@@ -269,12 +271,24 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
             txteMail.setVisibility(View.VISIBLE);
             email.setText(strEmail);
         }
-        if (strgender != null && strgender.equals("Male")) {
-            editAge.setText("( M - " + strAge + " )");
-        } else if (strgender != null && strgender.equals("Female")) {
-            editAge.setText("( F - " + strAge + " )");
-        } else if (strgender != null && strgender.equals("Trans")) {
-            editAge.setText("( T - " + strAge + " )");
+
+        if(year_dob!=0) {
+            String ageFinal=appController.getAgeFromYearDob(year_dob);
+            if (strgender != null && strgender.equals("Male")) {
+                editAge.setText("( M - " + ageFinal + " )");
+            } else if (strgender != null && strgender.equals("Female")) {
+                editAge.setText("( F - " + ageFinal + " )");
+            } else if (strgender != null && strgender.equals("Trans")) {
+                editAge.setText("( T - " + ageFinal + " )");
+            }
+        }else{
+            if (strgender != null && strgender.equals("Male")) {
+                editAge.setText("( M - " + strAge + " )");
+            } else if (strgender != null && strgender.equals("Female")) {
+                editAge.setText("( F - " + strAge + " )");
+            } else if (strgender != null && strgender.equals("Trans")) {
+                editAge.setText("( T - " + strAge + " )");
+            }
         }
 
         if (strPatientPhoto != null && !TextUtils.isEmpty(strPatientPhoto)) {
@@ -509,6 +523,7 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
     }
 
     private class ViewPagerAdapter extends FragmentPagerAdapter {
+
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
         ViewPager viewPager;
@@ -692,7 +707,7 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
             String patId = intent.getStringExtra(EXTRA_KEY_NOTIFY);
 
             if (patId != null) {
-                // Log.e("update", "" + patId + "  " + sqlController);
+
                 try {
                     if (sqlController == null) {
                         sqlController = new SQLController(getApplicationContext());

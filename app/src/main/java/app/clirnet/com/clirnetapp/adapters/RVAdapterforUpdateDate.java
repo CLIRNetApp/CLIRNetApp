@@ -68,8 +68,15 @@ public class RVAdapterforUpdateDate extends RecyclerView.Adapter<RVAdapterforUpd
         String id=""+posi;
         holder.id.setText(id); // this will add i value in desc order ie fifo order as per client req. 25-8-16 ,this id is not stored in db.
 
+        int dobYear=model.getDob_year();
 
-        holder.age.setText(model.getAge());
+        if(dobYear!=0) {
+            String ageFinal = new AppController().getAgeFromYearDob(dobYear);
+            holder.age.setText(ageFinal);
+        }else{
+            holder.age.setText(model.getAge());
+        }
+      //  holder.age.setText(model.getAge());
         holder.phone_no.setText(model.getMobileNumber());
 
         holder.gender.setText(model.getGender());
@@ -108,6 +115,4 @@ public class RVAdapterforUpdateDate extends RecyclerView.Adapter<RVAdapterforUpd
         patientList.addAll(hotelModels);
         notifyDataSetChanged();
     }
-
-
 }

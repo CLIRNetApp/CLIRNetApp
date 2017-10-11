@@ -5,7 +5,6 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -83,6 +82,39 @@ public class SQLController {
         return loginList;
     }
 
+    /*This method is used to get the login id and phone number of doctor to check two level authenticate while login from server */
+
+    public ArrayList<LoginModel> getUserLoginRecrods() throws ClirNetAppException {
+        ArrayList<LoginModel> loginList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "SELECT doc_login_id,phonenumber  FROM doctor_perInfo order by id desc limit 1";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    LoginModel user = new LoginModel(cursor.getString(0), cursor.getString(1));
+
+                    loginList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting login records");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+        return loginList;
+    }
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments
     public ArrayList<RegistrationModel> getPatientList(String date) throws ClirNetAppException {
 
@@ -90,7 +122,7 @@ public class SQLController {
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,p.uid,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,ph.refered_by,ph.refered_to,p.email,ph.follow_up_status,ph.spo2,ph.respiration,p.family_history,p.hospitalization_surgery,ph.obesity  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' and (ph.added_on = '" + date + "' or ph.modified_on='" + date + "') order by ph.key_visit_id desc";
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,p.uid,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,ph.refered_by,ph.refered_to,p.email,ph.follow_up_status,ph.spo2,ph.respiration,p.family_history,p.hospitalization_surgery,ph.obesity,p.dob_year  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' and (ph.added_on = '" + date + "' or ph.modified_on='" + date + "') order by ph.key_visit_id desc";
 
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
@@ -103,7 +135,7 @@ public class SQLController {
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
                             cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41),
-                            cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47),cursor.getString(48),cursor.getString(49),cursor.getString(50),cursor.getString(51),cursor.getString(52),cursor.getString(53));
+                            cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47),cursor.getString(48),cursor.getString(49),cursor.getString(50),cursor.getString(51),cursor.getString(52),cursor.getString(53),cursor.getInt(54));
 
                     hotelList.add(user);
 
@@ -135,7 +167,7 @@ public class SQLController {
         try {
 
             // String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.actual_follow_up_date = '" + date + "' order by ph.key_visit_id  desc";
-            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,ph.refered_by,ph.refered_to,p.email FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.actual_follow_up_date = '" + date + "' order by ph.key_visit_id  desc ";
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,ph.refered_by,ph.refered_to,p.email,p.dob_year FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.actual_follow_up_date = '" + date + "' order by ph.key_visit_id  desc ";
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
 
@@ -146,7 +178,7 @@ public class SQLController {
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
-                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47));
+                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47),cursor.getInt(48));
 
                     hotelList.add(user);
 
@@ -166,9 +198,7 @@ public class SQLController {
         }
 
         return hotelList;
-
     }
-
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments
     public ArrayList<RegistrationModel> getPatientListVisitDateSearch(String date) throws ClirNetAppException {
 
@@ -176,20 +206,25 @@ public class SQLController {
         SQLiteDatabase database1 = null;
         Cursor cursor = null;
         try {
-            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' order by ph.key_visit_id  desc ";
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,ph.tests,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,p.dob_year FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' order by ph.key_visit_id  desc ";
 
             database1 = dbHelper.getReadableDatabase();
             cursor = database1.rawQuery(selectQuery, null);
 
             if (cursor.moveToFirst()) {
                 do {
+                  //  RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                         //   cursor.getString(7), cursor.getString(8),
+                         //   cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
+                          //  cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
+                          //  cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
+                          //  cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43),cursor.getInt(44));
                     RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
                             cursor.getString(7), cursor.getString(8),
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
-                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44));
-
+                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38), cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44),cursor.getInt(45));
                     hotelList.add(user);
 
                 } while (cursor.moveToNext());
@@ -274,7 +309,7 @@ public class SQLController {
         Set<RegistrationModel> pList1 = new LinkedHashSet<>();
         try {
             //open();
-            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,p.alternate_no,p.alternate_phone_type,p.phone_type,ph.visit_date,p.email,p.uid,p.family_history,p.hospitalization_surgery  from  patient p  LEFT JOIN patient_history ph ON p.patient_id = ph.patient_id LEFT JOIN table_investigation ti ON ph.key_visit_id = ti.key_visit_id LEFT JOIN health_and_lifestyle hl ON p.patient_id = hl.patient_id LEFT JOIN observation obs ON obs.key_visit_id = ph.key_visit_id  where p.patient_id=ph.patient_id";//and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
+            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,p.alternate_no,p.alternate_phone_type,p.phone_type,ph.visit_date,p.email,p.uid,p.family_history,p.hospitalization_surgery,p.dob_year  from  patient p  LEFT JOIN patient_history ph ON p.patient_id = ph.patient_id LEFT JOIN table_investigation ti ON ph.key_visit_id = ti.key_visit_id LEFT JOIN health_and_lifestyle hl ON p.patient_id = hl.patient_id LEFT JOIN observation obs ON obs.key_visit_id = ph.key_visit_id  where p.patient_id=ph.patient_id";//and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
 
             // String countQuery = "select  COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id ";
 
@@ -601,7 +636,6 @@ public class SQLController {
                 countQuery = countQuery.concat("  and obs.lympadenopathy_description like '%" + strLymphadenopathyDescription +"%'");
             }
 
-
             //count query here to get no of records fetch by query for pagination in page.
             countQuery = countQuery.concat("  and p.phonenumber like '%" + phoneno + "%' order by ph.key_visit_id desc ");
             //   String queryforCount=selectQuery.concat("  and p.phonenumber like '%" + phoneno + "%' order by ph.key_visit_id desc ");
@@ -609,9 +643,9 @@ public class SQLController {
             selectQuery = selectQuery.concat("  and p.phonenumber like '%" + phoneno + "%' group by p.patient_id order by ph.key_visit_id desc limit " + page + "," + limit + ";");
 
             new Counts().setCountQuery(countQuery);
+            new Counts().setSelectQuery(selectQuery);
 
-           // Log.e("selectQuery", "" + selectQuery);
-         //   Log.e("countQueryQuery", "" + countQuery);
+           //   Log.e("countQueryQuery", "" + countQuery);
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
 
@@ -622,7 +656,7 @@ public class SQLController {
                             cursor.getString(7), cursor.getString(8),
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21), cursor.getString(22), cursor.getString(23),
-                            cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),cursor.getString(32),cursor.getString(33));
+                            cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),cursor.getString(32),cursor.getString(33),cursor.getInt(34));
 
                     pList1.add(user);
 
@@ -642,6 +676,7 @@ public class SQLController {
     }
 
     public int getCountResult() {
+
         SQLiteDatabase db1 = dbHelper.getReadableDatabase();
         int numRows = 0;
         try {
@@ -701,7 +736,7 @@ public class SQLController {
                     " ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,\n" +
                     " p.uid,ph.drugs,p.alternate_no,ph.height,ph.bmi,\n" +
                     " ph.sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,\n" +
-                    " ph.refered_by,ph.refered_to,p.email,ph.follow_up_status,ph.spo2,ph.respiration,p.family_history,p.hospitalization_surgery,ph.obesity from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like '%" + number + "%' group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc limit " + page + " , " + limit + ";";
+                    " ph.refered_by,ph.refered_to,p.email,ph.follow_up_status,ph.spo2,ph.respiration,p.family_history,p.hospitalization_surgery,ph.obesity,p.dob_year from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like '%" + number + "%' group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc limit " + page + " , " + limit + ";";
 
             new Counts().setCountQueryforHomeFragmentNoFilter(countQuery);
 
@@ -718,7 +753,7 @@ public class SQLController {
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
                             cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
                             cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38),
-                            cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47),cursor.getString(48),cursor.getString(49),cursor.getString(50),cursor.getString(51),cursor.getString(52),cursor.getString(53));
+                            cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47),cursor.getString(48),cursor.getString(49),cursor.getString(50),cursor.getString(51),cursor.getString(52),cursor.getString(53),cursor.getInt(54));
 
                     hotelList.add(user);
 
@@ -1012,13 +1047,11 @@ public class SQLController {
             if (cursor != null) {
                 cursor.close();
             }
-            if (db1 != null) {
+         /*   if (db1 != null) {
                 db1.close();
-            }
+            }*/
         }
-
         return ObservationList;
-
     }
     //get docot membership id from db
     public String getDoctorMembershipIdNew() throws ClirNetAppException {
@@ -1027,6 +1060,7 @@ public class SQLController {
         String returnString = ""; // Your default if none is found
         try {
             db1 = dbHelper.getReadableDatabase();
+        //    String query = "select doc_mem_id from doctor_perInfo order by doctor_id desc limit 1";
             String query = "select doc_mem_id from doctor_perInfo order by doc_mem_id desc limit 1";
 
             cursor = db1.rawQuery(query, null);
@@ -1040,9 +1074,9 @@ public class SQLController {
             if (cursor != null) {
                 cursor.close();
             }
-            if (db1 != null) {
+            /*if (db1 != null) {
                 db1.close();
-            }
+            }*/
         }
         return returnString;
     }
@@ -1054,7 +1088,7 @@ public class SQLController {
         try {
             db1 = dbHelper.getReadableDatabase();
             String query = "select doc_mem_id from doctor_perInfo where doc_login_id = '"+username+"' order by doc_mem_id desc limit 1";
-              Log.e("query","  "+query);
+            //  Log.e("query","  "+query);
             cursor = db1.rawQuery(query, null);
 
             if (cursor.moveToFirst()) {
@@ -1072,8 +1106,6 @@ public class SQLController {
         }
         return returnString;
     }
-
-
 
     //get doctor id from db
     public String getDoctorId() throws ClirNetAppException {
@@ -1288,7 +1320,7 @@ public class SQLController {
 
             String selectQuery = "SELECT pvd.visit_date , count( * ) AS tot FROM patient dpr, patient_history pvd WHERE dpr.patient_id = pvd.patient_id AND" +
                     " date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) Between Date('" + fromdate + "') AND Date('" + todate + "') GROUP BY pvd.visit_date";
-           //  Log.e("selectQuery","  "+selectQuery);
+
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
             // looping through all rows and adding to list
@@ -1624,10 +1656,10 @@ public class SQLController {
                 //close statment
                 cursor.close();
             }
-            if (db1 != null) {
+           /* if (db1 != null) {
                 db1.close();
             }
-
+*/
         }
 
         return returnString;
@@ -1876,9 +1908,9 @@ public class SQLController {
             if (cursor != null) {
                 cursor.close();
             }
-            if (db1 != null) {
+           /* if (db1 != null) {
                 db1.close();
-            }
+            }*/
         }
         return idList;
 
@@ -1910,9 +1942,9 @@ public class SQLController {
             if (cursor != null) {
                 cursor.close();
             }
-            if (db1 != null) {
+            /*if (db1 != null) {
                 db1.close();
-            }
+            }*/
         }
         return idList;
 
@@ -2256,9 +2288,9 @@ public class SQLController {
             if (cursor != null) {
                 cursor.close();
             }
-            if (db1 != null) {
+            /*if (db1 != null) {
                 db1.close();
-            }
+            }*/
         }
         return returnValue;
     }
@@ -2374,6 +2406,7 @@ public class SQLController {
         try {
             db1 = dbHelper.getReadableDatabase();
             String query = "select title,name from associate_master  where id='" + id + "' limit 1";
+
 
             cursor = db1.rawQuery(query, null);
 
@@ -3032,7 +3065,6 @@ public class SQLController {
             }
         }
         return vitalsList;
-
     }
 
     public int getTodaysPatientCount(String date) {
@@ -3049,7 +3081,6 @@ public class SQLController {
 
             }
         }
-
         return numRows;
     }
 
@@ -3068,7 +3099,6 @@ public class SQLController {
 
             }
         }
-
         return numRows;
     }
 
@@ -3117,7 +3147,6 @@ public class SQLController {
 
         try {
             numRows = (int) DatabaseUtils.longForQuery(db1, query, list);
-           // Log.e("query","  "+numRows);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -3201,8 +3230,6 @@ public class SQLController {
             String query = "SELECT " + columnName + " as id , COUNT(*) AS `num`,status FROM patient_history where " + columnName + " !='null' and " + columnName + " !=''  and date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) Between '" + fromDate + "' AND '" + toDate + "' GROUP BY " + columnName + " order by num desc limit 20 ";
             db = dbHelper.getReadableDatabase();
 
-            //Log.e("query","  "+query);
-
             cursor = db.rawQuery(query, null);
 
             if (cursor.moveToFirst()) {
@@ -3216,7 +3243,6 @@ public class SQLController {
 
                 } while (cursor.moveToNext());
             }
-
 
         } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong while geting countPerDa");
@@ -3252,9 +3278,6 @@ public class SQLController {
                 }else{
                     returnString= " " +returnString;
                 }
-
-
-
             }
         } catch (Exception e) {
             throw new ClirNetAppException("Something went wrong while getting getAssociateName");
@@ -3309,7 +3332,8 @@ public class SQLController {
         try {
             db1 = dbHelper.getReadableDatabase();
 
-            String query = "select speciality from associate_master where id="+ id +" ";
+            String query = "select speciality from associate_master where id = "+ id +" ";
+          //  Log.e("query"," "+query);
 
             cursor = db1.rawQuery(query, null);
 
@@ -3513,6 +3537,7 @@ public class SQLController {
                 db1.close();
             }
         }
+
         return returnString;
     }
 
@@ -3619,6 +3644,35 @@ public class SQLController {
         }
 
         return compData;
+    }
+    //get doctor id from db
+    public int getDobYear(String patId) throws ClirNetAppException {
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        int returnValue = 0; // Your default if none is found
+        try {
+            db1 = dbHelper.getReadableDatabase();
+
+            String query = "select dob_year from patient  where patient_id = "+ patId +"";
+
+
+            cursor = db1.rawQuery(query, null);
+            if (cursor.moveToFirst()) {
+                returnValue = cursor.getInt(cursor.getColumnIndex("dob_year"));
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getDobYear");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return returnValue;
+
+
     }
 }
 

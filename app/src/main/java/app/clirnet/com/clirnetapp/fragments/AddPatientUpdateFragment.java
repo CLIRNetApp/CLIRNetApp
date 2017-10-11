@@ -16,7 +16,6 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -65,6 +64,7 @@ import butterknife.InjectView;
 
 //Our class extending fragment
 public class AddPatientUpdateFragment extends Fragment {
+
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 1888;
     private static final int DATE_DIALOG_ID1 = 1;
     private static final int DATE_DIALOG_ID2 = 2;
@@ -1426,41 +1426,40 @@ public class AddPatientUpdateFragment extends Fragment {
                     }
 
                     if (strHeight != null && !strHeight.equals("") && strHeight.length() > 0) {
-                        //sbVitals.append("  ");
+
                         sbVitals.append("Height - ").append(strHeight).append("  ;  ");
                     }
                     if (strBmi != null && !strBmi.equals("") && strBmi.length() > 0) {
-                        //sbVitals.append("  ");
+
                         sbVitals.append("BMI - ").append(strBmi).append("  ;  ");
                     }
                     if (strPulse != null && !strPulse.equals("") && strPulse.length() > 0) {
-                        //sbVitals.append("  ");
+
                         sbVitals.append("Pulse - ").append(strPulse).append("  ;  ");
                     }
                     if (strBp != null && !strBp.equals("") && strBp.length() > 0) {
-                        //sbVitals.append("  ");
+
                         sbVitals.append("Systole - ").append(strBp).append("  ;  ");
                     }
 
                     if (strLowBp != null && !strLowBp.equals("") && strLowBp.length() > 0) {
-                        //sbVitals.append("  ");
+
                         sbVitals.append("Diastole - ").append(strLowBp).append("  ;  ");
                     }
                     if (strTemp != null && !strTemp.equals("") && strTemp.length() > 0) {
-                        //sbVitals.append("  ");
+
                         sbVitals.append("Temp - ").append(strTemp).append("  ;  ");
                     }
                     if (strSpo2 != null && !strSpo2.equals("") && strSpo2.length() > 0) {
-                        //sbVitals.append("  ");
+
                         sbVitals.append("SPO2 - ").append(strSpo2).append("  ;  ");
                     }
                     if (strRespirationRate != null && !strRespirationRate.equals("") && strRespirationRate.length() > 0) {
-                        //sbVitals.append("  ");
+
                         sbVitals.append("Respiration - ").append(strRespirationRate).append("  ;  ");
                     }
 
                     if (strObesity != null && !strObesity.equals("") && strObesity.length() > 0) {
-                        //sbVitals.append("  ");
                         sbVitals.append("Obesity - ").append(strObesity).append("  ;  ");
                     }
                     if (sbVitals != null&& sbVitals.length()>1) {

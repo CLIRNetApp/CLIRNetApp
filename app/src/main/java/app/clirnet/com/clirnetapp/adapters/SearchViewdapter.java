@@ -75,6 +75,7 @@ public class SearchViewdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
         return VIEW_TYPE_ITEM;
     }
+
     private boolean isPositionFooter(int position) {
         return position == patientList.size();
     }
@@ -90,7 +91,6 @@ public class SearchViewdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
         return null;
     }
-
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -111,8 +111,6 @@ public class SearchViewdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
             String fod = model.getActualFollowupDate();
 
-
-
             try {
                 if (fod == null || fod.equals("") || fod.equals("0000-00-00")  || fod.equals("30-11-0002")) {
                     memberViewHolder.follow_up_date.setText("--");
@@ -124,14 +122,18 @@ public class SearchViewdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 appController.appendLog(appController.getDateTime()+" " +"/ "+"Searach View Adapter"+e+" "+Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
-
-
-
             int posi=position+1;
             String id=""+posi;
             memberViewHolder.id.setText(id); // this will add i value in desc order ie fifo order as per client req. 25-8-16 ,this id is not stored in db.
 
-            memberViewHolder.age.setText(model.getAge());
+            int dobYear=model.getDob_year();
+            if(dobYear!=0) {
+                String ageFinal = appController.getAgeFromYearDob(dobYear);
+                memberViewHolder.age.setText(ageFinal);
+             }else{
+                memberViewHolder.age.setText(model.getAge());
+             }
+            //memberViewHolder.age.setText(model.getAge());
             memberViewHolder.phone_no.setText(model.getMobileNumber());
 
 
@@ -149,7 +151,6 @@ public class SearchViewdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
 
     }
-
     public void setLoading(boolean loading) {
         this.loading = loading;
     }

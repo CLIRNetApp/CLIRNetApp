@@ -74,6 +74,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
     private String mSleepStatus;
     private String strFamilyHistory;
     private String strHospitalizaionSurgery;
+    private int year_dob;
 
 
     @Override
@@ -127,6 +128,8 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
         strFamilyHistory = getIntent().getStringExtra("FAMILYHISTORY");
         strHospitalizaionSurgery = getIntent().getStringExtra("HOSPITALIZATION");
 
+
+
         TextView txtSysDate = (TextView) findViewById(R.id.sysdate);
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
@@ -147,8 +150,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
         editpatientName.setText(strName);
         editmobileno.setText(strPhone);
 
-
-        if (strPhoneType != null) {
+        if (strPhoneType != null && !strPhoneType.equals("")) {
             phoneType.setText(strPhoneType + " :");
         } else {
             phoneType.setText("Mobile :");
@@ -158,11 +160,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
             txteMail.setVisibility(View.VISIBLE);
             email.setText(strEmail);
         }
-        if (strgender != null && strgender.equals("Male")) {
-            editAge.setText("( M - " + strAge + " )");
-        } else if (strgender != null && strgender.equals("Female")) {
-            editAge.setText("( F - " + strAge + " )");
-        }
+
 
         TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
         TextView termsandCondition = (TextView) findViewById(R.id.termsandCondition);
@@ -196,7 +194,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
             }
         });
 
-        setDatatoText();
+      //  setDatatoText();
 
         SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM , yyyy", Locale.ENGLISH);//it will show date as 10 sep,2016
         Date todayDate = new Date();
@@ -223,6 +221,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
             bannerimgNames = bannerClass.getImageName();
 
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
+            year_dob=sqlController.getDobYear(strId);
 
             ArrayList<RegistrationModel> healthLifeStyleList = sqlController.getHealthAndLifestyle(strId);
 
@@ -241,7 +240,20 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Show patient Details" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
-        //To changes backgound images on time slot
+        if(year_dob!=0) {
+            String ageFinal = appController.getAgeFromYearDob(year_dob);
+            if (strgender != null && strgender.equals("Male")) {
+                editAge.setText("( M - " + ageFinal + " )");
+            } else if (strgender != null && strgender.equals("Female")) {
+                editAge.setText("( F - " + ageFinal + " )");
+            }
+        }else {
+            if (strgender != null && strgender.equals("Male")) {
+                editAge.setText("( M - " + strAge + " )");
+            } else if (strgender != null && strgender.equals("Female")) {
+                editAge.setText("( F - " + strAge + " )");
+            }
+        }
 
 
 //redirect to edit pesroanl info page
@@ -254,6 +266,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
 
 
         });
+
         editlastUpdate.setOnTouchListener(new View.OnTouchListener() {
 
             @Override

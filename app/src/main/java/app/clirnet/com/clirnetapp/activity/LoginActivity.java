@@ -130,6 +130,8 @@ public class LoginActivity extends Activity {
     private int notificationTreySize;
     private String start_time;
     private boolean responceCheck;
+    private String savedUserName;
+    private String savedPhoneNumber;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -138,6 +140,7 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
         ButterKnife.inject(this);
+
         try {
             /*message from fcm service*/
             msg = getIntent().getStringExtra("MSG");
@@ -146,9 +149,13 @@ public class LoginActivity extends Activity {
             headerMsg = getIntent().getStringExtra("HEADER");
             clubbingFlag = getIntent().getStringExtra("CLUBBINGFLAG");
             notificationTreySize = getIntent().getIntExtra("NOTIFITREYSIZE", 0);
-           // Log.e("Loginmsg", "  " + msg + "  header " + headerMsg + "  " +type + "  "+actionPath);
+            // Log.e("Loginmsg", "  " + msg + "  header " + headerMsg + "  " +type + "  "+actionPath);
             /*Clearing notifications ArrayList from MyFirebaseMessagingService after clicking on it*/
+
             MyFirebaseMessagingService.notifications.clear();
+
+           // FirebaseCrash.setCrashCollectionEnabled(false);
+
 
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -166,7 +173,6 @@ public class LoginActivity extends Activity {
             md5 = new MD5();
         }
 
-
         //getCurrentDob(21);
         //getCurrentDob(10);
 
@@ -180,8 +186,10 @@ public class LoginActivity extends Activity {
 
         try {
             sInstance = SQLiteHandler.getInstance(getApplicationContext());
-            sqlController = new SQLController(getApplicationContext());
-            sqlController.open();
+            if(sqlController==null) {
+                sqlController = new SQLController(getApplicationContext());
+                sqlController.open();
+            }
            // sInstance = SQLiteHandler.getInstance(getApplicationContext());
 
             Boolean value = getFirstTimeLoginStatus();
@@ -207,7 +215,6 @@ public class LoginActivity extends Activity {
             appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page" + ioe + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             throw new Error("Unable to create database");
-
         }
 
         try {
@@ -217,7 +224,6 @@ public class LoginActivity extends Activity {
 
             /*This AsyncTask will Insert data from Asset folder file to data 23-03-2016*/
             new InsertDataLocally().execute();
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -240,6 +246,8 @@ public class LoginActivity extends Activity {
         try {
 
             lastnameDatabaseClass.openDataBase();
+
+            getUsernamePasswordFromDatabase();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -266,8 +274,12 @@ public class LoginActivity extends Activity {
                     rememberMe(name, strPassword, time); //save username only
 
                     //rememberMeCheckbox();//Removed remeber me check box for safety concern 04-11-16
+
                     //to authenticate user credentials
+                    //Log.e("name",""+name +" savedUserName "+savedUserName+ " phoneNumber "+phoneNumber);
+                    //if(name.equals(savedUserName) || name.equals(phoneNumber))
                     LoginAuthentication();
+                   // else appController.showToastMsg(getApplicationContext(),"This username is not licensed to log into this device. Please check username");
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -290,7 +302,6 @@ public class LoginActivity extends Activity {
         if (bannerUpdateFlag == null || bannerUpdateFlag.equals("true")) {
             updateBannerTableDataFlag();
         }
-
 
         // Link to Register Screen
         btnLinkToForgetScreen.setOnClickListener(new View.OnClickListener()
@@ -460,12 +471,19 @@ public class LoginActivity extends Activity {
             boolean isInternetPresent = connectionDetector.isConnectingToInternet();
             if (isInternetPresent) {
                 start_time = appController.getDateTimenew();
+
                 new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword, doctor_membership_number, docId, start_time);
                 // Removing url response cache from volley.............
                 AppController.getInstance().getRequestQueue().getCache().remove(AppConfig.URL_LOGIN);
-              //  new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber, doctor_membership_number, docId, start_time,type,actionPath,msg,headerMsg,clubbingFlag,notificationTreySize);
+                //  new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber, doctor_membership_number, docId, start_time,type,actionPath,msg,headerMsg,clubbingFlag,notificationTreySize);
                 //startService();
-                checkLogin(name, md5EncyptedDataPassword, doctor_membership_number, docId);
+                Log.e("name",""+name +" savedUserName "+savedUserName+ " phoneNumber "+phoneNumber);
+
+                if(savedUserName==null && savedPhoneNumber==null || name.equals(savedUserName) || name.equals(savedPhoneNumber)) {
+                    checkLogin(name, md5EncyptedDataPassword, doctor_membership_number, docId);
+                }
+                else appController.showToastMsg(getApplicationContext(),"This username is not licensed to log into this device. Please check username");
+
 
                 savedLoginCounter(); //to save shared pref to update login counter
 
@@ -522,7 +540,6 @@ public class LoginActivity extends Activity {
             appController.showToastMsg(getApplicationContext(), "Username/Password Incomplete");
 
         }
-
     }
 
     private int getLastSyncTime() {
@@ -657,16 +674,29 @@ public class LoginActivity extends Activity {
 
     //this method will set username and password to edit text if remember me chkbox is checked previously
     private void getUser() {
+
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
         username = pref.getString(PREF_USERNAME, null);
         String password = pref.getString(PREF_PASSWORD, null);
 
         if (username != null || password != null) {
-
             inputEmail.setText(username);
         }
     }
+    private void getUsernamePasswordFromDatabase() {
 
+        try {
+            ArrayList<LoginModel> al;
+            al = sqlController.getUserLoginRecrods();
+            if (al.size() != 0) {
+                savedUserName = al.get(0).getUserName();
+                savedPhoneNumber = al.get(0).getPassowrd();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+        }
+    }
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -847,14 +877,14 @@ public class LoginActivity extends Activity {
                 }
                 if (Diagnosiscount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("Diagnosis.sql"));
-                    Log.e("updating","addding the diagnosis");
+                   // Log.e("updating","addding the diagnosis");
                 }
                 else{
                     String diagnosisUpdateFlag = getDiagnosisUpdateFlag();
 
                     if (diagnosisUpdateFlag == null || diagnosisUpdateFlag.equals("")) {
                         updateDiagnosisDataFlag();
-                        Log.e("updating","updating the diagnosis");
+                     //   Log.e("updating","updating the diagnosis");
                     }
 
                 }
@@ -998,7 +1028,7 @@ public class LoginActivity extends Activity {
             @Override
             public void onResponse(String response) {
 
-                Log.e("Loginresponse", " " + response);
+               // Log.e("Loginresponse", " " + response);
 
                 if (LoginActivity.this.isDestroyed()) { // or call isFinishing() if min sdk version < 17
                     return;
@@ -1098,8 +1128,7 @@ public class LoginActivity extends Activity {
     private void getTermsAndCondition() {
 
         SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
-        String username = pref.getString(PREF_TERMSANDCONDITION
-                , null);
+        String username = pref.getString(PREF_TERMSANDCONDITION, null);
 
         if (username == null) {
             showDialog12();
@@ -1234,6 +1263,7 @@ public class LoginActivity extends Activity {
     }
 
     private void showProgressDialog() {
+
         if (pDialog == null) {
             pDialog = new ProgressDialog(LoginActivity.this);
             pDialog.setMessage("Logging in ......");

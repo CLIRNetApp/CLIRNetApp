@@ -15,7 +15,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -44,7 +43,7 @@ import app.clirnet.com.clirnetapp.fragments.ReferralsFragment;
 import app.clirnet.com.clirnetapp.fragments.ReportFragment;
 import app.clirnet.com.clirnetapp.fragments.ReportFragmentViewPagerSetup;
 import app.clirnet.com.clirnetapp.fragments.ShowNotifications;
-import app.clirnet.com.clirnetapp.fragments.TopTenAilmentFragment;
+import app.clirnet.com.clirnetapp.fragments.TopTwentySymptomsAndDiagnosisFragment;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.helper.SessionManager;
@@ -56,7 +55,7 @@ import app.clirnet.com.clirnetapp.utility.SyncDataService;
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
-        , ReportFragment.OnFragmentInteractionListener, PatientReportFragment.OnFragmentInteractionListener, ReportFragmentViewPagerSetup.OnFragmentInteractionListener, TopTenAilmentFragment.OnFragmentInteractionListener,
+        , ReportFragment.OnFragmentInteractionListener, PatientReportFragment.OnFragmentInteractionListener, ReportFragmentViewPagerSetup.OnFragmentInteractionListener, TopTwentySymptomsAndDiagnosisFragment.OnFragmentInteractionListener,
         BarChartFragment.OnFragmentInteractionListener, KnowledgeFragment.OnFragmentInteractionListener, IncompleteListFragment.OnFragmentInteractionListener, AssociatesFragment.OnFragmentInteractionListener, HealthVitalsDialogFragment.onSubmitListener, DashboardFragment.OnFragmentInteractionListener, MasterSessionDialog.OnFragmentInteractionListener, PatientAnnouncements.OnFragmentInteractionListener, ConnectivityChangeReceiver.ConnectivityReceiverListener, ReferralsFragment.OnFragmentInteractionListener, ShowNotifications.OnFragmentInteractionListener, HelpFragment.OnFragmentInteractionListener {
 
     private FragmentManager fragmentManager;
@@ -144,14 +143,17 @@ public class NavigationActivity extends AppCompatActivity
 
             docId = sqlController.getDoctorId();
 
-            doctor_membership_number = sqlController.getDoctorMembershipIdNew();
+            //doctor_membership_number = sqlController.getDoctorMembershipIdNew();
 
             ArrayList<LoginModel> al;
             al = sqlController.getUserLoginRecrodsNew();
+
             if (al.size() != 0) {
                 savedUserName = al.get(0).getUserName();
                 savedUserPassword = al.get(0).getPassowrd();
             }
+           // Log.e("savedUserName",""+savedUserName);
+            doctor_membership_number = sqlController.getDoctorMembershipIdNew(savedUserName);
 
             u_name.setText("Dr. " + docName);
             email.setText(emailId);
@@ -168,7 +170,7 @@ public class NavigationActivity extends AppCompatActivity
         }
 
         /*Handle push notification messages*/
-        Log.e("type", "   " + notificationTreySize + "  " + actionPath);
+       // Log.e("type", "   " + notificationTreySize + "  " + actionPath);
         // if(notificationTreySize > 1){
         if (type != null && !type.equals("") && notificationTreySize > 0) {
             callAction("notification");
@@ -379,7 +381,6 @@ public class NavigationActivity extends AppCompatActivity
         }
 
         cleanResources();
-
     }
 
     private void cleanResources() {
@@ -401,9 +402,7 @@ public class NavigationActivity extends AppCompatActivity
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
-
     }
-
 
     public void callAction(String action) {
 

@@ -11,7 +11,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Looper;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,7 +21,6 @@ import android.support.v7.widget.SearchView;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -152,6 +150,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private LinearLayout nameheader;
     private RVAdapter rvadapter;
     private String formatedDate;
+    int i=0;
 
     public HomeFragment() {
         setHasOptionsMenu(true);
@@ -293,23 +292,37 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         });
         //send the data to server when sync botton pressed
+
         sync.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
                     boolean isInternetPresent = connectionDetector.isConnectingToInternet();
+                   final String process_start_time = new AppController().getDateTimenew();
 
                     if (isInternetPresent) {
-                        String process_start_time = new AppController().getDateTimenew();
+
                         sqlController = new SQLController(getActivity());
                         sqlController.open();
+                        if(i==0){
+                            new CallDataFromOne(getContext(), savedUserName, savedUserPassword, process_start_time, docId, doctor_membership_number);
+                            i=1;
+                        }else{
+                            appController.showToastMsg(getContext(),"Data is sending please have patience.");
+                        }
 
-                        new CallDataFromOne(getContext(), savedUserName, savedUserPassword, process_start_time, docId, doctor_membership_number);
-
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                //sync.setVisibility(View.VISIBLE);
+                                i=0;
+                                sync.setEnabled(true);
+                                sync.setClickable(true);
+                            }
+                        }, 5000);
                     } else {
                         showNoInternetAlert("Internet Unavailable", "Please connect to the Internet to initiate Sync");
                     }
-
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -479,19 +492,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     }
 
 
-    private void makeToast(final String msg) {
-
-        Handler handler = new Handler(Looper.getMainLooper());
-        handler.post(new Runnable() {
-            public void run() {
-
-                toast = Toast.makeText(getContext().getApplicationContext(), msg, Toast.LENGTH_LONG);
-                toast.setGravity(Gravity.CENTER, 0, 0);
-                toast.show();
-
-            }
-        });
-    }
     private void getUsernamePasswordFromDatabase() {
         Cursor cursor = null;
         SQLController sqlController1 = null;
@@ -732,7 +732,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 try {
                     if (searchNumber.trim().length() > 10) {
 
-                        makeToast("Phone cannot be more than 10 Digits");
+                        appController.showToastMsg(getContext(),"Phone cannot be more than 10 Digits");
 
                         return true;
                     }
@@ -769,7 +769,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         searchView.clearFocus();
 
                     } else {
-                        makeToast("Please enter at least 5 digits to start search");
+                        appController.showToastMsg(getContext(),"Please enter at least 5 digits to start search");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1128,6 +1128,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
                     phoneNumber = sqlController.getPhoneNumber();
                     createHelpDialog(docName,phoneNumber);
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
@@ -1185,7 +1186,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     startActivity(intent);
                     dialog.dismiss();
                 } else {
-                    makeToast("Incorrect Password. Please contact support@clirnet.com");
+                    appController.showToastMsg(getContext(),"Incorrect Password. Please contact support@clirnet.com");
                 }
 
 
@@ -1215,6 +1216,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     //custom dialog  for the sync button result
     private void showNoInternetAlert(String title, String message) {
+
         final Dialog dialog = new Dialog(getContext());
 
         dialog.setContentView(R.layout.no_inetrnet_login_dialog);
@@ -1471,7 +1473,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             startActivity(i);
             System.gc();
         }
-
     }
 
     private RecyclerView.OnScrollListener recyclerViewOnScrollListener = new RecyclerView.OnScrollListener() {

@@ -33,7 +33,7 @@ android {
         targetSdkVersion 25
         multiDexEnabled true
         versionCode 13
-        versionName "1.3.2.17"
+        versionName "1.3.2.18"
         resConfigs "en"
     }
     lintOptions {
@@ -50,6 +50,7 @@ android {
         }
         debug {
             debuggable true
+
         }
     }
     packagingOptions {

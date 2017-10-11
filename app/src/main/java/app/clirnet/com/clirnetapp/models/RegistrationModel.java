@@ -208,13 +208,16 @@ public class RegistrationModel {
     private String t3;
 
 
-
     private String pushMessage;
     private String pushHeader;
     private String pushType;
     private String pushActionPath;
     private String pushImageUrl;
+    private int dob_year;
 
+    public int getDob_year() {
+        return dob_year;
+    }
 
     public String getSugarRbs() {
         return sugarRbs;
@@ -672,7 +675,6 @@ public class RegistrationModel {
     }
 
 
-
     public String getPin_code() {
         return pin_code;
     }
@@ -680,7 +682,6 @@ public class RegistrationModel {
     public String getDistrict() {
         return district;
     }
-
 
 
     public String getPhone_type() {
@@ -912,6 +913,7 @@ public class RegistrationModel {
 
         this.pat_id = id;
     }
+
     public String getPushMessage() {
         return pushMessage;
     }
@@ -944,6 +946,63 @@ public class RegistrationModel {
         this.pat_id = id;
         this.key_visit_id = visitId;
     }
+
+    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
+                             String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
+                             String sugar, String symptoms, String dignosis, String tests, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, int dob_year) {
+
+        this.pat_id = id;
+        this.firstName = first_name;
+        this.middleName = middle_name;
+        this.lastName = last_name;
+        this.dob = strdate_of_birth;
+        this.gender = gender;
+
+        this.age = current_age;
+        this.mobileNumber = phone_number;
+        this.language = selectedLanguage;
+        this.photo = patientImagePath;
+        this.followUpDate = follow_up_date;
+
+        this.followUpdays = daysSel;
+        this.followUpWeek = weekSel;
+        this.followUpMonth = monthSel;
+        this.ailments = ailmentList;
+        this.pres_img = prescriptionImgPath;
+        this.clinicalNotes = clinical_note;
+        this.added_on = added_on;
+        this.visit_date = visit_date;
+        this.modified_on = modified_on;
+        this.key_visit_id = key_visit_id;
+        this.actualFollowupDate = actFolDate;
+
+        this.address = address;
+        this.cityortown = city;
+        this.district = district;
+        this.pin_code = pin;
+        this.state = state;
+
+        this.weight = weight;
+        this.pulse = pulse;
+        this.bp = bp;
+        this.lowBp = mmhg;
+        this.temprature = temprature;
+        this.sugar = sugar;
+        this.symptoms = symptoms;
+        this.dignosis = dignosis;
+        this.tests = tests;
+        this.drugs = drugs;
+        this.bmi = bmi;
+        this.height = height;
+        this.alternatePhoneNumber = altername_no;
+        this.alternatePhoneType = altternate_phType;
+        this.sugarFasting = sugar_fasting;
+        this.phone_type = phone_type;
+        this.isd_code = isd_code;
+        this.alternate_isd_code = alternate_noisd_code;
+        this.dob_year = dob_year;
+    }
+
 
     public RegistrationModel(String pat_id, String doctor_id, String doc_membership_id, String patient_info_type_form, String pat_first_name,
                              String pat_middle_name, String pat_last_name, String pat_gender, String pat_date_of_birth,
@@ -1029,7 +1088,7 @@ public class RegistrationModel {
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String gender, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String usersellectedDate, String daysSel,
                              String monthSel, String weekSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String modified_on, String actfod, String action, String address, String city, String district, String pin, String state,
-                             String altername_no, String altternate_phType, String phone_type, String visit_date, String email, String uid, String familyHistory, String hospitalizationSurgery) {
+                             String altername_no, String altternate_phType, String phone_type, String visit_date, String email, String uid, String familyHistory, String hospitalizationSurgery, int dob_year) {
         this.pat_id = id;
         this.firstName = first_name;
         this.middleName = middle_name;
@@ -1068,12 +1127,12 @@ public class RegistrationModel {
         this.uid = uid;
         this.familyHistory = familyHistory;
         this.hospitalizationSurgery = hospitalizationSurgery;
-
+        this.dob_year = dob_year;
     }
 
-    public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
+   /* public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
                              String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String tests, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code) {
+                             String sugar, String symptoms, String dignosis, String tests, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, int dob_year) {
 
         this.pat_id = id;
         this.firstName = first_name;
@@ -1124,9 +1183,8 @@ public class RegistrationModel {
         this.phone_type = phone_type;
         this.isd_code = isd_code;
         this.alternate_isd_code = alternate_noisd_code;
-
-    }
-
+        this.dob_year = dob_year;
+    }*/
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
                              String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
@@ -1264,7 +1322,7 @@ public class RegistrationModel {
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
                              String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String uid, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo, String email) {
+                             String sugar, String symptoms, String dignosis, String uid, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo, String email, int dob_year) {
 
         this.pat_id = id;
         this.firstName = first_name;
@@ -1323,6 +1381,7 @@ public class RegistrationModel {
 
         this.referedTo = referedTo;
         this.email = email;
+        this.dob_year = dob_year;
     }
 
     public RegistrationModel(String ecg, String sugar, String sugar_fasting, String acer, String pft, String hba1c, String serem_urea, String lipid_profile_tc, String lipid_profile_tg, String lipid_profile_ldl, String lipid_profile_vhdl, String lipid_profile_hdl) {
@@ -1370,7 +1429,7 @@ public class RegistrationModel {
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
                              String address, String city, String district, String pin, String state, String weight, String pulse, String bp, String mmhg, String temprature,
-                             String sugar, String symptoms, String dignosis, String uid, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo, String email, String followUpStatus, String spo2, String respiration, String strFamilyHistory, String strHospitalizationSurgeru, String strObestity) {
+                             String sugar, String symptoms, String dignosis, String uid, String drugs, String altername_no, String height, String bmi, String sugar_fasting, String altternate_phType, String phone_type, String isd_code, String alternate_noisd_code, String referedBy, String referedTo, String email, String followUpStatus, String spo2, String respiration, String strFamilyHistory, String strHospitalizationSurgeru, String strObestity, int dob_year) {
 
         this.pat_id = id;
         this.firstName = first_name;
@@ -1435,6 +1494,7 @@ public class RegistrationModel {
         this.familyHistory = strFamilyHistory;
         this.hospitalizationSurgery = strHospitalizationSurgeru;
         this.obesity = strObestity;
+        this.dob_year = dob_year;
     }
 
     public RegistrationModel(String strPallore, String strPallorDescription, String strCyanosis, String strCyanosisDescription, String strClubbing, String strClubbingDescription, String strTremors, String strTremorsDescription, String strIcterus, String strIcterusDescription, String strOedema, String strOedemaDescription, String strCalfTenderness, String strCalfTendernessDescription, String strLymphadenopathy, String strLymphadenopathyDescription) {
@@ -1514,18 +1574,19 @@ public class RegistrationModel {
         this.tsh = tsh;
         this.t3 = t3;
         this.t4 = t4;
+
     }
 
     /*Notification Mode;*/
-    public RegistrationModel(String header, String message, String type, String action_path, String added_on,String id,String flag) {
+    public RegistrationModel(String header, String message, String type, String action_path, String added_on, String id, String flag) {
 
         this.pushHeader = header;
         this.pushMessage = message;
         this.pushType = type;
         this.pushActionPath = action_path;
         this.added_on = added_on;
-        this.id=id;
-        this.flag=flag;
+        this.id = id;
+        this.flag = flag;
 
     }
 }
