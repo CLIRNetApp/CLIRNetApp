@@ -2482,21 +2482,21 @@ public class QuickAddVisitFragment extends Fragment implements View.OnClickListe
         if (mSmokerType != null && !mSmokerType.equals("") && mSmokerType.equals("Active Smoker")) {
             imgSmoke.setVisibility(View.VISIBLE);
             imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.smoke));
-        } else if (mSmokerType != null && !mSmokerType.equals("") && mSmokerType.equals("Non Smoker")) {
+        } else if (mSmokerType != null && !mSmokerType.equals("") && mSmokerType.equals("Non Smoker")||  mSmokerType != null && mSmokerType.equals("Ex Smoker") ||  mSmokerType != null && mSmokerType.equals("Passive Smoker")) {
             imgSmoke.setVisibility(View.VISIBLE);
             imgSmoke.setImageDrawable(getResources().getDrawable(R.drawable.no_smoke));
         }
         if (mAlcohol != null && !mAlcohol.equals("") && mAlcohol.equals("Drinker")) {
             imgDrink.setVisibility(View.VISIBLE);
             imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.drink));
-        } else if (mAlcohol != null && !mAlcohol.equals("") && mAlcohol.equals("Non Drinker")) {
+        } else if (mAlcohol != null && !mAlcohol.equals("") && mAlcohol.equals("Non Drinker")|| mAlcohol != null && mAlcohol.equals("Ex Drinker")) {
             imgDrink.setVisibility(View.VISIBLE);
             imgDrink.setImageDrawable(getResources().getDrawable(R.drawable.no_drink));
         }
         if (mChewinogTobaco != null && !mChewinogTobaco.equals("") && mChewinogTobaco.equals("Yes")) {
             imgTobaco.setVisibility(View.VISIBLE);
             imgTobaco.setImageDrawable(getResources().getDrawable(R.drawable.tobacco));
-        } else if (mSleepStatus != null && !mSleepStatus.equals("") && mSleepStatus.equals("No")) {
+        } else if (mChewinogTobaco != null && !mChewinogTobaco.equals("") && mChewinogTobaco.equals("No")) {
             imgTobaco.setVisibility(View.VISIBLE);
             imgTobaco.setImageDrawable(getResources().getDrawable(R.drawable.no_tobacco));
         }
@@ -2541,7 +2541,7 @@ public class QuickAddVisitFragment extends Fragment implements View.OnClickListe
                 appController.showToastMsg(getContext(), "Patient is a " + mAlcohol);
                 break;
             case R.id.imgTobaco:
-                appController.showToastMsg(getContext(), mChewinogTobaco + " patient consumes other tobacco products");
+                appController.showToastMsg(getContext(),  " Consumption of other Tobacco Products: "+mChewinogTobaco);
                 break;
 
             case R.id.imgSleep:

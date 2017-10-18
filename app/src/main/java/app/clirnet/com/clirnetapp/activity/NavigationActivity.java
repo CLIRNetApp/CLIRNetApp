@@ -51,8 +51,6 @@ import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectivityChangeReceiver;
 import app.clirnet.com.clirnetapp.utility.SyncDataService;
 
-
-
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
         , ReportFragment.OnFragmentInteractionListener, PatientReportFragment.OnFragmentInteractionListener, ReportFragmentViewPagerSetup.OnFragmentInteractionListener, TopTwentySymptomsAndDiagnosisFragment.OnFragmentInteractionListener,
@@ -93,7 +91,9 @@ public class NavigationActivity extends AppCompatActivity
             clubbingFlag = getIntent().getStringExtra("CLUBBINGFLAG");
             notificationTreySize = getIntent().getIntExtra("NOTIFITREYSIZE", 0);
              /*Clearing notifications ArrayList from MyFirebaseMessagingService faster clicking on it*/
-            MyFirebaseMessagingService.notifications.clear();
+             if(clubbingFlag!=null && clubbingFlag.equals("1"))
+             MyFirebaseMessagingService.notifications_club.clear();
+
 
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -170,15 +170,25 @@ public class NavigationActivity extends AppCompatActivity
         }
 
         /*Handle push notification messages*/
-       // Log.e("type", "   " + notificationTreySize + "  " + actionPath);
+        // Log.e("type", "   " + notificationTreySize + "  " + actionPath);
         // if(notificationTreySize > 1){
         if (type != null && !type.equals("") && notificationTreySize > 0) {
             callAction("notification");
-        } else if (actionPath!=null && notificationTreySize <= 0) {
+        } else if (actionPath!=null && !actionPath.equals("") && notificationTreySize <= 0 && type != null && !type.equals("") && !type.equals("1")) {
             callAction(actionPath);
         } else if (headerMsg != null && !headerMsg.equals("") && actionPath != null && !actionPath.equals("") && headerMsg.equals("goto")) {
             callAction(actionPath);
-        } else {
+        } else if (type != null && !type.equals("") && actionPath != null && !actionPath.equals("") && type.equals("1")) {
+            //for app-page
+            Fragment fragment;
+            fragment = new KnowledgeFragment();
+            Bundle bundle2 = new Bundle();
+            bundle2.putString("URL", actionPath);
+            fragment.setArguments(bundle2);
+            fragmentManager = getSupportFragmentManager();
+            fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
+
+        }else {
             callAction("DashboardFragment");
         }
     }
@@ -442,6 +452,7 @@ public class NavigationActivity extends AppCompatActivity
                 break;
 
             case "KnowledgeFragment":
+
                 AppController.getInstance().trackEvent("Knowledge", "Navigation");
 
                 mFragment = new KnowledgeFragment();
@@ -461,12 +472,14 @@ public class NavigationActivity extends AppCompatActivity
 
 
             case "PatientAnnouncements":
+
                 AppController.getInstance().trackEvent("PatientAnnouncements", "Navigation");
 
                 mFragment = new PatientAnnouncements();
                 break;
 
             case "notification":
+
                 AppController.getInstance().trackEvent("notification", "Navigation");
 
                 mFragment = new ShowNotifications();
@@ -505,6 +518,7 @@ public class NavigationActivity extends AppCompatActivity
     }
 
     private void callService() {
+
         this.context = this;
 
         Intent msgIntent = new Intent(this.context, MasterSessionService.class);
@@ -545,9 +559,7 @@ public class NavigationActivity extends AppCompatActivity
                 i.putExtra("TYPE", type);
                 i.putExtra("ACTION_PATH", actionPath);
                 i.putExtra("HEADER", headerMsg);
-
             }
-
             startActivity(i);
             System.gc();
         }

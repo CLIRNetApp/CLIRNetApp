@@ -229,9 +229,9 @@
     <string name="uid">UID</string>
     <string name="uidtype">UID Type</string>
     <string name="reset">Reset</string>
-    <string name="version">Release Version 1.3.2.18</string>
-    <string name="aboutApp">About App V 1.3.2.18</string>
-    <string name="updateDate">Last Updated Date 04/10/2017</string>
+    <string name="version">Release Version 1.4</string>
+    <string name="aboutApp">About App V 1.4</string>
+    <string name="updateDate">Last Updated Date 17/10/2017</string>
     <string name="quickadd">Quick Add</string>
     <string name="title_edit_quick_add">Quick Edit Patient</string>
 
@@ -347,7 +347,7 @@
     <string name="selectedGroup">Selected Group</string>
     <string name="title_activity_splash">SplashActivity</string>
     <string name="nodatadisplay">No Data To Display</string>
-    <string name="notification">Notification</string>
+    <string name="notification">Notifications</string>
     <string name="sendsms">Send SMS</string>
     <string name="morecontact">More Contact</string>
     <string name="moredemographic">More Demographics</string>
@@ -358,5 +358,19 @@
     <string name="maxgreatdbmax">Entered value is greater than the maximum available value in database of  </string>
     <string name="count">Count</string>
     <string name="helpme">Help Me</string>
+
+    <string name="progress_downloading">Downloading…</string>
+    <string name="progress_uploading">Uploading…</string>
+    <string name="progress_auth">Signing In…</string>
+
+    <string name="upload_success">Upload finished</string>
+    <string name="upload_failure">Upload failed</string>\
+
+    <string name="download_success">Download finished</string>
+    <string name="download_failure">Download failure</string>
+    <string name="success">Success</string>
+    <string name="smsdate">Patient announcements need to be requested at least 5 days before "Send SMS On" date.</string>
+    <string name="csv">CSV</string>
+    <string name="pdf">PDF</string>
 
 </resources>

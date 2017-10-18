@@ -75,6 +75,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
     private String strFamilyHistory;
     private String strHospitalizaionSurgery;
     private int year_dob;
+    private String strPatientFollowUpStatus;
 
 
     @Override
@@ -127,6 +128,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
         calledFrom = getIntent().getStringExtra("CALLEDFROM");
         strFamilyHistory = getIntent().getStringExtra("FAMILYHISTORY");
         strHospitalizaionSurgery = getIntent().getStringExtra("HOSPITALIZATION");
+        strPatientFollowUpStatus = getIntent().getStringExtra("FOLLOWUPSTATUS");
 
 
 
@@ -327,10 +329,11 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
                         i.putExtra("REFEREDTO", registrationModel.getReferedTo());
                         i.putExtra("UID", registrationModel.getUid());
                         i.putExtra("EMAIL", registrationModel.getEmail());
-                        i.putExtra("FAMILYHISTORY", strFamilyHistory);
-                        i.putExtra("HOSPITALIZATION", strHospitalizaionSurgery);
                         i.putExtra("SPO2", registrationModel.getSpo2());
                         i.putExtra("RESPIRATION", registrationModel.getRespirataion());
+                        i.putExtra("FAMILYHISTORY", strFamilyHistory);
+                        i.putExtra("HOSPITALIZATION", strHospitalizaionSurgery);
+                        i.putExtra("FOLLOWUPSTATUS", strPatientFollowUpStatus);
                         i.putExtra("CALLEDFROM", calledFrom);
                         // i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         // i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);

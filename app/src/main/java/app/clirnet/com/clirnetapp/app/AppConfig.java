@@ -8,7 +8,7 @@ public class AppConfig {
      // static final String LIVE_MAIN_URL = "http://192.168.1.53/";
      // static final String PRODUCTION_MAIN_URL = "http://104.199.232.104/clirnetapplicationv3/public/doctor/webapi/checkdoctorvalidity";
 
-     private static final String LOCAL_DEMO_URL = "http://doctor.clirnet.com";
+     private static final String LOCAL_DEMO_URL = "https://doctor.clirnet.com";
 
     public static final String URL_LOGIN = LOCAL_DEMO_URL + "/doctor/webapi/checkdoctorvalidity";
 

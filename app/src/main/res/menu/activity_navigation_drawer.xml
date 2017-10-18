@@ -61,7 +61,7 @@
     </item>
 
 
-    <item android:title="Help Menu ">
+    <item android:title="Other Options ">
         <menu>
             <group android:checkableBehavior="single">
                 <item

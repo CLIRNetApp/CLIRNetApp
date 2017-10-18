@@ -18,6 +18,8 @@ public class RegistrationModel {
     private String email;
     private String action;
 
+
+
     public String getFlag() {
         return flag;
     }
@@ -1088,7 +1090,7 @@ public class RegistrationModel {
 
     public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String gender, String current_age, String phone_number, String selectedLanguage, String patientImagePath, String usersellectedDate, String daysSel,
                              String monthSel, String weekSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String modified_on, String actfod, String action, String address, String city, String district, String pin, String state,
-                             String altername_no, String altternate_phType, String phone_type, String visit_date, String email, String uid, String familyHistory, String hospitalizationSurgery, int dob_year) {
+                             String altername_no, String altternate_phType, String phone_type, String visit_date, String email, String uid, String familyHistory, String hospitalizationSurgery, int dob_year,String followUpStatus) {
         this.pat_id = id;
         this.firstName = first_name;
         this.middleName = middle_name;
@@ -1128,6 +1130,7 @@ public class RegistrationModel {
         this.familyHistory = familyHistory;
         this.hospitalizationSurgery = hospitalizationSurgery;
         this.dob_year = dob_year;
+        this.followUpStatus=followUpStatus;
     }
 
    /* public RegistrationModel(String id, String first_name, String middle_name, String last_name, String strdate_of_birth, String current_age, String phone_number, String gender, String selectedLanguage, String patientImagePath, String follow_up_date, String daysSel, String weekSel, String monthSel, String ailmentList, String prescriptionImgPath, String clinical_note, String added_on, String visit_date, String modified_on, String key_visit_id, String actFolDate,
@@ -1589,4 +1592,24 @@ public class RegistrationModel {
         this.flag = flag;
 
     }
+    public RegistrationModel(String string, String string1, String string2, String string3, String string4) {
+        this.id=string;
+        this.firstName=string1;
+        this.lastName=string2;
+        this.dob=string3;
+        this.age=string4;
+    }
+    public RegistrationModel(String id, String fName, String mName, String lName, String dob, String gender, String age, String pNo, String lang, String email) {
+        this.id=id;
+        this.firstName=fName;
+        this.middleName=mName;
+        this.lastName=lName;
+        this.dob=dob;
+        this.gender=gender;
+        this.age=age;
+        this.mobileNumber=pNo;
+        this.language=lang;
+        this.email=email;
+    }
+
 }

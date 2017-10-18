@@ -722,7 +722,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     //update the patient visit records into db
     public void updatePatientOtherInfo(String strId, String visitId, String usersellectedDate, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String modified_dateon, String modified_time, String modified_by, String action, String patInfoType, String flag,
-                                       String weight, String pulse, String bphigh, String bplow, String temparature, String symptoms, String dignosis, String strHeight, String strbmi, String visit_date, String referedBy, String referedTo, String strSpo2, String strRespiration, String strObesity) throws ClirNetAppException {
+                                       String weight, String pulse, String bphigh, String bplow, String temparature, String symptoms, String dignosis, String strHeight, String strbmi, String visit_date, String referedBy, String referedTo, String strSpo2, String strRespiration, String strObesity,String strFollowUpStatus) throws ClirNetAppException {
         SQLiteDatabase db = this.getWritableDatabase();
 
         try {
@@ -759,7 +759,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(SPO2, strSpo2);
             values.put(RESPIRATION, strRespiration);
             values.put(OBESITY, strObesity);
-
+            values.put(FOLLOW_UP_STATUS, strFollowUpStatus);
             // Inserting Row
             db.update(TABLE_PATIENT_HISTORY, values, KEY_PATIENT_ID + "=" + strId + " AND " + KEY_VISIT_ID + "=" + visitId, null);
 

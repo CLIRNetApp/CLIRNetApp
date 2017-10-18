@@ -309,7 +309,7 @@ public class SQLController {
         Set<RegistrationModel> pList1 = new LinkedHashSet<>();
         try {
             //open();
-            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,p.alternate_no,p.alternate_phone_type,p.phone_type,ph.visit_date,p.email,p.uid,p.family_history,p.hospitalization_surgery,p.dob_year  from  patient p  LEFT JOIN patient_history ph ON p.patient_id = ph.patient_id LEFT JOIN table_investigation ti ON ph.key_visit_id = ti.key_visit_id LEFT JOIN health_and_lifestyle hl ON p.patient_id = hl.patient_id LEFT JOIN observation obs ON obs.key_visit_id = ph.key_visit_id  where p.patient_id=ph.patient_id";//and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
+            String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,p.alternate_no,p.alternate_phone_type,p.phone_type,ph.visit_date,p.email,p.uid,p.family_history,p.hospitalization_surgery,p.dob_year,ph.follow_up_status  from  patient p  LEFT JOIN patient_history ph ON p.patient_id = ph.patient_id LEFT JOIN table_investigation ti ON ph.key_visit_id = ti.key_visit_id LEFT JOIN health_and_lifestyle hl ON p.patient_id = hl.patient_id LEFT JOIN observation obs ON obs.key_visit_id = ph.key_visit_id  where p.patient_id=ph.patient_id";//and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
 
             // String countQuery = "select  COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id ";
 
@@ -649,14 +649,13 @@ public class SQLController {
             db1 = dbHelper.getReadableDatabase();
             cursor = db1.rawQuery(selectQuery, null);
 
-
             if (cursor.moveToFirst()) {
                 do {
                     RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
                             cursor.getString(7), cursor.getString(8),
                             cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
                             cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21), cursor.getString(22), cursor.getString(23),
-                            cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),cursor.getString(32),cursor.getString(33),cursor.getInt(34));
+                            cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),cursor.getString(32),cursor.getString(33),cursor.getInt(34),cursor.getString(35));
 
                     pList1.add(user);
 

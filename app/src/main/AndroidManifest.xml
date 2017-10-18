@@ -148,6 +148,13 @@
         <service
             android:name=".app.MasterSessionService"
             android:exported="false" />
+        <service
+            android:name=".cloudStorage.MyDownloadService"
+            android:exported="false"/>
+
+        <service
+            android:name=".cloudStorage.MyUploadService"
+            android:exported="false" />
 
         <activity
             android:name=".activity.NewEditPersonalInfo"
@@ -168,6 +175,9 @@
         <activity android:name=".activity.IntroActivity"
             android:launchMode="singleTop"
             android:theme="@style/Theme.Intro"/>
+
+        <receiver android:name=".fcm.NotificationDeleteReceiver">
+        </receiver>
     </application>
 
 </manifest>

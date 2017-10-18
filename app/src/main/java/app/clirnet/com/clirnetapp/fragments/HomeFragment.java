@@ -21,6 +21,7 @@ import android.support.v7.widget.SearchView;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.view.GestureDetector;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -105,7 +106,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     Button addaNewPatient;
     @InjectView(R.id.sync)
     Button sync;
-
     @InjectView(R.id.Searchrecycler_view)
     RecyclerView Searchrecycler_view;
 
@@ -308,16 +308,19 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                             new CallDataFromOne(getContext(), savedUserName, savedUserPassword, process_start_time, docId, doctor_membership_number);
                             i=1;
                         }else{
-                            appController.showToastMsg(getContext(),"Data is sending please have patience.");
+                            Toast toast = Toast.makeText(getContext(), "Processing request, please be patient.", Toast.LENGTH_LONG);
+                            toast.setGravity(Gravity.BOTTOM, 0, 0);
+                            toast.show();
+                           // appController.showToastMsg(getContext(),"Processing request, please be patient.");
                         }
-
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 //sync.setVisibility(View.VISIBLE);
                                 i=0;
+                                if(sync!=null){
                                 sync.setEnabled(true);
-                                sync.setClickable(true);
+                                sync.setClickable(true);}
                             }
                         }, 5000);
                     } else {

@@ -149,12 +149,15 @@ public class LoginActivity extends Activity {
             headerMsg = getIntent().getStringExtra("HEADER");
             clubbingFlag = getIntent().getStringExtra("CLUBBINGFLAG");
             notificationTreySize = getIntent().getIntExtra("NOTIFITREYSIZE", 0);
+
             // Log.e("Loginmsg", "  " + msg + "  header " + headerMsg + "  " +type + "  "+actionPath);
             /*Clearing notifications ArrayList from MyFirebaseMessagingService after clicking on it*/
 
-            MyFirebaseMessagingService.notifications.clear();
+            MyFirebaseMessagingService.notifications_club.clear();
 
            // FirebaseCrash.setCrashCollectionEnabled(false);
+            // TODO: Move this to where you establish a user session
+
 
 
         } catch (Exception e) {
@@ -279,6 +282,9 @@ public class LoginActivity extends Activity {
                     //Log.e("name",""+name +" savedUserName "+savedUserName+ " phoneNumber "+phoneNumber);
                     //if(name.equals(savedUserName) || name.equals(phoneNumber))
                     LoginAuthentication();
+                    logUser();
+
+                  //  forceCrash();
                    // else appController.showToastMsg(getApplicationContext(),"This username is not licensed to log into this device. Please check username");
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -1278,4 +1284,16 @@ public class LoginActivity extends Activity {
             pDialog.dismiss();
         }
     }
+    private void logUser() {
+        // TODO: Use the current user's information
+        // You can call any combination of these three methods
+        Crashlytics.setUserIdentifier(docId);
+        Crashlytics.setUserEmail(doctor_membership_number);
+        Crashlytics.setUserName(username);
+
+    }
+    public void forceCrash() {
+        throw new RuntimeException("This is a test crash");
+    }
+
 }

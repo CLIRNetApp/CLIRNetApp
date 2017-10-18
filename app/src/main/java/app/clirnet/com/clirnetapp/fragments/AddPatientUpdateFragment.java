@@ -220,6 +220,7 @@ public class AddPatientUpdateFragment extends Fragment {
     private Button buttonVital;
     private ArrayList<String> nameReferralsList;
     private ArrayAdapter<String> referralName;
+    private boolean fodChecked;
    /* private String strHb;
     private String strPlateletCount;
     private String strEsr;
@@ -657,6 +658,7 @@ public class AddPatientUpdateFragment extends Fragment {
                     daysSel = value;
                     fowSel = null;
                     monthSel = null;
+                    fodChecked=true;
                     userSellectedDate = dateis;
 
                 } else if (event.getAction() == KeyEvent.ACTION_UP) {
@@ -711,6 +713,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 fowSel = value;
                 daysSel = null;
                 monthSel = null;
+                fodChecked=true;
                 fodtextshow.setText(dateis);
             }
         });
@@ -750,6 +753,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 monthSel = value;
                 daysSel = null;
                 fowSel = null;
+                fodChecked=true;
                 fodtextshow.setText(dateis);
             }
         });
@@ -767,6 +771,7 @@ public class AddPatientUpdateFragment extends Fragment {
                     daysSel = null;
                     fowSel = null;
                     monthSel = null;
+                    fodChecked=false;
                     CleanFollowup();
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -1541,10 +1546,17 @@ public class AddPatientUpdateFragment extends Fragment {
 
         userSellectedDate = fodtextshow.getText().toString();
 
+        String enterNumberForFod = inputnumber.getText().toString();
+
         if (TextUtils.isEmpty(strSymptoms) && TextUtils.isEmpty(strDignosis)) {
             Toast.makeText(getContext(), "Please enter at least 1 symptom or diagnosis", Toast.LENGTH_LONG).show();
-
             return;
+        }
+        if(!fodChecked){
+            if(!enterNumberForFod.equals("")){
+                Toast.makeText(getContext(), "Please select measure of time for follow up date", Toast.LENGTH_LONG).show();
+                return;
+            }
         }
 
         String visit_id = String.valueOf(maxVisitId + 1);

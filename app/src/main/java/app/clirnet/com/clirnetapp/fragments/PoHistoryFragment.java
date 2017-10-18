@@ -2,18 +2,19 @@ package app.clirnet.com.clirnetapp.fragments;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,15 +35,32 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.MultiAutoCompleteTextView;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.dpizarro.autolabel.library.AutoLabelUI;
 import com.dpizarro.autolabel.library.AutoLabelUISettings;
+import com.lowagie.text.Document;
+import com.lowagie.text.DocumentException;
+import com.lowagie.text.Font;
+import com.lowagie.text.Image;
+import com.lowagie.text.Paragraph;
+import com.lowagie.text.Phrase;
+import com.lowagie.text.Rectangle;
+import com.lowagie.text.pdf.PdfPCell;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfWriter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -249,10 +267,10 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
     private String valMinSpo2;
     private String valMaxSpo2;
     private LinearLayout tabSubmitWarnig;
+    private String exportChoice;
 
 
     public PoHistoryFragment() {
-
     }
 
     @Override
@@ -432,7 +450,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 if (event.getAction() == MotionEvent.ACTION_UP) {
 
                     tabSubmitWarnig.setVisibility(View.GONE);
-                    exportData.setVisibility(View.VISIBLE);
+                    /*exportData.setVisibility(View.VISIBLE);*/
 
                     submit.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
                     patientData.clear(); //This method will clear all previous data from  Array list  24-8-2016
@@ -543,8 +561,14 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             @Override
             public void onClick(View view) {
+                exportDataDialog(0);
 
-                exportDB();
+               /* try {
+
+                    exportDB();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }*/
             }
         });
 
@@ -558,7 +582,12 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             @Override
             public void onLongClick(View view, int position) {
-                final int posi=position;
+                //commneted for this build 13-10-2017 ashish this will go on next build
+
+              //  exportDataDialog(position);
+
+
+               /* final int posi = position;
 
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(getActivity());
                 builder1.setMessage("Do you want to export patient data?");
@@ -567,9 +596,12 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 builder1.setPositiveButton(
                         "All",
                         new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id)
-                            {
-                                exportDB();
+                            public void onClick(DialogInterface dialog, int id) {
+                                try {
+                                    exportDB();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                             }
                         });
 
@@ -585,7 +617,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                 AlertDialog alert11 = builder1.create();
                 alert11.show();
 
-               // exportDB(position);
+                //exportDB(position);*/
 
             }
 
@@ -709,12 +741,12 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         return rootview;
     }
 
-    private void exportDB(int position) {
+    private void exportDB(int position,String exportChoice) {
 
         RegistrationModel book = patientData.get(position);
         String patId = book.getPat_id();
         File exportDir = new File(Environment.getExternalStorageDirectory(), "");
-
+        ArrayList<RegistrationModel> list = new ArrayList<>();
         if (!exportDir.exists()) {
             exportDir.mkdirs();
         }
@@ -734,14 +766,29 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
             csvWrite.writeNext(curCSV.getColumnNames());
 
+            if (curCSV.moveToFirst()) {
+                do {
+                    String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4), curCSV.getString(5), curCSV.getString(6), curCSV.getString(7), curCSV.getString(8), curCSV.getString(30)};
+                    csvWrite.writeNext(arrStr);
+                    //Log.e("data",""+curCSV.getString(3)+" "+curCSV.getString(4)+" "+ curCSV.getString(6));
 
-            while (curCSV.moveToNext()) {
+                    RegistrationModel user = new RegistrationModel(curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4), curCSV.getString(5), curCSV.getString(6), curCSV.getString(7), curCSV.getString(8), curCSV.getString(30));
+
+                    list.add(user);
+                } while (curCSV.moveToNext());
+            }
+
+
+
+           /* while (curCSV.moveToNext()) {
                 //Which column you want to exprort
                 String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4), curCSV.getString(5), curCSV.getString(6), curCSV.getString(7), curCSV.getString(8), curCSV.getString(9), curCSV.getString(10), curCSV.getString(11), curCSV.getString(12), curCSV.getString(13), curCSV.getString(14), curCSV.getString(15), curCSV.getString(16), curCSV.getString(17), curCSV.getString(18), curCSV.getString(19), curCSV.getString(20), curCSV.getString(21), curCSV.getString(22), curCSV.getString(23), curCSV.getString(24), curCSV.getString(25), curCSV.getString(26), curCSV.getString(27), curCSV.getString(28), curCSV.getString(29), curCSV.getString(30), curCSV.getString(31), curCSV.getString(32), curCSV.getString(33), curCSV.getString(34), curCSV.getString(35), curCSV.getString(36), curCSV.getString(37), curCSV.getString(38), curCSV.getString(39), curCSV.getString(40), curCSV.getString(41), curCSV.getString(42), curCSV.getString(43), curCSV.getString(44), curCSV.getString(45), curCSV.getString(46), curCSV.getString(47), curCSV.getString(48), curCSV.getString(49), curCSV.getString(50), curCSV.getString(51), curCSV.getString(52), curCSV.getString(53), curCSV.getString(54), curCSV.getString(55), curCSV.getString(56), curCSV.getString(57), curCSV.getString(58), curCSV.getString(59), curCSV.getString(60), curCSV.getString(61), curCSV.getString(62), curCSV.getString(63), curCSV.getString(64), curCSV.getString(65), curCSV.getString(66)};
                 csvWrite.writeNext(arrStr);
-            }
+            }*/
             csvWrite.close();
             curCSV.close();
+
+            File pdfFile = createPDF(list);  //get the pdf file path 17-10-2017
 
             Intent emialIntent = new Intent(Intent.ACTION_SEND);
             //  emialIntent.setType("*/*");
@@ -751,18 +798,25 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
             emialIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{mailId});
             Random r = new Random();
             emialIntent.putExtra(Intent.EXTRA_SUBJECT, "Local Db" + r.nextInt());
-            emialIntent.putExtra(Intent.EXTRA_SUBJECT, "Local Database  Name " + "doctor name "  + "  Membership Id:  "+doctor_membership_number);
-
-            emialIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));//actual data
+            emialIntent.putExtra(Intent.EXTRA_SUBJECT, "Local Database  Name " + "doctor name " + "  Membership Id:  " + doctor_membership_number);
+            if(exportChoice.equals("PDF")) {
+                emialIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(pdfFile));//actual data
+            }else{
+                emialIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));//actual data
+            }
+            //emialIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));//actual data
             startActivity(Intent.createChooser(emialIntent, "Choose an Email client :"));
         } catch (Exception sqlEx) {
             Log.e("MainActivity", sqlEx.getMessage(), sqlEx);
         }
     }
 
-    private void exportDB() {
+    private void exportDB(String exportChoice) throws IOException {
 
         File exportDir = new File(Environment.getExternalStorageDirectory(), "");
+        CSVWriter csvWrite = null;
+        Cursor curCSV = null;
+        ArrayList<RegistrationModel> list = new ArrayList<>();
 
         if (!exportDir.exists()) {
             exportDir.mkdirs();
@@ -771,40 +825,67 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         try {
 
             file.createNewFile();
-            CSVWriter csvWrite = new CSVWriter(new FileWriter(file));
+            csvWrite = new CSVWriter(new FileWriter(file));
             SQLiteDatabase db = new SQLiteHandler(getContext()).getReadableDatabase();
             String selectQuery = new Counts().getSelectQuery();
 
-            Cursor curCSV = db.rawQuery(selectQuery, null);
+            curCSV = db.rawQuery(selectQuery, null);
 
             csvWrite.writeNext(curCSV.getColumnNames());
+            if (curCSV.moveToFirst()) {
+                do {
+                    String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4), curCSV.getString(5), curCSV.getString(6), curCSV.getString(7), curCSV.getString(8), curCSV.getString(9), curCSV.getString(10), curCSV.getString(11), curCSV.getString(12), curCSV.getString(13), curCSV.getString(14), curCSV.getString(15), curCSV.getString(16), curCSV.getString(17), curCSV.getString(18), curCSV.getString(19), curCSV.getString(20), curCSV.getString(21), curCSV.getString(22), curCSV.getString(23), curCSV.getString(24), curCSV.getString(25), curCSV.getString(26), curCSV.getString(27), curCSV.getString(28), curCSV.getString(29), curCSV.getString(30), curCSV.getString(31), curCSV.getString(32), curCSV.getString(33), curCSV.getString(34)};
+                    csvWrite.writeNext(arrStr);
+                    //Log.e("data",""+curCSV.getString(3)+" "+curCSV.getString(4)+" "+ curCSV.getString(6));
 
-            while (curCSV.moveToNext()) {
+                    RegistrationModel user = new RegistrationModel(curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4), curCSV.getString(5), curCSV.getString(6), curCSV.getString(7), curCSV.getString(8), curCSV.getString(30));
+
+                    // RegistrationModel user = new RegistrationModel(curCSV.getString(0), curCSV.getString(1), curCSV.getString(3), curCSV.getString(4), curCSV.getString(6));
+
+                    list.add(user);
+
+                } while (curCSV.moveToNext());
+            }
+
+            /*while (curCSV.moveToNext()) {
                 //Which column you want to exprort
                 String arrStr[] = {curCSV.getString(0), curCSV.getString(1), curCSV.getString(2), curCSV.getString(3), curCSV.getString(4), curCSV.getString(5), curCSV.getString(6), curCSV.getString(7), curCSV.getString(8), curCSV.getString(9), curCSV.getString(10), curCSV.getString(11), curCSV.getString(12), curCSV.getString(13), curCSV.getString(14), curCSV.getString(15), curCSV.getString(16), curCSV.getString(17), curCSV.getString(18), curCSV.getString(19), curCSV.getString(20), curCSV.getString(21), curCSV.getString(22), curCSV.getString(23), curCSV.getString(24), curCSV.getString(25), curCSV.getString(26), curCSV.getString(27), curCSV.getString(28), curCSV.getString(29), curCSV.getString(30), curCSV.getString(31), curCSV.getString(32), curCSV.getString(33), curCSV.getString(34)};
                 csvWrite.writeNext(arrStr);
-            }
-            csvWrite.close();
-            curCSV.close();
-           // Log.e("curCSV", "" + csvWrite.toString());
+
+            }*/
+
+            // Log.e("curCSV", "" + curCSV.toString());
             Intent emialIntent = new Intent(Intent.ACTION_SEND);
             //  emialIntent.setType("*/*");
             emialIntent.setType("message/rfc822");
+
+            File pdfFile = createPDF(list);  //get the pdf file path 17-10-2017
 
             String mailId = "ashish.umredkar@clirnet.com";
             emialIntent.putExtra(Intent.EXTRA_EMAIL, new String[]{mailId});
             Random r = new Random();
             emialIntent.putExtra(Intent.EXTRA_SUBJECT, "Local Db" + r.nextInt());
-            emialIntent.putExtra(Intent.EXTRA_SUBJECT, "Local Database  Name " + "ashish" + "  Membership Id:  ");
-
-            emialIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));//actual data
+            emialIntent.putExtra(Intent.EXTRA_SUBJECT, "Local Database  Name " + "ashish" + "  Membership Id:  " + doctor_membership_number);
+            if(exportChoice.equals("PDF")) {
+                emialIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(pdfFile));//actual data
+            }else{
+                emialIntent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(file));//actual data
+            }
             startActivity(Intent.createChooser(emialIntent, "Choose an Email client :"));
-        } catch (Exception sqlEx) {
-            Log.e("MainActivity", sqlEx.getMessage(), sqlEx);
+           // createPDF(list);
+            //  CreatePdf(curCSV,curCSV);
+        } catch (Exception e) {
+            Log.e("MainActivity", e.getMessage(), e);
+        } finally {
+            if (csvWrite != null && curCSV != null) {
+                csvWrite.close();
+                curCSV.close();
+            }
         }
     }
 
     private void setAilmentData() {
+
         try {
             databaseClass.openDataBase();
             mAilmemtArrayList = databaseClass.getAilmentsListNew();
@@ -868,6 +949,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                                        int position, long arg3) {
                 //  selectColoursButton.setText(al.get(position).toString());
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> arg0) {
             }
@@ -953,10 +1035,10 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         i.putExtra("UID", book.getUid());
         i.putExtra("FAMILYHISTORY", book.getFamilyHistory());
         i.putExtra("HOSPITALIZATION", book.getHospitalizationSurgery());
+        i.putExtra("FOLLOWUPSTATUS", book.getFollowUpStatus());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         startActivity(i);
-
 
     }
 
@@ -2959,6 +3041,279 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
         });
     }
 
+
+    public File createPDF(ArrayList<RegistrationModel> list) throws FileNotFoundException, DocumentException {
+
+        //create document file
+        Document doc = new Document();
+        File dir, actFile = null;
+        String path;
+        //use to set background color
+        PdfPCell cell;
+        Image bgImage;
+        FileOutputStream fOut;
+        //creating new file path
+        path = Environment.getExternalStorageDirectory().getAbsolutePath() + "/CLIRNet/PDF Files";
+        dir = new File(path);
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        try {
+            Log.e("PDFCreator", "PDF Path: " + path);
+            SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyy", Locale.ENGLISH);
+            actFile = new File(dir, "CLIRNet" + sdf.format(Calendar.getInstance().getTime()) + ".pdf");
+            fOut = new FileOutputStream(actFile);
+            PdfWriter writer = PdfWriter.getInstance(doc, fOut);
+
+            //open the document
+            doc.open();
+            //create table
+            PdfPTable pt = new PdfPTable(3);
+            pt.setWidthPercentage(100);
+            float[] fl = new float[]{20, 45, 35};
+            pt.setWidths(fl);
+            cell = new PdfPCell();
+            cell.setBorder(Rectangle.NO_BORDER);
+
+            //set drawable in cell
+            Drawable myImage = getContext().getResources().getDrawable(R.drawable.cliricon);
+            Bitmap bitmap = ((BitmapDrawable) myImage).getBitmap();
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+            byte[] bitmapdata = stream.toByteArray();
+            try {
+                bgImage = Image.getInstance(bitmapdata);
+                bgImage.setAbsolutePosition(330f, 642f);
+                cell.addElement(bgImage);
+                pt.addCell(cell);
+                cell = new PdfPCell();
+                cell.setBorder(Rectangle.NO_BORDER);
+                cell.addElement(new Paragraph("Patient Data List"));
+
+                cell.addElement(new Paragraph(""));
+                cell.addElement(new Paragraph(""));
+                pt.addCell(cell);
+                cell = new PdfPCell(new Paragraph(""));
+                cell.setBorder(Rectangle.NO_BORDER);
+                pt.addCell(cell);
+
+                PdfPTable pTable = new PdfPTable(1);
+                pTable.setWidthPercentage(100);
+                cell = new PdfPCell();
+                cell.setColspan(1);
+                cell.addElement(pt);
+                pTable.addCell(cell);
+                PdfPTable table = new PdfPTable(9);
+
+                float[] columnWidth = new float[]{20, 30, 40, 30, 30, 40, 40, 40, 30};
+                table.setWidths(columnWidth);
+
+
+                cell = new PdfPCell();
+
+
+                cell.setColspan(6);
+                cell.addElement(pTable);
+                table.addCell(cell);
+                cell = new PdfPCell(new Phrase(" "));
+                cell.setColspan(6);
+                table.addCell(cell);
+                cell = new PdfPCell();
+                cell.setColspan(6);
+
+
+                cell = new PdfPCell(new Phrase("#"));
+
+                table.addCell(cell);
+               /* cell = new PdfPCell(new Phrase("ID"));
+
+                table.addCell(cell);*/
+                cell = new PdfPCell(new Phrase("FIRST NAME"));
+                table.addCell("wrap");
+                cell.setNoWrap(false);
+                table.addCell(cell);
+                cell = new PdfPCell(new Phrase("MIDDLE NAME"));
+                table.addCell("wrap");
+                cell.setNoWrap(false);
+                table.addCell(cell);
+                cell = new PdfPCell(new Phrase("LAST NAME"));
+                table.addCell("wrap");
+                cell.setNoWrap(false);
+                table.addCell(cell);
+                cell = new PdfPCell(new Phrase("AGE"));
+                table.addCell("wrap");
+                cell.setNoWrap(false);
+
+                table.addCell(cell);
+                cell = new PdfPCell(new Phrase("GENDER"));
+                table.addCell("wrap");
+                cell.setNoWrap(false);
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Phrase("MOBILE NUMBER"));
+                table.addCell("wrap");
+                cell.setNoWrap(false);
+                table.addCell(cell);
+
+                cell = new PdfPCell(new Phrase("LANGUAGE"));
+                table.addCell("wrap");
+                cell.setNoWrap(false);
+                table.addCell(cell);
+                cell = new PdfPCell(new Phrase("EMAIL"));
+                table.addCell("wrap");
+                cell.setNoWrap(false);
+                table.addCell(cell);
+
+                //table.setHeaderRows(3);
+                cell = new PdfPCell();
+                cell.setColspan(6);
+                int size = list.size();
+                Log.e("size", "" + size);
+
+                for (int i = 0; i < size; i++) {
+
+                    RegistrationModel registrationModel = list.get(i);
+                    table.addCell(String.valueOf(i));
+                    //table.addCell(registrationModel.getId());
+                    table.addCell(registrationModel.getFirstName());
+                    table.addCell(registrationModel.getMiddleName());
+                    table.addCell(registrationModel.getLastName());
+                    table.addCell(registrationModel.getAge());
+                    table.addCell(registrationModel.getGender());
+                    table.addCell(registrationModel.getMobileNumber());
+                    table.addCell(registrationModel.getLanguage());
+                    table.addCell(registrationModel.getEmail());
+                }
+
+                PdfPTable ftable = new PdfPTable(9);
+                ftable.setWidthPercentage(100);
+                float[] columnWidthaa = new float[]{30, 30, 40, 30, 30, 30, 40, 30, 30};
+                ftable.setWidths(columnWidthaa);
+                cell = new PdfPCell();
+                cell.setColspan(6);
+                ftable.addCell(cell);
+                cell = new PdfPCell(new Phrase("Total Number " + size));
+                cell.setBorder(Rectangle.NO_BORDER);
+
+                ftable.addCell(cell);
+                cell = new PdfPCell(new Phrase(""));
+                cell.setBorder(Rectangle.NO_BORDER);
+
+                ftable.addCell(cell);
+                cell = new PdfPCell(new Phrase(""));
+                cell.setBorder(Rectangle.NO_BORDER);
+
+                ftable.addCell(cell);
+                cell = new PdfPCell(new Phrase(""));
+                cell.setBorder(Rectangle.NO_BORDER);
+
+                ftable.addCell(cell);
+                cell = new PdfPCell(new Phrase(""));
+                cell.setBorder(Rectangle.NO_BORDER);
+
+                ftable.addCell(cell);
+                cell = new PdfPCell(new Phrase(""));
+                cell.setBorder(Rectangle.NO_BORDER);
+
+                ftable.addCell(cell);
+                cell = new PdfPCell(new Paragraph("Footer"));
+                cell.setColspan(6);
+                ftable.addCell(cell);
+                cell = new PdfPCell();
+                cell.setColspan(6);
+                cell.addElement(ftable);
+                table.addCell(cell);
+                Phrase  p = new Phrase("iText in Action Second Edition");
+                cell.setPadding(2);
+                cell.setUseAscender(true);
+                cell.setUseDescender(true);
+                table.addCell(p);
+                doc.add(table);
+                Toast.makeText(getContext().getApplicationContext(), "created PDF", Toast.LENGTH_LONG).show();
+            } catch (DocumentException de) {
+                Log.e("PDFCreator", "DocumentException:" + de);
+            } catch (IOException e) {
+                Log.e("PDFCreator", "ioException:" + e);
+            } finally {
+                doc.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return actFile;
+    }
+
+    private void exportDataDialog(final int positon) {
+        final Dialog dialog = new Dialog(getContext());
+        LayoutInflater factory = LayoutInflater.from(getContext());
+        final View f = factory.inflate(R.layout.export_data_dialog, null);
+         // final int newPosition;
+        /*if(positon!=null && !positon.equals("")){
+            final int  newPosition= Integer.parseInt(positon);
+        }*/
+
+        dialog.setTitle("Do you want to export patient data?");
+        dialog.setCanceledOnTouchOutside(false);
+        dialog.setContentView(f);
+        Button singelExport = (Button) f.findViewById(R.id.single_export);
+        Button allExport = (Button) f.findViewById(R.id.all_export);
+        RadioGroup genderbutton = (RadioGroup) f.findViewById(R.id.radioExport);
+
+
+        genderbutton.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                switch (checkedId) {
+                    case R.id.radioCsv:
+                        //Toast.makeText(getContext(),"Male Selected",Toast.LENGTH_LONG).show();
+                        exportChoice = "CSV";
+                        break;
+                    case R.id.radioPdf:
+                        exportChoice = "PDF";
+                        break;
+                }
+            }
+        });
+        singelExport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                exportDB(positon,exportChoice);
+                dialog.dismiss();
+            }
+        });
+        allExport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                try {
+                    exportDB(exportChoice);
+                    dialog.dismiss();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        dialog.show();
+    }
+    private void insertCell(PdfPTable table, String text, int align, int colspan, Font font){
+
+        //create a new cell with the specified Text and Font
+        PdfPCell cell = new PdfPCell(new Phrase(text.trim(), font));
+        //set the cell alignment
+        cell.setHorizontalAlignment(align);
+        //set the cell column span in case you want to merge two or more cells
+        cell.setColspan(colspan);
+        //in case there is no text and you wan to create an empty row
+        if(text.trim().equalsIgnoreCase("")){
+            cell.setMinimumHeight(10f);
+        }
+        //add the call to the table
+        table.addCell(cell);
+
+    }
 }
+
 
 

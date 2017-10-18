@@ -275,10 +275,9 @@ public class SyncDataService extends Service {
             pat_visit_count = null;
             mUserName = null;
             mPassword = null;
-
         }
 
-        //this will send data to server
+    //this will send data to server
 
     private void sendDataToServer(final String patient_details, final String patient_visits,final String patient_investigation,final String patient_healthLifeStyle,final String associate_data, final String docMemId, final String docId, final int patient_visits_count, final int patient_details_count, final String start_time,final String incompletePrescriptionQueueCount,final String observationsList) {
 
