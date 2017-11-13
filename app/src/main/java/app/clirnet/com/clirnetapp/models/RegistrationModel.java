@@ -1387,20 +1387,7 @@ public class RegistrationModel {
         this.dob_year = dob_year;
     }
 
-    public RegistrationModel(String ecg, String sugar, String sugar_fasting, String acer, String pft, String hba1c, String serem_urea, String lipid_profile_tc, String lipid_profile_tg, String lipid_profile_ldl, String lipid_profile_vhdl, String lipid_profile_hdl) {
-        this.ecg = ecg;
-        this.sugar = sugar;
-        this.sugarFasting = sugar_fasting;
-        this.acer = acer;
-        this.pft = pft;
-        this.hba1c = hba1c;
-        this.seremUrea = serem_urea;
-        this.lipidProfileTc = lipid_profile_tc;
-        this.lipidProfileTg = lipid_profile_tg;
-        this.lipidProfileLdl = lipid_profile_ldl;
-        this.lipidProfileVhdl = lipid_profile_vhdl;
-        this.lipidProfileHdl = lipid_profile_hdl;
-    }
+
 
     public RegistrationModel(String alocholConsumption, String packPerWeek, String stressLevel, String smokerType, String stickCount, String lifeSyle, String lactoseTolerance, String foodPreference, String foodHabit, String excercise, String chewingTobaco, String bingeEating, String allergies, String sexuallyActive, String sticksGapSelected, String pegsGapSelected, String otherTobacoConsumption, String drugConsumption, String otherDrugConsumption, String sleep, String lastSmokeYear, String lastDrinkYear) {
 
@@ -1610,6 +1597,21 @@ public class RegistrationModel {
         this.mobileNumber=pNo;
         this.language=lang;
         this.email=email;
+    }
+
+    public RegistrationModel(String id, String fName, String mName, String lName, String dob, String gender, String age, String pNo, String lang, String email,String actualFollowupDate,String visit_date) {
+        this.pat_id=id;
+        this.firstName=fName;
+        this.middleName=mName;
+        this.lastName=lName;
+        this.dob=dob;
+        this.gender=gender;
+        this.age=age;
+        this.mobileNumber=pNo;
+        this.language=lang;
+        this.email=email;
+        this.actualFollowupDate=actualFollowupDate;
+        this.visit_date=visit_date;
     }
 
 }

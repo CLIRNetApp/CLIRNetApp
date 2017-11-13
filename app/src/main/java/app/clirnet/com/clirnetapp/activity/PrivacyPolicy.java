@@ -7,10 +7,14 @@ import android.view.KeyEvent;
 import android.webkit.WebView;
 
 import app.clirnet.com.clirnetapp.R;
+
+
 @SuppressLint("SetJavaScriptEnabled")
 public class PrivacyPolicy extends AppCompatActivity {
 
     private static final String LOCAL_RESOURCE = "file:///android_asset/privacypolicy.html";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

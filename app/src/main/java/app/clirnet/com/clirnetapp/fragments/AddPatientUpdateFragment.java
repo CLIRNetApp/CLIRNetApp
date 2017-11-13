@@ -16,6 +16,7 @@ import android.support.v7.view.ContextThemeWrapper;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -184,12 +185,12 @@ public class AddPatientUpdateFragment extends Fragment {
     private String strLymphadenopathyDescription;
     private EditText edtInput_spo2;
     private EditText edtInput_respiration_rate;
-    private String strSpo2,strRespirationRate;
+    private String strSpo2, strRespirationRate;
     private String strPallore;
     private String strCyanosis, strTremors, strIcterus, strClubbing, strOedema, strCalfTenderness, strLymphadenopathy;
     private TextView showObservationsData;
     private EditText ediInput_obesity;
-    private String   strObesity;
+    private String strObesity;
 
     private int counttxthemogram = 1;
     private int counttxtLiverFunctionTest = 1;
@@ -255,7 +256,6 @@ public class AddPatientUpdateFragment extends Fragment {
     private String strTch;*/
 
 
-
     public AddPatientUpdateFragment() {
 
     }
@@ -269,11 +269,13 @@ public class AddPatientUpdateFragment extends Fragment {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             strPatientId = getArguments().getString("PATIENTID");
+            Log.e("strPatientId",""+strPatientId);
         }
     }
 
@@ -303,7 +305,7 @@ public class AddPatientUpdateFragment extends Fragment {
 
         textRefredByShow = (TextView) view.findViewById(R.id.txtrefredby);
         textRefredToShow = (TextView) view.findViewById(R.id.txtrefredto);
-         refered = (Button) view.findViewById(R.id.buttonReferrals);
+        refered = (Button) view.findViewById(R.id.buttonReferrals);
         buttonVital = (Button) view.findViewById(R.id.buttonVital);
         Button buttonHistory = (Button) view.findViewById(R.id.buttonHistory);
         buttonHistory.setVisibility(View.GONE);
@@ -330,7 +332,6 @@ public class AddPatientUpdateFragment extends Fragment {
                     showReferedDialogBox();
                     refered.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
-
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
                     refered.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
@@ -348,7 +349,6 @@ public class AddPatientUpdateFragment extends Fragment {
                     addVitalsDialog();
                     buttonVital.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
-
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
                     buttonVital.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground_blue));
@@ -357,7 +357,6 @@ public class AddPatientUpdateFragment extends Fragment {
             }
 
         });
-
 
 
         buttonHistory.setOnClickListener(new View.OnClickListener() {
@@ -373,7 +372,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 sqlController.open();
             }
             appController = new AppController();
-            dbController = SQLiteHandler.getInstance(getContext());
+            dbController = SQLiteHandler.getInstance(getContext().getApplicationContext());
             //This will get all the visit  history of patient
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
             docId = sqlController.getDoctorId();
@@ -384,13 +383,13 @@ public class AddPatientUpdateFragment extends Fragment {
 
 
             if (bannerClass == null) {
-                bannerClass = new BannerClass(getContext());
+                bannerClass = new BannerClass(getContext().getApplicationContext());
             }
             if (lastNamedb == null) {
-                lastNamedb = new LastnameDatabaseClass(getContext());
+                lastNamedb = new LastnameDatabaseClass(getContext().getApplicationContext());
             }
             if (databaseClass == null) {
-                databaseClass = new DatabaseClass(getContext());
+                databaseClass = new DatabaseClass(getContext().getApplicationContext());
             }
 
         } catch (ClirNetAppException | SQLException e) {
@@ -419,7 +418,7 @@ public class AddPatientUpdateFragment extends Fragment {
 
         });
 
-        CheckBox  checkBoxFollowUp = (CheckBox) view.findViewById(R.id.checkBoxFollowUp);
+        CheckBox checkBoxFollowUp = (CheckBox) view.findViewById(R.id.checkBoxFollowUp);
 
         checkBoxFollowUp.setOnClickListener(new View.OnClickListener() {
 
@@ -428,7 +427,7 @@ public class AddPatientUpdateFragment extends Fragment {
                 //is chk checked?
                 if (((CheckBox) v).isChecked()) {
 
-                    strPatientFollowUpStatus="FollowUp";
+                    strPatientFollowUpStatus = "FollowUp";
                 }
             }
         });
@@ -651,14 +650,14 @@ public class AddPatientUpdateFragment extends Fragment {
                         inputnumber.setError(null);
                     }
 
-                    String strVisitDate=visitDate.getText().toString();
-                    Date calDate= appController.stringToDate(strVisitDate);
+                    String strVisitDate = visitDate.getText().toString();
+                    Date calDate = appController.stringToDate(strVisitDate);
                     String dateis = sdf1.format(AppController.addDay1(calDate, val));
                     fodtextshow.setText(dateis);
                     daysSel = value;
                     fowSel = null;
                     monthSel = null;
-                    fodChecked=true;
+                    fodChecked = true;
                     userSellectedDate = dateis;
 
                 } else if (event.getAction() == KeyEvent.ACTION_UP) {
@@ -706,14 +705,14 @@ public class AddPatientUpdateFragment extends Fragment {
                 }
                 int fVal = (int) (val * 7);
 
-                String strVisitDate=visitDate.getText().toString();
-                Date calDate=appController.stringToDate(strVisitDate);
+                String strVisitDate = visitDate.getText().toString();
+                Date calDate = appController.stringToDate(strVisitDate);
                 String dateis = sdf1.format(AppController.addDay1(calDate, fVal));
                 userSellectedDate = dateis;
                 fowSel = value;
                 daysSel = null;
                 monthSel = null;
-                fodChecked=true;
+                fodChecked = true;
                 fodtextshow.setText(dateis);
             }
         });
@@ -746,14 +745,14 @@ public class AddPatientUpdateFragment extends Fragment {
                     inputnumber.setError(null);
                 }
 
-                String strVisitDate=visitDate.getText().toString();
-                Date calDate=appController.stringToDate(strVisitDate);
+                String strVisitDate = visitDate.getText().toString();
+                Date calDate = appController.stringToDate(strVisitDate);
                 String dateis = sdf1.format(AppController.addMonth(calDate, Integer.parseInt(value)));
                 userSellectedDate = dateis;
                 monthSel = value;
                 daysSel = null;
                 fowSel = null;
-                fodChecked=true;
+                fodChecked = true;
                 fodtextshow.setText(dateis);
             }
         });
@@ -771,7 +770,7 @@ public class AddPatientUpdateFragment extends Fragment {
                     daysSel = null;
                     fowSel = null;
                     monthSel = null;
-                    fodChecked=false;
+                    fodChecked = false;
                     CleanFollowup();
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -887,7 +886,7 @@ public class AddPatientUpdateFragment extends Fragment {
 
         i.putExtra("ACTION_PATH", "HomeFragment");
         i.putExtra("HEADER", "goto");//dummy text to activity
-       // i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);  // it will directly jump to navigation activity with called fragment
+        // i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);  // it will directly jump to navigation activity with called fragment
 
         startActivity(i);
         getActivity().finish();
@@ -1130,7 +1129,6 @@ public class AddPatientUpdateFragment extends Fragment {
                 strReferredTo1Name = (String) parent.getItemAtPosition(position);
 
 
-
                 try {
                     if (nameRefredTo1Spinner.getSelectedItem() != "Select Referrals") {
 
@@ -1149,11 +1147,11 @@ public class AddPatientUpdateFragment extends Fragment {
                             referredtoSpeciality1.setText(strSpeciality);
                         }
 
-                        if(position > 0){
-                            nameReferralsList.remove(position);
+                       /* if (position > 0) {
+                            nameReferralsList.remove(position-1);
                             nameReferralsList.remove(strReferredTo1Name);
                             referralName.notifyDataSetChanged();
-                        }
+                        }*/
                     }
                 } catch (ClirNetAppException e) {
                     e.printStackTrace();
@@ -1346,8 +1344,8 @@ public class AddPatientUpdateFragment extends Fragment {
             edtLowBp = (EditText) f.findViewById(R.id.lowBp);
             edtInput_temp = (EditText) f.findViewById(R.id.input_temp);
             edtInput_spo2 = (EditText) f.findViewById(R.id.input_spo2);
-            edtInput_respiration_rate= (EditText) f.findViewById(R.id.input_respiration_rate);
-            ediInput_obesity=(EditText)f.findViewById(R.id.input_obesity);
+            edtInput_respiration_rate = (EditText) f.findViewById(R.id.input_respiration_rate);
+            ediInput_obesity = (EditText) f.findViewById(R.id.input_obesity);
 
             dialog.setTitle(" Add Vitals ");
             dialog.setCanceledOnTouchOutside(false);
@@ -1383,10 +1381,10 @@ public class AddPatientUpdateFragment extends Fragment {
 
                 edtInput_temp.setText(strTemp);
             }
-            if (strSpo2 != null && !strSpo2.equals("") ) {
+            if (strSpo2 != null && !strSpo2.equals("")) {
                 edtInput_spo2.setText(strSpo2);
             }
-            if (strRespirationRate != null && !strRespirationRate.equals("") ) {
+            if (strRespirationRate != null && !strRespirationRate.equals("")) {
                 edtInput_respiration_rate.setText(strRespirationRate);
             }
             if (strObesity != null && !strObesity.equals("") && strObesity.length() > 0) {
@@ -1413,9 +1411,9 @@ public class AddPatientUpdateFragment extends Fragment {
 
                     strHeight = edtInput_height.getText().toString().trim();
                     strBmi = edtInput_bmi.getText().toString().trim();
-                    strSpo2=edtInput_spo2.getText().toString();
-                    strRespirationRate=edtInput_respiration_rate.getText().toString();
-                    strObesity =ediInput_obesity.getText().toString();
+                    strSpo2 = edtInput_spo2.getText().toString();
+                    strRespirationRate = edtInput_respiration_rate.getText().toString();
+                    strObesity = ediInput_obesity.getText().toString();
 
                     if (strTemp.length() > 0) {
                         double valueTemp = Double.parseDouble(strTemp);
@@ -1424,6 +1422,78 @@ public class AddPatientUpdateFragment extends Fragment {
                             return;
                         } else {
                             edtInput_temp.setError(null);
+                        }
+                    }
+
+                    if (strWeight.length() > 0) {
+                        double valueWeight = Double.parseDouble(strWeight);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valueWeight > 250) {
+                            edtInput_weight.setError("The maximum Weight that can be recorded 250 kg");
+                            return;
+                        } else {
+                            edtInput_weight.setError(null);
+                        }
+                    }
+                    if (strHeight.length() > 0) {
+                        double valueHeight = Double.parseDouble(strHeight);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valueHeight > 240) {
+                            edtInput_height.setError("The maximum height that can be recorded 240 cm");
+                            return;
+                        } else {
+                            edtInput_height.setError(null);
+                        }
+                    }
+                    if (strPulse.length() > 0) {
+                        double valuePulse = Double.parseDouble(strPulse);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valuePulse > 150) {
+                            edtInput_pulse.setError("The maximum Pulse that can be recorded 150");
+                            return;
+                        } else {
+                            edtInput_pulse.setError(null);
+                        }
+                    }
+                    if (strSpo2.length() > 0) {
+                        double valueSpo2 = Double.parseDouble(strSpo2);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valueSpo2 > 100) {
+                            edtInput_spo2.setError("The maximum SPO2 that can be recorded 100 mmHg");
+                            return;
+                        } else {
+                            edtInput_spo2.setError(null);
+                        }
+                    }
+                    if (strBp.length() > 0) {
+                        double valueBp = Double.parseDouble(strBp);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valueBp > 400) {
+                            edtInput_bp.setError("The maximum Systole that can be recorded 400 mmHg");
+                            return;
+                        } else {
+                            edtInput_bp.setError(null);
+                        }
+                    }
+                    if (strLowBp.length() > 0) {
+                        double valueDiastole = Double.parseDouble(strLowBp);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valueDiastole > 200) {
+                            edtLowBp.setError("The maximum Diastole that can be recorded 200 mmHg");
+                            return;
+                        } else {
+                            edtLowBp.setError(null);
+                        }
+                    }
+
+                    if (strRespirationRate.length() > 0) {
+                        double valueRespRate = Double.parseDouble(strRespirationRate);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valueRespRate > 30) {
+                            edtInput_respiration_rate.setError("The maximum Respiration Rate that can be recorded 30");
+                            return;
+                        } else {
+                            edtInput_respiration_rate.setError(null);
                         }
                     }
                     if (strWeight != null && strWeight.length() > 0) {
@@ -1467,8 +1537,8 @@ public class AddPatientUpdateFragment extends Fragment {
                     if (strObesity != null && !strObesity.equals("") && strObesity.length() > 0) {
                         sbVitals.append("Obesity - ").append(strObesity).append("  ;  ");
                     }
-                    if (sbVitals != null&& sbVitals.length()>1) {
-                       showVitalsDataLayout.setVisibility(View.VISIBLE);
+                    if (sbVitals != null && sbVitals.length() > 1) {
+                        showVitalsDataLayout.setVisibility(View.VISIBLE);
                     }
 
                     showVitalsData.setText(sbVitals);
@@ -1493,7 +1563,7 @@ public class AddPatientUpdateFragment extends Fragment {
                                       int before, int count) {
                 String bmi = appController.CalculateBMI(edtInput_weight.getText().toString(), edtInput_height.getText().toString());
                 edtInput_bmi.setText(bmi);
-                strObesity =appController.getObesity(bmi);
+                strObesity = appController.getObesity(bmi);
                 ediInput_obesity.setText(strObesity);
             }
         });
@@ -1512,7 +1582,7 @@ public class AddPatientUpdateFragment extends Fragment {
                                       int before, int count) {
                 String bmi = appController.CalculateBMI(edtInput_weight.getText().toString(), edtInput_height.getText().toString());
                 edtInput_bmi.setText(bmi);
-                strObesity =appController.getObesity(bmi);
+                strObesity = appController.getObesity(bmi);
                 ediInput_obesity.setText(strObesity);
             }
         });
@@ -1527,21 +1597,21 @@ public class AddPatientUpdateFragment extends Fragment {
         String strSymptoms = edtSymptoms.getText().toString().trim();
 
         List symptoms = edtSymptoms.getObjects();
-        String [] arraySymptoms = (String[]) symptoms.toArray(new String[symptoms.size()]);
+        String[] arraySymptoms = (String[]) symptoms.toArray(new String[symptoms.size()]);
         String sympt = Arrays.toString(arraySymptoms);
-        strSymptoms=strSymptoms.replace(",,","");
+        strSymptoms = strSymptoms.replace(",,", "");
 
-        String correctSymptoms=sympt.substring(1,sympt.length()-1);
+        String correctSymptoms = sympt.substring(1, sympt.length() - 1);
         strSymptoms = correctSymptoms + strSymptoms;
 
         String strDignosis = edtDignosis.getText().toString().trim();
 
-        List dignosis= edtDignosis.getObjects();
-        String [] diagonosArray = (String[]) dignosis.toArray(new String[dignosis.size()]);
+        List dignosis = edtDignosis.getObjects();
+        String[] diagonosArray = (String[]) dignosis.toArray(new String[dignosis.size()]);
         String diagonos = Arrays.toString(diagonosArray);
-        strDignosis=strDignosis.replace(",,","");
+        strDignosis = strDignosis.replace(",,", "");
 
-        String correctDignosis=diagonos.substring(1,diagonos.length()-1);
+        String correctDignosis = diagonos.substring(1, diagonos.length() - 1);
         strDignosis = correctDignosis + strDignosis;
 
         userSellectedDate = fodtextshow.getText().toString();
@@ -1552,8 +1622,8 @@ public class AddPatientUpdateFragment extends Fragment {
             Toast.makeText(getContext(), "Please enter at least 1 symptom or diagnosis", Toast.LENGTH_LONG).show();
             return;
         }
-        if(!fodChecked){
-            if(!enterNumberForFod.equals("")){
+        if (!fodChecked) {
+            if (!enterNumberForFod.equals("")) {
                 Toast.makeText(getContext(), "Please select measure of time for follow up date", Toast.LENGTH_LONG).show();
                 return;
             }
@@ -1613,10 +1683,17 @@ public class AddPatientUpdateFragment extends Fragment {
         String record_source = "Add Patient Update";
 
         dbController.addPatientNextVisitRecord(visit_id, strPatientId, userSellectedDate, daysSel, fowSel, monthSel, clinical_note, prescriptionImgPath, visit_date, docId, doctor_membership_number, added_on, addedTime, flag, added_by, action, patientInfoType,
-                strWeight, strPulse, strBp, strLowBp, strTemp, strSymptoms, strDignosis, strHeight, strBmi, strReferedBy, strReferedTo,strPatientFollowUpStatus, record_source,strSpo2,strRespirationRate, strObesity);
+                strWeight, strPulse, strBp, strLowBp, strTemp, strSymptoms, strDignosis, strHeight, strBmi, strReferedBy, strReferedTo, strPatientFollowUpStatus, record_source, strSpo2, strRespirationRate, strObesity);
 
         dbController.addInvestigation(strPatientId, visit_id, strSugar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC
                 , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft, flag);
+
+        try {
+            if(prescriptionImgPath!=null)
+                dbController.addImages(strPatientId, visit_id, prescriptionImgPath);
+        } catch (ClirNetAppException e) {
+            e.printStackTrace();
+        }
 
         /*dbController.addInvestigation(strPatientId, visit_id, strSugar, strSugarFasting, strHbA1c, strAcer, strSerumUrea, strLipidHDL, strLipidTC,strTch
                 , strLipidTG, strLipidLDL, strLipidVHDL, strEcg, strPft,strHb,strPlateletCount,strEsr,strDcl,strDcn ,strDce,strDcm,strDcb,
@@ -1708,56 +1785,67 @@ public class AddPatientUpdateFragment extends Fragment {
         addedTime = null;
         addedOnDate = null;
         specialityArray = null;
-        buttonObservations= null;
-        strPatientFollowUpStatus=null;
-        strPallorDescription= null;
-        strCyanosisDescription= null;
-        strTremorsDescription= null;
-        strIcterusDescription= null;
-        strClubbingDescription= null;
-        strOedemaDescription= null;
-        strCalfTendernessDescription= null;
-        strLymphadenopathyDescription= null;
-        edtInput_spo2=null;
-        edtInput_respiration_rate=null;
+        buttonObservations = null;
+        strPatientFollowUpStatus = null;
+        strPallorDescription = null;
+        strCyanosisDescription = null;
+        strTremorsDescription = null;
+        strIcterusDescription = null;
+        strClubbingDescription = null;
+        strOedemaDescription = null;
+        strCalfTendernessDescription = null;
+        strLymphadenopathyDescription = null;
+        edtInput_spo2 = null;
+        edtInput_respiration_rate = null;
 
-        strSpo2=null;strRespirationRate=null;
-        strPallore=null;
-        strCyanosis=null; strTremors=null; strIcterus=null;strClubbing=null; strOedema=null; strCalfTenderness=null;
-        strLymphadenopathy=null;showObservationsData=null;
-        sbVitals= null;sbObservations =null;sbInvestigations=null;
-        ediInput_obesity=null;
-        strObesity=null;
-        showInvestigationData=null;showVitalsData=null;showObservationsData=null;
-        strPft=null;
-        strLipidTC=null;
-        strLipidTG=null;
-        strLipidLDL=null;
-        strLipidVHDL=null;
-        strLipidHDL=null;
-        strSugar =null;
-        strHbA1c=null;
-        strSerumUrea=null;
-        strAcer=null;
-        buttonInvestigation=null;
-        strVisitId=null;
+        strSpo2 = null;
+        strRespirationRate = null;
+        strPallore = null;
+        strCyanosis = null;
+        strTremors = null;
+        strIcterus = null;
+        strClubbing = null;
+        strOedema = null;
+        strCalfTenderness = null;
+        strLymphadenopathy = null;
+        showObservationsData = null;
+        sbVitals = null;
+        sbObservations = null;
+        sbInvestigations = null;
+        ediInput_obesity = null;
+        strObesity = null;
+        showInvestigationData = null;
+        showVitalsData = null;
+        showObservationsData = null;
+        strPft = null;
+        strLipidTC = null;
+        strLipidTG = null;
+        strLipidLDL = null;
+        strLipidVHDL = null;
+        strLipidHDL = null;
+        strSugar = null;
+        strHbA1c = null;
+        strSerumUrea = null;
+        strAcer = null;
+        buttonInvestigation = null;
+        strVisitId = null;
 
-        hemogramlayout=null;
-        liverFunctionlayout=null;
-        lipidProfilelayout=null;
-        diabeticlayout=null;
-        urineRoutineExaminationlayout=null;
-        rftlayout=null;
-        thyroidProfilelayout=null;
-        txthemogram=null;
-        txtLiverFunctionTest=null;
-        txtLipidProfile=null;
-        txtDiabeticProfile=null;
-        txtUrineRoutineExamination=null;
-        txtRft=null;
-        txtThyroidProfile=null;
-        refered=null;
-        refered=null;
+        hemogramlayout = null;
+        liverFunctionlayout = null;
+        lipidProfilelayout = null;
+        diabeticlayout = null;
+        urineRoutineExaminationlayout = null;
+        rftlayout = null;
+        thyroidProfilelayout = null;
+        txthemogram = null;
+        txtLiverFunctionTest = null;
+        txtLipidProfile = null;
+        txtDiabeticProfile = null;
+        txtUrineRoutineExamination = null;
+        txtRft = null;
+        txtThyroidProfile = null;
+        refered = null;
+        refered = null;
     }
 
     public void getViewPager(ViewPager viewPager) {
@@ -1864,7 +1952,7 @@ public class AddPatientUpdateFragment extends Fragment {
             edtInput_sugarfasting.setText(strSugarFasting);
         if (strHbA1c != null && !strHbA1c.equals("")) input_hba1c.setText(strHbA1c);
         if (strSerumUrea != null && !strSerumUrea.equals("")) input_seremUrea.setText(strSerumUrea);
-       if (strAcer != null && !strAcer.equals("")) input_acer.setText(strAcer);
+        if (strAcer != null && !strAcer.equals("")) input_acer.setText(strAcer);
         /*if (strHb != null && !strHb.equals(""))input_hb.setText(strHb);
         if (strPlateletCount != null && !strPlateletCount.equals("")) input_plateletcount.setText(strPlateletCount);
         if (strEsr != null && !strEsr.equals(""))input_esr.setText(strEsr);
@@ -2079,8 +2167,8 @@ public class AddPatientUpdateFragment extends Fragment {
                 if (strLipidVHDL != null && strLipidVHDL.length() > 0) {
                     sbInvestigations.append("VLDL - ").append(strLipidVHDL).append("  ;  ");
                 }
-                if(sbInvestigations!=null && sbInvestigations.length()>1){
-                   showshowInvestigationDataLayout.setVisibility(View.VISIBLE);
+                if (sbInvestigations != null && sbInvestigations.length() > 1) {
+                    showshowInvestigationDataLayout.setVisibility(View.VISIBLE);
                     showInvestigationData.setText(sbInvestigations);
                 }
 
@@ -2094,6 +2182,7 @@ public class AddPatientUpdateFragment extends Fragment {
         dialog.show();
 
     }
+
     private void showObservationsDialog() {
 
         final Dialog dialog;
@@ -2141,14 +2230,16 @@ public class AddPatientUpdateFragment extends Fragment {
         final EditText calfTendernessDescription = (EditText) f.findViewById(R.id.calfTendernessDescription);
         final EditText lymphadenopathyDescription = (EditText) f.findViewById(R.id.lymphadenopathyDescription);
 
-        if(strPallorDescription!=null)pallorDescription.setText(strPallorDescription);
-        if(strCyanosisDescription!=null)cyanosisDescription.setText(strCyanosisDescription);
-        if(strTremorsDescription!=null)tremorsDescription.setText(strTremorsDescription);
-        if(strIcterusDescription!=null)icterusDescription.setText(strIcterusDescription);
-        if(strClubbingDescription!=null)clubbingDescription.setText(strClubbingDescription);
-        if(strOedemaDescription!=null)oedemaDescription.setText(strOedemaDescription);
-        if(strCalfTendernessDescription!=null)calfTendernessDescription.setText(strCalfTendernessDescription);
-        if(strLymphadenopathyDescription!=null)lymphadenopathyDescription.setText(strLymphadenopathyDescription);
+        if (strPallorDescription != null) pallorDescription.setText(strPallorDescription);
+        if (strCyanosisDescription != null) cyanosisDescription.setText(strCyanosisDescription);
+        if (strTremorsDescription != null) tremorsDescription.setText(strTremorsDescription);
+        if (strIcterusDescription != null) icterusDescription.setText(strIcterusDescription);
+        if (strClubbingDescription != null) clubbingDescription.setText(strClubbingDescription);
+        if (strOedemaDescription != null) oedemaDescription.setText(strOedemaDescription);
+        if (strCalfTendernessDescription != null)
+            calfTendernessDescription.setText(strCalfTendernessDescription);
+        if (strLymphadenopathyDescription != null)
+            lymphadenopathyDescription.setText(strLymphadenopathyDescription);
 
         if (strPallore != null && !strPallore.equals(""))
             switch (strPallore) {
@@ -2220,6 +2311,7 @@ public class AddPatientUpdateFragment extends Fragment {
                     cbCalfTendernessNo.setChecked(true);
                     break;
             }
+
         if (strLymphadenopathy != null && !strLymphadenopathy.equals(""))
             switch (strLymphadenopathy) {
                 case "Yes":
@@ -2508,13 +2600,13 @@ public class AddPatientUpdateFragment extends Fragment {
 
                 showObservationsData();
 
-                if(sbObservations!=null && sbObservations.length()>1){
-                  //  labelshowObservationsData.setVisibility(View.VISIBLE);
+                if (sbObservations != null && sbObservations.length() > 1) {
+                    //  labelshowObservationsData.setVisibility(View.VISIBLE);
                 }
 
 
-                dbController.addObservations(strPatientId, strVisitId, strPallore, strPallorDescription, strCyanosis, strCyanosisDescription, strTremors, strTremorsDescription, strIcterus,strIcterusDescription
-                        , strClubbing, strClubbingDescription, strOedema, strOedemaDescription, strCalfTenderness,strCalfTendernessDescription, strLymphadenopathy,strLymphadenopathyDescription,new AppController().getDateTimeddmmyyyy(),flag);
+                dbController.addObservations(strPatientId, strVisitId, strPallore, strPallorDescription, strCyanosis, strCyanosisDescription, strTremors, strTremorsDescription, strIcterus, strIcterusDescription
+                        , strClubbing, strClubbingDescription, strOedema, strOedemaDescription, strCalfTenderness, strCalfTendernessDescription, strLymphadenopathy, strLymphadenopathyDescription, new AppController().getDateTimeddmmyyyy(), flag);
 
                 dialog.dismiss();
             }
@@ -2522,38 +2614,72 @@ public class AddPatientUpdateFragment extends Fragment {
         dialog.show();
 
     }
+
     private void showObservationsData() {
 
         if (strPallore != null && strPallore.length() > 0) {
-            sbObservations.append("Pallor - ").append(strPallore).append(" (").append(strPallorDescription).append(")").append("  ;  ");
+            sbObservations.append("Pallor - ").append(strPallore);
+            if (strPallorDescription != null && !strPallorDescription.equals(""))
+                sbObservations.append(" (").append(strPallorDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
 
         if (strCyanosis != null && strCyanosis.length() > 0) {
-            sbObservations.append("Cyanosis - ").append(strCyanosis).append(" (").append(strCyanosisDescription).append(")").append("  ;  ");
+            sbObservations.append("Cyanosis - ").append(strCyanosis);
+            if (strCyanosisDescription != null && !strCyanosisDescription.equals(""))
+                sbObservations.append(" (").append(strCyanosisDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
 
         if (strTremors != null && strTremors.length() > 0) {
-            sbObservations.append("Tremors - ").append(strTremors).append(" (").append(strTremorsDescription).append(")").append("  ;  ");
+            sbObservations.append("Tremors - ").append(strTremors);
+            if (strTremorsDescription != null && !strTremorsDescription.equals(""))
+                sbObservations.append(" (").append(strTremorsDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
 
         if (strIcterus != null && strIcterus.length() > 0) {
-            sbObservations.append("Icterus - ").append(strIcterus).append(" (").append(strIcterusDescription).append(")").append("  ;  ");
+            sbObservations.append("Icterus - ").append(strIcterus);
+            if (strIcterusDescription != null && !strIcterusDescription.equals(""))
+                sbObservations.append(" (").append(strIcterusDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
         if (strClubbing != null && strClubbing.length() > 0) {
-            sbObservations.append("Clubbing - ").append(strClubbing).append(" (").append(strClubbingDescription).append(")").append("  ;  ");
+            sbObservations.append("Clubbing - ").append(strClubbing);
+            if (strClubbingDescription != null && !strClubbingDescription.equals(""))
+                sbObservations.append(" (").append(strClubbingDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
         if (strOedema != null && strOedema.length() > 0) {
-            sbObservations.append("Oedema - ").append(strOedema).append(" (").append(strOedemaDescription).append(")").append("  ;  ");
+            sbObservations.append("Oedema - ").append(strOedema);
+            if (strOedemaDescription != null && !strOedemaDescription.equals(""))
+                sbObservations.append(" (").append(strOedemaDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
         if (strCalfTenderness != null && strCalfTenderness.length() > 0) {
-            sbObservations.append("Tenderness - ").append(strCalfTenderness).append(" (").append(strCalfTendernessDescription).append(")").append("  ;  ");
+            sbObservations.append("Tenderness - ").append(strCalfTenderness);
+            if (strCalfTendernessDescription != null && !strCalfTendernessDescription.equals(""))
+                sbObservations.append(" (").append(strCalfTendernessDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
         if (strLymphadenopathy != null && strLymphadenopathy.length() > 0) {
-            sbObservations.append("Lymphadenopathy - ").append(strLymphadenopathy).append(" (").append(strLymphadenopathyDescription).append(")").append("  ;  ");
+            sbObservations.append("Lymphadenopathy - ").append(strLymphadenopathy);
+            if (strLymphadenopathyDescription != null && !strLymphadenopathyDescription.equals(""))
+                sbObservations.append(" (").append(strLymphadenopathyDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
-        showObservationsDataLayout.setVisibility(View.VISIBLE);
+
+        if (sbObservations != null && sbObservations.length() > 1) {
+            showObservationsDataLayout.setVisibility(View.VISIBLE);
+            showObservationsDataLayout.setVisibility(View.VISIBLE);
+        } else {
+            showObservationsDataLayout.setVisibility(View.GONE);
+        }
+
         showObservationsData.setText(sbObservations);
+
     }
+
     private void setOnClickListner() {
 
 

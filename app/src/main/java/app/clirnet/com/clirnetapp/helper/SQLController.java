@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 
 import app.clirnet.com.clirnetapp.models.Counts;
+import app.clirnet.com.clirnetapp.models.Images;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
 import app.clirnet.com.clirnetapp.models.TopTenAilmentModel;
@@ -22,11 +24,9 @@ import app.clirnet.com.clirnetapp.reports.GenderWiseDataModel;
 //this class is most imp class which used to query the database
 public class SQLController {
 
-
     private final Context ourcontext;
     private SQLiteHandler dbHelper;
     private SQLiteDatabase database;
-
 
     public SQLController(Context c) {
         ourcontext = c;
@@ -159,7 +159,7 @@ public class SQLController {
     }
 
     //get all the patient imp data from db, via fod which will used in Consultation fragments and home fragments
-    public ArrayList<RegistrationModel> getPatientListnew(String date) throws ClirNetAppException {
+   /* public ArrayList<RegistrationModel> getPatientListnew(String date) throws ClirNetAppException {
 
         ArrayList<RegistrationModel> hotelList = new ArrayList<>();
         SQLiteDatabase database1 = null;
@@ -198,7 +198,7 @@ public class SQLController {
         }
 
         return hotelList;
-    }
+    }*/
     //get all the patient imp data from db, which will used in Consultation fragments and home fragments
     public ArrayList<RegistrationModel> getPatientListVisitDateSearch(String date) throws ClirNetAppException {
 
@@ -308,6 +308,7 @@ public class SQLController {
 
         Set<RegistrationModel> pList1 = new LinkedHashSet<>();
         try {
+
             //open();
             String selectQuery = "select p.patient_id,p.first_name,p.middle_name,p.last_name ,p.dob ,p.gender,p.age,p.phonenumber,p.language,p.photo,ph.follow_up_date,ph.days,ph.months,ph.weeks,ph.ailment,ph.prescription,ph.clinical_notes,ph.added_on,ph.modified_on,ph.actual_follow_up_date,ph.action, p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,p.alternate_no,p.alternate_phone_type,p.phone_type,ph.visit_date,p.email,p.uid,p.family_history,p.hospitalization_surgery,p.dob_year,ph.follow_up_status  from  patient p  LEFT JOIN patient_history ph ON p.patient_id = ph.patient_id LEFT JOIN table_investigation ti ON ph.key_visit_id = ti.key_visit_id LEFT JOIN health_and_lifestyle hl ON p.patient_id = hl.patient_id LEFT JOIN observation obs ON obs.key_visit_id = ph.key_visit_id  where p.patient_id=ph.patient_id";//and  p.first_name like '%" + fname + "%' and p.last_name like '%" + lname + "%'";
 
@@ -717,60 +718,6 @@ public class SQLController {
         return numRows;
     }
 
-    public ArrayList<RegistrationModel> getPatientListForPhoneNumberFilter(String number, int page, int limit) throws ClirNetAppException {
-
-        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
-        SQLiteDatabase db1 = null;
-        Cursor cursor = null;
-        try {                                                                                                                                                                                                                                                                                                                                                                                          //p.first_name like '%" + fname + "%'
-
-            String countQuery = "select COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id and p.phonenumber like '%" + number + "%' order by ph.key_visit_id desc ";
-
-            String selectQuery = "select p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,\n" +
-                    " p.age,p.phonenumber,p.gender,p.language,p.photo,\n" +
-                    " ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,\n" +
-                    " ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,\n" +
-                    " ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,\n" +
-                    " p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,\n" +
-                    " ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,\n" +
-                    " p.uid,ph.drugs,p.alternate_no,ph.height,ph.bmi,\n" +
-                    " ph.sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,\n" +
-                    " ph.refered_by,ph.refered_to,p.email,ph.follow_up_status,ph.spo2,ph.respiration,p.family_history,p.hospitalization_surgery,ph.obesity,p.dob_year from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like '%" + number + "%' group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc limit " + page + " , " + limit + ";";
-
-            new Counts().setCountQueryforHomeFragmentNoFilter(countQuery);
-
-            db1 = dbHelper.getReadableDatabase();
-            cursor = db1.rawQuery(selectQuery, null);
-
-            // looping through all rows and adding to list
-            if (cursor.moveToFirst()) {
-                do {
-
-                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
-                            cursor.getString(7), cursor.getString(8),
-                            cursor.getString(9), cursor.getString(10), cursor.getString(11), cursor.getString(12), cursor.getString(13), cursor.getString(14), cursor.getString(15),
-                            cursor.getString(16), cursor.getString(17), cursor.getString(18), cursor.getString(19), cursor.getString(20), cursor.getString(21),
-                            cursor.getString(22), cursor.getString(23), cursor.getString(24), cursor.getString(25), cursor.getString(26), cursor.getString(27), cursor.getString(28), cursor.getString(29), cursor.getString(30), cursor.getString(31),
-                            cursor.getString(32), cursor.getString(33), cursor.getString(34), cursor.getString(35), cursor.getString(36), cursor.getString(37), cursor.getString(38),
-                            cursor.getString(39), cursor.getString(40), cursor.getString(41), cursor.getString(42), cursor.getString(43), cursor.getString(44), cursor.getString(45), cursor.getString(46), cursor.getString(47),cursor.getString(48),cursor.getString(49),cursor.getString(50),cursor.getString(51),cursor.getString(52),cursor.getString(53),cursor.getInt(54));
-
-                    hotelList.add(user);
-
-                } while (cursor.moveToNext());
-            }
-        } catch (Exception e) {
-            throw new ClirNetAppException("Something went wrong while getting getPatientListForPhoneNumberFilter");
-        } finally {
-            if (cursor != null) {
-                cursor.close();
-            }
-            if (db1 != null) {
-                db1.close();
-            }
-        }
-        return hotelList;
-
-    }
 
     public int getCountResultforgetPatientListForPhoneNumberFilter() {
 
@@ -1242,6 +1189,7 @@ public class SQLController {
     }
 
     public String getAsyncvalue() throws ClirNetAppException {
+
         Cursor cursor = null;
         String returnString = null; // Your default if none is found
         SQLiteDatabase db1 = null;
@@ -1269,7 +1217,9 @@ public class SQLController {
                 db1.close();
             }
         }
+        Log.e("returnString",""+returnString);
         return returnString;
+
     }
 
     //This will close the Cursor and Database 1-11-2016
@@ -1316,6 +1266,7 @@ public class SQLController {
         SQLiteDatabase db1 = null;
         Cursor cursor = null;
         try {
+            //"yyyy-MM-dd";
 
             String selectQuery = "SELECT pvd.visit_date , count( * ) AS tot FROM patient dpr, patient_history pvd WHERE dpr.patient_id = pvd.patient_id AND" +
                     " date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) Between Date('" + fromdate + "') AND Date('" + todate + "') GROUP BY pvd.visit_date";
@@ -3175,6 +3126,23 @@ public class SQLController {
         }
     }
 
+    private String makePlaceholders1(String[] list) {
+
+        int len=list.length;
+
+        if (list.length < 1) {
+            // It will lead to an invalid query anyway ..
+            throw new RuntimeException("No placeholders");
+        } else {
+            StringBuilder sb = new StringBuilder(len * 2 - 1);
+            sb.append(""+list[0]);
+            for (int i = 1; i < len; i++) {
+                sb.append(","+list[i]);
+            }
+            return sb.toString();
+        }
+    }
+
     public  ArrayList<Counts> getMostConnectedDr(String columnName) throws ClirNetAppException {
 
         ArrayList<Counts> list = new ArrayList<>();
@@ -3673,7 +3641,655 @@ public class SQLController {
 
 
     }
+
+    public HashMap<String, String> getTestData(String patId) throws ClirNetAppException {
+        HashMap<String, String> map = new HashMap<>();
+
+        String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.prescription,ph.clinical_notes,ph.visit_date,ph.key_visit_id,ph.actual_follow_up_date,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,ph.weight,ph.pulse,ph.bp_high,ph.bp_low,ph.temperature,ph.sugar,ph.symptoms,ph.diagnosis,p.uid,ph.drugs,p.alternate_no,ph.height,ph.bmi,sugar_fasting,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,ph.refered_by,ph.refered_to,p.email,ph.follow_up_status,ph.spo2,ph.respiration,p.family_history,p.hospitalization_surgery,ph.obesity,p.dob_year  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where p.patient_id ="+patId+" order by ph.key_visit_id desc limit 1";
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    map.put("ID", cursor.getString(0));
+                    map.put("FIRSTTNAME", cursor.getString(1));
+                    map.put("MIDDLENAME", cursor.getString(2));
+                    map.put("LASTNAME", cursor.getString(3));
+                    map.put("DOB", cursor.getString(4));
+                    map.put("AGE", cursor.getString(5));
+                    map.put("PHONE", cursor.getString(6));
+                    map.put("GENDER", cursor.getString(7));
+                    map.put("LANGUAGE", cursor.getString(8));
+                    map.put("PATIENTPHOTO", cursor.getString(9));
+                    map.put("FOD", cursor.getString(10));//this data is of no use
+                    map.put("FOLLOWDAYS", cursor.getString(11));
+                    map.put("FOLLOWWEEKS", cursor.getString(12));
+                    map.put("FOLLOWMONTH", cursor.getString(13));
+                    map.put("PRESCRIPTION", cursor.getString(14));
+                    map.put("CLINICALNOTES", cursor.getString(15));
+
+                    map.put("VISITDATE", cursor.getString(16));
+                    map.put("VISITID", cursor.getString(17));
+                    map.put("ACTUALFOD", cursor.getString(18));
+                    map.put("ADDRESS", cursor.getString(19));
+                    map.put("CITYORTOWN", cursor.getString(20));
+                    map.put("DISTRICT", cursor.getString(21));
+                    map.put("PIN", cursor.getString(22));
+                    map.put("STATE", cursor.getString(23));
+                    map.put("WEIGHT", cursor.getString(24));
+                    map.put("PULSE", cursor.getString(25));
+                    map.put("BP", cursor.getString(26));
+
+                    map.put("LOWBP", cursor.getString(27));
+                    map.put("TEMPRATURE", cursor.getString(28));
+                    map.put("SUGAR", cursor.getString(29));
+                    map.put("SYMPTOMS", cursor.getString(30));
+                    map.put("DIGNOSIS", cursor.getString(31));
+                    map.put("UID", cursor.getString(32));
+                    map.put("DRUGS", cursor.getString(33));
+                    map.put("ALTERNATENUMBER", cursor.getString(34));
+                    map.put("HEIGHT", cursor.getString(35));
+                    map.put("BMI", cursor.getString(36));
+                    map.put("SUGARFASTING", cursor.getString(37));
+                    map.put("ALTERNATENUMBERTYPE", cursor.getString(38));
+                    map.put("PHONETYPE", cursor.getString(39));
+                    map.put("ISDCODE", cursor.getString(40));
+                    map.put("ALTERNATEISDCODE", cursor.getString(41));
+                    map.put("REFEREDBY", cursor.getString(42));
+                    map.put("REFEREDTO", cursor.getString(43));
+                    map.put("EMAIL", cursor.getString(44));
+                    map.put("FOLLOWUPSTATUS", cursor.getString(45));
+
+                    map.put("SPO2", cursor.getString(46));
+                    map.put("RESPIRATION", cursor.getString(47));
+                    map.put("FAMILYHISTORY", cursor.getString(48));
+                    map.put("HOSPITALIZATION", cursor.getString(49));
+                    map.put("OBESITY", cursor.getString(50));
+                    map.put("DOBYEAR", cursor.getString(51));
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while geting getAllDataAssociateMaster");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database != null) {
+                database.close();
+            }
+        }
+        return map;
+    }
+
+
+
+    public HashMap<String, String> getDataForAddPatientUpdate(String patId) throws ClirNetAppException {
+        HashMap<String, String> map = new HashMap<>();
+
+        String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,p.patient_address,p.patient_city_town,p.district,p.pin_code,p.patient_state,p.uid,p.alternate_no,p.alternate_phone_type,p.phone_type,p.isd_code,p.alternate_no_isd,p.email,p.family_history,p.hospitalization_surgery  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where p.patient_id ="+patId+" order by ph.key_visit_id desc limit 1";
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+
+                    map.put("ID", cursor.getString(0));
+                    map.put("FIRSTTNAME", cursor.getString(1));
+                    map.put("MIDDLENAME", cursor.getString(2));
+                    map.put("LASTNAME", cursor.getString(3));
+                    map.put("DOB", cursor.getString(4));
+                    map.put("AGE", cursor.getString(5));
+                    map.put("PHONE", cursor.getString(6));
+                    map.put("GENDER", cursor.getString(7));
+                    map.put("LANGUAGE", cursor.getString(8));
+                    map.put("PATIENTPHOTO", cursor.getString(9));
+
+                    map.put("ADDRESS", cursor.getString(10));
+                    map.put("CITYORTOWN", cursor.getString(11));
+                    map.put("DISTRICT", cursor.getString(12));
+                    map.put("PIN", cursor.getString(13));
+                    map.put("STATE", cursor.getString(14));
+                    map.put("UID", cursor.getString(15));
+
+                    map.put("ALTERNATENUMBER", cursor.getString(16));
+
+                    map.put("ALTERNATENUMBERTYPE", cursor.getString(17));
+                    map.put("PHONETYPE", cursor.getString(18));
+                    map.put("ISDCODE", cursor.getString(19));
+                    map.put("ALTERNATEISDCODE", cursor.getString(20));
+                    map.put("EMAIL", cursor.getString(21));
+
+                    map.put("FAMILYHISTORY", cursor.getString(22));
+                    map.put("HOSPITALIZATION", cursor.getString(23));
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while geting getAllDataAssociateMaster");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database != null) {
+                database.close();
+            }
+        }
+        return map;
+    }
+
+    public HashMap<String, String> getShowPersonalData(String patId) throws ClirNetAppException {
+        HashMap<String, String> map = new HashMap<>();
+
+        String selectQuery = "select p.patient_id,p.first_name, p.middle_name, p.last_name,p.phonenumber,p.gender,p.age,p.photo,p.phone_type,p.email,p.dob_year  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where p.patient_id ="+patId+" order by ph.key_visit_id desc limit 1";
+        SQLiteDatabase database = dbHelper.getWritableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = database.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+
+                    map.put("ID", cursor.getString(0));
+                    map.put("FIRSTTNAME", cursor.getString(1));
+                    map.put("MIDDLENAME", cursor.getString(2));
+                    map.put("LASTNAME", cursor.getString(3));
+                    map.put("PHONE", cursor.getString(4));
+                    map.put("GENDER", cursor.getString(5));
+                    map.put("AGE", cursor.getString(6));
+                    map.put("PATIENTPHOTO", cursor.getString(7));
+                    map.put("PHONETYPE", cursor.getString(8));
+                    map.put("EMAIL", cursor.getString(9));
+                    map.put("DOB_YEAR", cursor.getString(10));
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while geting getAllDataAssociateMaster");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database != null) {
+                database.close();
+            }
+        }
+        return map;
+    }
+
+    public ArrayList<RegistrationModel> getPatientListForPhoneNumberFilter(String number, int page, int limit) throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {                                                                                                                                                                                                                                                                                                                                                                                          //p.first_name like '%" + fname + "%'
+
+            String countQuery = "select COUNT (*) as count from patient p,patient_history ph   where p.patient_id=ph.patient_id and p.phonenumber like '%" + number + "%' order by ph.key_visit_id desc ";
+
+            String selectQuery = "select p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,\n" +
+                    " p.gender,p.age,p.phonenumber,p.language,p.email,ph.actual_follow_up_date,ph.visit_date from patient p , patient_history ph where ph.patient_id=p.patient_id and p.phonenumber like '%" + number + "%' group by ph.patient_id having count(*)>0   order by ph.key_visit_id desc limit " + page + " , " + limit + ";";
+
+            new Counts().setCountQueryforHomeFragmentNoFilter(countQuery);
+
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                            cursor.getString(7), cursor.getString(8),cursor.getString(9),cursor.getString(10),cursor.getString(11));
+
+                    hotelList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getPatientListForPhoneNumberFilter");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+        return hotelList;
+
+    }
+
+    //get all the patient imp data from db, which will used in Consultation fragments and home fragments
+    public ArrayList<RegistrationModel> getPatientList1(String date) throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "select p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,\n" +
+                    " p.gender,p.age,p.phonenumber,p.language,p.email,ph.actual_follow_up_date,ph.visit_date  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.visit_date = '" + date + "' and (ph.added_on = '" + date + "' or ph.modified_on='" + date + "') order by ph.key_visit_id desc";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                            cursor.getString(7), cursor.getString(8),
+                            cursor.getString(9), cursor.getString(10), cursor.getString(11));
+
+                    hotelList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+
+            throw new ClirNetAppException("Something went wrong while getting getPatientList");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+
+        return hotelList;
+    }
+
+    public ArrayList<RegistrationModel> getPatientListnew(String date) throws ClirNetAppException {
+
+        ArrayList<RegistrationModel> hotelList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+
+            // String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,p.age,p.phonenumber,p.gender,p.language,p.photo,ph.follow_up_date, ph.days,ph.weeks,ph.months, ph.ailment,ph.prescription,ph.clinical_notes,p.added_on,ph.visit_date,p.modified_on,ph.key_visit_id,ph.actual_follow_up_date FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.actual_follow_up_date = '" + date + "' order by ph.key_visit_id  desc";
+            String selectQuery = "SELECT  p.patient_id,p.first_name, p.middle_name, p.last_name,p.dob,\n" +
+                    " p.gender,p.age,p.phonenumber,p.language,p.email,ph.actual_follow_up_date,ph.visit_date  FROM patient p INNER JOIN patient_history ph ON p.patient_id = ph.patient_id where ph.actual_follow_up_date = '" + date + "' order by ph.key_visit_id  desc ";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    RegistrationModel user = new RegistrationModel(cursor.getString(0), cursor.getString(1), cursor.getString(2), cursor.getString(3), cursor.getString(4), cursor.getString(5), cursor.getString(6),
+                            cursor.getString(7), cursor.getString(8),
+                            cursor.getString(9), cursor.getString(10), cursor.getString(11));
+
+                    hotelList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+
+            throw new ClirNetAppException("Something went wrong while getting getPatientListnew");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+
+        return hotelList;
+    }
+
+    public ArrayList<Images> getImagesFromPatientHistory() throws ClirNetAppException {
+
+        ArrayList<Images> loginList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+            String selectQuery = "select patient_id,key_visit_id,prescription from patient_history where prescription!=\"\"";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Images user = new Images(cursor.getString(0), cursor.getString(1),cursor.getString(2));
+
+                    loginList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getImagesFromPatientHistory");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+        return loginList;
+    }
+
+    public ArrayList<Images> getImagesFromRecodImagesTable() throws ClirNetAppException {
+
+        ArrayList<Images> loginList = new ArrayList<>();
+        SQLiteDatabase database1 = null;
+        Cursor cursor = null;
+        try {
+
+            String selectQuery = "select id,patient_id,key_visit_id,image_url,status_uploded from "+SQLiteHandler.TABLE_RECORD_IMAGES+" where status_uploded =0 and image_url!=\"\"  ;";
+
+            database1 = dbHelper.getReadableDatabase();
+            cursor = database1.rawQuery(selectQuery, null);
+
+            if (cursor.moveToFirst()) {
+                do {
+                    Images user = new Images(cursor.getString(0), cursor.getString(1),cursor.getString(2),cursor.getString(3));
+
+                    loginList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getImagesFromPatientHistory");
+        } finally {
+            //create method & pass cursor & db1 ref.
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (database1 != null) {
+                database1.close();
+            }
+        }
+        return loginList;
+    }
+
+    public void updateImagesRecords(String id,String downloadUrl,String downloadedPath)
+    {
+        try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
+            // db.delete("notification", "id = ?", new String[]{id});
+            ContentValues contentValue = new ContentValues();
+            contentValue.put(SQLiteHandler.GLOBAL_IMAGE_URL, downloadUrl);
+            contentValue.put(SQLiteHandler.NEW_DOWNLOAD_IMAGE_NAME, downloadedPath);
+            contentValue.put("status_uploded", 1);
+            db.update(SQLiteHandler.TABLE_RECORD_IMAGES, contentValue, "id" + "=" + id, null);
+            //Log.e("status"," "+id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateEditedImagesRecords(String patId,String visitId,String imageUrl)throws ClirNetAppException
+    {
+        try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
+            // db.delete("notification", "id = ?", new String[]{id});
+            ContentValues contentValue = new ContentValues();
+
+            contentValue.put(SQLiteHandler.KEY_PATIENT_ID, patId);
+            contentValue.put(SQLiteHandler.KEY_VISIT_ID, visitId);
+            contentValue.put(SQLiteHandler.IMAGE_URL, imageUrl);
+            db.update(SQLiteHandler.TABLE_RECORD_IMAGES, contentValue, "id" + "=" + patId, null);
+            //Log.e("status"," "+id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void updateImagesRecords(int id,String imagePath,int status)
+    {
+        try (SQLiteDatabase db = dbHelper.getWritableDatabase()) {
+            // db.delete("notification", "id = ?", new String[]{id});
+            ContentValues contentValue = new ContentValues();
+            // contentValue.put(SQLiteHandler.GLOBAL_IMAGE_URL, downloadUrl);
+            //contentValue.put(SQLiteHandler.NEW_DOWNLOAD_IMAGE_NAME, imagePath);
+            contentValue.put(SQLiteHandler.NEW_DOWNLOAD_IMAGE_PATH, imagePath);
+            contentValue.put("status_uploded", status);
+            db.update(SQLiteHandler.TABLE_RECORD_IMAGES, contentValue, "id" + "=" + id, null);
+            //Log.e("status"," "+id);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getPrescriptionImageUploadedUrlFormFcm(String visitId) throws ClirNetAppException {
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        String returnString = ""; // Your default if none is found
+        try {
+            db1 = dbHelper.getReadableDatabase();
+
+            String query = "select key_visit_id,global_img_url from "+SQLiteHandler.TABLE_RECORD_IMAGES+" where key_visit_id="+visitId+" and status_uploded=1 limit 1";
+
+            cursor = db1.rawQuery(query, null);
+
+            if (cursor.moveToFirst()) {
+                returnString = cursor.getString(cursor.getColumnIndex("global_img_url"));
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException("Something went wrong while getting getPrescriptionImageUploadedUrlFormFcm");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return returnString;
+    }
+
+    /*This method is used to get the key_visit_id from perticular date range for downloading images from server*/
+
+    public ArrayList<String> getVisitIdFromDateRange(String fromDate,String toDate,String todaysDate,String fromDeleteVisitDate,String toDeleteVisitDate) throws ClirNetAppException {
+
+        ArrayList<String> patientList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+
+            String selectQuery = "select key_visit_id,actual_follow_up_date from patient_history where visit_date!='"+todaysDate+"' and actual_follow_up_date!='' and actual_follow_up_date!='30-11-0002' and date(substr(actual_follow_up_date,7,4)||'-'||substr(actual_follow_up_date,4,2)||'-'||substr(actual_follow_up_date,1,2)) Not Between Date('"+fromDate+"') AND Date('"+toDate+"') AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2)) NOT Between Date('"+fromDeleteVisitDate+"') AND Date('"+toDeleteVisitDate+"')  order by key_visit_id desc";
+
+            Log.e("selectQuery","  "+selectQuery);
+
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    String value = cursor.getString(cursor.getColumnIndex("key_visit_id"));
+                    patientList.add(value);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException(" Something went wrong while geting getVisitIdFromDateRange ");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return patientList;
+    }
+    public ArrayList<Images> getLink(String[] list) {
+
+        SQLiteDatabase db1 = dbHelper.getReadableDatabase();
+        ArrayList<Images> pathList = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+
+            String query = "select id,server_image_name,image_url from records_images "
+             + " WHERE key_visit_id IN (" + makePlaceholders1(list) + ")and status_uploded ='1'";
+
+              Log.e("query",""+query);
+
+            cursor = db1.rawQuery(query, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+                    int id = cursor.getInt(cursor.getColumnIndex("id"));
+                    String value = cursor.getString(cursor.getColumnIndex("server_image_name"));
+                    String actImageUrl = cursor.getString(cursor.getColumnIndex("image_url"));
+
+                    Images user = new Images(id,value,actImageUrl);
+
+                    pathList.add(user);
+
+
+                } while (cursor.moveToNext());
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return pathList;
+    }
+
+    public ArrayList<String> getVisitIdFromDateRangeForDownload(String fromDate,String toDate) throws ClirNetAppException {
+
+        ArrayList<String> patientList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+
+            String selectQuery = "select key_visit_id from patient_history where actual_follow_up_date!='' and actual_follow_up_date!='30-11-0002' and date(substr(actual_follow_up_date,7,4)||'-'||substr(actual_follow_up_date,4,2)||'-'||substr(actual_follow_up_date,1,2))  Between  Date('"+fromDate+"') AND Date('"+toDate+"') order by key_visit_id desc";
+
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    String value = cursor.getString(cursor.getColumnIndex("key_visit_id"));
+                    patientList.add(value);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException(" Something went wrong while geting getVisitIdFromDateRange ");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+
+        return patientList;
+    }
+
+    public ArrayList<Images> getImagesToDownload(String[] list,String fromDate,String toDate) {
+
+        SQLiteDatabase db1 = dbHelper.getReadableDatabase();
+        ArrayList<Images> pathList = new ArrayList<>();
+        Cursor cursor = null;
+
+        try {
+
+            String query = "select id,server_image_name,image_url from records_images "
+                 + " WHERE key_visit_id IN (" + makePlaceholders1(list) + ")and status_uploded ='2'";//need toset it to 2
+
+
+            String selectQuery="select ri.id,ri.server_image_name,ri.image_url from records_images  ri,patient_history ph where ri.key_visit_id=ph.key_visit_id and status_uploded='3'and actual_follow_up_date!='30-11-0002' and date(substr(actual_follow_up_date,7,4)||'-'||substr(actual_follow_up_date,4,2)||'-'||substr(actual_follow_up_date,1,2))  Not Between Date('"+fromDate+"') AND Date('"+toDate+"') AND Date('"+toDate+"') AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2))  Between Date('"+fromDate+"') AND Date('"+toDate+"') order by ph.key_visit_id desc";
+
+            // String query="select id,server_image_name,image_url from records_images  WHERE key_visit_id IN (106486,105227,106485)and status_uploded ='1';";
+
+            Log.e("query1",""+query);
+
+            Log.e("query2",""+selectQuery);
+
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    int id = cursor.getInt(cursor.getColumnIndex("id"));
+                    String value = cursor.getString(cursor.getColumnIndex("server_image_name"));
+                    String actImageUrl = cursor.getString(cursor.getColumnIndex("image_url"));
+
+                    Images user = new Images(id,value,actImageUrl);
+
+                    pathList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return pathList;
+    }
+    public ArrayList<Images> getVisitIdFromDateRangeForDeletion(String fromDate,String toDate) throws ClirNetAppException {
+
+        ArrayList<Images> patientList = new ArrayList<>();
+        SQLiteDatabase db1 = null;
+        Cursor cursor = null;
+        try {
+
+           //   String selectQuery = "select key_visit_id from records_images where status_uploded='3' and actual_follow_up_date!='30-11-0002' and date(substr(actual_follow_up_date,7,4)||'-'||substr(actual_follow_up_date,4,2)||'-'||substr(actual_follow_up_date,1,2))  Between  Date('"+fromDate+"') AND Date('"+toDate+"') order by key_visit_id desc";
+            String selectQuery="select ri.id,ri.key_visit_id,ri.image_url from records_images  ri,patient_history ph where ri.key_visit_id=ph.key_visit_id and status_uploded='3'and actual_follow_up_date!='30-11-0002' and date(substr(actual_follow_up_date,7,4)||'-'||substr(actual_follow_up_date,4,2)||'-'||substr(actual_follow_up_date,1,2))  Not Between Date('"+fromDate+"') AND Date('"+toDate+"') AND Date('"+toDate+"') AND date(substr(visit_date,7,4)||'-'||substr(visit_date,4,2)||'-'||substr(visit_date,1,2))  Between Date('"+fromDate+"') AND Date('"+toDate+"') order by ph.key_visit_id desc";
+
+            Log.e("deletequery",""+selectQuery);
+
+            db1 = dbHelper.getReadableDatabase();
+            cursor = db1.rawQuery(selectQuery, null);
+
+            // looping through all rows and adding to list
+            if (cursor.moveToFirst()) {
+                do {
+
+                    int id = cursor.getInt(cursor.getColumnIndex("id"));
+                    String visitId = cursor.getString(cursor.getColumnIndex("key_visit_id"));
+                    String actImageUrl = cursor.getString(cursor.getColumnIndex("image_url"));
+
+                    Images user = new Images(visitId,actImageUrl,id);
+
+
+                    patientList.add(user);
+
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            throw new ClirNetAppException(" Something went wrong while geting getVisitIdFromDateRange ");
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            if (db1 != null) {
+                db1.close();
+            }
+        }
+          Log.e("patientList.size()",""+patientList.size());
+        return patientList;
+    }
+
 }
+
 
 
 

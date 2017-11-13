@@ -50,7 +50,7 @@ public class DatabaseClass extends SQLiteOpenHelper {
 
     public void createDataBase() {
 
-        boolean tblExist = isTableExists(database, "ailments");
+        boolean tblExist = isTableExists(database, "Allergy");
 
         if (tblExist) {
             //do nothing - database already exist
@@ -61,14 +61,11 @@ public class DatabaseClass extends SQLiteOpenHelper {
             dbHelper.getReadableDatabase();
 
             try {
-
                 copyDataBase();
-
             } catch (IOException e) {
-                appController.appendLog(appController.getDateTime()+"" +"/"+"Database"+e);
+                appController.appendLog(appController.getDateTime()+"" +"/"+"Database "+e);
 
                 throw new Error("Error copying database");
-
             }
         }
 

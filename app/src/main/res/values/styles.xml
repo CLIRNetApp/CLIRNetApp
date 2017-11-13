@@ -1,16 +1,5 @@
 <resources>
 
-    <!--
-        Base application theme, dependent on API level. This theme is replaced
-        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
-    -->
-    <!--<style name="AppBaseTheme" parent="Theme.AppCompat.Light">
-        &lt;!&ndash;
-            Theme customizations available in newer API levels can go in
-            res/values-vXX/styles.xml, while customizations related to
-            backward-compatibility can go here.
-        &ndash;&gt;
-    </style>-->
 
     <!-- Application theme. -->
 
@@ -32,6 +21,7 @@
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
@@ -45,6 +35,7 @@
     <style name="MyCustomTabLayout" parent="Widget.Design.TabLayout">
         <item name="tabTextAppearance">@style/MyCustomTabText</item>
         <item name="tabSelectedTextColor">@android:color/white</item>
+
     </style>
 
     <style name="MyCustomTabText" parent="TextAppearance.AppCompat.Button">
@@ -62,8 +53,7 @@
     </style>
 
     <style name="MyCheckBox" parent="Theme.AppCompat.NoActionBar">
-        <item name="colorControlNormal">#000
-        </item>   <!-- normal border color change as you wish -->
+        <item name="colorControlNormal">#000</item>   <!-- normal border color change as you wish -->
         <item name="android:textColor">#FFFF3F3C</item>
     </style>
 

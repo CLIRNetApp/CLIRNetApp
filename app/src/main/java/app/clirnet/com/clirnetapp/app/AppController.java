@@ -11,8 +11,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Environment;
+import android.os.StatFs;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -64,6 +66,7 @@ import app.clirnet.com.clirnetapp.utility.ConnectivityChangeReceiver;
 import io.fabric.sdk.android.Fabric;
 
 public class AppController extends Application {
+    //notasecret    Service account clirnet created. The account's private key CLIRNetApp-3b7775fd9105.p12 password
 
     private static final String TAG = AppController.class.getSimpleName();
 
@@ -95,6 +98,8 @@ public class AppController extends Application {
         mInstance = this;
         AnalyticsTrackers.initialize(this);
         AnalyticsTrackers.getInstance().get(AnalyticsTrackers.Target.APP);
+
+      //  TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/OpenSans-Regular.ttf"); // font from assets: "assets/fonts/Roboto-Regular.ttf
 
     }
 
@@ -399,14 +404,14 @@ public class AppController extends Application {
 
     //Method to validate if there is allready records in db to check
     public boolean isDuplicate(List<String> col, String value) {
-        boolean isDuplicate = false;
+        boolean isDuplicate1 = false;
         for (String s : col) {
             if (s.equals(value)) {
-                isDuplicate = true;
+                isDuplicate1 = true;
                 break;
             }
         }
-        return isDuplicate;
+        return isDuplicate1;
     }
 
 
@@ -1077,6 +1082,32 @@ public class AppController extends Application {
         return !(b == null || b.equals(""));
     }
 
+    public boolean checkifImageExists1(String imagename) {
+        Bitmap b = null;
+        try {
+            File file = getImage1(imagename );
+            String path = null;
+
+            if (file != null) {
+                long length = file.length();
+                length = length / 1024;
+                if (length > 0) {
+                    path = file.getAbsolutePath();
+                }
+            }
+            if (path != null)
+                b = BitmapFactory.decodeFile(path);
+
+            //  return !(b == null || b.equals(""));
+        } catch (Exception e) {
+            e.printStackTrace();
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+        }
+        return !(b == null || b.equals(""));
+    }
+
+
     public File getImage(String imagename) {
 
         File mediaImage = null;
@@ -1087,6 +1118,24 @@ public class AppController extends Application {
                 return null;
 
             mediaImage = new File(AppConfig.SDCARD_PATH + imagename);
+        } catch (Exception e) {
+            this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+            e.printStackTrace();
+        }
+        return mediaImage;
+    }
+
+    public File getImage1(String imagename) {
+
+        File mediaImage = null;
+        try {
+            String root = Environment.getExternalStorageDirectory().toString();
+            File myDir = new File(root);
+            if (!myDir.exists())
+                return null;
+
+            mediaImage = new File(imagename);
         } catch (Exception e) {
             this.appendLog(this.getDateTime() + " " + "/ " + "App Controller" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
@@ -1283,6 +1332,7 @@ public class AppController extends Application {
     }
 
   public int getDates(String value,int age){
+
       Calendar c2 = Calendar.getInstance();
       int returnValue=0;
 
@@ -1313,6 +1363,14 @@ public class AppController extends Application {
         }
 
         return String.valueOf(returnValue);
+    }
+    public long getFreeMemory(){
+
+        StatFs stat = new StatFs(Environment.getExternalStorageDirectory().getPath());
+        long bytesAvailable = (long)stat.getBlockSize() * (long)stat.getAvailableBlocks();
+        long megAvailable = bytesAvailable / (1024 * 1024);
+        Log.e("Available","Available MB : "+megAvailable);
+        return  megAvailable;
     }
 }
 

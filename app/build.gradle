@@ -33,7 +33,7 @@ android {
         targetSdkVersion 25
         multiDexEnabled true
         versionCode 13
-        versionName "1.4"
+        versionName "1.4.1.4"
         resConfigs "en"
     }
     lintOptions {
@@ -52,7 +52,9 @@ android {
             debuggable true
 
         }
+
     }
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES.txt'
         exclude 'META-INF/LICENSE.txt'
@@ -86,7 +88,7 @@ dependencies {
     compile('org.apache.httpcomponents:httpmime:4.3') {
         exclude module: "httpclient"
     }
-    compile('com.crashlytics.sdk.android:crashlytics:2.7.0@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.7.1@aar') {
         transitive = true;
     }
     compile 'org.apache.httpcomponents:httpclient-android:4.3.5.1'

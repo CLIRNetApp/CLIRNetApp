@@ -566,6 +566,7 @@ public class QuickAddVisitFragment extends Fragment implements View.OnClickListe
                 bannerClass = new BannerClass(getContext());
             }
             bannerimgNames = bannerClass.getImageName();
+
             if (strReferedBy != null && !strReferedBy.equals("")) {
                 String referedBy = sqlController.getNameByIdAssociateMaster(strReferedBy);
                 showReferrals.setVisibility(View.VISIBLE);
@@ -2048,6 +2049,7 @@ public class QuickAddVisitFragment extends Fragment implements View.OnClickListe
                     dialog.dismiss();
                 }
             });
+
             save.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -2065,12 +2067,84 @@ public class QuickAddVisitFragment extends Fragment implements View.OnClickListe
                     strObesity = ediInput_obesity.getText().toString();
 
                     if (strTemp.length() > 0) {
-                        int intTemp = Integer.parseInt(strTemp);
-                        if (intTemp > 110) {
+                        double valueTemp = Double.parseDouble(strTemp);
+                        if (valueTemp > 110) {
                             edtInput_temp.setError("Temperature cannot be more than 110");
                             return;
                         } else {
                             edtInput_temp.setError(null);
+                        }
+                    }
+
+                    if (strWeight.length() > 0) {
+                        double valueWeight = Double.parseDouble(strWeight);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valueWeight > 250) {
+                            edtInput_weight.setError("The maximum Weight that can be recorded 250 kg");
+                            return;
+                        } else {
+                            edtInput_weight.setError(null);
+                        }
+                    }
+                    if (strHeight.length() > 0) {
+                        double valueHeight = Double.parseDouble(strHeight);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valueHeight > 240) {
+                            edtInput_height.setError("The maximum height that can be recorded 240 cm");
+                            return;
+                        } else {
+                            edtInput_height.setError(null);
+                        }
+                    }
+                    if (strPulse.length() > 0) {
+                        double valuePulse = Double.parseDouble(strPulse);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valuePulse > 150) {
+                            edtInput_pulse.setError("The maximum Pulse that can be recorded 150");
+                            return;
+                        } else {
+                            edtInput_pulse.setError(null);
+                        }
+                    }
+                    if (strSpo2.length() > 0) {
+                        double valueSpo2 = Double.parseDouble(strSpo2);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valueSpo2 > 100) {
+                            edtInput_spo2.setError("The maximum SPO2 that can be recorded 100 mmHg");
+                            return;
+                        } else {
+                            edtInput_spo2.setError(null);
+                        }
+                    }
+                    if (strBp.length() > 0) {
+                        double valueBp = Double.parseDouble(strBp);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valueBp > 400) {
+                            edtInput_bp.setError("The maximum Systole that can be recorded 400 mmHg");
+                            return;
+                        } else {
+                            edtInput_bp.setError(null);
+                        }
+                    }
+                    if (strLowBp.length() > 0) {
+                        double valueDiastole = Double.parseDouble(strLowBp);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valueDiastole > 200) {
+                            edtLowBp.setError("The maximum Diastole that can be recorded 200 mmHg");
+                            return;
+                        } else {
+                            edtLowBp.setError(null);
+                        }
+                    }
+
+                    if (strRespirationRate.length() > 0) {
+                        double valueRespRate = Double.parseDouble(strRespirationRate);
+                        // int intTemp = Math.round(Integer.parseInt(strTemp));
+                        if (valueRespRate > 30) {
+                            edtInput_respiration_rate.setError("The maximum Respiration Rate that can be recorded 30");
+                            return;
+                        } else {
+                            edtInput_respiration_rate.setError(null);
                         }
                     }
                     if (strWeight != null && strWeight.length() > 0) {
@@ -2992,32 +3066,57 @@ public class QuickAddVisitFragment extends Fragment implements View.OnClickListe
     private void showObservationsData() {
 
         if (strPallore != null && strPallore.length() > 0) {
-            sbObservations.append("Pallor - ").append(strPallore).append(" (").append(strPallorDescription).append(")").append("  ;  ");
+            sbObservations.append("Pallor - ").append(strPallore);
+            if(strPallorDescription!=null && !strPallorDescription.equals(""))
+                sbObservations.append(" (").append(strPallorDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
 
         if (strCyanosis != null && strCyanosis.length() > 0) {
-            sbObservations.append("Cyanosis - ").append(strCyanosis).append(" (").append(strCyanosisDescription).append(")").append("  ;  ");
+            sbObservations.append("Cyanosis - ").append(strCyanosis);
+            if(strCyanosisDescription!=null && !strCyanosisDescription.equals(""))
+                sbObservations .append(" (").append(strCyanosisDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
 
         if (strTremors != null && strTremors.length() > 0) {
-            sbObservations.append("Tremors - ").append(strTremors).append(" (").append(strTremorsDescription).append(")").append("  ;  ");
+            sbObservations.append("Tremors - ").append(strTremors);
+            if(strTremorsDescription!=null && !strTremorsDescription.equals(""))
+                sbObservations.append(" (").append(strTremorsDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
 
         if (strIcterus != null && strIcterus.length() > 0) {
-            sbObservations.append("Icterus - ").append(strIcterus).append(" (").append(strIcterusDescription).append(")").append("  ;  ");
+            sbObservations.append("Icterus - ").append(strIcterus);
+            if(strIcterusDescription!=null && !strIcterusDescription.equals(""))
+                sbObservations.append(" (").append(strIcterusDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
         if (strClubbing != null && strClubbing.length() > 0) {
-            sbObservations.append("Clubbing - ").append(strClubbing).append(" (").append(strClubbingDescription).append(")").append("  ;  ");
+            sbObservations.append("Clubbing - ").append(strClubbing);
+            if(strClubbingDescription!=null && !strClubbingDescription.equals(""))
+                sbObservations.append(" (").append(strClubbingDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
         if (strOedema != null && strOedema.length() > 0) {
-            sbObservations.append("Oedema - ").append(strOedema).append(" (").append(strOedemaDescription).append(")").append("  ;  ");
+            sbObservations.append("Oedema - ").append(strOedema);
+            if(strOedemaDescription!=null && !strOedemaDescription.equals(""))
+                sbObservations. append(" (").append(strOedemaDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
         if (strCalfTenderness != null && strCalfTenderness.length() > 0) {
-            sbObservations.append("Tenderness - ").append(strCalfTenderness).append(" (").append(strCalfTendernessDescription).append(")").append("  ;  ");
+            sbObservations.append("Tenderness - ").append(strCalfTenderness);
+            if(strCalfTendernessDescription!=null && !strCalfTendernessDescription.equals(""))
+                sbObservations.append(" (").append(strCalfTendernessDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
         if (strLymphadenopathy != null && strLymphadenopathy.length() > 0) {
-            sbObservations.append("Lymphadenopathy - ").append(strLymphadenopathy).append(" (").append(strLymphadenopathyDescription).append(")").append("  ;  ");
+            sbObservations.append("Lymphadenopathy - ").append(strLymphadenopathy);
+            if(strLymphadenopathyDescription!=null && !strLymphadenopathyDescription.equals(""))
+                sbObservations .append(" (").append(strLymphadenopathyDescription).append(")").append("  ;  ");
+            else sbObservations .append("  ;  ");
         }
+
         if (strPallore != null && !strPallore.equals("") || strPallorDescription != null && !strPallorDescription.equals("") || strCyanosis != null && !strCyanosis.equals("") || strTremors != null && !strTremors.equals("") || strIcterus != null && !strIcterus.equals("") || strClubbing != null && !strClubbing.equals("") || strOedema != null && !strOedema.equals("") || strCalfTenderness != null && !strCalfTenderness.equals("") ||
                 strLymphadenopathy != null && !strLymphadenopathy.equals("") || strLymphadenopathyDescription != null && !strLymphadenopathyDescription.equals("")) {
 

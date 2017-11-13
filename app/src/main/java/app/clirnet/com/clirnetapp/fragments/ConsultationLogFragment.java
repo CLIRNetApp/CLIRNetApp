@@ -352,38 +352,8 @@ private void searchRecords(){
             RegistrationModel book = filterVistDateList.get(position);
             Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
 
-            i.putExtra("PATIENTPHOTO", book.getPhoto());
             i.putExtra("ID", book.getPat_id());
-            i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
-            i.putExtra("FIRSTTNAME", book.getFirstName());
-            i.putExtra("MIDDLENAME", book.getMiddleName());
-            i.putExtra("LASTNAME", book.getLastName());
-            i.putExtra("DOB", book.getDob());
 
-            i.putExtra("PHONE", book.getMobileNumber());
-            i.putExtra("PHONETYPE", book.getPhone_type());
-            i.putExtra("AGE", book.getAge());
-            i.putExtra("LANGUAGE", book.getLanguage());
-            i.putExtra("GENDER", book.getGender());
-            i.putExtra("FOD", book.getFollowUpDate());
-            i.putExtra("AILMENT", book.getAilments());
-            i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
-            i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
-            i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
-            i.putExtra("CLINICALNOTES", book.getClinicalNotes());
-            i.putExtra("PRESCRIPTION", book.getPres_img());
-            i.putExtra("ISDCODE", book.getIsd_code());
-            i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
-            i.putExtra("EMAIL", book.getEmail());
-            i.putExtra("ADDRESS", book.getAddress());
-            i.putExtra("CITYORTOWN", book.getCityortown());
-            i.putExtra("DISTRICT", book.getDistrict());
-            i.putExtra("PIN", book.getPin_code());
-            i.putExtra("STATE", book.getState());
-            i.putExtra("ALTERNATENUMBER", book.getAlternatePhoneNumber());
-            i.putExtra("ALTERNATENUMBERTYPE", book.getAlternatePhoneType());
-            i.putExtra("PHONETYPE", book.getPhone_type());
-            i.putExtra("UID", book.getUid());
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
             startActivity(i);
@@ -396,40 +366,8 @@ private void searchRecords(){
 
             Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
 
-            i.putExtra("PATIENTPHOTO", book.getPhoto());
             i.putExtra("ID", book.getPat_id());
-            i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
-            i.putExtra("FIRSTTNAME", book.getFirstName());
-            i.putExtra("MIDDLENAME", book.getMiddleName());
-            i.putExtra("LASTNAME", book.getLastName());
-            i.putExtra("DOB", book.getDob());
 
-            i.putExtra("PHONE", book.getMobileNumber());
-            i.putExtra("PHONETYPE", book.getPhone_type());
-            i.putExtra("AGE", book.getAge());
-            i.putExtra("LANGUAGE", book.getLanguage());
-            i.putExtra("GENDER", book.getGender());
-            i.putExtra("FOD", book.getFollowUpDate());
-            i.putExtra("AILMENT", book.getAilments());
-            i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
-            i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
-            i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
-            i.putExtra("CLINICALNOTES", book.getClinicalNotes());
-            i.putExtra("PRESCRIPTION", book.getPres_img());
-            i.putExtra("ISDCODE", book.getIsd_code());
-            i.putExtra("ALTERNATEISDCODE", book.getAlternate_isd_code());
-            i.putExtra("UID", book.getUid());
-            i.putExtra("EMAIL", book.getEmail());
-            i.putExtra("ADDRESS", book.getAddress());
-            i.putExtra("CITYORTOWN", book.getCityortown());
-            i.putExtra("DISTRICT", book.getDistrict());
-            i.putExtra("PIN", book.getPin_code());
-            i.putExtra("STATE", book.getState());
-            i.putExtra("ALTERNATENUMBER", book.getAlternatePhoneNumber());
-            i.putExtra("ALTERNATENUMBERTYPE", book.getAlternatePhoneType());
-            i.putExtra("PHONETYPE", book.getPhone_type());
-            i.putExtra("UID", book.getUid());
-            i.putExtra("CALLEDFROM","2");
             i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
         }

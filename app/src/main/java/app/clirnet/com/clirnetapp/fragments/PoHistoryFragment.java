@@ -507,7 +507,6 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
                                 , strSmoking, noOfSticksPerYear, strLeftSmokingSinceYear, strAlcoholConsumption, noOfPegsPerYear, strLeftAlcoholSinceYear, strTobaco, otherTobacoTaking, strDrug, otherDrugTaking, strFoodHabit, strFoodPreference, strBingeEating, strLactoseTolerance, strLifeStyle, strSleepStatus, strStressLevel, strSexuallyActive, strExcercise, strAllergie, strPallore, strPallorDescription, strCyanosis, strCyanosisDescription, strTremors, strTremorsDescription, strIcterus, strIcterusDescription
                                 , strClubbing, strClubbingDescription, strOedema, strOedemaDescription, strCalfTenderness, strCalfTendernessDescription, strLymphadenopathy, strLymphadenopathyDescription, spo2MinValue, spo2MaxValue, respirationMinValue, respirationMinValue);
 
-
                         queryCount = sqlController.getCountResult();
 
 
@@ -888,7 +887,7 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         try {
             databaseClass.openDataBase();
-            mAilmemtArrayList = databaseClass.getAilmentsListNew();
+            mAilmemtArrayList = new ArrayList<>();
             ArrayList<String> mSymptomsList = lastnameDatabaseClass.getSymptoms();
             ArrayList<String> mDiagnosisList = lastnameDatabaseClass.getDiagnosis();
 
@@ -988,54 +987,10 @@ public class PoHistoryFragment extends Fragment implements MultiSpinner.MultiSpi
 
         Intent i = new Intent(getContext().getApplicationContext(), ShowPersonalDetailsActivity.class);
 
-        i.putExtra("PATIENTPHOTO", book.getPhoto());
+
         i.putExtra("ID", book.getPat_id());
-        i.putExtra("NAME", book.getFirstName() + " " + book.getLastName());
-        i.putExtra("FIRSTTNAME", book.getFirstName());
-        i.putExtra("MIDDLENAME", book.getMiddleName());
-        i.putExtra("LASTNAME", book.getLastName());
-        i.putExtra("DOB", book.getDob());
-        i.putExtra("PHONE", book.getMobileNumber());
-        i.putExtra("PHONETYPE", book.getPhone_type());
-        i.putExtra("AGE", book.getAge());
-        i.putExtra("LANGUAGE", book.getLanguage());
-        i.putExtra("GENDER", book.getGender());
-        i.putExtra("ACTUALFOD", book.getActualFollowupDate());
-        i.putExtra("FOD", book.getFollowUpDate());
-        i.putExtra("AILMENT", book.getAilments());
-        i.putExtra("FOLLOWDAYS", book.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", book.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", book.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", book.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", book.getPres_img());
-        i.putExtra("VISITID", book.getKey_visit_id());
-        i.putExtra("VISITDATE", book.getVisit_date());
-        i.putExtra("ADDRESS", book.getAddress());
-        i.putExtra("CITYORTOWN", book.getCityortown());
-        i.putExtra("DISTRICT", book.getDistrict());
-        i.putExtra("PIN", book.getPin_code());
-        i.putExtra("STATE", book.getState());
-        i.putExtra("WEIGHT", book.getWeight());
-        i.putExtra("PULSE", book.getPulse());
-        i.putExtra("BP", book.getBp());
-        i.putExtra("LOWBP", book.getlowBp());
-        i.putExtra("TEMPRATURE", book.getTemprature());
-        i.putExtra("SUGAR", book.getSugar());
-        i.putExtra("SYMPTOMS", book.getSymptoms());
-        i.putExtra("DIGNOSIS", book.getDignosis());
-        i.putExtra("TESTS", book.getTests());
-        i.putExtra("DRUGS", book.getDrugs());
-        i.putExtra("BMI", book.getBmi());
-        i.putExtra("ALTERNATENUMBER", book.getAlternatePhoneNumber());
-        i.putExtra("ALTERNATENUMBERTYPE", book.getAlternatePhoneType());
-        i.putExtra("HEIGHT", book.getHeight());
-        i.putExtra("SUGARFASTING", book.getSugarFasting());
-        i.putExtra("UID", book.getUid());
-        i.putExtra("EMAIL", book.getEmail());
-        i.putExtra("UID", book.getUid());
-        i.putExtra("FAMILYHISTORY", book.getFamilyHistory());
-        i.putExtra("HOSPITALIZATION", book.getHospitalizationSurgery());
-        i.putExtra("FOLLOWUPSTATUS", book.getFollowUpStatus());
+
+
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         startActivity(i);

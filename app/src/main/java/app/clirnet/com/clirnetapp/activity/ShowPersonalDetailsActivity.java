@@ -21,6 +21,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
 import app.clirnet.com.clirnetapp.R;
@@ -29,6 +30,7 @@ import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.models.RegistrationModel;
+
 
 public class ShowPersonalDetailsActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -41,41 +43,33 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
 
     private String strId;
     private String strFirstName;
-    private String strMiddleName;
+
     private String strLastName;
     private String strPhone;
     private String strAge;
-    private String strDob;
-    private String strLanguage;
+
     private ImageView backChangingImages;
     private AppController appController;
-    private String fromWhere;
+
 
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
     private String doctor_membership_number;
     private Button editlastUpdate;
     private String strPhoneType;
-    private String strAddress;
-    private String strCityorTown;
-    private String strDistrict;
-    private String strPinNo;
-    private String strState;
-    private String strAlternatenumber;
-    private String strAlternatephtype;
+
     private String strEmail;
-    private String strUid;
-    private String calledFrom;
+
     private String mAlcohol;
     private String mStressLevel;
     private String mSmokerType;
     private String mLifeStyle;
     private String mExcercise, mChewinogTobaco;
     private String mSleepStatus;
-    private String strFamilyHistory;
-    private String strHospitalizaionSurgery;
+
     private int year_dob;
-    private String strPatientFollowUpStatus;
+
+    private String strName;
 
 
     @Override
@@ -98,38 +92,8 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Show patient Details " + e + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
-        strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
 
-        String strName = getIntent().getStringExtra("NAME");
         strId = getIntent().getStringExtra("ID");//patient id
-        strFirstName = getIntent().getStringExtra("FIRSTTNAME");
-        strMiddleName = getIntent().getStringExtra("MIDDLENAME");
-        strLastName = getIntent().getStringExtra("LASTNAME");
-        strPhone = getIntent().getStringExtra("PHONE");
-
-        strPhoneType = getIntent().getStringExtra("PHONETYPE");
-        strAge = getIntent().getStringExtra("AGE");
-        strDob = getIntent().getStringExtra("DOB");
-        strLanguage = getIntent().getStringExtra("LANGUAGE");
-        strgender = getIntent().getStringExtra("GENDER");
-        fromWhere = getIntent().getStringExtra("FROMWHERE");
-
-        strAddress = getIntent().getStringExtra("ADDRESS");
-        strCityorTown = getIntent().getStringExtra("CITYORTOWN");
-        strDistrict = getIntent().getStringExtra("DISTRICT");
-        strPinNo = getIntent().getStringExtra("PIN");
-        strState = getIntent().getStringExtra("STATE");
-        strAlternatenumber = getIntent().getStringExtra("ALTERNATENUMBER");
-
-        strAlternatephtype = getIntent().getStringExtra("ALTERNATENUMBERTYPE");
-        strEmail = getIntent().getStringExtra("EMAIL");
-        strPhoneType = getIntent().getStringExtra("PHONETYPE");
-        strUid = getIntent().getStringExtra("UID");
-        calledFrom = getIntent().getStringExtra("CALLEDFROM");
-        strFamilyHistory = getIntent().getStringExtra("FAMILYHISTORY");
-        strHospitalizaionSurgery = getIntent().getStringExtra("HOSPITALIZATION");
-        strPatientFollowUpStatus = getIntent().getStringExtra("FOLLOWUPSTATUS");
-
 
 
         TextView txtSysDate = (TextView) findViewById(R.id.sysdate);
@@ -141,27 +105,13 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
         backChangingImages = (ImageView) findViewById(R.id.backChangingImages);
 
         ImageView patientImage = (ImageView) findViewById(R.id.patientImage);
-        // TextView date = (TextView) findViewById(R.id.sysdate);
+
         TextView editpatientName = (TextView) findViewById(R.id.patientName);
         TextView editAge = (TextView) findViewById(R.id.age);
         TextView editmobileno = (TextView) findViewById(R.id.mobileno);
         TextView phoneType = (TextView) findViewById(R.id.phoneType);
         TextView email = (TextView) findViewById(R.id.email);
         TextView txteMail = (TextView) findViewById(R.id.txtEmail);
-
-        editpatientName.setText(strName);
-        editmobileno.setText(strPhone);
-
-        if (strPhoneType != null && !strPhoneType.equals("")) {
-            phoneType.setText(strPhoneType + " :");
-        } else {
-            phoneType.setText("Mobile :");
-        }
-
-        if (strEmail != null && !TextUtils.isEmpty(strEmail)) {
-            txteMail.setVisibility(View.VISIBLE);
-            email.setText(strEmail);
-        }
 
 
         TextView privacyPolicy = (TextView) findViewById(R.id.privacyPolicy);
@@ -196,13 +146,13 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
             }
         });
 
-      //  setDatatoText();
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM , yyyy", Locale.ENGLISH);//it will show date as 10 sep,2016
+        SimpleDateFormat sdf = new SimpleDateFormat("dd MMMM , yyyy", Locale.ENGLISH); //it will show date as 10 sep,2016
         Date todayDate = new Date();
 
         String dd = sdf.format(todayDate);
         txtSysDate.setText("Today's Date: " + dd);
+
         try {
             //getLoaderManager().initLoader(THE_LOADER, null, this).forceLoad();
             sqlController = new SQLController(getApplicationContext());
@@ -238,10 +188,43 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
 
             }
 
+            HashMap<String, String> compList = sqlController.getTestData(strId);
+
+            strFirstName = compList.get("FIRSTTNAME");
+            String strMiddleName = compList.get("MIDDLENAME");
+            strLastName = compList.get("LASTNAME");
+            strName = strFirstName +" "+strLastName;
+
+            strAge = compList.get("AGE");
+            strPhone = compList.get("PHONE");
+            strgender = compList.get("GENDER");
+            strPatientPhoto = compList.get("PATIENTPHOTO");
+            strEmail = compList.get("EMAIL");
+            strPhoneType = compList.get("PHONETYPE");
+            String yearDob = compList.get("DOB_YEAR");
+            if(yearDob!=null && !yearDob.equals(""))
+            year_dob = Integer.parseInt(compList.get("DOB_YEAR"));
+
         } catch (Exception e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Show patient Details" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
+
+
+        editpatientName.setText(strName);
+        editmobileno.setText(strPhone);
+
+        if (strPhoneType != null && !strPhoneType.equals("")) {
+            phoneType.setText(strPhoneType + " :");
+        } else {
+            phoneType.setText("Mobile :");
+        }
+
+        if (strEmail != null && !TextUtils.isEmpty(strEmail)) {
+            txteMail.setVisibility(View.VISIBLE);
+            email.setText(strEmail);
+        }
+
         if(year_dob!=0) {
             String ageFinal = appController.getAgeFromYearDob(year_dob);
             if (strgender != null && strgender.equals("Male")) {
@@ -258,7 +241,7 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
         }
 
 
-//redirect to edit pesroanl info page
+         //redirect to edit pesroanl info page
         editPersonalInfo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -278,63 +261,13 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
                     editlastUpdate.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
 
                     //   Toast.makeText(getApplicationContext(), "There is no history to update!!!", Toast.LENGTH_LONG).show();
-                    if (patientPersonalData.size() > 0) {
+                     if (patientPersonalData.size() > 0) {
                         RegistrationModel registrationModel = patientPersonalData.get(0); //0 will get first record from the list
-                        Intent i = new Intent(getApplicationContext(), NewEditPatientUpdate.class);
 
-                        i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
-                        i.putExtra("ID", registrationModel.getPat_id());
-                        i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
-                        i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
-                        i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
-                        i.putExtra("LASTNAME", registrationModel.getLastName());
-                        i.putExtra("DOB", registrationModel.getDob());
-                        i.putExtra("PHONE", registrationModel.getMobileNumber());
-                        i.putExtra("PHONETYPE", registrationModel.getPhone_type());
-                        i.putExtra("AGE", registrationModel.getAge());
-                        i.putExtra("LANGUAGE", registrationModel.getLanguage());
-                        i.putExtra("GENDER", registrationModel.getGender());
-                        i.putExtra("ACTUALFOD", registrationModel.getActualFollowupDate());
-                        i.putExtra("FOD", registrationModel.getFollowUpDate());
-                        i.putExtra("AILMENT", registrationModel.getAilments());
-                        i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
-                        i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
-                        i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
-                        i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
-                        i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
-                        i.putExtra("VISITID", registrationModel.getKey_visit_id());
-                        i.putExtra("ADDED_ON", registrationModel.getAdded_on());
-                        i.putExtra("VISITDATE", registrationModel.getVisit_date());
-                        i.putExtra("ADDRESS", registrationModel.getAddress());
-                        i.putExtra("CITYORTOWN", registrationModel.getCityortown());
-                        i.putExtra("DISTRICT", registrationModel.getDistrict());
-                        i.putExtra("PIN", registrationModel.getPin_code());
-                        i.putExtra("STATE", registrationModel.getState());
-                        i.putExtra("WEIGHT", registrationModel.getWeight());
-                        i.putExtra("PULSE", registrationModel.getPulse());
-                        i.putExtra("BP", registrationModel.getBp());
-                        i.putExtra("LOWBP", registrationModel.getlowBp());
-                        i.putExtra("TEMPRATURE", registrationModel.getTemprature());
-                        i.putExtra("SUGAR", registrationModel.getSugar());
-                        i.putExtra("SYMPTOMS", registrationModel.getSymptoms());
-                        i.putExtra("DIGNOSIS", registrationModel.getDignosis());
-                        i.putExtra("TESTS", registrationModel.getTests());
-                        i.putExtra("DRUGS", registrationModel.getDrugs());
-                        i.putExtra("BMI", registrationModel.getBmi());
-                        i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
-                        i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
-                        i.putExtra("HEIGHT", registrationModel.getHeight());
-                        i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
-                        i.putExtra("REFEREDBY", registrationModel.getReferedBy());
-                        i.putExtra("REFEREDTO", registrationModel.getReferedTo());
-                        i.putExtra("UID", registrationModel.getUid());
-                        i.putExtra("EMAIL", registrationModel.getEmail());
-                        i.putExtra("SPO2", registrationModel.getSpo2());
-                        i.putExtra("RESPIRATION", registrationModel.getRespirataion());
-                        i.putExtra("FAMILYHISTORY", strFamilyHistory);
-                        i.putExtra("HOSPITALIZATION", strHospitalizaionSurgery);
-                        i.putExtra("FOLLOWUPSTATUS", strPatientFollowUpStatus);
-                        i.putExtra("CALLEDFROM", calledFrom);
+                         Intent i = new Intent(getApplicationContext(), NewEditPatientUpdate.class);
+
+                         i.putExtra("ID", registrationModel.getPat_id());
+
                         // i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                         // i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
                         startActivity(i);
@@ -348,7 +281,6 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
 
             }
         });
-
 
         if (strPatientPhoto != null && !TextUtils.isEmpty(strPatientPhoto)) {
             if (strPatientPhoto.length() > 0) {
@@ -379,39 +311,10 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
 
         Intent i = new Intent(getApplicationContext(), NewEditPersonalInfo.class);
 
-        i.putExtra("PATIENTPHOTO", strPatientPhoto);
         i.putExtra("ID", strId);
-        i.putExtra("FIRSTNAME", strFirstName);
-        i.putExtra("MIDDLEAME", strMiddleName);
-        i.putExtra("LASTNAME", strLastName);
-        i.putExtra("PHONE", strPhone);
-        i.putExtra("PHONETYPE", strPhoneType);
-        i.putExtra("DOB", strDob);
-        i.putExtra("AGE", strAge);
-        i.putExtra("LANGUAGE", strLanguage);
-        i.putExtra("GENDER", strgender);
-        i.putExtra("FROMWHERE", fromWhere);
-        i.putExtra("ADDRESS", strAddress);
-        i.putExtra("CITYORTOWN", strCityorTown);
-        i.putExtra("DISTRICT", strDistrict);
-        i.putExtra("PIN", strPinNo);
-        i.putExtra("STATE", strState);
-        i.putExtra("ALTERNATENUMBER", strAlternatenumber);
-        i.putExtra("ALTERNATENUMBERTYPE", strAlternatephtype);
-        i.putExtra("UID", strUid);
-        i.putExtra("EMAIL", strEmail);
-        i.putExtra("FAMILYHISTORY", strFamilyHistory);
-        i.putExtra("HOSPITALIZATION", strHospitalizaionSurgery);
+
         startActivity(i);
         // finish();
-    }
-
-    private void setDatatoText() {
-       /* editpatientName.setText(strName);
-        editmobileno.setText(strPhone);
-        editage.setText(strAge);
-        editlang.setText(strLanguage);
-        editgender.setText(strgender);*/
     }
 
 
@@ -458,40 +361,31 @@ public class ShowPersonalDetailsActivity extends AppCompatActivity implements Vi
         strPhoneType = null;
         patientPersonalData = null;
         strPatientPhoto = null;
-        strLanguage = null;
+
         strgender = null;
         strAge = null;
-        strDob = null;
+
         strId=null;
         strFirstName=null;
-        strMiddleName=null;
+
         strLastName = null;
         if (bannerClass != null) {
             bannerClass = null;
         }
+
         bannerimgNames = null;
         doctor_membership_number = null;
         backChangingImages = null;
-        fromWhere = null;
         editlastUpdate = null;
-        strAddress = null;
-        strCityorTown = null;
-        strDistrict = null;
-        strPinNo = null;
-        strState = null;
-        strAlternatenumber = null;
-        strAlternatephtype = null;
         strEmail=null;
-        strUid=null;
-        calledFrom=null;
         mAlcohol=null;
         mStressLevel=null;
         mSmokerType=null;
         mLifeStyle=null;
-        mExcercise=null; mChewinogTobaco=null;
+        mExcercise=null;
+        mChewinogTobaco=null;
         mSleepStatus=null;
-        strFamilyHistory=null;
-        strHospitalizaionSurgery=null;
+
     }
 
 

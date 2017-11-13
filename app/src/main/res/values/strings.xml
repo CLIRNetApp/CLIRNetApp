@@ -229,9 +229,9 @@
     <string name="uid">UID</string>
     <string name="uidtype">UID Type</string>
     <string name="reset">Reset</string>
-    <string name="version">Release Version 1.4</string>
-    <string name="aboutApp">About App V 1.4</string>
-    <string name="updateDate">Last Updated Date 17/10/2017</string>
+    <string name="version">Release Version 1.4.1.4</string>
+    <string name="aboutApp">About App V 1.4.1.4</string>
+    <string name="updateDate">Last Updated Date 11/11/2017</string>
     <string name="quickadd">Quick Add</string>
     <string name="title_edit_quick_add">Quick Edit Patient</string>
 
@@ -372,5 +372,6 @@
     <string name="smsdate">Patient announcements need to be requested at least 5 days before "Send SMS On" date.</string>
     <string name="csv">CSV</string>
     <string name="pdf">PDF</string>
+    <string name="poor_network">Net Connection is too low to make request</string>
 
 </resources>

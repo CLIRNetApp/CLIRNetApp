@@ -8,6 +8,7 @@ public class CallAsynOnce {
     private static String value;
 
 
+
     public void setValue(String t) {
         value = t;
     }
@@ -15,6 +16,8 @@ public class CallAsynOnce {
     public String getValue() {
         return value;
     }
+
+
 
 
 }

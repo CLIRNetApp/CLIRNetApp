@@ -115,7 +115,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private SQLiteHandler dbController;
     private SimpleDateFormat sdf1;
     private Date date1;
-    private Toast toast;
+
     private ConnectionDetector connectionDetector;
     private ProgressDialog pDialog;
 
@@ -142,7 +142,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private ArrayList<String> bannerimgNames;
 
     private String docId;
-    private String pateintrecordasync_start_time;
+
     private RecyclerView incomplete_recordsRecyclerview;
     private ArrayList<RegistrationModel> incompleteRecordList;
     private TextView incompletedisplay_tv;
@@ -150,11 +150,14 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     private LinearLayout nameheader;
     private RVAdapter rvadapter;
     private String formatedDate;
-    int i=0;
+    int i = 0;
 
     public HomeFragment() {
         setHasOptionsMenu(true);
     }
+
+    /*To set custom font to activity 28-10-2017*/
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -185,6 +188,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                              Bundle savedInstanceState) {
 
         view = inflater.inflate(R.layout.fragment_home, container, false);
+
         ButterKnife.inject(this, view);
 
         ((NavigationActivity) getActivity()).setActionBarTitle("Patient Central");
@@ -211,7 +215,10 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         pDialog = new ProgressDialog(getContext());
 
         connectionDetector = new ConnectionDetector(getContext());
+
         dbController = SQLiteHandler.getInstance(getContext());
+
+        final String netSpeed = connectionDetector.checkNetworkType();
 
         TextView privacyPolicy = (TextView) view.findViewById(R.id.privacyPolicy);
 
@@ -223,7 +230,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         privacyPolicy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), PrivacyPolicy.class);
+                Intent intent = new Intent(getContext().getApplicationContext(), PrivacyPolicy.class);
                 startActivity(intent);
 
             }
@@ -233,7 +240,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         termsandCondition.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getActivity().getApplicationContext(), TermsCondition.class);
+                Intent intent = new Intent(getContext().getApplicationContext(), TermsCondition.class);
                 startActivity(intent);
 
             }
@@ -247,7 +254,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             public boolean onTouch(View view, MotionEvent event) {
                 if (event.getAction() == MotionEvent.ACTION_UP) {
                     //Calling quick add
-                    Intent intent = new Intent(getActivity().getApplicationContext(), QuickAddActivity.class);
+                    Intent intent = new Intent(getContext().getApplicationContext(), QuickAddActivity.class);
                     startActivity(intent);
                     fab.setBackgroundResource(R.drawable.quickaddpressed);
 
@@ -262,7 +269,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         try {
 
-            sqlController = new SQLController(getActivity().getApplicationContext());
+            sqlController = new SQLController(getContext().getApplicationContext());
             sqlController.open();
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
             docId = sqlController.getDoctorId();
@@ -298,31 +305,34 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             public void onClick(View v) {
                 try {
                     boolean isInternetPresent = connectionDetector.isConnectingToInternet();
-                   final String process_start_time = new AppController().getDateTimenew();
+                    final String process_start_time = new AppController().getDateTimenew();
 
-                    if (isInternetPresent) {
+                    if (isInternetPresent && netSpeed.equals("Good")) {
 
-                        sqlController = new SQLController(getActivity());
+                        sqlController = new SQLController(getContext().getApplicationContext());
                         sqlController.open();
-                        if(i==0){
-                            new CallDataFromOne(getContext(), savedUserName, savedUserPassword, process_start_time, docId, doctor_membership_number);
-                            i=1;
-                        }else{
-                            Toast toast = Toast.makeText(getContext(), "Processing request, please be patient.", Toast.LENGTH_LONG);
+                        if (i == 0) {
+                            new CallDataFromOne(getContext().getApplicationContext(), savedUserName, savedUserPassword, process_start_time, docId, doctor_membership_number);
+                            i = 1;
+                        } else {
+                            Toast toast = Toast.makeText(getContext().getApplicationContext(), "Processing request, please be patient.", Toast.LENGTH_LONG);
                             toast.setGravity(Gravity.BOTTOM, 0, 0);
                             toast.show();
-                           // appController.showToastMsg(getContext(),"Processing request, please be patient.");
+                            // appController.showToastMsg(getContext(),"Processing request, please be patient.");
                         }
                         new Handler().postDelayed(new Runnable() {
                             @Override
                             public void run() {
                                 //sync.setVisibility(View.VISIBLE);
-                                i=0;
-                                if(sync!=null){
-                                sync.setEnabled(true);
-                                sync.setClickable(true);}
+                                i = 0;
+                                if (sync != null) {
+                                    sync.setEnabled(true);
+                                    sync.setClickable(true);
+                                }
                             }
                         }, 5000);
+                    } else if (isInternetPresent && netSpeed.equals("Low")) {
+                        showNoInternetAlert("Low Internet Connectivity", getResources().getString(R.string.poor_network));
                     } else {
                         showNoInternetAlert("Internet Unavailable", "Please connect to the Internet to initiate Sync");
                     }
@@ -394,7 +404,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
             formatedDate = appController.ConvertDateFormat(sysdate.toString());
 
-            filteredModelList = sqlController1.getPatientList(formatedDate);//ie by todays date
+            filteredModelList = sqlController1.getPatientList1(formatedDate);//ie by todays date
 
             incompleteRecordList = sqlController1.getIncompleteRecordList(formatedDate);
 
@@ -529,41 +539,12 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         RegistrationModel registrationModel = filteredModelList.get(position);
 
-        //  System.out.println("Date1 is before or equal to Date2");
+
         Intent i = new Intent(getContext().getApplicationContext(), AddPatientUpdate.class);
-        i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
+
+
         i.putExtra("PatientID", registrationModel.getPat_id());
-        i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
-        i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
-        i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
-        i.putExtra("LASTNAME", registrationModel.getLastName());
-        i.putExtra("DOB", registrationModel.getDob());
-        i.putExtra("PHONE", registrationModel.getMobileNumber());
-        i.putExtra("AGE", registrationModel.getAge());
-        i.putExtra("LANGUAGE", registrationModel.getLanguage());
-        i.putExtra("GENDER", registrationModel.getGender());
-        i.putExtra("FOD", registrationModel.getFollowUpDate());
-        i.putExtra("AILMENT", registrationModel.getAilments());
-        i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
 
-        i.putExtra("ADDRESS", registrationModel.getAddress());
-        i.putExtra("CITYORTOWN", registrationModel.getCityortown());
-        i.putExtra("DISTRICT", registrationModel.getDistrict());
-        i.putExtra("PIN", registrationModel.getPin_code());
-        i.putExtra("STATE", registrationModel.getState());
-
-        i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
-        i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
-        i.putExtra("PHONETYPE", registrationModel.getPhone_type());
-        i.putExtra("ISDCODE", registrationModel.getIsd_code());
-        i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
-        i.putExtra("UID", registrationModel.getUid());
-        i.putExtra("FAMILYHISTORY", registrationModel.getFamilyHistory());
-        i.putExtra("HOSPITALIZATION", registrationModel.getHospitalizationSurgery());
 
         startActivity(i);
     }
@@ -574,60 +555,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         Intent i = new Intent(getContext().getApplicationContext(), NewEditPatientUpdate.class);
 
-        i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
         i.putExtra("ID", registrationModel.getPat_id());
-        i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
-        i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
-        i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
-        i.putExtra("LASTNAME", registrationModel.getLastName());
-        i.putExtra("DOB", registrationModel.getDob());
-        i.putExtra("PHONE", registrationModel.getMobileNumber());
-        i.putExtra("PHONETYPE", registrationModel.getPhone_type());
-        i.putExtra("AGE", registrationModel.getAge());
-        i.putExtra("LANGUAGE", registrationModel.getLanguage());
-        i.putExtra("GENDER", registrationModel.getGender());
-        i.putExtra("ACTUALFOD", registrationModel.getActualFollowupDate());
-        i.putExtra("FOD", registrationModel.getFollowUpDate());
-        i.putExtra("AILMENT", registrationModel.getAilments());
-        i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
-        i.putExtra("VISITID", registrationModel.getKey_visit_id());
-        i.putExtra("VISITDATE", registrationModel.getVisit_date());
-        i.putExtra("ADDRESS", registrationModel.getAddress());
-        i.putExtra("CITYORTOWN", registrationModel.getCityortown());
-        i.putExtra("DISTRICT", registrationModel.getDistrict());
-        i.putExtra("PIN", registrationModel.getPin_code());
-        i.putExtra("STATE", registrationModel.getState());
-        i.putExtra("WEIGHT", registrationModel.getWeight());
-        i.putExtra("PULSE", registrationModel.getPulse());
-        i.putExtra("BP", registrationModel.getBp());
-        i.putExtra("LOWBP", registrationModel.getlowBp());
-        i.putExtra("TEMPRATURE", registrationModel.getTemprature());
-        i.putExtra("SUGAR", registrationModel.getSugar());
-        i.putExtra("SYMPTOMS", registrationModel.getSymptoms());
-        i.putExtra("DIGNOSIS", registrationModel.getDignosis());
-        i.putExtra("TESTS", registrationModel.getTests());
-        i.putExtra("DRUGS", registrationModel.getDrugs());
-        i.putExtra("BMI", registrationModel.getBmi());
-        i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
-        i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
-        i.putExtra("HEIGHT", registrationModel.getHeight());
-        i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
-        i.putExtra("ISDCODE", registrationModel.getIsd_code());
-        i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
-        i.putExtra("REFEREDBY", registrationModel.getReferedBy());
-        i.putExtra("REFEREDTO", registrationModel.getReferedTo());
-        i.putExtra("UID", registrationModel.getUid());
-        i.putExtra("EMAIL", registrationModel.getEmail());
-        i.putExtra("FOLLOWUPSTATUS", registrationModel.getFollowUpStatus());
-        i.putExtra("SPO2", registrationModel.getSpo2());
-        i.putExtra("RESPIRATION", registrationModel.getRespirataion());
-        i.putExtra("FAMILYHISTORY", registrationModel.getFamilyHistory());
-        i.putExtra("HOSPITALIZATION", registrationModel.getHospitalizationSurgery());
-        i.putExtra("OBESITY", registrationModel.getObesity());
 
         startActivity(i);
 
@@ -735,7 +663,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                 try {
                     if (searchNumber.trim().length() > 10) {
 
-                        appController.showToastMsg(getContext(),"Phone cannot be more than 10 Digits");
+                        appController.showToastMsg(getContext(), "Phone cannot be more than 10 Digits");
 
                         return true;
                     }
@@ -772,7 +700,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                         searchView.clearFocus();
 
                     } else {
-                        appController.showToastMsg(getContext(),"Please enter at least 5 digits to start search");
+                        appController.showToastMsg(getContext(), "Please enter at least 5 digits to start search");
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -795,6 +723,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
             public void onClick(View view, int position) {
 
                 RegistrationModel book = filteredModelList.get(position);
+
                 String visit_date = book.getVisit_date();
 
                 try {
@@ -833,64 +762,9 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         Intent i = new Intent(getActivity().getApplicationContext(), NewEditPatientUpdate.class);
 
-        i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
+
         i.putExtra("ID", registrationModel.getPat_id());
 
-        i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
-        i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
-        i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
-        i.putExtra("LASTNAME", registrationModel.getLastName());
-        i.putExtra("DOB", registrationModel.getDob());
-
-        i.putExtra("PHONE", registrationModel.getMobileNumber());
-
-        i.putExtra("AGE", registrationModel.getAge());
-        i.putExtra("LANGUAGE", registrationModel.getLanguage());
-        i.putExtra("GENDER", registrationModel.getGender());
-        i.putExtra("FOD", registrationModel.getFollowUpDate());
-
-        i.putExtra("ACTUALFOD", registrationModel.getActualFollowupDate());
-
-        i.putExtra("AILMENT", registrationModel.getAilments());
-        i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
-        i.putExtra("VISITID", registrationModel.getKey_visit_id());
-        i.putExtra("VISITDATE", registrationModel.getVisit_date());
-        i.putExtra("ADDRESS", registrationModel.getAddress());
-        i.putExtra("CITYORTOWN", registrationModel.getCityortown());
-        i.putExtra("DISTRICT", registrationModel.getDistrict());
-        i.putExtra("PIN", registrationModel.getPin_code());
-        i.putExtra("STATE", registrationModel.getState());
-        i.putExtra("WEIGHT", registrationModel.getWeight());
-        i.putExtra("PULSE", registrationModel.getPulse());
-        i.putExtra("BP", registrationModel.getBp());
-        i.putExtra("LOWBP", registrationModel.getlowBp());
-        i.putExtra("TEMPRATURE", registrationModel.getTemprature());
-        i.putExtra("SUGAR", registrationModel.getSugar());
-        i.putExtra("SYMPTOMS", registrationModel.getSymptoms());
-        i.putExtra("DIGNOSIS", registrationModel.getDignosis());
-        i.putExtra("TESTS", registrationModel.getTests());
-        i.putExtra("DRUGS", registrationModel.getDrugs());
-        i.putExtra("BMI", registrationModel.getBmi());
-        i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
-        i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
-        i.putExtra("HEIGHT", registrationModel.getHeight());
-        i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
-        i.putExtra("ISDCODE", registrationModel.getIsd_code());
-        i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
-        i.putExtra("REFEREDBY", registrationModel.getReferedBy());
-        i.putExtra("REFEREDTO", registrationModel.getReferedTo());
-        i.putExtra("UID", registrationModel.getUid());
-        i.putExtra("EMAIL", registrationModel.getEmail());
-        i.putExtra("PHONETYPE", registrationModel.getPhone_type());
-        i.putExtra("FOLLOWUPSTATUS", registrationModel.getFollowUpStatus());
-        i.putExtra("SPO2", registrationModel.getSpo2());
-        i.putExtra("RESPIRATION", registrationModel.getRespirataion());
-        i.putExtra("FAMILYHISTORY", registrationModel.getFamilyHistory());
-        i.putExtra("HOSPITALIZATION", registrationModel.getHospitalizationSurgery());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
@@ -901,68 +775,11 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         Intent i = new Intent(getContext(), AddPatientUpdate.class);
 
-        i.putExtra("PATIENTPHOTO", registrationModel.getPhoto());
         i.putExtra("PatientID", registrationModel.getPat_id());
 
-        i.putExtra("NAME", registrationModel.getFirstName() + " " + registrationModel.getLastName());
-        i.putExtra("FIRSTTNAME", registrationModel.getFirstName());
-        i.putExtra("MIDDLENAME", registrationModel.getMiddleName());
-        i.putExtra("LASTNAME", registrationModel.getLastName());
-        i.putExtra("DOB", registrationModel.getDob());
-
-        i.putExtra("PHONE", registrationModel.getMobileNumber());
-
-        i.putExtra("AGE", registrationModel.getAge());
-        i.putExtra("LANGUAGE", registrationModel.getLanguage());
-        i.putExtra("GENDER", registrationModel.getGender());
-        i.putExtra("FOD", registrationModel.getFollowUpDate());
-
-        i.putExtra("ACTUALFOD", registrationModel.getActualFollowupDate());
-
-        i.putExtra("AILMENT", registrationModel.getAilments());
-        i.putExtra("FOLLOWDAYS", registrationModel.getFollowUpdays());
-        i.putExtra("FOLLOWWEEKS", registrationModel.getFollowUpWeek());
-        i.putExtra("FOLLOWMONTH", registrationModel.getFollowUpMonth());
-        i.putExtra("CLINICALNOTES", registrationModel.getClinicalNotes());
-        i.putExtra("PRESCRIPTION", registrationModel.getPres_img());
-        i.putExtra("VISITID", registrationModel.getKey_visit_id());
-        i.putExtra("VISITDATE", registrationModel.getVisit_date());
-        i.putExtra("ADDRESS", registrationModel.getAddress());
-        i.putExtra("CITYORTOWN", registrationModel.getCityortown());
-        i.putExtra("DISTRICT", registrationModel.getDistrict());
-        i.putExtra("PIN", registrationModel.getPin_code());
-        i.putExtra("STATE", registrationModel.getState());
-        i.putExtra("WEIGHT", registrationModel.getWeight());
-        i.putExtra("PULSE", registrationModel.getPulse());
-        i.putExtra("BP", registrationModel.getBp());
-        i.putExtra("LOWBP", registrationModel.getlowBp());
-        i.putExtra("TEMPRATURE", registrationModel.getTemprature());
-        i.putExtra("SUGAR", registrationModel.getSugar());
-        i.putExtra("SYMPTOMS", registrationModel.getSymptoms());
-        i.putExtra("DIGNOSIS", registrationModel.getDignosis());
-        i.putExtra("TESTS", registrationModel.getTests());
-        i.putExtra("DRUGS", registrationModel.getDrugs());
-        i.putExtra("BMI", registrationModel.getBmi());
-        i.putExtra("ALTERNATENUMBER", registrationModel.getAlternatePhoneNumber());
-        i.putExtra("ALTERNATENUMBERTYPE", registrationModel.getAlternatePhoneType());
-        i.putExtra("HEIGHT", registrationModel.getHeight());
-        i.putExtra("SUGARFASTING", registrationModel.getSugarFasting());
-        i.putExtra("ISDCODE", registrationModel.getIsd_code());
-        i.putExtra("ALTERNATEISDCODE", registrationModel.getAlternate_isd_code());
-        i.putExtra("REFEREDBY", registrationModel.getReferedBy());
-        i.putExtra("REFEREDTO", registrationModel.getReferedTo());
-        i.putExtra("UID", registrationModel.getUid());
-        i.putExtra("EMAIL", registrationModel.getEmail());
-        i.putExtra("PHONETYPE", registrationModel.getPhone_type());
-        i.putExtra("FOLLOWUPSTATUS", registrationModel.getFollowUpStatus());
-        i.putExtra("SPO2", registrationModel.getSpo2());
-        i.putExtra("RESPIRATION", registrationModel.getRespirataion());
-        i.putExtra("FAMILYHISTORY", registrationModel.getFamilyHistory());
-        i.putExtra("HOSPITALIZATION", registrationModel.getHospitalizationSurgery());
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
     }
-
 
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
@@ -989,6 +806,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         void onFragmentInteraction(Uri uri);
     }
+
     private void showAboutAppDialog(final String number) {
 
         final Dialog dialog = new Dialog(getContext());
@@ -1064,6 +882,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         }
 
     }
+
     //class to implement OnClick Listner
     public static class RecyclerTouchListener implements RecyclerView.OnItemTouchListener {
 
@@ -1130,7 +949,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     docName = sqlController.getDocdoctorName();
 
                     phoneNumber = sqlController.getPhoneNumber();
-                    createHelpDialog(docName,phoneNumber);
+                    createHelpDialog(docName, phoneNumber);
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -1181,7 +1000,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     password.setError("Please enter Password!");
                     return;
                 }
-
                 if (newPass.equals(getString(R.string.servicePassword))) {
                     Intent intent = new Intent(getContext(), ServiceArea.class);
                     intent.putExtra("username", savedUserName);
@@ -1189,7 +1007,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     startActivity(intent);
                     dialog.dismiss();
                 } else {
-                    appController.showToastMsg(getContext(),"Incorrect Password. Please contact support@clirnet.com");
+                    appController.showToastMsg(getContext(), "Incorrect Password. Please contact support@clirnet.com");
                 }
 
 
@@ -1207,8 +1025,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         dialog.show();
     }
-
-
 
 
     @Override
@@ -1327,7 +1143,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         addaNewPatient = null;
         view = null;
         date1 = null;
-        toast = null;
         searchNumber = null;
         Searchrecycler_view = null;
         recyclerView = null;
@@ -1335,7 +1150,6 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         savedUserPassword = null;
 
         doctor_membership_number = null;
-        pateintrecordasync_start_time = null;
         backChangingImages = null;
         incompletedisplay_tv = null;
         docId = null;
@@ -1412,7 +1226,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     }
                 }
             }
-            if(fab!=null){
+            if (fab != null) {
                 fab.setBackgroundResource(R.drawable.quickadd1);
             }
         } catch (Exception e) {
@@ -1578,7 +1392,8 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
         NavigationView navigationView = (NavigationView) view.findViewById(R.id.nav_view);
         navigationView.setCheckedItem(id);
     }
-    public void createHelpDialog(final String docName,final String phoneNumber ) {
+
+    public void createHelpDialog(final String docName, final String phoneNumber) {
 
         final Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.help_dialog);
@@ -1601,7 +1416,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
                     return;
                 }
                 dialog.dismiss();
-                new GetHelpAsyncTask(getContext(),savedUserPassword,savedUserName,phoneNumber,doctor_membership_number,docId,strMsg,docName);
+                new GetHelpAsyncTask(getContext(), savedUserPassword, savedUserName, phoneNumber, doctor_membership_number, docId, strMsg, docName);
 
             }
         });
@@ -1617,5 +1432,4 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         dialog.show();
     }
-
 }

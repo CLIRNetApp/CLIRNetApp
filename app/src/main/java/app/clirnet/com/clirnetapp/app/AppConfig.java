@@ -2,13 +2,13 @@ package app.clirnet.com.clirnetapp.app;
 
 public class AppConfig {
 
-     // Server user login url
-     public static final String LOCAL_DEMO_URL2 = "http://43.242.212.136/clirnetapplicationv2/public/doctor/webapi/syncpatientdatav2";;//49.50.76.125/
+    // Server user login url
+   public static final String LOCAL_DEMO_URL2 = "http://43.242.212.136/clirnetapplicationv2/public/doctor/webapi/syncpatientdatav2";//49.50.76.125/
       //public static final String   LOCAL_DEMO_URL = "http://dev.clirnet.com/";//49.50.76.125/
      // static final String LIVE_MAIN_URL = "http://192.168.1.53/";
      // static final String PRODUCTION_MAIN_URL = "http://104.199.232.104/clirnetapplicationv3/public/doctor/webapi/checkdoctorvalidity";
 
-     private static final String LOCAL_DEMO_URL = "https://doctor.clirnet.com";
+    public static final String LOCAL_DEMO_URL = "https://doctor.clirnet.com";
 
     public static final String URL_LOGIN = LOCAL_DEMO_URL + "/doctor/webapi/checkdoctorvalidity";
 
@@ -24,7 +24,7 @@ public class AppConfig {
 
     //public static String URL_CHANGE_PASSWORD="http://doctor.clirnet.com/doctor/webapi/updatepassword";
 
-   // public static String URL_UPDATE_PASSOWORD = LOCAL_DEMO_URL + "clirnetapplicationv3/public/doctor/webapi/updatepassword";
+     // public static String URL_UPDATE_PASSOWORD = LOCAL_DEMO_URL + "clirnetapplicationv3/public/doctor/webapi/updatepassword";
 
     //static String URL_CHANGE_PASSWORD = LOCAL_DEMO_URL + "/doctor/webapi/changepassword";
 
@@ -60,5 +60,5 @@ public class AppConfig {
 
     static final String HELP_ME = LOCAL_DEMO_URL +"/doctor/webapi/addhelp";
 
-    public static final String SDCARD_PATH = "sdcard/BannerImages/";
+    static final String SDCARD_PATH = "sdcard/BannerImages/";
 }

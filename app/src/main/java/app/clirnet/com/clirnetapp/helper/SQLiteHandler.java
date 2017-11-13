@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
 
@@ -54,7 +55,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     static final String RECENT_DATA_KCAP = "recent_data_kcap";
     static final String RECENT_DATA_COMPANDIUM = "recent_data_companium";
     static final String RECENT_DATA_MSESSION = "recent_data_msession";
-    private static String TABLE_RECORD_IMAGES = "record_images";
+    static final String TABLE_RECORD_IMAGES = "records_images";
     private static final String TABLE_NOTIFICATIONS = "notification";
 
     // Table Columns names
@@ -68,7 +69,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String KEY_EMAIL = "email";
 
     //Patient personal Info Table
-    private static final String KEY_PATIENT_ID = "patient_id";
+     static final String KEY_PATIENT_ID = "patient_id";
     private static final String DOCTOR_ID = "doctor_id";
     private static final String DOCTOR_MEMBERSHIP_ID = "doc_mem_id";
     private static final String PATIENT_INFO_TYPE_FORM = "patient_info_type";
@@ -94,7 +95,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     private static final String DELETED_ON = "deleted_on";
     private static final String VISIT_DATE = "visit_date";
 
-    private static final String KEY_VISIT_ID = "key_visit_id";
+     static final String KEY_VISIT_ID = "key_visit_id";
     private static final String ACTUAL_FOLLOW_UP_DATE = "actual_follow_up_date";
 
     private static final String DOCTOR_LOGIN_ID = "doc_login_id";
@@ -231,9 +232,14 @@ public class SQLiteHandler extends SQLiteOpenHelper {
     static final String MS_URL = "ms_url";
     static final String MS_STATUS = "ms_status";
     private static final String IS_AGE_CALCULATED = "age_calculated";
-    private static final String IMAGE_URL = "image_url";
+     static final String IMAGE_URL = "image_url";
     private static final String IMAGE_TYPE = "image_type";
     private static final String IMAGE_COUNT = "image_count";
+    static final String GLOBAL_IMAGE_URL="global_img_url";
+    static final String NEW_DOWNLOAD_IMAGE_NAME="server_image_name";
+    static final String NEW_DOWNLOAD_IMAGE_PATH="downloaded_image_path";
+    private  static final String STATUS_UPLOADED ="status_uploded";
+    private  static final String IS_IMAGE_DELETED="is_img_deleted";
     private static final String MESSAGE = "message";
     private static final String HEADER = "header";
     private static final String ACTION_PATH = "action_path";
@@ -477,19 +483,24 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                     FLAG + " INTEGER ) ";
 
 
-    private static String CREATE_TABLE_OCCUPATION = "create table "
+   /* private static String CREATE_TABLE_OCCUPATION = "create table "
             + OCCUPATION + "(" + KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
-            + OCCUPATION_NAME + " TEXT ) ";
+            + OCCUPATION_NAME + " TEXT ) ";*/
 
 
-    private static final String CREATE_TABLE_RECORD_IMAGES =
+    static final String CREATE_TABLE_RECORD_IMAGES =
             "CREATE TABLE " + TABLE_RECORD_IMAGES + " (" +
                     KEY_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                    KEY_VISIT_ID + " INTEGER NOT NULL UNIQUE, " +
-                    KEY_PATIENT_ID + " INTEGER NOT NULL UNIQUE , " +
+                    KEY_VISIT_ID + " INTEGER NOT NULL , " +
+                    KEY_PATIENT_ID + " INTEGER NOT NULL , " +
                     IMAGE_COUNT + " TEXT, " +
                     IMAGE_URL + " TEXT, " +
                     IMAGE_TYPE + " TEXT, " +
+                    GLOBAL_IMAGE_URL + " TEXT, " +
+                    NEW_DOWNLOAD_IMAGE_NAME + " TEXT, " +
+                    NEW_DOWNLOAD_IMAGE_PATH + " TEXT, " +
+                    STATUS_UPLOADED + " INTEGER DEFAULT 0, " +
+                    IS_IMAGE_DELETED + ", " +
                     ADDED_BY + " TEXT, " +
                     ADDED_ON + " TEXT, " +
                     DELETED_ON + " TEXT ," +
@@ -611,9 +622,8 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
             //want to add few new tables and columns
             db.execSQL(CREATE_INVESTIGATION_TABLE);
-            db.execSQL(CREATE_TABLE_OCCUPATION);
+           // db.execSQL(CREATE_TABLE_OCCUPATION);
             db.execSQL(CREATE_OBSERVATION_TABLE);
-            db.execSQL(CREATE_TABLE_RECORD_IMAGES);//record images table
 
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_OCCUPATION);
             db.execSQL(DATABASE_ALTER_TABLE_PATIENT_RELIGION);
@@ -722,7 +732,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
 
     //update the patient visit records into db
     public void updatePatientOtherInfo(String strId, String visitId, String usersellectedDate, String daysSel, String fowSel, String monthSel, String clinical_note, String patientImagePath, String modified_dateon, String modified_time, String modified_by, String action, String patInfoType, String flag,
-                                       String weight, String pulse, String bphigh, String bplow, String temparature, String symptoms, String dignosis, String strHeight, String strbmi, String visit_date, String referedBy, String referedTo, String strSpo2, String strRespiration, String strObesity,String strFollowUpStatus) throws ClirNetAppException {
+                                       String weight, String pulse, String bphigh, String bplow, String temparature, String symptoms, String dignosis, String strHeight, String strbmi, String visit_date, String referedBy, String referedTo, String strSpo2, String strRespiration, String strObesity, String strFollowUpStatus) throws ClirNetAppException {
         SQLiteDatabase db = this.getWritableDatabase();
 
         try {
@@ -1339,10 +1349,9 @@ public class SQLiteHandler extends SQLiteOpenHelper {
                 cursor.moveToNext();
             }
             return resultSet;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             Crashlytics.logException(e);
-        }finally {
+        } finally {
             if (cursor != null) {
                 cursor.close();
             }
@@ -1517,6 +1526,7 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             values.put(KEY_VALUE, "true");
 
             db.insert(TABLE_ASYNC, null, values);
+            Log.e("addAsync", "addAsync true");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -1525,7 +1535,6 @@ public class SQLiteHandler extends SQLiteOpenHelper {
             }
         }
     }
-
 
     //update the flag once data send to server successfully
     public void FlagupdatePassword(String password) {
@@ -3012,5 +3021,32 @@ public class SQLiteHandler extends SQLiteOpenHelper {
         }
 
     }
+
+    public void addImages(String patId, String visitId, String ImageUrl) throws ClirNetAppException {
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        try {
+
+            ContentValues contentValue = new ContentValues();
+
+            contentValue.put(KEY_PATIENT_ID, patId);
+            contentValue.put(KEY_VISIT_ID, visitId);
+            contentValue.put(IMAGE_URL, ImageUrl);
+
+            Log.e("visitId",""+visitId);
+
+            db.insert(TABLE_RECORD_IMAGES, null, contentValue);
+            //Log.e("notification","notification added");
+
+        } catch (Exception e) {
+            throw new ClirNetAppException("Error inserting Notifications data");
+        } finally {
+            if (db != null) {
+                db.close(); // Closing database connection
+            }
+        }
+    }
+
+
 }
 

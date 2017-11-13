@@ -9,11 +9,18 @@ import android.widget.EditText;
 
 import app.clirnet.com.clirnetapp.R;
 
+
 public class MailActivity extends AppCompatActivity {
 
     private EditText textTo;
     private EditText textSubject;
     private EditText textMessage;
+
+    /*To set custom font to activity 28-10-2017*//*
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

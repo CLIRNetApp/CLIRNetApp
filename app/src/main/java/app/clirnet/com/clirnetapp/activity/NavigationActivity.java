@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -15,16 +17,45 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.RetryPolicy;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.StringRequest;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.ContentViewEvent;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+
+import org.json.JSONObject;
+
+import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import app.clirnet.com.clirnetapp.R;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.app.MasterSessionService;
+import app.clirnet.com.clirnetapp.cloudStorage.MyDownloadService;
+import app.clirnet.com.clirnetapp.cloudStorage.MyUploadService;
 import app.clirnet.com.clirnetapp.dialogFragment.MasterSessionDialog;
 import app.clirnet.com.clirnetapp.fcm.MyFirebaseMessagingService;
 import app.clirnet.com.clirnetapp.fragments.AssociatesFragment;
@@ -44,12 +75,16 @@ import app.clirnet.com.clirnetapp.fragments.ReportFragment;
 import app.clirnet.com.clirnetapp.fragments.ReportFragmentViewPagerSetup;
 import app.clirnet.com.clirnetapp.fragments.ShowNotifications;
 import app.clirnet.com.clirnetapp.fragments.TopTwentySymptomsAndDiagnosisFragment;
+import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
 import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.helper.SessionManager;
+import app.clirnet.com.clirnetapp.models.Images;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectivityChangeReceiver;
 import app.clirnet.com.clirnetapp.utility.SyncDataService;
+import app.clirnet.com.clirnetapp.utility.Validator;
+
 
 public class NavigationActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeFragment.OnFragmentInteractionListener, ConsultationLogFragment.OnFragmentInteractionListener, PoHistoryFragment.OnFragmentInteractionListener
@@ -76,7 +111,31 @@ public class NavigationActivity extends AppCompatActivity
     private String doctor_membership_number;
     private String clubbingFlag;
     private int notificationTreySize;
+    private FirebaseAuth mAuth;
+    private StorageReference storageReference;
+    private String uid;
+    public static final String TAG = "TokenAuth";
+    private int fodRange;
+    private int downloadImageDateRange;
+    private ArrayList<Images> imageData;
+    private String fromDate;
+    private String toDate;
+    private Validator mValidator;
+    private String toDownloadDate;
+    private String toDeleteDownloadImage;
+    private String fromDeleteDownloadImageDate;
+    private String currentDate;
+    private String toDeleteCurrentDate;
+    private String formDeleteImageCurrentDate;
 
+
+
+    /*To set custom font to activity 28-10-2017*//*
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
+    }
+*/
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,9 +150,43 @@ public class NavigationActivity extends AppCompatActivity
             clubbingFlag = getIntent().getStringExtra("CLUBBINGFLAG");
             notificationTreySize = getIntent().getIntExtra("NOTIFITREYSIZE", 0);
              /*Clearing notifications ArrayList from MyFirebaseMessagingService faster clicking on it*/
-             if(clubbingFlag!=null && clubbingFlag.equals("1"))
-             MyFirebaseMessagingService.notifications_club.clear();
+            if (clubbingFlag != null && clubbingFlag.equals("1"))
+                MyFirebaseMessagingService.notifications_club.clear();
 
+            if (actionPath != null) {
+
+                // Log.e("received","notification");
+
+                Answers.getInstance().logContentView(new ContentViewEvent()
+                        .putContentName("Notification Clicked!")
+                        .putContentType("Opened Page")
+                        .putContentId("article-350")
+                        .putCustomAttribute("Custom String", actionPath)
+                        .putCustomAttribute("Custom Number", 35));
+            }
+
+            if (mAuth == null) {
+                mAuth = FirebaseAuth.getInstance();
+            }
+            if (mValidator == null) {
+                mValidator = new Validator(getApplicationContext());
+            }
+
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+            StrictMode.setThreadPolicy(policy);
+
+            // FirebaseStorage storage = FirebaseStorage.getInstance("gs://clirnetapp.appspot.com");
+
+            FirebaseStorage storage = FirebaseStorage.getInstance("gs://clirnetstorage");
+            if (storageReference == null)
+                storageReference = storage.getReference();
+
+            fodRange = mValidator.getFodRange();
+            downloadImageDateRange = mValidator.getDownloadImageRange();
+
+
+            Log.e("fodRange", "" + fodRange);
 
         } catch (Exception e) {
             appController.appendLog(appController.getDateTime() + "" + "/" + "Navigation Activity " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -152,13 +245,76 @@ public class NavigationActivity extends AppCompatActivity
                 savedUserName = al.get(0).getUserName();
                 savedUserPassword = al.get(0).getPassowrd();
             }
-           // Log.e("savedUserName",""+savedUserName);
+            // Log.e("savedUserName",""+savedUserName);
             doctor_membership_number = sqlController.getDoctorMembershipIdNew(savedUserName);
 
             u_name.setText("Dr. " + docName);
             email.setText(emailId);
 
-            checkConnection();/*Chcking internet connection Manually*/
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+
+            Date date = new Date();
+             currentDate = dateFormat.format(date);
+            Date fodRangeDate = AppController.addDay1(date, fodRange);
+
+            Date downloadDate = AppController.addDay1(date, downloadImageDateRange);
+
+            Date fromdeleteDownloadImageDate = AppController.addDay1(date, 1);
+
+            Date deleteDownloadImageDate = AppController.addDay1(date, 15);
+
+            Date deleteImageDateCurrentDate = AppController.addDay1(date, -fodRange);
+
+            String strTommorowsDate = dateFormat.format(fodRangeDate);
+
+
+            Log.e("currentDate", "  " + currentDate + "   " + strTommorowsDate);
+
+            SimpleDateFormat dateFormat3 = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
+
+            fromDate = dateFormat3.format(date);
+            toDate = dateFormat3.format(fodRangeDate);
+            toDownloadDate = dateFormat3.format(downloadDate);
+
+            toDeleteCurrentDate=dateFormat3.format(date);
+
+            fromDeleteDownloadImageDate = dateFormat3.format(fromdeleteDownloadImageDate);
+            toDeleteDownloadImage = dateFormat3.format(deleteDownloadImageDate);
+
+            formDeleteImageCurrentDate=dateFormat3.format(deleteImageDateCurrentDate);
+            // Log.e("fromDate", "  " + fromDate + "" + toDate);
+
+            deleteDownloadedImagesFromRange();
+
+            /* ArrayList<String> po=sqlController.getVisitIdFromDateRange(fromDate,toDate);
+            Log.e("PO",""+po.size());
+
+            String[] array=null;
+
+            if (po.size() > 0) {
+                array = po.toArray(new String[0]);
+
+            }
+            if(po.size() >0) {
+                ArrayList<Images> successfulFollowUps = sqlController.getLink(array);
+                int size = successfulFollowUps.size();
+
+           *//* if(size>0){
+
+               startService(new Intent(LoginActivity.this, MyDownloadService.class)
+                        .putExtra(MyDownloadService.EXTRA_IMAGE_LIST,successfulFollowUps)
+                        .setAction(MyDownloadService.ACTION_DOWNLOAD));
+
+            }*//*
+            }*/
+
+
+            try {
+                imageData = sqlController.getImagesFromRecodImagesTable();
+                Log.e("imageData", "  " + imageData.size());
+            } catch (ClirNetAppException e) {
+                e.printStackTrace();
+            }
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -169,12 +325,18 @@ public class NavigationActivity extends AppCompatActivity
             }
         }
 
+        checkConnection();
+
+        /*Checking internet connection Manually*/
+
         /*Handle push notification messages*/
+
         // Log.e("type", "   " + notificationTreySize + "  " + actionPath);
+
         // if(notificationTreySize > 1){
         if (type != null && !type.equals("") && notificationTreySize > 0) {
             callAction("notification");
-        } else if (actionPath!=null && !actionPath.equals("") && notificationTreySize <= 0 && type != null && !type.equals("") && !type.equals("1")) {
+        } else if (actionPath != null && !actionPath.equals("") && notificationTreySize <= 0 && type != null && !type.equals("") && !type.equals("1")) {
             callAction(actionPath);
         } else if (headerMsg != null && !headerMsg.equals("") && actionPath != null && !actionPath.equals("") && headerMsg.equals("goto")) {
             callAction(actionPath);
@@ -188,7 +350,7 @@ public class NavigationActivity extends AppCompatActivity
             fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction().replace(R.id.flContent, fragment).addToBackStack(null).commit();
 
-        }else {
+        } else {
             callAction("DashboardFragment");
         }
     }
@@ -208,7 +370,6 @@ public class NavigationActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-
     }
 
 
@@ -307,7 +468,6 @@ public class NavigationActivity extends AppCompatActivity
 
             case R.id.nav_logout:
 
-                // Launching the login activity
                 AppController.getInstance().trackEvent("Logout", "Navigation");
 
                 goToLoginActivity();
@@ -317,7 +477,6 @@ public class NavigationActivity extends AppCompatActivity
 
             case R.id.nav_help:
 
-                // Launching the login activity
                 AppController.getInstance().trackEvent("Help", "Navigation");
 
                 fragment = new HelpFragment();
@@ -407,8 +566,8 @@ public class NavigationActivity extends AppCompatActivity
 
     public void setActionBarTitle(String title) {
         try {
-            if(getSupportActionBar()!=null)
-            getSupportActionBar().setTitle(title);
+            if (getSupportActionBar() != null)
+                getSupportActionBar().setTitle(title);
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -419,7 +578,6 @@ public class NavigationActivity extends AppCompatActivity
         Fragment mFragment;
         fragmentManager = getSupportFragmentManager();
         switch (action) {
-
             case "DashboardFragment":
                 AppController.getInstance().trackEvent("Dashboard", "Navigation");
 
@@ -459,12 +617,14 @@ public class NavigationActivity extends AppCompatActivity
                 break;
 
             case "IncompleteListFragment":
+
                 AppController.getInstance().trackEvent("Prsecription", "Navigation");
 
                 mFragment = new IncompleteListFragment();
                 break;
 
             case "AssociatesFragment":
+
                 AppController.getInstance().trackEvent("Associates", "Navigation");
 
                 mFragment = new AssociatesFragment();
@@ -487,8 +647,8 @@ public class NavigationActivity extends AppCompatActivity
 
 
             default:
-                mFragment = new DashboardFragment();
 
+                mFragment = new DashboardFragment();
         }
 
         fragmentManager.beginTransaction().replace(R.id.flContent, mFragment).commit();
@@ -506,16 +666,59 @@ public class NavigationActivity extends AppCompatActivity
     // Method to manually check connection status
     private void checkConnection() {
         boolean isConnected = ConnectivityChangeReceiver.isConnected();
-        if (isConnected) callService();
 
+        getFirebaseAuthToken();//get the fcm auth token service
+        callService();
+
+        if (isConnected && uid!=null) {
+            final Handler handler = new Handler();
+       /* handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 5000ms
+                sendImagesToCloud();
+            }
+        }, 5000);*/
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 8000ms
+                startDeletingImageTask();
+                startDownloadingImageTask();
+            }
+        }, 8000);
+
+        }
     }
-
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
+        getFirebaseAuthToken();//get the fcm auth token service
+        callService();
+        if (isConnected && uid!=null) {
 
-        if (isConnected) callService();
+        final Handler handler = new Handler();
+       /* handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 5000ms
+                sendImagesToCloud();
+
+            }
+        }, 5000);*/
+
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 8000ms
+                startDeletingImageTask();
+                startDownloadingImageTask();
+            }
+        }, 8000);
+    }
 
     }
+
 
     private void callService() {
 
@@ -535,6 +738,7 @@ public class NavigationActivity extends AppCompatActivity
             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, SystemClock.elapsedRealtime(), 1800000, pendingIntent);
         }*/
+
     }
 
     /* this function used to check item from navigation list when perticular fragment gets called.*/
@@ -564,6 +768,218 @@ public class NavigationActivity extends AppCompatActivity
             System.gc();
         }
 
+    }
+
+    private void getFirebaseAuthToken() {
+
+        final ProgressDialog pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+        // pDialog.show();
+        final String TAG = "sending";
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                "http://43.242.212.136/clirnetapplicationv2/public/doctor/webapi/fcmtoken", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                pDialog.hide();
+                try {
+                    JSONObject jObj = new JSONObject(response);
+
+                    JSONObject user = jObj.getJSONObject("data");
+                    String strToken = user.getString("token");
+                    siginInWithCustomeToken(strToken);
+
+                    Log.e("strToken", "  " + strToken);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                pDialog.hide();
+            }
+
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("username", "training");
+                params.put("password", "c778fefef897d9a1654bd4babf75bbff");//"c778fefef897d9a1654bd4babf75bbff"
+                params.put("apikey", "PFFt0436yjfn0945DevOp0958732Cons3214556");
+                params.put("membershipid", "0099-999999-0040");
+                return checkParams(params);
+            }
+
+            private Map<String, String> checkParams(Map<String, String> map) {
+                for (Map.Entry<String, String> pairs : map.entrySet()) {
+                    if (pairs.getValue() == null) {
+                        map.put(pairs.getKey(), "");
+                    }
+                }
+                return map;
+            }
+        };
+
+        int socketTimeout = 30000;//30 seconds - change to what you want
+        int retryforTimes = 2;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, retryforTimes, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        strReq.setRetryPolicy(policy);
+
+        // Adding request to request queue
+        strReq.setShouldCache(false);//set cache false
+        AppController.getInstance().getRequestQueue().getCache().clear(); //removing all previous cache
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, "tag");
+    }
+
+    private void siginInWithCustomeToken(String token) {
+
+        mAuth.signInWithCustomToken(token)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCustomToken:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            uid = mAuth.getUid();
+                            Log.e("user", "" + user + "   " + mAuth.getUid());
+                            if(uid!=null)
+                                sendImagesToCloud();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCustomToken:failure", task.getException());
+                            Toast.makeText(NavigationActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void sendImagesToCloud() {
+
+        if (uid != null)
+            if (imageData != null && imageData.size() > 0)
+                startService(new Intent(NavigationActivity.this, MyUploadService.class)
+                        //.putExtra(MyUploadService.EXTRA_FILE_URI, Uri.parse("content://media/external/images/media/26013"))
+                        .putExtra(MyUploadService.EXTRA_IMAGE_LIST, imageData)
+                        .putExtra(MyUploadService.FIREBASE_UID, uid)
+                        .setAction(MyUploadService.ACTION_UPLOAD));
+    }
+
+    /*Deleting local images when */
+
+    private void startDeletingImageTask() {
+
+        if (sqlController != null)
+            try {
+
+                ArrayList<String> po = sqlController.getVisitIdFromDateRange(fromDeleteDownloadImageDate, toDate,currentDate,formDeleteImageCurrentDate,toDeleteCurrentDate);
+                Log.e("PO", "" + po.size());
+
+
+                Log.e("po.size()", "" + po.size());
+
+                String[] array ;
+
+                if (po.size() > 0) {
+                    array = po.toArray(new String[0]);
+                    ArrayList<Images> successfulFollowUps = sqlController.getLink(array);
+                    int size = successfulFollowUps.size();
+
+                    Log.e("successfulFollowUps" +
+                            "",""+size);
+
+                    if (size > 0) {
+
+                        for (int i = 0; i < size; i++) {
+                            String imgPath = successfulFollowUps.get(i).getActImagePath();
+                            int id = successfulFollowUps.get(i).getpId();
+                            Log.e("imgPath", "" + imgPath + "  id :  " + id);
+                            if (imgPath != null)
+                               deleteImageFile(id, imgPath,2);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+    }
+
+
+
+    private void startDownloadingImageTask() {
+
+        if (sqlController != null)
+            try {
+
+                ArrayList<String> po = sqlController.getVisitIdFromDateRangeForDownload(fromDate, toDownloadDate);
+                Log.e("PO", "" + po.size());
+
+                Log.e("po.size()", "" + po.size());
+
+                String[] array;
+
+                if (po.size() > 0) {
+
+                    array = po.toArray(new String[0]);
+                    ArrayList<Images> successfulFollowUps = sqlController.getImagesToDownload(array,fromDate, toDownloadDate);
+                    int size = successfulFollowUps.size();
+
+                    if (size > 0) {
+
+                        startService(new Intent(getApplicationContext(), MyDownloadService.class)
+                                .putExtra(MyDownloadService.EXTRA_IMAGE_LIST, successfulFollowUps)
+                                .putExtra(MyDownloadService.FIREBASE_UID, uid)
+                                .setAction(MyDownloadService.ACTION_DOWNLOAD));
+
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+    }
+    private void deleteDownloadedImagesFromRange(){
+        if (sqlController != null)
+            try {
+
+                ArrayList<Images> deleteDownlodedImgIdList = sqlController.getVisitIdFromDateRangeForDeletion(fromDeleteDownloadImageDate, toDeleteDownloadImage);
+
+                Log.e("deleteDownlodedImg", "" + deleteDownlodedImgIdList.size());
+
+                int size = deleteDownlodedImgIdList.size();
+
+                if (size > 0) {
+                    for (int i = 0; i < size; i++) {
+                            String imgPath = deleteDownlodedImgIdList.get(i).getImageUrl();
+                            int id = deleteDownlodedImgIdList.get(i).getpId();
+                            Log.e("deleteDownlodedImg", "" + imgPath + "  id :  " + id);
+                            if (imgPath != null)
+                                deleteImageFile(id, imgPath,2);
+                        }
+                    }
+
+            } catch (ClirNetAppException  e) {
+                e.printStackTrace();
+            }
+    }
+    private void deleteImageFile(int id, String imgPath,int status) {
+
+        File fdelete = new File(imgPath);
+        if (fdelete.exists()) {
+            if (fdelete.delete()) {
+                System.out.println("file Deleted :" + fdelete);
+                if (sqlController != null)
+                    sqlController.updateImagesRecords(id, "", status);//update status =2
+            } else {
+                System.out.println("file not Deleted :" + fdelete);
+            }
+        }
     }
 }
 

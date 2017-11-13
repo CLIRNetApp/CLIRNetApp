@@ -58,12 +58,13 @@ public class PatientReportFragment extends Fragment {
     private String fromDate, toDate;
 
     private LinkedList<String> newdate;
-
+    private SQLController sqlController;
 
     public PatientReportFragment() {
         // Required empty public constructor
         setHasOptionsMenu(true);
     }
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -79,6 +80,7 @@ public class PatientReportFragment extends Fragment {
             toDate = bundle.getString("TODATE");
         }
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -86,6 +88,7 @@ public class PatientReportFragment extends Fragment {
         // Tracking the screen view
         AppController.getInstance().trackScreenView("Patient Report Fragment");
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();
@@ -136,8 +139,11 @@ public class PatientReportFragment extends Fragment {
 
         ArrayList<Entry> values = new ArrayList<>();
         try {
-            SQLController sqlController = new SQLController(getContext());
-            sqlController.open();
+
+            if (sqlController == null) {
+                sqlController = new SQLController(getContext().getApplicationContext());
+                sqlController.open();
+            }
 
             ArrayList<Counts> countsNo;
             dateList = new ArrayList<>();
@@ -160,18 +166,18 @@ public class PatientReportFragment extends Fragment {
             }
 
             DateFormat format = new SimpleDateFormat("yyyy-MM-dd", Locale.ENGLISH);
-            DateFormat format1 = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
+            DateFormat format1 = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
             newdate = new LinkedList<>();
             List<String> newcount = new LinkedList<>();
             try {
                 Date stdate = format.parse(fromDate);
                 Date eddate = format.parse(toDate);
 
-                String newsd=format1.format(stdate);
-                String newed=format1.format(eddate);
+                String newsd = format1.format(stdate);
+                String newed = format1.format(eddate);
 
-                Date d1=format1.parse(newsd);
-                Date d2=format1.parse(newed);
+                Date d1 = format1.parse(newsd);
+                Date d2 = format1.parse(newed);
 
 
                 Calendar start = Calendar.getInstance();
@@ -180,28 +186,28 @@ public class PatientReportFragment extends Fragment {
                 end.setTime(d2);
                 end.add(Calendar.DATE, 1);
 
-           //here we are checking if date is present in dateList or not which came from db if not we r adding customly date and count which is 0. 29/11-2016 By.Ashish
+                //here we are checking if date is present in dateList or not which came from db if not we r adding customly date and count which is 0. 29/11-2016 By.Ashish
                 for (Date date1 = start.getTime(); start.before(end); start.add(Calendar.DATE, 1), date1 = start.getTime()) {
 
-                    Format formatter = new SimpleDateFormat("dd-MM-yyyy",Locale.ENGLISH);
-                    SimpleDateFormat   sdf = new SimpleDateFormat("dd-MM",Locale.ENGLISH);
+                    Format formatter = new SimpleDateFormat("dd-MM-yyyy", Locale.ENGLISH);
+                    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM", Locale.ENGLISH);
                     Date date;
                     String s = formatter.format(date1);
 
                     if (dateList.contains(s)) {
                         int getindex = dateList.indexOf(s);
-                        String countval =nocountsperday.get(getindex);
+                        String countval = nocountsperday.get(getindex);
 
-                        date =sdf.parse(s);
+                        date = sdf.parse(s);
 
-                        String convertedDate=sdf.format(date);
+                        String convertedDate = sdf.format(date);
                         newdate.add(convertedDate);
                         newcount.add(countval);
 
                     } else {
-                        date =sdf.parse(s);
+                        date = sdf.parse(s);
 
-                        String convertedDate=sdf.format(date);
+                        String convertedDate = sdf.format(date);
                         newdate.add(convertedDate);
                         newcount.add("0");
                     }
@@ -209,7 +215,7 @@ public class PatientReportFragment extends Fragment {
             } catch (ParseException e) {
 
                 e.printStackTrace();
-                appController.appendLog(appController.getDateTime() + " " + "/ " + "PatientReportFragment" + e +" Line Number: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+                appController.appendLog(appController.getDateTime() + " " + "/ " + "PatientReportFragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
             }
 
             int size1 = newcount.size();
@@ -226,7 +232,7 @@ public class PatientReportFragment extends Fragment {
 
         } catch (Exception e) {
             e.printStackTrace();
-            new AppController().appendLog(new AppController().getDateTime() + " " + "/ " + "PatientReportFragment" + e +" Line Number: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+            new AppController().appendLog(new AppController().getDateTime() + " " + "/ " + "PatientReportFragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         LineDataSet set1;
@@ -258,7 +264,7 @@ public class PatientReportFragment extends Fragment {
         dataSets.add(set1); // add the datasets
 
         // create a data object with the datasets
-        LineData data = new LineData(newdate,dataSets);
+        LineData data = new LineData(newdate, dataSets);
 
         data.setValueTextColor(Color.BLACK);
         data.setValueTextSize(16f);
@@ -266,6 +272,7 @@ public class PatientReportFragment extends Fragment {
 
 
     }
+
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -280,20 +287,23 @@ public class PatientReportFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-       if(mListener!=null){
-           mListener = null;
-       }
-        if(view != null){
-            view=null;
+        if (mListener != null) {
+            mListener = null;
         }
-        if(appController !=null){
-            appController=null;
+        if (view != null) {
+            view = null;
         }
-        fromDate=null;
-        toDate=null;
-        dateList=null;
-        newdate=null;
-        nocountsperday=null;
+        if (appController != null) {
+            appController = null;
+        }
+        if(sqlController!=null){
+            sqlController=null;
+        }
+        fromDate = null;
+        toDate = null;
+        dateList = null;
+        newdate = null;
+        nocountsperday = null;
     }
 
     public interface OnFragmentInteractionListener {

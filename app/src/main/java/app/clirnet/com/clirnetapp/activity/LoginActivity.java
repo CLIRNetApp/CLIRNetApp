@@ -6,19 +6,24 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StrictMode;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AlertDialog;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -40,14 +45,34 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.RetryPolicy;
 import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.StringRequest;
 import com.crashlytics.android.Crashlytics;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -62,6 +87,8 @@ import app.clirnet.com.clirnetapp.app.AppConfig;
 import app.clirnet.com.clirnetapp.app.AppController;
 import app.clirnet.com.clirnetapp.app.DoctorDeatilsAsynTask;
 import app.clirnet.com.clirnetapp.app.UpdatePassworsAsynTask;
+import app.clirnet.com.clirnetapp.cloudStorage.MyDownloadService;
+import app.clirnet.com.clirnetapp.cloudStorage.MyUploadService;
 import app.clirnet.com.clirnetapp.fcm.MyFirebaseMessagingService;
 import app.clirnet.com.clirnetapp.helper.BannerClass;
 import app.clirnet.com.clirnetapp.helper.ClirNetAppException;
@@ -71,13 +98,18 @@ import app.clirnet.com.clirnetapp.helper.SQLController;
 import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.helper.SessionManager;
 import app.clirnet.com.clirnetapp.models.CallAsynOnce;
+import app.clirnet.com.clirnetapp.models.Images;
 import app.clirnet.com.clirnetapp.models.LoginModel;
 import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.utility.MD5;
 import app.clirnet.com.clirnetapp.utility.SyncDataService;
+import app.clirnet.com.clirnetapp.utility.Validator;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import io.fabric.sdk.android.Fabric;
+
+import static com.tokenautocomplete.TokenCompleteTextView.TAG;
+
 
 public class LoginActivity extends Activity {
 
@@ -132,12 +164,39 @@ public class LoginActivity extends Activity {
     private boolean responceCheck;
     private String savedUserName;
     private String savedPhoneNumber;
+    private String netSpeed;
+    private FirebaseAuth mAuth;
+    private StorageReference storageReference;
+    private String uid;
+    private BroadcastReceiver mBroadcastReceiver;
+    private ProgressDialog mProgressDialog;
+    private Uri mDownloadUrl = null;
+
+
+    public void onStart() {
+        super.onStart();
+        //read username and password from SharedPreferences
+        LocalBroadcastManager manager = LocalBroadcastManager.getInstance(getApplicationContext());
+        manager.registerReceiver(mBroadcastReceiver, MyDownloadService.getIntentFilter());
+        manager.registerReceiver(mBroadcastReceiver, MyUploadService.getIntentFilter());
+        getUser();
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // Unregister download receiver
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(mBroadcastReceiver);
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Fabric.with(this, new Crashlytics());
         setContentView(R.layout.activity_login);
+
 
         ButterKnife.inject(this);
 
@@ -150,14 +209,12 @@ public class LoginActivity extends Activity {
             clubbingFlag = getIntent().getStringExtra("CLUBBINGFLAG");
             notificationTreySize = getIntent().getIntExtra("NOTIFITREYSIZE", 0);
 
-            // Log.e("Loginmsg", "  " + msg + "  header " + headerMsg + "  " +type + "  "+actionPath);
+
             /*Clearing notifications ArrayList from MyFirebaseMessagingService after clicking on it*/
 
             MyFirebaseMessagingService.notifications_club.clear();
 
            // FirebaseCrash.setCrashCollectionEnabled(false);
-            // TODO: Move this to where you establish a user session
-
 
 
         } catch (Exception e) {
@@ -167,34 +224,50 @@ public class LoginActivity extends Activity {
         TextView btnLinkToForgetScreen = (TextView) findViewById(R.id.btnLinkToForgetScreen);
 
         DatabaseClass databaseClass = new DatabaseClass(getApplicationContext());
-        bannerClass = new BannerClass(getApplicationContext());
+
         LastnameDatabaseClass lastnameDatabaseClass = new LastnameDatabaseClass(getApplicationContext());
+
         dbController = SQLiteHandler.getInstance(getApplicationContext());
+        bannerClass = new BannerClass(getApplicationContext());
         appController = new AppController();
 
         if (md5 == null) {
             md5 = new MD5();
         }
 
+        mAuth = FirebaseAuth.getInstance();
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
+
+        // FirebaseStorage storage = FirebaseStorage.getInstance("gs://clirnetapp.appspot.com");
+        FirebaseStorage storage = FirebaseStorage.getInstance("gs://clirnetstorage");
+        storageReference =storage.getReference();
+
+
+
         //getCurrentDob(21);
         //getCurrentDob(10);
 
         //this will set value to run  asynctask only once per login session
 
+
         new CallAsynOnce().setValue("1");//this set value which helps to call asyntask only once while app is running.
 
         // Progress dialog
 
-        connectionDetector = new ConnectionDetector(getApplicationContext());
+         connectionDetector = new ConnectionDetector(getApplicationContext());
+         //Log.e("netSpeed",""+connectionDetector.checkNetworkType());
+         netSpeed=connectionDetector.checkNetworkType();
 
         try {
             sInstance = SQLiteHandler.getInstance(getApplicationContext());
+
             if(sqlController==null) {
                 sqlController = new SQLController(getApplicationContext());
                 sqlController.open();
             }
-           // sInstance = SQLiteHandler.getInstance(getApplicationContext());
-
             Boolean value = getFirstTimeLoginStatus();
 
             if (value) {
@@ -202,11 +275,14 @@ public class LoginActivity extends Activity {
 
                 doctor_membership_number = sqlController.getDoctorMembershipIdNew();
                 docId = sqlController.getDoctorId();
+
+                //getFirebaseAuthToken();//get the fcm auth token service
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTimenew() + " " + "/ " + "Login Page" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+            appController.appendLog(appController.getDateTimenew() + " " + "/ " + "Login Page  " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
 
         try {
@@ -214,10 +290,13 @@ public class LoginActivity extends Activity {
             databaseClass.createDataBase();
             bannerClass.createDataBase();
 
-        } catch (Exception ioe) {
-            appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page" + ioe + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            int fodRange=new Validator(LoginActivity.this).getFodRange();
+            Log.e("fodRange",""+fodRange);
 
-            throw new Error("Unable to create database");
+        } catch (Exception ioe) {
+            appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page  " + ioe + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+           // throw new Error("Unable to create database");
         }
 
         try {
@@ -228,9 +307,11 @@ public class LoginActivity extends Activity {
             /*This AsyncTask will Insert data from Asset folder file to data 23-03-2016*/
             new InsertDataLocally().execute();
 
+
+
         } catch (Exception e) {
             e.printStackTrace();
-            appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         } finally {
             databaseClass.close();
@@ -242,7 +323,7 @@ public class LoginActivity extends Activity {
 
         } catch (IOException e) {
 
-            appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             throw new Error("Unable to create database");
         }
@@ -252,6 +333,28 @@ public class LoginActivity extends Activity {
 
             getUsernamePasswordFromDatabase();
 
+           /*  ArrayList<String> po=sqlController.getVisitIdFromDateRange("","");
+            Log.e("PO",""+po.size());
+
+            String[] array=null;
+
+            if (po.size() > 0) {
+             array = po.toArray(new String[0]);
+
+            }
+
+            ArrayList<Images> successfulFollowUps = sqlController.getLink(array);
+            int size=successfulFollowUps.size();
+
+           if(size>0){
+
+               startService(new Intent(LoginActivity.this, MyDownloadService.class)
+                        .putExtra(MyDownloadService.EXTRA_IMAGE_LIST,successfulFollowUps)
+                        .setAction(MyDownloadService.ACTION_DOWNLOAD));
+
+            }*/
+
+           // downloadFile();
         } catch (Exception e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -259,12 +362,13 @@ public class LoginActivity extends Activity {
         } finally {
             lastnameDatabaseClass.close();
         }
+
         btnLogin.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View view, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
 
+                if (event.getAction() == MotionEvent.ACTION_UP) {
                     hideKeyBoard();
                     btnLogin.setBackground(getResources().getDrawable(R.drawable.rounded_corner_withbackground));
                     name = inputEmail.getText().toString().trim();
@@ -284,7 +388,30 @@ public class LoginActivity extends Activity {
                     LoginAuthentication();
                     logUser();
 
-                  //  forceCrash();
+                   // uploadFile1(Uri.parse("content://media/external/images/media/25980"));
+                   /* ArrayList<Images> imageData=null;
+                    try {
+                         imageData = sqlController.getImagesFromRecodImagesTable();
+                        Log.e("imageData","  "+imageData.size());
+                    } catch (ClirNetAppException e) {
+                        e.printStackTrace();
+                    }*/
+                    /* if(imageData.size()>0)
+                   startService(new Intent(LoginActivity.this, MyUploadService.class)
+                            //.putExtra(MyUploadService.EXTRA_FILE_URI, Uri.parse("content://media/external/images/media/26013"))
+                            .putExtra(MyUploadService.EXTRA_IMAGE_LIST,  imageData)
+                            .putExtra(MyUploadService.FIREBASE_UID,  uid)
+                            .setAction(MyUploadService.ACTION_UPLOAD));*/
+
+                  /*  startService(new Intent(LoginActivity.this, MyDownloadService.class)
+                            .putExtra(MyDownloadService.EXTRA_DOWNLOAD_PATH, "https://firebasestorage.googleapis.com/v0/b/clirnetapp.appspot.com/o/demo%2F0099-999999-0040-1509689430%2Fprescription_107_22-06-2017_19%3A55%3A38.png?alt=media&token=1b6b3c97-e9bf-4e82-9402-25a382e055b3")
+                            .setAction(MyDownloadService.ACTION_DOWNLOAD));*/
+
+//                    Intent intent = new Intent(LoginActivity.this, MyDownloadService.class)
+//                            .putExtra(MyDownloadService.EXTRA_DOWNLOAD_PATH, path)
+//                            .setAction(MyDownloadService.ACTION_DOWNLOAD);
+//                    startService(intent);
+                   //  forceCrash();
                    // else appController.showToastMsg(getApplicationContext(),"This username is not licensed to log into this device. Please check username");
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -304,7 +431,7 @@ public class LoginActivity extends Activity {
         //Commented on  10-05-2017
         /*  Updateing banner stats flag to 0 build no 1.3+  */
         /*Updating associate master flag from 1 to 0*/
-       String bannerUpdateFlag = getupdateBannerClickVisitFlag0();
+         String bannerUpdateFlag = getupdateBannerClickVisitFlag0();
         if (bannerUpdateFlag == null || bannerUpdateFlag.equals("true")) {
             updateBannerTableDataFlag();
         }
@@ -316,9 +443,11 @@ public class LoginActivity extends Activity {
 
             public void onClick(View view) {
                 boolean isInternetPresent = connectionDetector.isConnectingToInternet();
-                if (isInternetPresent) {
+                if (isInternetPresent && netSpeed.equals("Good")) {
                     showChangePassDialog();
-                }else{
+                }else if(isInternetPresent && netSpeed.equals("Low")){
+                    appController.showToastMsg(getApplicationContext(),"Internet Connection is too low To make request/!");
+                } else{
                    appController.showToastMsg(getApplicationContext(),"Please Connect To Internet And Try Again!");
                 }
 
@@ -329,6 +458,94 @@ public class LoginActivity extends Activity {
             // carry on the normal flow, as the case of  permissions  granted.
         }
 
+        // Local broadcast receiver
+        mBroadcastReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.d(TAG, "onReceive:" + intent);
+                hideProgressDialog();
+
+                switch (intent.getAction()) {
+                    case MyDownloadService.DOWNLOAD_COMPLETED:
+                        // Get number of bytes downloaded
+                        long numBytes = intent.getLongExtra(MyDownloadService.EXTRA_BYTES_DOWNLOADED, 0);
+
+                        // Alert success
+                        showMessageDialog(getString(R.string.success), String.format(Locale.getDefault(),
+                                "%d bytes downloaded from %s",
+                                numBytes,
+                                intent.getStringExtra(MyDownloadService.EXTRA_DOWNLOAD_PATH)));
+                        // setUpImage(MyDownloadService.EXTRA_DOWNLOAD_PATH);
+                        break;
+                    case MyDownloadService.DOWNLOAD_ERROR:
+                        // Alert failure
+                        showMessageDialog("Error", String.format(Locale.getDefault(),
+                                "Failed to download from %s",
+                                intent.getStringExtra(MyDownloadService.EXTRA_DOWNLOAD_PATH)));
+                        break;
+                    case MyUploadService.UPLOAD_COMPLETED:
+                    case MyUploadService.UPLOAD_ERROR:
+                        onUploadResultIntent(intent);
+                        break;
+                }
+            }
+        };
+
+    }
+    public static String bytesToHuman (long size)
+    {
+        long Kb = 1  * 1024;
+        long Mb = Kb * 1024;
+        long Gb = Mb * 1024;
+        long Tb = Gb * 1024;
+        long Pb = Tb * 1024;
+        long Eb = Pb * 1024;
+
+        if (size <  Kb)                 return floatForm(        size     ) + " byte";
+        if (size >= Kb && size < Mb)    return floatForm((double)size / Kb) + " Kb";
+        if (size >= Mb && size < Gb)    return floatForm((double)size / Mb) + " Mb";
+        if (size >= Gb && size < Tb)    return floatForm((double)size / Gb) + " Gb";
+        if (size >= Tb && size < Pb)    return floatForm((double)size / Tb) + " Tb";
+        if (size >= Pb && size < Eb)    return floatForm((double)size / Pb) + " Pb";
+        if (size >= Eb)                 return floatForm((double)size / Eb) + " Eb";
+
+        return "???";
+    }
+    public static String floatForm (double d)
+    {
+        return new DecimalFormat("#.##").format(d);
+    }
+    private void onUploadResultIntent(Intent intent) {
+        // Got a new intent from MyUploadService with a success or failure
+        mDownloadUrl = intent.getParcelableExtra(MyUploadService.EXTRA_DOWNLOAD_URL);
+        Uri mFileUri = intent.getParcelableExtra(MyUploadService.EXTRA_FILE_URI);
+        Log.e("mDownloadUrl","  "+mDownloadUrl);
+        // updateUI(mAuth.getCurrentUser());
+    }
+
+    private void showMessageDialog(String title, String message) {
+       /* AlertDialog ad = new AlertDialog.Builder(getApplicationContext())
+                .setTitle(title)
+                .setMessage(message)
+                .create();
+        ad.show();*/
+       appController.showToastMsg(getApplicationContext(),message);
+    }
+
+    private void showProgressDialog(String caption) {
+        if (mProgressDialog == null) {
+            mProgressDialog = new ProgressDialog(getApplicationContext());
+            mProgressDialog.setIndeterminate(true);
+        }
+
+        mProgressDialog.setMessage(caption);
+        mProgressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (mProgressDialog != null && mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
     }
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     private  boolean checkAndRequestPermissions() {
@@ -398,10 +615,6 @@ public class LoginActivity extends Activity {
 
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                if (db != null) {
-                    db.close();
-                }
             }
         }
     }
@@ -475,7 +688,8 @@ public class LoginActivity extends Activity {
             //Check if internet in on or not and if on authenticate user via entered Credentials
             // login user
             boolean isInternetPresent = connectionDetector.isConnectingToInternet();
-            if (isInternetPresent) {
+
+            if (isInternetPresent  && netSpeed.equals("Good")) {
                 start_time = appController.getDateTimenew();
 
                 new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword, doctor_membership_number, docId, start_time);
@@ -483,11 +697,12 @@ public class LoginActivity extends Activity {
                 AppController.getInstance().getRequestQueue().getCache().remove(AppConfig.URL_LOGIN);
                 //  new LoginAsyncTask(LoginActivity.this, name, md5EncyptedDataPassword, phoneNumber, doctor_membership_number, docId, start_time,type,actionPath,msg,headerMsg,clubbingFlag,notificationTreySize);
                 //startService();
-                Log.e("name",""+name +" savedUserName "+savedUserName+ " phoneNumber "+phoneNumber);
+
 
                 if(savedUserName==null && savedPhoneNumber==null || name.equals(savedUserName) || name.equals(savedPhoneNumber)) {
                     checkLogin(name, md5EncyptedDataPassword, doctor_membership_number, docId);
                 }
+
                 else appController.showToastMsg(getApplicationContext(),"This username is not licensed to log into this device. Please check username");
 
 
@@ -497,7 +712,7 @@ public class LoginActivity extends Activity {
 
                 //registerToServer(name, "ashish.umredkar@clirnet.com"); //for fcm notification
 
-                //update last sync time if sync from server
+                //update last getFirebaseAuthToken time if getFirebaseAuthToken from server
                 // update last login time
                 //lastSyncTime(start_time);
                 //lastSyncTime("05-02-2017 02:12:25");
@@ -506,8 +721,9 @@ public class LoginActivity extends Activity {
             } else {
 
                 boolean isLogin;
+
                 try {
-                    //check last sync time to check if last sync from server is more than 72 hours or not
+                    //check last getFirebaseAuthToken time to check if last getFirebaseAuthToken from server is more than 72 hours or not
                     int lasttimeSync = getLastSyncTime();
 
                     if (lasttimeSync > 72) {
@@ -619,6 +835,7 @@ public class LoginActivity extends Activity {
                 String start_time = appController.getDateTimenew();
                 new UpdatePassworsAsynTask(LoginActivity.this, username, doctor_membership_number, docId, md5oldPassword, md5newPassword, start_time);
                 dialog.dismiss();
+
             }
         });
 
@@ -671,12 +888,7 @@ public class LoginActivity extends Activity {
 
     }
 
-    public void onStart() {
-        super.onStart();
-        //read username and password from SharedPreferences
-        getUser();
 
-    }
 
     //this method will set username and password to edit text if remember me chkbox is checked previously
     private void getUser() {
@@ -703,6 +915,7 @@ public class LoginActivity extends Activity {
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Home Fragment" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -864,13 +1077,28 @@ public class LoginActivity extends Activity {
         return pref.getString("diagnosisFlag", null);
     }
 
+    private void setTransferImagesFlag() {
+
+        getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+                .edit()
+                .putString("transferImageFlag", "true")
+                .apply();
+    }
+
+    //this method will set username and password to edit text if remember me chkbox is checked previously
+    private String getTransferImagesFlag() {
+
+        SharedPreferences pref = getSharedPreferences(PREFS_NAME, MODE_PRIVATE);
+        return pref.getString("transferImageFlag", null);
+    }
+
     private class InsertDataLocally extends AsyncTask<String, String, String> {
 
         @Override
         protected String doInBackground(String... params) {
             try {
 
-                String Diagnosiscount = sInstance.getTableCount("Diagnosis");
+                /* String Diagnosiscount = sInstance.getTableCount("Diagnosis");
                 String Specialitycount = sInstance.getTableCount("Speciality");
                 String symptomscount = sInstance.getTableCount("Symptoms");
                 String last_name_masterCount = sInstance.getTableCount("last_name_master");
@@ -879,7 +1107,6 @@ public class LoginActivity extends Activity {
 
                 if (symptomscount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("Symptoms.sql"));
-
                 }
                 if (Diagnosiscount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("Diagnosis.sql"));
@@ -892,7 +1119,6 @@ public class LoginActivity extends Activity {
                         updateDiagnosisDataFlag();
                      //   Log.e("updating","updating the diagnosis");
                     }
-
                 }
                 if (Specialitycount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("Speciality.sql"));
@@ -906,9 +1132,42 @@ public class LoginActivity extends Activity {
                 if (allergyCount.equals("0")) {
                     bannerClass.insertFromFile(getAssets().open("Allergy.sql"));
                    // Log.e("Allergy","Task is ruuning ");
-                }
+                }*/
 
-            } catch (IOException | ClirNetAppException e) {
+                Boolean value = getFirstTimeLoginStatus();
+
+                if (value) {
+                    String transferImagesFlag = getTransferImagesFlag();
+
+                    Log.e("transferImagesFlag", "Task is ruuning " + transferImagesFlag);
+
+                    if (transferImagesFlag == null || transferImagesFlag.equals("")) {
+
+                        ArrayList<Images> imageData = sqlController.getImagesFromPatientHistory();
+                        int size = imageData.size();
+                        Log.e("size", "" + size);
+
+                        if (size > 0) {
+                            for (int i = 0; i < size; i++) {
+                                String patId = imageData.get(i).getPatId();
+                                String visitId = imageData.get(i).getVisitId();
+                                String imgUrl = imageData.get(i).getImageUrl();
+
+                                if(imgUrl!=null) {
+                                    if (!imgUrl.startsWith("/storage/emulated/0/PatientsImages/")) {
+
+                                        imgUrl = "/storage/emulated/0/PatientsImages/" + imgUrl;
+                                    }
+                                }
+
+                                sInstance.addImages(patId, visitId, imgUrl);
+                            }
+                        }
+                        setTransferImagesFlag();
+                    }
+                }
+            } catch (Exception  e) {
+                if(appController!=null)
                 appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page  " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             }
@@ -984,7 +1243,6 @@ public class LoginActivity extends Activity {
                 }
             }
         }
-
     }
     private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(this)
@@ -994,6 +1252,7 @@ public class LoginActivity extends Activity {
                 .create()
               .show();
     }
+
     private String getCurrentDob(int age){
 
         final Calendar c2 = Calendar.getInstance();
@@ -1020,6 +1279,7 @@ public class LoginActivity extends Activity {
         dob = appController.ConvertDateFormat(dob);
         return dob;
     }
+
     private void checkLogin(final String email, final String password, final String docMemId, final String docId) {
 
         String tag_string_req = "req_login";
@@ -1047,7 +1307,6 @@ public class LoginActivity extends Activity {
                     AppController appController = new AppController();
                     String end_time = appController.getDateTimenew();
 
-
                     // Create login session
                     JSONObject user = jObj.getJSONObject("data");
                     String result = user.getString("result");
@@ -1060,13 +1319,13 @@ public class LoginActivity extends Activity {
                         dbController.addLoginRecord(email, password, phoneNumber);
 
                         getTermsAndCondition();
-                        //update last sync time if sync from server
+                        //update last getFirebaseAuthToken time if getFirebaseAuthToken from server
                         lastSyncTime(end_time);
 
                     } else {
 
                         appController.showToastMsg(getApplicationContext(),"Username/Password Mismatch");
-                        //Toast.makeText(mContext, "Username/Password Mismatch", Toast.LENGTH_SHORT).show();
+
                     }
 
                 } catch (JSONException | ClirNetAppException e) {
@@ -1166,7 +1425,6 @@ public class LoginActivity extends Activity {
         final CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.checkBox);
         final WebView wv = (WebView) checkBoxView.findViewById(R.id.webview);
 
-
         //  checkBox.setText("Yes, I accept the terms and condition");
         final AlertDialog.Builder ad = new AlertDialog.Builder(this)
                 // .setMessage(termsnconditiomessage)
@@ -1196,7 +1454,7 @@ public class LoginActivity extends Activity {
         });
 
         wv.setVisibility(View.VISIBLE);
-        wv.loadUrl("http://doctor.clirnet.com/doctor/patientcentral/termsandcondition");
+        wv.loadUrl("https://doctor.clirnet.com/doctor/patientcentral/termsandcondition");
         wv.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -1255,7 +1513,7 @@ public class LoginActivity extends Activity {
                 .apply();
 
     }
-    //store last sync time in prefrence
+    //store last getFirebaseAuthToken time in prefrence
     private void lastSyncTime(String lastSyncTime) {
 
         getSharedPreferences("SyncFlag", MODE_PRIVATE)
@@ -1269,7 +1527,6 @@ public class LoginActivity extends Activity {
     }
 
     private void showProgressDialog() {
-
         if (pDialog == null) {
             pDialog = new ProgressDialog(LoginActivity.this);
             pDialog.setMessage("Logging in ......");
@@ -1285,15 +1542,171 @@ public class LoginActivity extends Activity {
         }
     }
     private void logUser() {
-        // TODO: Use the current user's information
+
         // You can call any combination of these three methods
         Crashlytics.setUserIdentifier(docId);
         Crashlytics.setUserEmail(doctor_membership_number);
         Crashlytics.setUserName(username);
-
-    }
-    public void forceCrash() {
-        throw new RuntimeException("This is a test crash");
     }
 
+    public void uploadFile1(Uri uri) {
+
+        final ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Uploading");
+        progressDialog.show();
+        Log.e("uid","");
+
+        StorageReference riversRef = storageReference.child("doctor").child("0099-999999-0040-1509512326").child(uri.getLastPathSegment()+".jpg");
+        Log.e("riversRef",""+riversRef);
+        Log.e("filePath"," "+uri);
+
+        riversRef.putFile(uri)
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        //if the upload is successfull
+                        //hiding the progress dialog
+                        //Log.e("taskSnapshot"," "+taskSnapshot.getDownloadUrl());
+                        progressDialog.dismiss();
+                        //setUpImage(taskSnapshot.getDownloadUrl());
+                        //and displaying a success toast
+                        Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(Exception exception) {
+                        //if the upload is not successfull
+                        //hiding the progress dialog
+                        progressDialog.dismiss();
+                        //and displaying error message
+                        Toast.makeText(getApplicationContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        //calculating progress percentage
+                        double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
+
+                        //displaying percentage in progress dialog
+                        progressDialog.setMessage("Uploaded " + ((int) progress) + "%...");
+                    }
+                });
+
+        //Log.e("riversRef", "  " + riversRef.child("images/pic1.jpg").getDownloadUrl());
+
+    }
+
+    private void getFirebaseAuthToken(){
+
+        final ProgressDialog pDialog = new ProgressDialog(this);
+        pDialog.setMessage("Loading...");
+       // pDialog.show();
+        final String TAG = "sending";
+
+        StringRequest strReq = new StringRequest(Request.Method.POST,
+                "http://43.242.212.136/clirnetapplicationv2/public/doctor/webapi/fcmtoken", new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+
+                pDialog.hide();
+                try {
+                    JSONObject jObj = new JSONObject(response);
+
+                    JSONObject user = jObj.getJSONObject("data");
+                    String  strToken = user.getString("token");
+                    siginInWithCustomeToken(strToken);
+
+                    Log.e("strToken","  "+strToken);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                VolleyLog.d(TAG, "Error: " + error.getMessage());
+                pDialog.hide();
+            }
+
+        }) {
+            @Override
+            protected Map<String, String> getParams() {
+                Map<String, String> params = new HashMap<String, String>();
+                params.put("username", "training");
+                params.put("password", "c778fefef897d9a1654bd4babf75bbff");//"c778fefef897d9a1654bd4babf75bbff"
+                params.put("apikey", "PFFt0436yjfn0945DevOp0958732Cons3214556");
+                params.put("membershipid", "0099-999999-0040");
+                return checkParams(params);
+            }
+
+            private Map<String, String> checkParams(Map<String, String> map) {
+                for (Map.Entry<String, String> pairs : map.entrySet()) {
+                    if (pairs.getValue() == null) {
+                        map.put(pairs.getKey(), "");
+                    }
+                }
+                return map;
+            }
+        };
+
+        int socketTimeout = 30000;//30 seconds - change to what you want
+        int retryforTimes = 2;
+        RetryPolicy policy = new DefaultRetryPolicy(socketTimeout, retryforTimes, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        strReq.setRetryPolicy(policy);
+
+        // Adding request to request queue
+        strReq.setShouldCache(false);//set cache false
+        AppController.getInstance().getRequestQueue().getCache().clear(); //removing all previous cache
+        // Adding request to request queue
+        AppController.getInstance().addToRequestQueue(strReq, "tag");
+    }
+    private void siginInWithCustomeToken(String token){
+
+        mAuth.signInWithCustomToken(token)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d(TAG, "signInWithCustomToken:success");
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            uid=mAuth.getUid();
+                            Log.e("user",""+user+"   "+mAuth.getUid());
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w(TAG, "signInWithCustomToken:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void downloadFile(){
+
+        try {
+            URL url = new URL("https://firebasestorage.googleapis.com/v0/b/clirnetapp.appspot.com/o/demo%2F0099-999999-0040-1509689430%2Fprescription_07-09-2017%2018%3A15%3A39.png?alt=media&token=19f81bd6-7e0a-42bf-9702-4c0e60319d3a");
+            InputStream in = new BufferedInputStream(url.openStream());
+
+            File rootPath = new File(Environment.getExternalStorageDirectory(), "file_name");
+            if(!rootPath.exists()) {
+                rootPath.mkdirs();
+            }
+            final File localFile = new File(rootPath,"Image-Porkeri_001.png");
+
+            OutputStream out = new BufferedOutputStream(new FileOutputStream(localFile));
+
+            for ( int i; (i = in.read()) != -1; ) {
+                out.write(i);
+            }
+            in.close();
+            out.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

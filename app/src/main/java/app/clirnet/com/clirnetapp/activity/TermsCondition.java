@@ -7,6 +7,8 @@ import android.view.KeyEvent;
 import android.webkit.WebView;
 
 import app.clirnet.com.clirnetapp.R;
+
+
 @SuppressLint("SetJavaScriptEnabled")
 public class TermsCondition extends AppCompatActivity {
 

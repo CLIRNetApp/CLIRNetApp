@@ -4,7 +4,6 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
-import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -46,7 +45,7 @@ public class SyncDataService extends Service {
     private ArrayList<RegistrationModel> getPatientVisitIdsList = new ArrayList<>();
     private ArrayList<RegistrationModel> getInvestigationIdsList = new ArrayList<>();
     private ArrayList<RegistrationModel> getHealthLifeStyleIdsList = new ArrayList<>();
-    private ArrayList<RegistrationModel> getObservationIdsList= new ArrayList<>();
+    private ArrayList<RegistrationModel> getObservationIdsList = new ArrayList<>();
     private ArrayList<RegistrationModel> getAssociateMasterList;
     private SQLiteHandler dbController;
     private String patientInfoArayString;
@@ -149,7 +148,7 @@ public class SyncDataService extends Service {
             String start_time = appController.getDateTimenew();
 
             //  new CallDataFromOne(getApplicationContext(), mUserName, mPassword, start_time, docId, doctor_membership_number);
-           // new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, docId, start_time); //send log file to server
+            // new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, docId, start_time); //send log file to server
 
             ArrayList<String> bannerDisplayIds_List;
             ArrayList<String> bannaerClickedIdsList;
@@ -157,8 +156,8 @@ public class SyncDataService extends Service {
 
             patientIds_List = sqlController.getPatientIdsFalg0();
             getPatientVisitIdsList = sqlController.getPatientVisitIdsFalg0();
-            getInvestigationIdsList=sqlController.getPatientIdInvestigationFalg0();
-            getHealthLifeStyleIdsList=sqlController.getPatientIdHealthAndLifestyleFalg0();
+            getInvestigationIdsList = sqlController.getPatientIdInvestigationFalg0();
+            getHealthLifeStyleIdsList = sqlController.getPatientIdHealthAndLifestyleFalg0();
             getAssociateMasterList = sqlController.getAssociateMasterFalg0();
 
 
@@ -178,17 +177,17 @@ public class SyncDataService extends Service {
 
             patientVisitHistorArayString = String.valueOf(dbController.getResultsForPatientHistory());
 
-           // Log.e("patientVisitHisg",""+patientVisitHistorArayString);
+            // Log.e("patientVisitHisg",""+patientVisitHistorArayString);
 
             String investigationArayString = String.valueOf(dbController.getResultsForInvestigation());
 
             String healthAndLifestyleArayString = String.valueOf(dbController.getResultsForHealthAndLifeStyle());
 
-            String observationDataList= String.valueOf(dbController.getObservationsDataDisplay());
+            String observationDataList = String.valueOf(dbController.getObservationsDataDisplay());
 
-            getObservationIdsList=sqlController.getObservationListIdsFalg0();
+            getObservationIdsList = sqlController.getObservationListIdsFalg0();
 
-            Log.e("observationDataList",""+observationDataList);
+            // Log.e("observationDataList",""+observationDataList);
 
             /*count no of patient_id occurance of patient and visit string from db*/
             pat_personal_count = appController.getCharFreq(patientInfoArayString);
@@ -230,56 +229,55 @@ public class SyncDataService extends Service {
 
                 //appController.appendLog(appController.getDateTime() + " " + " / " + "Sending Data to server from Sync Service " + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
-                sendDataToServer(patientInfoArayString, patientVisitHistorArayString, investigationArayString, healthAndLifestyleArayString,associateMasterDataList,doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size(), new AppController().getDateTimenew(),incompletePrescriptionQueueCount,observationDataList);
+                sendDataToServer(patientInfoArayString, patientVisitHistorArayString, investigationArayString, healthAndLifestyleArayString, associateMasterDataList, doctor_membership_number, docId, getPatientVisitIdsList.size(), patientIds_List.size(), new AppController().getDateTimenew(), incompletePrescriptionQueueCount, observationDataList);
 
                 //commented log file sending code on 23-09-2017 By Ashish
-               // new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, docId, start_time); //send log file to server
+                // new LogFileAsyncTask(getApplicationContext(), mUserName, mPassword, doctor_membership_number, docId, start_time); //send log file to server
 
             }
         }
     }
 
-        @Override
-        public IBinder onBind (Intent intent){
-            return null;
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        handler.removeCallbacks(sendUpdatesToUI);
+        if (appController != null) {
+            appController = null;
         }
-
-        @Override
-        public void onDestroy () {
-            super.onDestroy();
-
-            handler.removeCallbacks(sendUpdatesToUI);
-            if (appController != null) {
-                appController = null;
-            }
-            if (connectionDetector != null) {
-                connectionDetector = null;
-            }
-            if (sqlController != null) {
-                sqlController = null;
-            }
-            if (dbController != null) {
-                dbController = null;
-            }
-            if (bannerClass != null) {
-                bannerClass = null;
-            }
-            running = false;
-            patientIds_List = null;
-            getPatientVisitIdsList = null;
-            doctor_membership_number = null;
-            docId = null;
-            patientInfoArayString = null;
-            patientVisitHistorArayString = null;
-            pat_personal_count = null;
-            pat_visit_count = null;
-            mUserName = null;
-            mPassword = null;
+        if (connectionDetector != null) {
+            connectionDetector = null;
         }
-
+        if (sqlController != null) {
+            sqlController = null;
+        }
+        if (dbController != null) {
+            dbController = null;
+        }
+        if (bannerClass != null) {
+            bannerClass = null;
+        }
+        running = false;
+        patientIds_List = null;
+        getPatientVisitIdsList = null;
+        doctor_membership_number = null;
+        docId = null;
+        patientInfoArayString = null;
+        patientVisitHistorArayString = null;
+        pat_personal_count = null;
+        pat_visit_count = null;
+        mUserName = null;
+        mPassword = null;
+    }
     //this will send data to server
 
-    private void sendDataToServer(final String patient_details, final String patient_visits,final String patient_investigation,final String patient_healthLifeStyle,final String associate_data, final String docMemId, final String docId, final int patient_visits_count, final int patient_details_count, final String start_time,final String incompletePrescriptionQueueCount,final String observationsList) {
+    private void sendDataToServer(final String patient_details, final String patient_visits, final String patient_investigation, final String patient_healthLifeStyle, final String associate_data, final String docMemId, final String docId, final int patient_visits_count, final int patient_details_count, final String start_time, final String incompletePrescriptionQueueCount, final String observationsList) {
 
         String tag_string_req = "req_sync2";
 
@@ -289,7 +287,7 @@ public class SyncDataService extends Service {
             @Override
             public void onResponse(String response) {
 
-               // appController.appendLog(appController.getDateTimenew() + " " + " / " + "Response from Server Service" + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+                // appController.appendLog(appController.getDateTimenew() + " " + " / " + "Response from Server Service" + " " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
                 try {
                     JSONObject jObj = new JSONObject(response);
@@ -298,7 +296,7 @@ public class SyncDataService extends Service {
 
                     String msg = user.getString("msg");
 
-                   // appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync DataService data is sync to server : Messaage: " + msg);
+                    // appController.appendLog(appController.getDateTime() + " " + "/ " + "Sync DataService data is sync to server : Messaage: " + msg);
 
                     if (msg.equals("OK")) {
 
@@ -311,7 +309,6 @@ public class SyncDataService extends Service {
                             dbController.FlagupdatePatientPersonal(patientId, flag);
                         }
 
-
                         int listsize = getPatientVisitIdsList.size();
                         for (int i = 0; i < listsize; i++) {
 
@@ -323,27 +320,26 @@ public class SyncDataService extends Service {
                         }
 
                         int investigationListsize = getInvestigationIdsList.size();
-                        if(investigationListsize > 0)
-                        for (int i = 0; i < investigationListsize; i++) {
+                        if (investigationListsize > 0)
+                            for (int i = 0; i < investigationListsize; i++) {
 
-                            String patientVisitId = getInvestigationIdsList.get(i).getPat_id();
-                            String flag = "1";
-                          //  Log.e("getInvestigationIdsList", " : " + patientVisitId);
-                            //saved last updated sync time in shared prefrence
-                            //update flag after success
-                            dbController.FlagupdateInvestigation(patientVisitId, flag);
-                        }
+                                String patientVisitId = getInvestigationIdsList.get(i).getPat_id();
+                                String flag = "1";
+                                //  Log.e("getInvestigationIdsList", " : " + patientVisitId);
+                                //saved last updated sync time in shared prefrence
+                                //update flag after success
+                                dbController.FlagupdateInvestigation(patientVisitId, flag);
+                            }
                         int healthAndLifestyleListsize = getHealthLifeStyleIdsList.size();
-                        if(healthAndLifestyleListsize > 0)
-                        for (int i = 0; i < healthAndLifestyleListsize; i++) {
+                        if (healthAndLifestyleListsize > 0)
+                            for (int i = 0; i < healthAndLifestyleListsize; i++) {
 
-                            String patientVisitId = getHealthLifeStyleIdsList.get(i).getPat_id();
-                            String flag = "1";
+                                String patientVisitId = getHealthLifeStyleIdsList.get(i).getPat_id();
+                                String flag = "1";
 
-
-                            //update flag after success
-                            dbController.FlagupdateHealthAndLifestyle(patientVisitId, flag);
-                        }
+                                //update flag after success
+                                dbController.FlagupdateHealthAndLifestyle(patientVisitId, flag);
+                            }
                         int associateMasterIdsList = getAssociateMasterList.size();
 
                         for (int i = 0; i < associateMasterIdsList; i++) {
@@ -354,9 +350,9 @@ public class SyncDataService extends Service {
                             dbController.FlagupdateAssociateMater(patientVisitId, flag);
                         }
 
-                        int observationListSize=getObservationIdsList.size();
+                        int observationListSize = getObservationIdsList.size();
 
-                        for(int i=0;i<observationListSize;i++){
+                        for (int i = 0; i < observationListSize; i++) {
                             String patientVisitId = getObservationIdsList.get(i).getPat_id();
                             String flag = "1";
 
@@ -423,7 +419,6 @@ public class SyncDataService extends Service {
                 return checkParams(params);
 
             }
-
             private Map<String, String> checkParams(Map<String, String> map) {
                 for (Map.Entry<String, String> pairs : map.entrySet())
                     if (pairs.getValue() == null) {
@@ -468,15 +463,12 @@ public class SyncDataService extends Service {
         }
     }
 
-
     //store last sync time in prefrence
     private void lastSyncTime(String lastSyncTime) {
-
         getSharedPreferences("SyncFlag", MODE_PRIVATE)
                 .edit()
                 .putString("lastSyncTime", lastSyncTime)
                 .apply();
-
     }
 }
 

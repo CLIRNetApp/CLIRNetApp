@@ -325,8 +325,35 @@ public class AddPatientUpdateAdapter extends RecyclerView.Adapter<AddPatientUpda
 
 
         try {
-            final String imgPath = patientList.get(position).getPres_img();
-            if (!TextUtils.isEmpty(imgPath)) {
+            final String imageUrl = patientList.get(position).getPres_img();
+            final String visitId = patientList.get(position).getKey_visit_id();
+
+          //  final String imageUrl=sqlController.getPrescriptionImageUploadedUrlFormFcm(visitId);
+
+           // Log.e("imageUrl"," "+imageUrl);
+
+            if (!TextUtils.isEmpty(imageUrl)) {
+                holder.imgText.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimaryDark));
+                holder.imgText.setTextColor(mContext.getResources().getColor(R.color.white));
+                holder.imgText.setText("View Prescription");
+
+                holder.imgText.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent i = new Intent(mContext, ShowPrescriptionImageActivity.class);
+                        i.putExtra("PRESCRIPTIONIMAGE", imageUrl);
+                        mContext.startActivity(i);
+                    }
+                });
+
+            } else {
+                holder.imgText.setBackgroundColor(mContext.getResources().getColor(R.color.grey));
+                holder.imgText.setTextColor(mContext.getResources().getColor(R.color.white));
+                holder.imgText.setText("No Prescription Attached");
+
+            }
+
+            /*if (!TextUtils.isEmpty(imgPath)) {
                 holder.imgText.setBackgroundColor(mContext.getResources().getColor(R.color.colorPrimaryDark));
                 holder.imgText.setTextColor(mContext.getResources().getColor(R.color.white));
                 holder.imgText.setText("View Prescription");
@@ -344,10 +371,13 @@ public class AddPatientUpdateAdapter extends RecyclerView.Adapter<AddPatientUpda
                 holder.imgText.setTextColor(mContext.getResources().getColor(R.color.white));
                 holder.imgText.setText("No Prescription Attached");
 
-            }
-        } catch (NullPointerException e) {
+            }*/
+        }catch (NullPointerException e) {
             e.printStackTrace();
         }
+        /*catch (ClirNetAppException e) {
+            e.printStackTrace();
+        }*/
 
     }
 
@@ -370,7 +400,6 @@ public class AddPatientUpdateAdapter extends RecyclerView.Adapter<AddPatientUpda
         HistoryViewHolder(View view) {
             super(view);
             tv_visit_date = (TextView) view.findViewById(R.id.tv_visit_date);
-
             tv_fod = (TextView) view.findViewById(R.id.tv_fod);
             imgText = (TextView) view.findViewById(R.id.imgText);
             tv_clinical_notes = (TextView) view.findViewById(R.id.tv_clinical_notes);

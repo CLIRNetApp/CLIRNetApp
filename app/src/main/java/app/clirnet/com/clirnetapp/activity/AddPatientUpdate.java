@@ -18,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ImageView;
@@ -45,6 +46,7 @@ import app.clirnet.com.clirnetapp.models.RegistrationModel;
 import app.clirnet.com.clirnetapp.utility.Validator;
 
 
+
 @SuppressWarnings("AccessStaticViaInstance")
 public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFragment.OnFragmentInteractionListener, View.OnClickListener {
 
@@ -54,14 +56,14 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
     private ImageView backChangingImages;
     private String strPhone;
     private String strAge;
-    private String strLanguage;
+
     private String strgender;
     private String strPatientPhoto;
-
+    private  String strName;
     private String strFirstName;
-    private String strMiddleName;
+
     private String strLastName;
-    private String strDob;
+
 
     private String strPatientId;
 
@@ -76,23 +78,11 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
     private AppController appController;
 
     private Validator validator;
-    private String strCityorTown;
-    private String strDistrict;
-    private String strPinNo;
-    private String strState;
-    private String strAddress;
 
     private ArrayList<String> bannerimgNames;
     private BannerClass bannerClass;
     private LastnameDatabaseClass lastNamedb;
 
-
-    private String strAlternatenumber;
-    private String strAlternatephtype;
-    private String strIsd_code;
-    private String strAlternateIsd_code;
-
-    private String struid;
     private String strEmail;
     private String mAlcohol;
     private String mStressLevel;
@@ -100,8 +90,7 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
     private String mLifeStyle;
     private String mExcercise, mChewinogTobaco;
     private String mSleepStatus;
-    private String strFamilyHistory;
-    private String strHospitalizaionSurgery;
+
 
     private MyBroadcastReceiver_Update myBroadcastReceiver_Update;
     private TextView editpatientName;
@@ -113,44 +102,17 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
     private String strPhoneType;
     private int year_dob;
 
+
+
     @SuppressLint({"SimpleDateFormat", "SetTValidatorextI18n"})
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_patient_update);
 
-        strPatientPhoto = getIntent().getStringExtra("PATIENTPHOTO");
 
-        String strName = getIntent().getStringExtra("NAME");
         strPatientId = getIntent().getStringExtra("PatientID");
 
-        strFirstName = getIntent().getStringExtra("FIRSTTNAME");
-        strMiddleName = getIntent().getStringExtra("MIDDLENAME");
-        strLastName = getIntent().getStringExtra("LASTNAME");
-        strPhone = getIntent().getStringExtra("PHONE");
-        strAge = getIntent().getStringExtra("AGE");
-        strDob = getIntent().getStringExtra("DOB");
-        strLanguage = getIntent().getStringExtra("LANGUAGE");
-        strgender = getIntent().getStringExtra("GENDER");
-
-        strAddress = getIntent().getStringExtra("ADDRESS");
-        strCityorTown = getIntent().getStringExtra("CITYORTOWN");
-        strDistrict = getIntent().getStringExtra("DISTRICT");
-        strPinNo = getIntent().getStringExtra("PIN");
-        strState = getIntent().getStringExtra("STATE");
-
-        strIsd_code = getIntent().getStringExtra("ISDCODE");
-        strAlternateIsd_code = getIntent().getStringExtra("ALTERNATEISDCODE");
-
-        strAlternatenumber = getIntent().getStringExtra("ALTERNATENUMBER");
-
-        strAlternatephtype = getIntent().getStringExtra("ALTERNATENUMBERTYPE");
-        struid = getIntent().getStringExtra("UID");
-        strEmail = getIntent().getStringExtra("EMAIL");
-        strPhoneType = getIntent().getStringExtra("PHONETYPE");
-
-        strFamilyHistory = getIntent().getStringExtra("FAMILYHISTORY");
-        strHospitalizaionSurgery = getIntent().getStringExtra("HOSPITALIZATION");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -188,7 +150,7 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
             sqlController = new SQLController(getApplicationContext());
             sqlController.open();
             doctor_membership_number = sqlController.getDoctorMembershipIdNew();
-            year_dob=sqlController.getDobYear(strPatientId);
+            //year_dob=sqlController.getDobYear(strPatientId);
 
 
             ArrayList<RegistrationModel> healthLifeStyleList = sqlController.getHealthAndLifestyle(strPatientId);
@@ -204,6 +166,27 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
 
                 mSleepStatus = healthLifeStyleList.get(0).getSleep();
             }
+
+            HashMap<String, String> compList = sqlController.getShowPersonalData(strPatientId);
+
+            strFirstName = compList.get("FIRSTTNAME");
+            String  strMiddleName = compList.get("MIDDLENAME");
+            strLastName = compList.get("LASTNAME");
+            strName=strFirstName +"  "+ strLastName;
+
+            strAge = compList.get("AGE");
+            strPhone = compList.get("PHONE");
+            strgender = compList.get("GENDER");
+            String strLanguage = compList.get("LANGUAGE");
+            strPatientPhoto = compList.get("PATIENTPHOTO");
+
+            strEmail = compList.get("EMAIL");
+            strPhoneType = compList.get("PHONETYPE");
+            String dob_year=compList.get("DOB_YEAR");
+            if(dob_year!=null && !dob_year.equals(""))
+            year_dob= Integer.parseInt(dob_year);
+
+
         } catch (ClirNetAppException | SQLException e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTime() + " " + "/ " + "Add Patient Update" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -313,31 +296,9 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
 
                 Intent i = new Intent(getApplicationContext(), NewEditPersonalInfo.class);
 
-                i.putExtra("PATIENTPHOTO", strPatientPhoto);
+
                 i.putExtra("ID", strPatientId);
-                i.putExtra("FIRSTNAME", strFirstName);
-                i.putExtra("MIDDLEAME", strMiddleName);
-                i.putExtra("LASTNAME", strLastName);
-                i.putExtra("PHONE", strPhone);
-                i.putExtra("PHONETYPE", strPhoneType);
-                i.putExtra("DOB", strDob);
-                i.putExtra("AGE", strAge);
-                i.putExtra("LANGUAGE", strLanguage);
-                i.putExtra("GENDER", strgender);
-                i.putExtra("ADDRESS", strAddress);
-                i.putExtra("CITYORTOWN", strCityorTown);
-                i.putExtra("DISTRICT", strDistrict);
-                i.putExtra("PIN", strPinNo);
-                i.putExtra("STATE", strState);
-                i.putExtra("ALTERNATENUMBER", strAlternatenumber);
-                i.putExtra("ALTERNATENUMBERTYPE", strAlternatephtype);
-                i.putExtra("ISDCODE", strIsd_code);
-                i.putExtra("ALTERNATEISDCODE", strAlternateIsd_code);
-                i.putExtra("UID", struid);
-                i.putExtra("EMAIL", strEmail);
-                i.putExtra("FAMILYHISTORY", strFamilyHistory);
-                i.putExtra("HOSPITALIZATION", strHospitalizaionSurgery);
-                i.putExtra("FROMWHERE", "editpatient");
+
                 startActivity(i);
                 // finish();
             }
@@ -454,28 +415,19 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
 
         strPhone = null;
         strAge = null;
-        strLanguage = null;
+
         strgender = null;
         strPatientPhoto = null;
         strFirstName = null;
-        strMiddleName = null;
+
         strLastName = null;
-        strDob = null;
+
         strPatientId = null;
         sqlController = null;
         patientHistoryData = null;
         backChangingImages = null;
         validator = null;
-        strCityorTown = null;
-        strDistrict = null;
-        strPinNo = null;
-        strState = null;
-        strAddress = null;
-        strAlternatenumber = null;
-        strAlternatephtype = null;
-        strIsd_code = null;
-        strAlternateIsd_code = null;
-        struid = null;
+
         strEmail = null;
         editpatientName = null;
         editAge = null;
@@ -484,15 +436,13 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
         email = null;
         txteMail = null;
         strPhoneType = null;
-
         mAlcohol= null;
         mStressLevel= null;
         mSmokerType= null;
         mLifeStyle= null;
         mExcercise= null; mChewinogTobaco= null;
         mSleepStatus= null;
-        strFamilyHistory= null;
-        strHospitalizaionSurgery= null;
+
     }
 
     @Override
@@ -508,13 +458,14 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
 
         adapter.addFragment(addPatientUpdateFragment, "Current");
         Bundle bundle2 = new Bundle();
-        bundle2.putString("PatientID", strPatientId);
+        bundle2.putString("PATIENTID", strPatientId);
+        Log.e("strPatientId",""+strPatientId);
 
         addPatientUpdateFragment.setArguments(bundle2);
 
         OldHistoryFragment oldHistoryFragment = new OldHistoryFragment();
         Bundle bundle = new Bundle();
-        bundle.putString("PatientID", strPatientId);
+        bundle.putString("PATIENTID", strPatientId);
 
         oldHistoryFragment.setArguments(bundle);
         adapter.addFragment(oldHistoryFragment, "History");
@@ -528,9 +479,6 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
         private final List<String> mFragmentTitleList = new ArrayList<>();
         ViewPager viewPager;
 
-        ViewPagerAdapter(FragmentManager manager) {
-            super(manager);
-        }
 
         ViewPagerAdapter(FragmentManager manager, ViewPager viewPager) {
 
@@ -543,7 +491,7 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
 
             switch (index) {
                 case 0:
-                    // Top Rated fragment activity
+
                     AddPatientUpdateFragment argumentFragment = new AddPatientUpdateFragment();//Get Fragment Instance
                     argumentFragment.getViewPager(viewPager);
                     Bundle data = new Bundle();//Use bundle to pass data
@@ -552,7 +500,7 @@ public class AddPatientUpdate extends AppCompatActivity implements OldHistoryFra
                     return argumentFragment;
 
                 case 1:
-                    // Games fragment activity
+
                     OldHistoryFragment oldHistoryFragment = new OldHistoryFragment();
                     // oldHistoryFragment.getViewPager(viewPager);
                     Bundle bundle = new Bundle();
