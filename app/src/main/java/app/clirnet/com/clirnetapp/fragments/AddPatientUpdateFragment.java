@@ -1,5 +1,6 @@
 package app.clirnet.com.clirnetapp.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -61,7 +62,7 @@ import app.clirnet.com.clirnetapp.helper.SQLiteHandler;
 import app.clirnet.com.clirnetapp.utility.ContactsCompletionView;
 import app.clirnet.com.clirnetapp.utility.ImageCompression;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 
 //Our class extending fragment
 public class AddPatientUpdateFragment extends Fragment {
@@ -133,11 +134,11 @@ public class AddPatientUpdateFragment extends Fragment {
     private EditText edtInput_height;
 
 
-    @InjectView(R.id.showObservations)
+    @Bind(R.id.showObservations)
     LinearLayout showObservationsDataLayout;
-    @InjectView(R.id.showVitals)
+    @Bind(R.id.showVitals)
     LinearLayout showVitalsDataLayout;
-    @InjectView(R.id.showInvestigation)
+    @Bind(R.id.showInvestigation)
     LinearLayout showshowInvestigationDataLayout;
 
     private String strWeight;
@@ -285,7 +286,7 @@ public class AddPatientUpdateFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.add_patient_update_fragment, container, false);
 
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
 
         cancel = (Button) view.findViewById(R.id.cancel);
         addUpdate = (Button) view.findViewById(R.id.addUpdate);
@@ -1325,6 +1326,7 @@ public class AddPatientUpdateFragment extends Fragment {
 
     }
 
+    @SuppressLint("RestrictedApi")
     private void addVitalsDialog() {
 
         final Dialog dialog;

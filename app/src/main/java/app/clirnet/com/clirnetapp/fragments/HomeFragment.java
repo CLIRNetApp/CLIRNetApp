@@ -80,7 +80,7 @@ import app.clirnet.com.clirnetapp.utility.ConnectionDetector;
 import app.clirnet.com.clirnetapp.utility.ItemClickListener;
 import app.clirnet.com.clirnetapp.utility.SyncDataService;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 
 import static android.content.Context.INPUT_METHOD_SERVICE;
 import static android.content.Context.MODE_PRIVATE;
@@ -91,22 +91,22 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
     private OnFragmentInteractionListener mListener;
     private SearchView searchView;
-    @InjectView(R.id.recycler_view)
+    @Bind(R.id.recycler_view)
     RecyclerView recyclerView;
-    @InjectView(R.id.todays_patient_updatetxt)
+    @Bind(R.id.todays_patient_updatetxt)
     TextView todays_patient_updatetxt;
 
-    @InjectView(R.id.norecordtv)
+    @Bind(R.id.norecordtv)
     LinearLayout norecordtv;
-    @InjectView(R.id.backChangingImages)
+    @Bind(R.id.backChangingImages)
     ImageView backChangingImages;
-    @InjectView(R.id.fab)
+    @Bind(R.id.fab)
     Button fab;
-    @InjectView(R.id.addanewPatient)
+    @Bind(R.id.addanewPatient)
     Button addaNewPatient;
-    @InjectView(R.id.sync)
+    @Bind(R.id.sync)
     Button sync;
-    @InjectView(R.id.Searchrecycler_view)
+    @Bind(R.id.Searchrecycler_view)
     RecyclerView Searchrecycler_view;
 
     private StringBuilder sysdate;
@@ -189,7 +189,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
 
         view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
 
         ((NavigationActivity) getActivity()).setActionBarTitle("Patient Central");
 
@@ -1274,7 +1274,7 @@ public class HomeFragment extends Fragment implements RecyclerView.OnItemTouchLi
     public void onDestroyView() {
         super.onDestroyView();
         view = null;
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
 
     }
 

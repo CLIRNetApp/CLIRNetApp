@@ -1,7 +1,7 @@
-
 package app.clirnet.com.clirnetapp.activity;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Dialog;
@@ -105,7 +105,7 @@ import app.clirnet.com.clirnetapp.utility.MD5;
 import app.clirnet.com.clirnetapp.utility.SyncDataService;
 import app.clirnet.com.clirnetapp.utility.Validator;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
+import butterknife.Bind;
 import io.fabric.sdk.android.Fabric;
 
 import static com.tokenautocomplete.TokenCompleteTextView.TAG;
@@ -123,11 +123,11 @@ public class LoginActivity extends Activity {
 
     private static final String PREF_TERMSANDCONDITION = "terms";
 
-    @InjectView(R.id.email)
+    @Bind(R.id.email)
     EditText inputEmail;
-    @InjectView(R.id.password)
+    @Bind(R.id.password)
     EditText inputPassword;
-    @InjectView(R.id.btnLogin)
+    @Bind(R.id.btnLogin)
     Button btnLogin;
 
     private EditText oldPassword;
@@ -198,7 +198,7 @@ public class LoginActivity extends Activity {
         setContentView(R.layout.activity_login);
 
 
-        ButterKnife.inject(this);
+        ButterKnife.bind(this);
 
         try {
             /*message from fcm service*/
@@ -214,7 +214,7 @@ public class LoginActivity extends Activity {
 
             MyFirebaseMessagingService.notifications_club.clear();
 
-           // FirebaseCrash.setCrashCollectionEnabled(false);
+            // FirebaseCrash.setCrashCollectionEnabled(false);
 
 
         } catch (Exception e) {
@@ -243,8 +243,7 @@ public class LoginActivity extends Activity {
 
         // FirebaseStorage storage = FirebaseStorage.getInstance("gs://clirnetapp.appspot.com");
         FirebaseStorage storage = FirebaseStorage.getInstance("gs://clirnetstorage");
-        storageReference =storage.getReference();
-
+        storageReference = storage.getReference();
 
 
         //getCurrentDob(21);
@@ -257,14 +256,14 @@ public class LoginActivity extends Activity {
 
         // Progress dialog
 
-         connectionDetector = new ConnectionDetector(getApplicationContext());
-         //Log.e("netSpeed",""+connectionDetector.checkNetworkType());
-         netSpeed=connectionDetector.checkNetworkType();
+        connectionDetector = new ConnectionDetector(getApplicationContext());
+        //Log.e("netSpeed",""+connectionDetector.checkNetworkType());
+        netSpeed = connectionDetector.checkNetworkType();
 
         try {
             sInstance = SQLiteHandler.getInstance(getApplicationContext());
 
-            if(sqlController==null) {
+            if (sqlController == null) {
                 sqlController = new SQLController(getApplicationContext());
                 sqlController.open();
             }
@@ -290,13 +289,13 @@ public class LoginActivity extends Activity {
             databaseClass.createDataBase();
             bannerClass.createDataBase();
 
-            int fodRange=new Validator(LoginActivity.this).getFodRange();
-            Log.e("fodRange",""+fodRange);
+            int fodRange = new Validator(LoginActivity.this).getFodRange();
+            Log.e("fodRange", "" + fodRange);
 
         } catch (Exception ioe) {
             appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page  " + ioe + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
-           // throw new Error("Unable to create database");
+            // throw new Error("Unable to create database");
         }
 
         try {
@@ -306,7 +305,6 @@ public class LoginActivity extends Activity {
 
             /*This AsyncTask will Insert data from Asset folder file to data 23-03-2016*/
             new InsertDataLocally().execute();
-
 
 
         } catch (Exception e) {
@@ -354,7 +352,7 @@ public class LoginActivity extends Activity {
 
             }*/
 
-           // downloadFile();
+            // downloadFile();
         } catch (Exception e) {
             e.printStackTrace();
             appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page" + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -388,7 +386,7 @@ public class LoginActivity extends Activity {
                     LoginAuthentication();
                     logUser();
 
-                   // uploadFile1(Uri.parse("content://media/external/images/media/25980"));
+                    // uploadFile1(Uri.parse("content://media/external/images/media/25980"));
                    /* ArrayList<Images> imageData=null;
                     try {
                          imageData = sqlController.getImagesFromRecodImagesTable();
@@ -411,8 +409,8 @@ public class LoginActivity extends Activity {
 //                            .putExtra(MyDownloadService.EXTRA_DOWNLOAD_PATH, path)
 //                            .setAction(MyDownloadService.ACTION_DOWNLOAD);
 //                    startService(intent);
-                   //  forceCrash();
-                   // else appController.showToastMsg(getApplicationContext(),"This username is not licensed to log into this device. Please check username");
+                    //  forceCrash();
+                    // else appController.showToastMsg(getApplicationContext(),"This username is not licensed to log into this device. Please check username");
 
                 } else if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
@@ -426,12 +424,12 @@ public class LoginActivity extends Activity {
         /*We are updating visit date format*/
         // updateVisitDateFormat(); //Commented on  10-05-2017
 
-         addVitalsIntoInvstigation();
+        addVitalsIntoInvstigation();
 
         //Commented on  10-05-2017
         /*  Updateing banner stats flag to 0 build no 1.3+  */
         /*Updating associate master flag from 1 to 0*/
-         String bannerUpdateFlag = getupdateBannerClickVisitFlag0();
+        String bannerUpdateFlag = getupdateBannerClickVisitFlag0();
         if (bannerUpdateFlag == null || bannerUpdateFlag.equals("true")) {
             updateBannerTableDataFlag();
         }
@@ -445,16 +443,16 @@ public class LoginActivity extends Activity {
                 boolean isInternetPresent = connectionDetector.isConnectingToInternet();
                 if (isInternetPresent && netSpeed.equals("Good")) {
                     showChangePassDialog();
-                }else if(isInternetPresent && netSpeed.equals("Low")){
-                    appController.showToastMsg(getApplicationContext(),"Internet Connection is too low To make request/!");
-                } else{
-                   appController.showToastMsg(getApplicationContext(),"Please Connect To Internet And Try Again!");
+                } else if (isInternetPresent && netSpeed.equals("Low")) {
+                    appController.showToastMsg(getApplicationContext(), "Internet Connection is too low To make request/!");
+                } else {
+                    appController.showToastMsg(getApplicationContext(), "Please Connect To Internet And Try Again!");
                 }
 
             }
         });
 
-        if(checkAndRequestPermissions()) {
+        if (checkAndRequestPermissions()) {
             // carry on the normal flow, as the case of  permissions  granted.
         }
 
@@ -492,34 +490,35 @@ public class LoginActivity extends Activity {
         };
 
     }
-    public static String bytesToHuman (long size)
-    {
-        long Kb = 1  * 1024;
+
+    public static String bytesToHuman(long size) {
+        long Kb = 1 * 1024;
         long Mb = Kb * 1024;
         long Gb = Mb * 1024;
         long Tb = Gb * 1024;
         long Pb = Tb * 1024;
         long Eb = Pb * 1024;
 
-        if (size <  Kb)                 return floatForm(        size     ) + " byte";
-        if (size >= Kb && size < Mb)    return floatForm((double)size / Kb) + " Kb";
-        if (size >= Mb && size < Gb)    return floatForm((double)size / Mb) + " Mb";
-        if (size >= Gb && size < Tb)    return floatForm((double)size / Gb) + " Gb";
-        if (size >= Tb && size < Pb)    return floatForm((double)size / Tb) + " Tb";
-        if (size >= Pb && size < Eb)    return floatForm((double)size / Pb) + " Pb";
-        if (size >= Eb)                 return floatForm((double)size / Eb) + " Eb";
+        if (size < Kb) return floatForm(size) + " byte";
+        if (size >= Kb && size < Mb) return floatForm((double) size / Kb) + " Kb";
+        if (size >= Mb && size < Gb) return floatForm((double) size / Mb) + " Mb";
+        if (size >= Gb && size < Tb) return floatForm((double) size / Gb) + " Gb";
+        if (size >= Tb && size < Pb) return floatForm((double) size / Tb) + " Tb";
+        if (size >= Pb && size < Eb) return floatForm((double) size / Pb) + " Pb";
+        if (size >= Eb) return floatForm((double) size / Eb) + " Eb";
 
         return "???";
     }
-    public static String floatForm (double d)
-    {
+
+    public static String floatForm(double d) {
         return new DecimalFormat("#.##").format(d);
     }
+
     private void onUploadResultIntent(Intent intent) {
         // Got a new intent from MyUploadService with a success or failure
         mDownloadUrl = intent.getParcelableExtra(MyUploadService.EXTRA_DOWNLOAD_URL);
         Uri mFileUri = intent.getParcelableExtra(MyUploadService.EXTRA_FILE_URI);
-        Log.e("mDownloadUrl","  "+mDownloadUrl);
+        Log.e("mDownloadUrl", "  " + mDownloadUrl);
         // updateUI(mAuth.getCurrentUser());
     }
 
@@ -529,7 +528,7 @@ public class LoginActivity extends Activity {
                 .setMessage(message)
                 .create();
         ad.show();*/
-       appController.showToastMsg(getApplicationContext(),message);
+        appController.showToastMsg(getApplicationContext(), message);
     }
 
     private void showProgressDialog(String caption) {
@@ -547,10 +546,11 @@ public class LoginActivity extends Activity {
             mProgressDialog.dismiss();
         }
     }
+
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-    private  boolean checkAndRequestPermissions() {
+    private boolean checkAndRequestPermissions() {
         List<String> listPermissionsNeeded = new ArrayList<>();
-        String[] permissions= new String[]{
+        String[] permissions = new String[]{
                 Manifest.permission.WRITE_EXTERNAL_STORAGE,
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 Manifest.permission.CAMERA,
@@ -560,15 +560,15 @@ public class LoginActivity extends Activity {
                 Manifest.permission.READ_LOGS};
 
         int result;
-        for (String p:permissions) {
-            result = ContextCompat.checkSelfPermission(this,p);
+        for (String p : permissions) {
+            result = ContextCompat.checkSelfPermission(this, p);
             if (result != PackageManager.PERMISSION_GRANTED) {
                 listPermissionsNeeded.add(p);
             }
         }
 
         if (!listPermissionsNeeded.isEmpty()) {
-            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]),REQUEST_ID_MULTIPLE_PERMISSIONS);
+            ActivityCompat.requestPermissions(this, listPermissionsNeeded.toArray(new String[listPermissionsNeeded.size()]), REQUEST_ID_MULTIPLE_PERMISSIONS);
             return false;
         }
         return true;
@@ -579,8 +579,8 @@ public class LoginActivity extends Activity {
             @Override
             public void run() {
 
-               // sInstance.FlagupdateBannerClicked("0");//V 1.3.1
-               // sInstance.FlagupdateBannerDisplay("0");//V 1.3.1
+                // sInstance.FlagupdateBannerClicked("0");//V 1.3.1
+                // sInstance.FlagupdateBannerDisplay("0");//V 1.3.1
                 sInstance.FlagupdateAssociateMaster("0");//V 1.3.2.8 //02-09-2017 ASHISH
                 setupdateBannerClickVisitFlag0();
             }
@@ -599,7 +599,8 @@ public class LoginActivity extends Activity {
             }
         });
     }
-  /* we are adding patient_history sugar and sugar_fasting data into Investigation table along with key_visit_id */
+
+    /* we are adding patient_history sugar and sugar_fasting data into Investigation table along with key_visit_id */
     private void addVitalsIntoInvstigation() {
 
         String addedVitalsSugarFlag = getInsertedInvestigationVitalsFlag();
@@ -689,7 +690,7 @@ public class LoginActivity extends Activity {
             // login user
             boolean isInternetPresent = connectionDetector.isConnectingToInternet();
 
-            if (isInternetPresent  && netSpeed.equals("Good")) {
+            if (isInternetPresent && netSpeed.equals("Good")) {
                 start_time = appController.getDateTimenew();
 
                 new DoctorDeatilsAsynTask(LoginActivity.this, name, md5EncyptedDataPassword, doctor_membership_number, docId, start_time);
@@ -699,11 +700,10 @@ public class LoginActivity extends Activity {
                 //startService();
 
 
-                if(savedUserName==null && savedPhoneNumber==null || name.equals(savedUserName) || name.equals(savedPhoneNumber)) {
+                if (savedUserName == null && savedPhoneNumber == null || name.equals(savedUserName) || name.equals(savedPhoneNumber)) {
                     checkLogin(name, md5EncyptedDataPassword, doctor_membership_number, docId);
-                }
-
-                else appController.showToastMsg(getApplicationContext(),"This username is not licensed to log into this device. Please check username");
+                } else
+                    appController.showToastMsg(getApplicationContext(), "This username is not licensed to log into this device. Please check username");
 
 
                 savedLoginCounter(); //to save shared pref to update login counter
@@ -729,7 +729,7 @@ public class LoginActivity extends Activity {
                     if (lasttimeSync > 72) {
                         showCreatePatientAlertDialog();
                         appController.showToastMsg(getApplicationContext(), "Security credentials expired. Please log in with Internet connection On.");
-                       // Toast.makeText(getApplicationContext(), "User not logged in for 3 days. Security credentials expired.", Toast.LENGTH_LONG).show();
+                        // Toast.makeText(getApplicationContext(), "User not logged in for 3 days. Security credentials expired.", Toast.LENGTH_LONG).show();
                     } else {
 
 
@@ -745,7 +745,7 @@ public class LoginActivity extends Activity {
                             new SessionManager(this).setLogin(true);
 
                         } else {
-                            appController.showToastMsg(getApplicationContext(),  "Username/Password Mismatch");
+                            appController.showToastMsg(getApplicationContext(), "Username/Password Mismatch");
                         }
                     }
                 } catch (ClirNetAppException e) {
@@ -807,9 +807,9 @@ public class LoginActivity extends Activity {
                 String newPass = newPassword.getText().toString().trim();
                 String confirmPass = confirmPassword.getText().toString().trim();
                 try {
-                    if(name!=null || !name.equals(""))
-                    doctor_membership_number = sqlController.getDoctorMembershipIdNew(name);
-                }catch (Exception e){
+                    if (name != null || !name.equals(""))
+                        doctor_membership_number = sqlController.getDoctorMembershipIdNew(name);
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
                 if (TextUtils.isEmpty(oldPass)) {
@@ -889,7 +889,6 @@ public class LoginActivity extends Activity {
     }
 
 
-
     //this method will set username and password to edit text if remember me chkbox is checked previously
     private void getUser() {
 
@@ -901,6 +900,7 @@ public class LoginActivity extends Activity {
             inputEmail.setText(username);
         }
     }
+
     private void getUsernamePasswordFromDatabase() {
 
         try {
@@ -920,7 +920,7 @@ public class LoginActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
 
-        ButterKnife.reset(this);
+        ButterKnife.unbind(this);
         dismissProgressDialog();
         //Close the all database connection opened here 31/10/2016 By. Ashish
         if (sqlController != null) {
@@ -1153,7 +1153,7 @@ public class LoginActivity extends Activity {
                                 String visitId = imageData.get(i).getVisitId();
                                 String imgUrl = imageData.get(i).getImageUrl();
 
-                                if(imgUrl!=null) {
+                                if (imgUrl != null) {
                                     if (!imgUrl.startsWith("/storage/emulated/0/PatientsImages/")) {
 
                                         imgUrl = "/storage/emulated/0/PatientsImages/" + imgUrl;
@@ -1166,21 +1166,23 @@ public class LoginActivity extends Activity {
                         setTransferImagesFlag();
                     }
                 }
-            } catch (Exception  e) {
-                if(appController!=null)
-                appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page  " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+            } catch (Exception e) {
+                if (appController != null)
+                    appController.appendLog(appController.getDateTimenew() + "" + "/" + "Login Page  " + e + " Line Number: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
             }
             return null;
         }
+
         protected void onPostExecute(String e) {
 
         }
     }
+
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void onRequestPermissionsResult(int requestCode,
                                            @NonNull String permissions[], @NonNull int[] grantResults) {
-       // Log.d(TAG, "Permission callback called-------");
+        // Log.d(TAG, "Permission callback called-------");
         switch (requestCode) {
             case REQUEST_ID_MULTIPLE_PERMISSIONS: {
 
@@ -1205,17 +1207,17 @@ public class LoginActivity extends Activity {
                             && perms.get(Manifest.permission.ACCESS_NETWORK_STATE) == PackageManager.PERMISSION_GRANTED
                             && perms.get(Manifest.permission.INTERNET) == PackageManager.PERMISSION_GRANTED
                             && perms.get(Manifest.permission.READ_LOGS) == PackageManager.PERMISSION_GRANTED) {
-                       // Log.d(TAG, "sms & location services permission granted");
+                        // Log.d(TAG, "sms & location services permission granted");
                         // process the normal flow
                         //else any one or both the permissions are not granted
                     } else {
-                       // Log.d(TAG, "Some permissions are not granted ask again ");
+                        // Log.d(TAG, "Some permissions are not granted ask again ");
                         //permission is denied (this is the first time, when "never ask again" is not checked) so ask again explaining the usage of permission
 //                        // shouldShowRequestPermissionRationale will return true
                         //show the dialog or snackbar saying its necessary and try again otherwise proceed with setup.
                         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_EXTERNAL_STORAGE) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)   || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE) ||
-                                ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_NETWORK_STATE)   || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET) ||
+                                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_PHONE_STATE) ||
+                                ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_NETWORK_STATE) || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.INTERNET) ||
                                 ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_LOGS)) {
                             showDialogOK("Camera and Location Services Permission required for this app",
                                     new DialogInterface.OnClickListener() {
@@ -1244,36 +1246,37 @@ public class LoginActivity extends Activity {
             }
         }
     }
+
     private void showDialogOK(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(this)
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
                 .setNegativeButton("Cancel", okListener)
                 .create()
-              .show();
+                .show();
     }
 
-    private String getCurrentDob(int age){
+    private String getCurrentDob(int age) {
 
         final Calendar c2 = Calendar.getInstance();
         int mYear = c2.get(Calendar.YEAR);
 
         int mMonth = c2.get(Calendar.MONTH);
 
-        if(mMonth>11){
-            mMonth=mMonth-9;
-        } else if(mMonth>6){
-            mMonth=mMonth-4;
+        if (mMonth > 11) {
+            mMonth = mMonth - 9;
+        } else if (mMonth > 6) {
+            mMonth = mMonth - 4;
         }
         int mDay = c2.get(Calendar.DAY_OF_MONTH);
-        if(mDay>27){
-            mDay=mDay-22;
-        }else if(mDay>16){
-            mDay=mDay-15;
+        if (mDay > 27) {
+            mDay = mDay - 22;
+        } else if (mDay > 16) {
+            mDay = mDay - 15;
         }
-        int yr=mYear-age;
+        int yr = mYear - age;
 
-        String dob= mDay + "-"
+        String dob = mDay + "-"
                 + (mMonth + 1) + "-" + yr;
 
         dob = appController.ConvertDateFormat(dob);
@@ -1294,7 +1297,7 @@ public class LoginActivity extends Activity {
             @Override
             public void onResponse(String response) {
 
-               // Log.e("Loginresponse", " " + response);
+                // Log.e("Loginresponse", " " + response);
 
                 if (LoginActivity.this.isDestroyed()) { // or call isFinishing() if min sdk version < 17
                     return;
@@ -1324,7 +1327,7 @@ public class LoginActivity extends Activity {
 
                     } else {
 
-                        appController.showToastMsg(getApplicationContext(),"Username/Password Mismatch");
+                        appController.showToastMsg(getApplicationContext(), "Username/Password Mismatch");
 
                     }
 
@@ -1353,7 +1356,8 @@ public class LoginActivity extends Activity {
             protected Map<String, String> getParams() {
 
                 TelephonyManager manager = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-                String imeiNo = manager.getDeviceId();
+
+                @SuppressLint("MissingPermission") String imeiNo = manager.getDeviceId();
                 // Posting parameters to login url
                 Map<String, String> params = new HashMap<>();
                 String keyid = getResources().getString(R.string.apikey);
